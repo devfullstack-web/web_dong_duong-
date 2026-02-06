@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -41,6 +42,7 @@ import { vi } from 'date-fns/locale';
 import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
 import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
 import { BarChart3, PieChart as PieChartIcon, LayoutList } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface JobApplication {
     id: string;
@@ -92,88 +94,92 @@ const STATUS_CONFIG: Record<
 };
 
 export default function ApplicationsManagementPage() {
-    const [applications, setApplications] = useState<JobApplication[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [stats, setStats] = useState<any>(null);
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<JobApplication | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
 
     // Reset to page 1 when search changes
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    const fetchApplications = async (page: number, limit: number, search: string) => {
-        setIsLoading(true);
-        try {
+    // Query for applications list
+    const { data: applicationsData, isLoading } = useQuery<{
+        data: JobApplication[];
+        meta: { total: number };
+    }>({
+        queryKey: ['applications', currentPage, pageSize, debouncedSearch],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.APPLICATIONS, {
                 params: {
-                    page,
-                    limit,
-                    search: search || undefined,
+                    page: currentPage,
+                    limit: pageSize,
+                    search: debouncedSearch || undefined,
                 },
             });
-            setApplications(res.data.data || []);
-            if (res.data.meta) {
-                setTotalItems(res.data.meta.total || 0);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh sách ứng viên');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            return res.data;
+        },
+    });
 
-    const fetchStats = async () => {
-        try {
+    // Query for stats
+    const { data: statsData } = useQuery<{ data: any }>({
+        queryKey: ['stats'],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.STATS);
-            setStats(res.data.data);
-        } catch (error) {
-            console.error('Failed to fetch recruitment stats', error);
-        }
-    };
+            return res.data;
+        },
+    });
 
-    useEffect(() => {
-        fetchApplications(currentPage, pageSize, debouncedSearch);
-        fetchStats();
-    }, [currentPage, pageSize, debouncedSearch]);
+    const applications = applicationsData?.data || [];
+    const totalItems = applicationsData?.meta?.total || 0;
+    const stats = statsData?.data;
+
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.APPLICATIONS}/${id}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa hồ sơ ứng viên');
+            queryClient.invalidateQueries({ queryKey: ['applications'] });
+            queryClient.invalidateQueries({ queryKey: ['stats'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Không thể xóa hồ sơ ứng viên');
+        },
+    });
+
+    // Update status mutation
+    const updateStatusMutation = useMutation({
+        mutationFn: async ({ id, status }: { id: string; status: string }) => {
+            await $api.patch(`${API_ROUTES.APPLICATIONS}/${id}`, { status });
+        },
+        onSuccess: () => {
+            toast.success('Đã cập nhật trạng thái hồ sơ');
+            queryClient.invalidateQueries({ queryKey: ['applications'] });
+            queryClient.invalidateQueries({ queryKey: ['stats'] });
+        },
+        onError: () => {
+            toast.error('Không thể cập nhật trạng thái');
+        },
+    });
 
     const handleDelete = async () => {
         if (!itemToDelete) return;
-        setIsDeleting(true);
-        try {
-            await $api.delete(`${API_ROUTES.APPLICATIONS}/${itemToDelete.id}`);
-            toast.success('Đã xóa hồ sơ ứng viên');
-            fetchApplications(currentPage, pageSize, debouncedSearch);
-            fetchStats();
-        } catch {
-            toast.error('Không thể xóa hồ sơ ứng viên');
-        } finally {
-            setIsDeleting(false);
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.id);
     };
 
     const handleUpdateStatus = async (id: string, status: string) => {
-        try {
-            await $api.patch(`${API_ROUTES.APPLICATIONS}/${id}`, { status });
-            toast.success('Đã cập nhật trạng thái hồ sơ');
-            fetchApplications(currentPage, pageSize, debouncedSearch);
-            fetchStats();
-        } catch {
-            toast.error('Không thể cập nhật trạng thái');
-        }
+        updateStatusMutation.mutate({ id, status });
     };
 
     const getStatusBadge = (status: string) => {
@@ -529,13 +535,9 @@ export default function ApplicationsManagementPage() {
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 onConfirm={handleDelete}
-                loading={isDeleting}
+                loading={deleteMutation.isPending}
                 itemName={itemToDelete?.full_name || ''}
             />
         </div>
     );
-}
-
-function cn(...classes: string[]) {
-    return classes.filter(Boolean).join(' ');
 }

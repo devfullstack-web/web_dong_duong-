@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -81,76 +82,72 @@ const STATUS_CONFIG = {
 
 export default function JobsManagementPage() {
     const { hasPermission } = useAuth();
-    const [jobs, setJobs] = useState<JobPosting[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [stats, setStats] = useState<any>(null);
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<JobPosting | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
 
     // Reset to page 1 when search changes
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    const fetchJobs = async (page: number, limit: number, search: string) => {
-        setIsLoading(true);
-        try {
+    // Query for jobs list
+    const { data: jobsData, isLoading } = useQuery<{
+        data: JobPosting[];
+        meta: { total: number };
+    }>({
+        queryKey: ['jobs', currentPage, pageSize, debouncedSearch],
+        queryFn: async () => {
             const res = await $api.get(`${API_ROUTES.JOBS}`, {
                 params: {
-                    page,
-                    limit,
-                    search: search || undefined,
+                    page: currentPage,
+                    limit: pageSize,
+                    search: debouncedSearch || undefined,
                 },
             });
-            setJobs(res.data.data || []);
-            if (res.data.meta) {
-                setTotalItems(res.data.meta.total || 0);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh sách tuyển dụng');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            return res.data;
+        },
+    });
 
-    const fetchStats = async () => {
-        try {
+    // Query for stats
+    const { data: statsData } = useQuery<{ data: any }>({
+        queryKey: ['stats'],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.STATS);
-            setStats(res.data.data);
-        } catch (error) {
-            console.error('Failed to fetch job stats', error);
-        }
-    };
+            return res.data;
+        },
+    });
 
-    useEffect(() => {
-        fetchJobs(currentPage, pageSize, debouncedSearch);
-        fetchStats();
-    }, [currentPage, pageSize, debouncedSearch]);
+    const jobs = jobsData?.data || [];
+    const totalItems = jobsData?.meta?.total || 0;
+    const stats = statsData?.data;
+
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.JOBS}/${id}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa tin tuyển dụng');
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['stats'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Không thể xóa tin tuyển dụng');
+        },
+    });
 
     const handleDelete = async () => {
         if (!itemToDelete) return;
-        setIsDeleting(true);
-        try {
-            await $api.delete(`${API_ROUTES.JOBS}/${itemToDelete.id}`);
-            toast.success('Đã xóa tin tuyển dụng');
-            fetchJobs(currentPage, pageSize, debouncedSearch);
-            fetchStats();
-        } catch {
-            toast.error('Không thể xóa tin tuyển dụng');
-        } finally {
-            setIsDeleting(false);
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.id);
     };
 
     // Prepare chart data
@@ -183,8 +180,8 @@ export default function JobsManagementPage() {
         })) || [];
 
     return (
-        <div className="flex-1 space-y-10 py-8 pt-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex-1 space-y-6 md:space-y-10 py-4 md:py-8 pt-4 md:pt-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 mb-2">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest text-[#fbbf24]">
@@ -195,7 +192,7 @@ export default function JobsManagementPage() {
                             Live Recruitment
                         </span>
                     </div>
-                    <h2 className="text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-8 border-[#002d6b] pl-6 leading-none">
+                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 md:border-l-8 border-[#002d6b] pl-3 md:pl-6 leading-none">
                         Quản lý Tuyển dụng
                     </h2>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
@@ -205,27 +202,31 @@ export default function JobsManagementPage() {
                 </div>
                 {hasPermission(PERMISSIONS.RECRUITMENT_CREATE) && (
                     <Link href={PORTAL_ROUTES.cms.jobs.add}>
-                        <Button className="h-14 px-10 bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center gap-3">
+                        <Button className="h-12 md:h-14 px-6 md:px-10 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center gap-3 justify-center">
                             <Plus size={18} /> Thêm tin mới
                         </Button>
                     </Link>
                 )}
             </div>
 
-            <Tabs defaultValue="list" className="space-y-8">
-                <div className="flex items-center justify-between">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
+            <Tabs defaultValue="list" className="space-y-6 md:space-y-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <LayoutList size={14} /> Danh sách tin tuyển dụng
+                            <LayoutList size={14} />{' '}
+                            <span className="hidden sm:inline">Danh sách</span>{' '}
+                            <span className="sm:hidden">DS</span>
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <PieChartIcon size={14} /> Biểu đồ phân tích
+                            <PieChartIcon size={14} />{' '}
+                            <span className="hidden sm:inline">Biểu đồ phân tích</span>{' '}
+                            <span className="sm:hidden">Biểu đồ</span>
                         </TabsTrigger>
                     </TabsList>
 
@@ -237,7 +238,7 @@ export default function JobsManagementPage() {
                 </div>
 
                 <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
-                    <div className="flex flex-col md:flex-row gap-4 p-6 bg-slate-50 border border-slate-100">
+                    <div className="flex flex-col md:flex-row gap-4 p-4 md:p-6 bg-slate-50 border border-slate-100">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <input
@@ -266,22 +267,22 @@ export default function JobsManagementPage() {
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="w-full">
+                                <table className="w-full min-w-[550px]">
                                     <thead>
                                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Vị trí & Phòng ban
                                             </th>
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
                                                 Địa điểm & Loại hình
                                             </th>
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Trạng thái
                                             </th>
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
                                                 Hạn nộp
                                             </th>
-                                            <th className="text-right p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-right p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Thao tác
                                             </th>
                                         </tr>
@@ -292,7 +293,7 @@ export default function JobsManagementPage() {
                                                 key={job.id}
                                                 className="hover:bg-slate-50/30 transition-colors group"
                                             >
-                                                <td className="p-6">
+                                                <td className="p-3 md:p-6">
                                                     <div className="space-y-1">
                                                         <p className="text-sm font-black text-slate-900 uppercase tracking-tight line-clamp-1">
                                                             {job.title}
@@ -304,7 +305,7 @@ export default function JobsManagementPage() {
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="p-6 text-xs font-bold text-slate-600">
+                                                <td className="p-3 md:p-6 text-xs font-bold text-slate-600 hidden md:table-cell">
                                                     <div className="flex flex-col gap-1.5">
                                                         <div className="flex items-center gap-2">
                                                             <MapPin
@@ -324,7 +325,7 @@ export default function JobsManagementPage() {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="p-6">
+                                                <td className="p-3 md:p-6">
                                                     <Badge
                                                         className={cn(
                                                             'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none',
@@ -340,7 +341,7 @@ export default function JobsManagementPage() {
                                                         }
                                                     </Badge>
                                                 </td>
-                                                <td className="p-6 whitespace-nowrap">
+                                                <td className="p-3 md:p-6 whitespace-nowrap hidden sm:table-cell">
                                                     {job.deadline ? (
                                                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase">
                                                             <Calendar
@@ -359,7 +360,7 @@ export default function JobsManagementPage() {
                                                         </span>
                                                     )}
                                                 </td>
-                                                <td className="p-6 text-right">
+                                                <td className="p-3 md:p-6 text-right">
                                                     <div className="flex items-center justify-end gap-2">
                                                         {hasPermission(
                                                             PERMISSIONS.RECRUITMENT_UPDATE,
@@ -458,7 +459,7 @@ export default function JobsManagementPage() {
                     value="analytics"
                     className="space-y-8 mt-0 border-none p-0 animate-in fade-in duration-500"
                 >
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
                         <PieChartLabel
                             title="Trạng thái tuyển dụng"
                             description="Phân bổ tin tuyển dụng theo trạng thái"
@@ -489,7 +490,7 @@ export default function JobsManagementPage() {
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 onConfirm={handleDelete}
-                loading={isDeleting}
+                loading={deleteMutation.isPending}
                 itemName={itemToDelete?.title || ''}
             />
         </div>

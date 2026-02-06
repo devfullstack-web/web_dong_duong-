@@ -13,6 +13,7 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 import { COMPANY_INFO } from '@/constants/site-info';
+import { PORTAL_ROUTES } from '@/constants/routes';
 
 export default function Footer() {
     return (
@@ -147,10 +148,10 @@ export default function Footer() {
                             Bảo mật
                         </Link>
                         <Link
-                            href="#"
+                            href={PORTAL_ROUTES.dashboard}
                             className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
                         >
-                            Sơ đồ trang
+                            Quản trị
                         </Link>
                     </div>
                 </div>

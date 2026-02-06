@@ -65,9 +65,9 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-4 md:space-y-8">
             <div>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase">
+                <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight uppercase">
                     Hồ sơ cá nhân
                 </h1>
                 <p className="text-slate-500 font-medium italic mt-1 text-sm">
@@ -84,9 +84,9 @@ export default function SettingsPage() {
                         Cập nhật thông tin định danh của bạn trên hệ thống.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="p-8 space-y-8">
-                    <div className="flex flex-col md:flex-row gap-12">
-                        <div className="w-full md:w-64">
+                <CardContent className="p-4 md:p-8 space-y-6 md:space-y-8">
+                    <div className="flex flex-col md:flex-row gap-6 md:gap-12">
+                        <div className="w-full md:w-64 mx-auto md:mx-0 max-w-64">
                             <ImageUploader
                                 value={formData.avatarUrl}
                                 onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
@@ -143,7 +143,7 @@ export default function SettingsPage() {
                         </div>
                     </div>
                 </CardContent>
-                <CardFooter className="bg-slate-50/30 p-8 border-t border-slate-50 flex justify-end">
+                <CardFooter className="bg-slate-50/30 p-4 md:p-8 border-t border-slate-50 flex justify-end">
                     <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting}

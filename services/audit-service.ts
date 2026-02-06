@@ -46,7 +46,6 @@ export const auditService = {
             let userAgent = 'unknown';
 
             if (request) {
-                // Try to get IP address from headers
                 const headers =
                     request instanceof NextRequest ? request.headers : (request as Request).headers;
                 ipAddress =

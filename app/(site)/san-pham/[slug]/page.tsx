@@ -92,7 +92,7 @@ export default function ProductDetailPage() {
         if (!product.tech_specs) return null;
 
         if (Array.isArray(product.tech_specs)) {
-            // Comparison table format
+            // Comparison table format - giữ dạng bảng nhưng compact hơn
             const headers = Object.keys(product.tech_specs[0]);
             return (
                 <div className="overflow-x-auto">
@@ -102,7 +102,7 @@ export default function ProductDetailPage() {
                                 {headers.map((h, i) => (
                                     <th
                                         key={i}
-                                        className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-slate-100"
+                                        className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-slate-100"
                                     >
                                         {h}
                                     </th>
@@ -118,7 +118,7 @@ export default function ProductDetailPage() {
                                     {headers.map((h, j) => (
                                         <td
                                             key={j}
-                                            className="px-8 py-6 text-sm font-bold text-slate-900"
+                                            className="px-4 py-3 text-sm font-medium text-slate-900"
                                         >
                                             {row[h]}
                                         </td>
@@ -130,8 +130,32 @@ export default function ProductDetailPage() {
                 </div>
             );
         } else {
-            // Standard Key-Value format
+            // Standard Key-Value format - Grid layout cho compact
             const entries = Object.entries(product.tech_specs);
+            const shouldUseGrid = entries.length > 6;
+
+            if (shouldUseGrid) {
+                // Grid 2 cột khi có nhiều specs
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {entries.map(([label, value], i) => (
+                            <div
+                                key={i}
+                                className="bg-white p-4 border border-slate-200 hover:border-brand-primary/30 transition-colors"
+                            >
+                                <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+                                    {label}
+                                </div>
+                                <div className="text-sm font-semibold text-slate-900">
+                                    {String(value)}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            }
+
+            // Dạng bảng compact khi ít specs
             return (
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse bg-white shadow-sm ring-1 ring-slate-200">
@@ -141,10 +165,10 @@ export default function ProductDetailPage() {
                                     key={i}
                                     className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors"
                                 >
-                                    <td className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground w-1/3 bg-slate-50/50">
+                                    <td className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground w-1/3 bg-slate-50/50">
                                         {label}
                                     </td>
-                                    <td className="px-8 py-6 text-sm font-bold text-slate-900">
+                                    <td className="px-4 py-3 text-sm font-semibold text-slate-900">
                                         {String(value)}
                                     </td>
                                 </tr>

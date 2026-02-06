@@ -51,62 +51,30 @@ export default function Hero() {
     }, []);
 
     return (
-        <section className="relative h-screen min-h-[800px] w-full overflow-hidden ">
-            <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                    key={current}
-                    custom={direction}
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute inset-0 z-0"
-                >
-                    <Image
-                        src={SLIDES[current].image}
-                        alt="Sài Gòn Valve Industry"
-                        fill
-                        className="object-cover opacity-70 contrast-[1.05] saturate-[1.1] brightness-110"
-                        priority
-                        onError={(e: any) => {
-                            e.target.src = SLIDES[current].fallback;
-                        }}
-                    />
-
-                    {/* Digital Grid Overlay */}
-                    <div
-                        className="absolute inset-0 opacity-[0.08]"
-                        style={{
-                            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0)`,
-                            backgroundSize: '32px 32px',
-                        }}
-                    />
-
-                    {/* Animated Wave Lines */}
-                    <svg className="absolute inset-0 w-full h-full opacity-30 pointer-events-none">
-                        <motion.path
-                            d="M 0 400 Q 250 350, 500 400 T 1000 400"
-                            stroke="rgba(6,182,212,0.4)"
-                            strokeWidth="1"
-                            fill="none"
-                            animate={{
-                                d: [
-                                    'M 0 400 Q 250 380, 500 400 T 1000 400',
-                                    'M 0 400 Q 250 420, 500 400 T 1000 400',
-                                    'M 0 400 Q 250 380, 500 400 T 1000 400',
-                                ],
-                            }}
-                            transition={{ repeat: Infinity, duration: 8, ease: 'easeInOut' }}
-                        />
-                    </svg>
-
-                    <div className="absolute inset-0 bg-gradient-to-b from-slate-900/20 via-slate-800/30 to-slate-900/20"></div>
-                </motion.div>
-            </AnimatePresence>
+        <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden ">
+            {/* Video Background */}
+            <div className="absolute inset-0 z-0">
+                {/* Poster Image - hiển thị khi video chưa load */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src="/images/hero-poster.jpg"
+                    alt="Video poster"
+                    className="absolute inset-0 w-full h-full object-cover object-center opacity-0"
+                />
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="auto"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
+                    src="/videos/hero-background.mp4"
+                />
+            </div>
 
             <div className="container relative z-10 mx-auto h-full px-4 lg:px-8">
-                <div className="flex h-full flex-col justify-center pt-24">
-                    <div className="max-w-5xl space-y-10">
+                <div className="flex h-full flex-col justify-center pt-16">
+                    <div className="max-w-4xl space-y-8">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={current}
@@ -114,40 +82,37 @@ export default function Hero() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                                className="space-y-8"
+                                className="space-y-6"
                             >
-                           
-
-                                <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white tracking-tight leading-[1.05] uppercase drop-shadow-lg">
+                                <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-[1.1] uppercase">
                                     {SLIDES[current].title} <br />
-                                    <span className="text-brand-primary drop-shadow-[0_2px_4px_rgba(0,29,74,0.3)]">
+                                    <span className="text-brand-accent">
                                         {SLIDES[current].highlight}
                                     </span>{' '}
                                     <br />
-                                    <span className="text-white/70">
+                                    <span className="text-white/60">
                                         {SLIDES[current].titleSuffix}
                                     </span>
                                 </h1>
 
-                                <p className="max-w-xl text-base sm:text-lg text-slate-200 font-medium leading-relaxed drop-shadow-sm">
+                                <p className="max-w-lg text-sm sm:text-base text-white/70 font-medium leading-relaxed">
                                     {SLIDES[current].desc}
                                 </p>
 
-                                <div className="flex flex-col sm:flex-row gap-5 pt-4">
+                                <div className="flex flex-col sm:flex-row gap-4 pt-2">
                                     <Link
                                         href="/san-pham"
-                                        className="group relative overflow-hidden inline-flex items-center justify-center gap-4 px-10 py-5 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:scale-105"
+                                        className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary"
                                     >
                                         <span className="relative z-10">KHÁM PHÁ NGAY</span>
                                         <MoveRight
-                                            size={16}
-                                            className="relative z-10 transition-transform group-hover:translate-x-1.5"
+                                            size={14}
+                                            className="relative z-10 transition-transform group-hover:translate-x-1"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-r from-brand-primary to-brand-primary/80 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
                                     </Link>
                                     <Link
                                         href="/gioi-thieu"
-                                        className="inline-flex items-center justify-center gap-4 px-10 py-5 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/20 hover:bg-brand-primary hover:border-brand-primary transition-all backdrop-blur-sm rounded-sm hover:scale-105"
+                                        className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm"
                                     >
                                         TƯ VẤN GIẢI PHÁP
                                     </Link>
@@ -156,7 +121,7 @@ export default function Hero() {
                         </AnimatePresence>
 
                         {/* Slide Indicators */}
-                        <div className="flex items-center gap-4 pt-12">
+                        <div className="flex items-center gap-3 pt-8">
                             {SLIDES.map((_, i) => (
                                 <button
                                     key={i}
@@ -167,8 +132,8 @@ export default function Hero() {
                                     className={cn(
                                         'h-1 rounded-full transition-all duration-500',
                                         current === i
-                                            ? 'w-16 bg-brand-primary shadow-[0_0_10px_rgba(0,29,74,0.4)]'
-                                            : 'w-8 bg-white/20 hover:bg-white/40',
+                                            ? 'w-12 bg-brand-accent shadow-[0_0_10px_rgba(251,191,36,0.4)]'
+                                            : 'w-6 bg-white/30 hover:bg-white/50',
                                     )}
                                 />
                             ))}
@@ -182,15 +147,15 @@ export default function Hero() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
-                className="absolute bottom-12 right-12 z-20 flex flex-col items-end gap-6"
+                className="absolute bottom-8 right-8 z-20 flex flex-col items-end gap-4"
             >
-                <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">
+                <div className="flex items-center gap-3">
+                    <span className="text-[9px] font-bold text-white/50 uppercase tracking-[0.3em]">
                         0{current + 1} / 0{SLIDES.length}
                     </span>
-                    <div className="w-20 h-px bg-white/20">
+                    <div className="w-16 h-px bg-white/20">
                         <motion.div
-                            className="h-full bg-brand-primary"
+                            className="h-full bg-brand-accent"
                             initial={{ width: 0 }}
                             animate={{ width: `${((current + 1) / SLIDES.length) * 100}%` }}
                             transition={{ duration: 0.5 }}

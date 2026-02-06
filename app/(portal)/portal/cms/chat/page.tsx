@@ -15,6 +15,7 @@ import {
     Headphones,
     Clock,
     Users,
+    ArrowLeft,
 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
@@ -296,9 +297,9 @@ export default function ChatAdminPage() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-4 md:space-y-8">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 mb-2">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest">
@@ -309,7 +310,7 @@ export default function ChatAdminPage() {
                             Real-time Chat
                         </span>
                     </div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight text-slate-900 border-l-8 border-[#002d6b] pl-6 leading-none">
+                    <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tight pt-1 text-slate-900 border-l-4 md:border-l-8 border-[#002d6b] pl-3 md:pl-6 leading-none">
                         Hỗ trợ Khách hàng
                     </h1>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
@@ -328,9 +329,14 @@ export default function ChatAdminPage() {
             </div>
 
             {/* Main Chat Container */}
-            <div className="flex h-[calc(100vh-16rem)] bg-white border border-slate-200 overflow-hidden shadow-sm">
+            <div className="flex h-[calc(100vh-14rem)] md:h-[calc(100vh-16rem)] bg-white border border-slate-200 overflow-hidden shadow-sm">
                 {/* Session List */}
-                <div className="w-[340px] border-r border-slate-200 flex flex-col bg-slate-50/50">
+                <div
+                    className={cn(
+                        'border-r border-slate-200 flex-col bg-slate-50/50 w-full md:w-[340px] md:flex',
+                        selectedSession ? 'hidden' : 'flex',
+                    )}
+                >
                     {/* Session List Header */}
                     <div className="p-5 border-b border-slate-200 bg-white">
                         <div className="flex items-center justify-between mb-4">
@@ -452,17 +458,30 @@ export default function ChatAdminPage() {
                 </div>
 
                 {/* Chat Window */}
-                <div className="flex-1 flex flex-col bg-slate-50/30">
+                <div
+                    className={cn(
+                        'flex-1 flex-col bg-slate-50/30',
+                        selectedSession ? 'flex' : 'hidden md:flex',
+                    )}
+                >
                     {selectedSession ? (
                         <>
                             {/* Chat Header */}
-                            <div className="p-5 border-b border-slate-200 bg-white flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-[#002d6b] flex items-center justify-center">
-                                        <User className="w-6 h-6 text-white" />
+                            <div className="p-3 md:p-5 border-b border-slate-200 bg-white flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-3 md:gap-4">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="md:hidden h-9 w-9 shrink-0 hover:bg-slate-100"
+                                        onClick={() => setSelectedSession(null)}
+                                    >
+                                        <ArrowLeft className="w-5 h-5 text-slate-600" />
+                                    </Button>
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-[#002d6b] flex items-center justify-center shrink-0">
+                                        <User className="w-5 h-5 md:w-6 md:h-6 text-white" />
                                     </div>
-                                    <div>
-                                        <h3 className="text-sm font-black uppercase tracking-tight text-slate-800">
+                                    <div className="min-w-0">
+                                        <h3 className="text-sm font-black uppercase tracking-tight text-slate-800 truncate">
                                             {selectedSession.guest_name || 'Khách'}
                                         </h3>
                                         <div className="flex items-center gap-2 mt-0.5">
@@ -473,7 +492,7 @@ export default function ChatAdminPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="hidden sm:flex items-center gap-2 shrink-0">
                                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1.5 bg-slate-50 border border-slate-100">
                                         Session: {selectedSession.id.substring(0, 8)}
                                     </span>
@@ -481,8 +500,8 @@ export default function ChatAdminPage() {
                             </div>
 
                             {/* Messages Area */}
-                            <div className="flex-1 overflow-y-auto p-6">
-                                <div className="flex flex-col gap-5">
+                            <div className="flex-1 overflow-y-auto p-3 md:p-6">
+                                <div className="flex flex-col gap-3 md:gap-5">
                                     {isLoadingMessages ? (
                                         <div className="flex flex-col items-center justify-center py-20">
                                             <Loader2 className="w-10 h-10 animate-spin text-[#002d6b] mb-3" />
@@ -510,12 +529,12 @@ export default function ChatAdminPage() {
                                                     className={`flex ${isAdmin ? 'justify-end' : 'justify-start'} group/msg`}
                                                 >
                                                     <div
-                                                        className={`flex items-end gap-3 max-w-[70%] ${isAdmin ? 'flex-row-reverse' : ''}`}
+                                                        className={`flex items-end gap-2 md:gap-3 max-w-[85%] md:max-w-[70%] ${isAdmin ? 'flex-row-reverse' : ''}`}
                                                     >
                                                         {/* Avatar */}
                                                         <div
                                                             className={cn(
-                                                                'w-9 h-9 flex items-center justify-center shrink-0',
+                                                                'w-7 h-7 md:w-9 md:h-9 flex items-center justify-center shrink-0',
                                                                 isAdmin
                                                                     ? 'bg-[#002d6b]'
                                                                     : 'bg-slate-200',
@@ -666,14 +685,14 @@ export default function ChatAdminPage() {
                             </div>
 
                             {/* Message Input */}
-                            <div className="p-5 border-t border-slate-200 bg-white">
+                            <div className="p-3 md:p-5 border-t border-slate-200 bg-white">
                                 <AnimatePresence>
                                     {replyingTo && (
                                         <motion.div
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: 10 }}
-                                            className="mb-4 p-4 bg-slate-50 flex items-center justify-between border-l-4 border-[#fbbf24]"
+                                            className="mb-3 md:mb-4 p-3 md:p-4 bg-slate-50 flex items-center justify-between border-l-4 border-[#fbbf24]"
                                         >
                                             <div className="min-w-0">
                                                 <p className="text-[9px] text-[#002d6b] font-black uppercase tracking-widest">
@@ -707,20 +726,20 @@ export default function ChatAdminPage() {
                                     <Input
                                         value={inputValue}
                                         onChange={handleInputChange}
-                                        placeholder="Nhập câu trả lời cho khách hàng..."
-                                        className="flex-1 h-12 bg-slate-50 border-slate-200 focus-visible:ring-[#002d6b] focus-visible:ring-offset-0 text-sm placeholder:text-slate-400"
+                                        placeholder="Nhập câu trả lời..."
+                                        className="flex-1 h-11 md:h-12 bg-slate-50 border-slate-200 focus-visible:ring-[#002d6b] focus-visible:ring-offset-0 text-sm placeholder:text-slate-400"
                                     />
                                     <Button
                                         type="submit"
-                                        className="h-12 px-8 bg-[#002d6b] hover:bg-[#002d6b]/90 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-[#002d6b]/20"
+                                        className="h-11 md:h-12 px-4 md:px-8 bg-[#002d6b] hover:bg-[#002d6b]/90 text-white text-[10px] font-black uppercase tracking-widest shadow-lg shadow-[#002d6b]/20"
                                         disabled={!inputValue.trim() || isSending}
                                     >
                                         {isSending ? (
                                             <Loader2 className="w-4 h-4 animate-spin" />
                                         ) : (
                                             <>
-                                                <Send className="w-4 h-4 mr-2" />
-                                                Gửi
+                                                <Send className="w-4 h-4 md:mr-2" />
+                                                <span className="hidden md:inline">Gửi</span>
                                             </>
                                         )}
                                     </Button>
@@ -728,11 +747,11 @@ export default function ChatAdminPage() {
                             </div>
                         </>
                     ) : (
-                        <div className="flex-1 flex flex-col items-center justify-center p-10 text-center">
-                            <div className="w-24 h-24 bg-[#002d6b]/5 border border-[#002d6b]/10 flex items-center justify-center mb-6">
-                                <Headphones className="w-12 h-12 text-[#002d6b]/30" />
+                        <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-10 text-center">
+                            <div className="w-20 h-20 md:w-24 md:h-24 bg-[#002d6b]/5 border border-[#002d6b]/10 flex items-center justify-center mb-6">
+                                <Headphones className="w-10 h-10 md:w-12 md:h-12 text-[#002d6b]/30" />
                             </div>
-                            <h3 className="text-xl font-black uppercase tracking-tight text-slate-700 mb-2">
+                            <h3 className="text-lg md:text-xl font-black uppercase tracking-tight text-slate-700 mb-2">
                                 Trung tâm Hỗ trợ
                             </h3>
                             <p className="text-sm text-slate-400 max-w-sm leading-relaxed">

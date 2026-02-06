@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import {
     Upload,
@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import Lightbox from '@/components/shared/Lightbox';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface UploadedImage {
     filename: string;
@@ -29,14 +30,12 @@ interface UploadedImage {
 }
 
 export default function MediaManagementPage() {
-    const [images, setImages] = useState<UploadedImage[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const [isUploading, setIsUploading] = useState(false);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<UploadedImage | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -47,24 +46,53 @@ export default function MediaManagementPage() {
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const fetchImages = async () => {
-        setIsLoading(true);
-        try {
+    // Query for images list
+    const { data: imagesData, isLoading } = useQuery<{ success: boolean; data: UploadedImage[] }>({
+        queryKey: ['media-images'],
+        queryFn: async () => {
             const response = await $api.get(API_ROUTES.UPLOAD);
-            if (response.data.success) {
-                setImages(response.data.data || []);
-            }
-        } catch (error) {
-            console.error('Error fetching images:', error);
-            toast.error('Không thể tải danh sách ảnh');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            return response.data;
+        },
+    });
 
-    useEffect(() => {
-        fetchImages();
-    }, []);
+    const images = imagesData?.data || [];
+
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (filename: string) => {
+            await $api.delete(`${API_ROUTES.UPLOAD}?filename=${filename}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa ảnh thành công');
+            queryClient.invalidateQueries({ queryKey: ['media-images'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Lỗi khi xóa ảnh');
+        },
+    });
+
+    // Upload mutation
+    const uploadMutation = useMutation({
+        mutationFn: async (file: File) => {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await $api.post(API_ROUTES.UPLOAD, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            return response.data;
+        },
+        onSuccess: () => {
+            toast.success('Tải ảnh thành công!');
+            handleClearSelection();
+            queryClient.invalidateQueries({ queryKey: ['media-images'] });
+            setUploadDialogOpen(false);
+        },
+        onError: () => {
+            toast.error('Không thể tải ảnh. Vui lòng thử lại.');
+        },
+    });
 
     const handleSelectFile = (file: File) => {
         if (!file) return;
@@ -96,46 +124,12 @@ export default function MediaManagementPage() {
 
     const handleUpload = async () => {
         if (!selectedFile) return;
-
-        setIsUploading(true);
-        try {
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-
-            const response = await $api.post(API_ROUTES.UPLOAD, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
-
-            if (response.data.success) {
-                toast.success('Tải ảnh thành công!');
-                handleClearSelection();
-                fetchImages();
-                setUploadDialogOpen(false);
-            }
-        } catch (error) {
-            console.error('Upload error:', error);
-            toast.error('Không thể tải ảnh. Vui lòng thử lại.');
-        } finally {
-            setIsUploading(false);
-        }
+        uploadMutation.mutate(selectedFile);
     };
 
     const handleDeleteConfirm = async () => {
         if (!itemToDelete) return;
-
-        setIsDeleting(true);
-        try {
-            await $api.delete(`${API_ROUTES.UPLOAD}?filename=${itemToDelete.filename}`);
-            toast.success('Đã xóa ảnh thành công');
-            fetchImages();
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi xóa ảnh');
-        } finally {
-            setIsDeleting(false);
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.filename);
     };
 
     const copyToClipboard = (text: string) => {
@@ -384,10 +378,10 @@ export default function MediaManagementPage() {
                         {selectedFile && (
                             <Button
                                 onClick={handleUpload}
-                                disabled={isUploading}
+                                disabled={uploadMutation.isPending}
                                 className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 rounded-none"
                             >
-                                {isUploading ? (
+                                {uploadMutation.isPending ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         Đang tải...
@@ -422,7 +416,7 @@ export default function MediaManagementPage() {
                 description="Ảnh này sẽ bị xóa vĩnh viễn khỏi máy chủ. Mọi liên kết hiện tại trên trang web sẽ bị lỗi."
                 itemName={itemToDelete?.filename}
                 itemLabel="Tên file"
-                loading={isDeleting}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

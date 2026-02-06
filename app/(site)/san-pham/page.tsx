@@ -17,6 +17,7 @@ import {
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { useDebounce } from '@/hooks/use-debounce';
+import { useQuery } from '@tanstack/react-query';
 
 interface Product {
     id: string;
@@ -37,72 +38,64 @@ interface Category {
 const ITEMS_PER_PAGE = 6;
 
 export default function ProductArchive() {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [total, setTotal] = useState(0);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-    // Reset to page 1 when search changes
+    // Reset to page 1 when search or category changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [debouncedSearch]);
+    }, [debouncedSearch, selectedCategoryId]);
 
-    const fetchProducts = async (page: number = 1) => {
-        setLoading(true);
-        try {
+    // Fetch products using react-query
+    const { data: productsData, isLoading: productsLoading } = useQuery<{
+        data: Product[];
+        meta: { total: number; totalPages: number };
+    }>({
+        queryKey: [
+            'products',
+            { page: currentPage, search: debouncedSearch, categoryId: selectedCategoryId },
+        ],
+        queryFn: async () => {
             const response = await $api.get(API_ROUTES.PRODUCTS, {
                 params: {
                     status: 'active',
-                    page,
+                    page: currentPage,
                     limit: ITEMS_PER_PAGE,
                     search: debouncedSearch || undefined,
                     categoryId: selectedCategoryId || undefined,
                 },
             });
             if (response.data.success) {
-                const data = response.data.data || [];
-                setProducts(data);
-
-                // Set pagination from API meta
-                if (response.data.meta) {
-                    setTotalPages(response.data.meta.totalPages || 1);
-                    setTotal(response.data.meta.total || 0);
-                }
+                return {
+                    data: response.data.data || [],
+                    meta: response.data.meta || { total: 0, totalPages: 1 },
+                };
             }
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+            throw new Error('Failed to fetch products');
+        },
+    });
 
-    // Fetch categories once on mount
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await $api.get(`${API_ROUTES.CATEGORIES}?type=product`);
-                if (response.data.success) {
-                    const data = response.data.data || [];
-                    setCategories(data);
-                }
-            } catch (error) {
-                console.error('Error fetching categories:', error);
+    // Fetch categories using react-query
+    const { data: categories = [] } = useQuery<Category[]>({
+        queryKey: ['categories', 'product'],
+        queryFn: async () => {
+            const response = await $api.get(`${API_ROUTES.CATEGORIES}?type=product`);
+            if (response.data.success) {
+                return response.data.data || [];
             }
-        };
-        fetchCategories();
-    }, []);
+            throw new Error('Failed to fetch categories');
+        },
+        staleTime: 5 * 60 * 1000, // Categories don't change often
+    });
 
-    useEffect(() => {
-        fetchProducts(currentPage);
-    }, [currentPage, debouncedSearch, selectedCategoryId]);
+    const products = productsData?.data || [];
+    const totalPages = productsData?.meta?.totalPages || 1;
+    const total = productsData?.meta?.total || 0;
 
-    if (loading && products.length === 0) {
+    if (productsLoading && products.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
@@ -114,7 +107,6 @@ export default function ProductArchive() {
 
     const handleCategoryChange = (categoryId: string | null) => {
         setSelectedCategoryId(categoryId);
-        setCurrentPage(1);
     };
 
     const handleSearchChange = (query: string) => {
@@ -129,8 +121,8 @@ export default function ProductArchive() {
     return (
         <div className="flex flex-col min-h-screen bg-white pt-24">
             {/* Page Header */}
-            <section className="relative py-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-30">
+            <section className="relative py-20 bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-70">
                     <Image
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="Projects Background"
@@ -138,7 +130,6 @@ export default function ProductArchive() {
                         className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
@@ -412,7 +403,7 @@ export default function ProductArchive() {
                                 </div>
                             )}
 
-                            {products.length === 0 && !loading && (
+                            {products.length === 0 && !productsLoading && (
                                 <div className="py-20 text-center space-y-4">
                                     <Info className="mx-auto text-slate-200" size={64} />
                                     <p className="text-muted-foreground font-bold uppercase tracking-widest">

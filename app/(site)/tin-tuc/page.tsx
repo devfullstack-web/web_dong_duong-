@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
@@ -16,6 +16,7 @@ import {
 import { cn } from '@/lib/utils';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
+import { useQuery } from '@tanstack/react-query';
 
 interface NewsArticle {
     id: string;
@@ -42,46 +43,42 @@ function formatDate(dateString: string | null): string {
 }
 
 export default function NewsPage() {
-    const [news, setNews] = useState<NewsArticle[]>([]);
-    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [total, setTotal] = useState(0);
 
-    const fetchNews = async (page: number = 1) => {
-        setLoading(true);
-        try {
+    // Fetch news using react-query
+    const { data: newsData, isLoading } = useQuery<{
+        data: NewsArticle[];
+        meta: { total: number; totalPages: number };
+    }>({
+        queryKey: ['news', { page: currentPage }],
+        queryFn: async () => {
             const response = await $api.get(API_ROUTES.NEWS, {
                 params: {
                     status: 'published',
-                    page,
+                    page: currentPage,
                     limit: 8,
                 },
             });
             if (response.data.success) {
-                setNews(response.data.data || []);
-                if (response.data.meta) {
-                    setTotalPages(response.data.meta.totalPages || 1);
-                    setTotal(response.data.meta.total || 0);
-                }
+                return {
+                    data: response.data.data || [],
+                    meta: response.data.meta || { total: 0, totalPages: 1 },
+                };
             }
-        } catch (error) {
-            console.error('Error fetching news:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+            throw new Error('Failed to fetch news');
+        },
+    });
 
-    useEffect(() => {
-        fetchNews(currentPage);
-    }, [currentPage]);
+    const news = newsData?.data || [];
+    const totalPages = newsData?.meta?.totalPages || 1;
+    const total = newsData?.meta?.total || 0;
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    if (loading && news.length === 0) {
+    if (isLoading && news.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
@@ -92,7 +89,7 @@ export default function NewsPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Page Header */}
-            <section className="relative pt-40 pb-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+            <section className="relative pt-40 pb-20 bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
                 <div className="absolute inset-0 z-0 opacity-30">
                     <Image
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
@@ -101,7 +98,7 @@ export default function NewsPage() {
                         className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
+                    <div className="absolute inset-0 bg-linear-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">

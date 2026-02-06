@@ -60,4 +60,4 @@ setInterval(() => {
             cache.delete(key);
         }
     }
-}, 60000); // Every minute
+}, 60 * 1000); // Every minute

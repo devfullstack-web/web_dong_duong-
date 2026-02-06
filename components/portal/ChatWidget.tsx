@@ -238,10 +238,10 @@ export default function ChatWidget() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.2, ease: 'easeOut' }}
-                        className="mb-4 w-[340px] md:w-[400px] bg-white dark:bg-slate-900 shadow-2xl shadow-slate-900/20 overflow-hidden flex flex-col h-[520px] border border-slate-200 dark:border-slate-800"
+                        className="mb-4 w-85 md:w-100 bg-white dark:bg-slate-900 shadow-2xl shadow-slate-900/20 overflow-hidden flex flex-col h-130 border border-slate-200 dark:border-slate-800"
                     >
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-[#002d6b] to-[#003d8f] p-5 text-white relative overflow-hidden">
+                        <div className="bg-linear-to-r from-[#002d6b] to-[#003d8f] p-5 text-white relative overflow-hidden">
                             {/* Background Pattern */}
                             <div className="absolute inset-0 opacity-10">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
@@ -287,7 +287,7 @@ export default function ChatWidget() {
                                         <p className="text-sm font-bold text-slate-600 dark:text-slate-400 mb-1">
                                             Xin chào!
                                         </p>
-                                        <p className="text-xs text-slate-400 dark:text-slate-500 max-w-[200px]">
+                                        <p className="text-xs text-slate-400 dark:text-slate-500 max-w-50">
                                             Bạn cần chúng tôi hỗ trợ điều gì?
                                         </p>
                                     </div>
@@ -332,7 +332,7 @@ export default function ChatWidget() {
 
                                                     {repliedMessage && !msg.is_deleted && (
                                                         <div
-                                                            className={`text-[10px] bg-white dark:bg-slate-800 p-2 border-l-2 border-[#fbbf24] mb-1 opacity-80 truncate max-w-[180px] ${isGuest ? 'ml-auto text-right' : ''}`}
+                                                            className={`text-[10px] bg-white dark:bg-slate-800 p-2 border-l-2 border-[#fbbf24] mb-1 opacity-80 truncate max-w-45 ${isGuest ? 'ml-auto text-right' : ''}`}
                                                         >
                                                             {repliedMessage.is_deleted
                                                                 ? 'Tin nhắn đã bị gỡ'
@@ -510,7 +510,7 @@ export default function ChatWidget() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="w-14 h-14 bg-gradient-to-br from-[#002d6b] to-[#003d8f] hover:from-[#001d4b] hover:to-[#002d6b] text-white shadow-xl shadow-[#002d6b]/30 transition-all relative overflow-hidden group"
+                    className="w-14 h-14 bg-linear-to-br from-[#002d6b] to-[#003d8f] hover:from-[#001d4b] hover:to-[#002d6b] text-white shadow-xl shadow-[#002d6b]/30 transition-all relative overflow-hidden group"
                 >
                     <div className="absolute inset-0 bg-[#fbbf24] opacity-0 group-hover:opacity-10 transition-opacity" />
                     {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
