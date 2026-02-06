@@ -9,6 +9,15 @@ const $api = axios.create({
     },
 });
 
+// Public API instance - no auth headers, no refresh logic
+// Use this for public endpoints like chat widget
+export const $publicApi = axios.create({
+    baseURL: '/api',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
 $api.interceptors.request.use(
     (config) => {
         const token = Cookies.get('accessToken');

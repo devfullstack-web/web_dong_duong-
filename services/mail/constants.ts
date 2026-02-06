@@ -1,8 +1,8 @@
 import { COMPANY_INFO } from '@/constants/site-info';
 
 export const MAIL_BRAND = {
-    primary: '#00429a',
-    secondary: '#001d4a',
+    primary: '#004395',
+    secondary: '#00112b',
     accent: '#fbbf24',
     background: '#f8fafc',
     text: '#1e293b',
