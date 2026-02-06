@@ -24,6 +24,13 @@ import Lightbox from '@/components/shared/Lightbox';
 
 import $api from '@/utils/axios';
 import { ProductComments } from '@/components/site/ProductComments';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel';
 
 export default function ProductDetailPage() {
     const params = useParams();
@@ -201,41 +208,63 @@ export default function ProductDetailPage() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-4 gap-4">
-                                {allImages.length > 1 ? (
-                                    allImages.map((img: string, i: number) => (
-                                        <div
-                                            key={i}
-                                            className={cn(
-                                                'relative aspect-square bg-slate-50 border border-slate-100 p-2 transition-all cursor-zoom-in overflow-hidden group',
-                                                currentImageIndex === i
-                                                    ? 'border-brand-primary opacity-100 shadow-md'
-                                                    : 'opacity-60 hover:opacity-100',
-                                            )}
-                                            onClick={() => openLightbox(i)}
-                                        >
-                                            <Image
-                                                src={img}
-                                                alt={`Thumbnail ${i}`}
-                                                fill
-                                                className="object-contain p-2 group-hover:scale-110 transition-transform"
-                                            />
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="aspect-square bg-slate-50 border border-slate-100 p-4 opacity-100 shadow-inner">
-                                        <Image
-                                            src={
-                                                product.image_url ||
-                                                'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
-                                            }
-                                            alt="Thumb"
-                                            width={100}
-                                            height={100}
-                                            className="object-contain"
-                                        />
-                                    </div>
-                                )}
+                            <div className="relative w-full max-w-full group">
+                                <Carousel
+                                    opts={{
+                                        align: 'start',
+                                        dragFree: true,
+                                    }}
+                                    className="w-full"
+                                >
+                                    <CarouselContent className="-ml-4 pb-4">
+                                        {allImages.length > 1 ? (
+                                            allImages.map((img: string, i: number) => (
+                                                <CarouselItem
+                                                    key={i}
+                                                    className="pl-4 basis-1/4 sm:basis-1/4 md:basis-1/5 lg:basis-1/4"
+                                                >
+                                                    <div
+                                                        className={cn(
+                                                            'relative aspect-square bg-slate-50 border border-slate-100 p-2 transition-all cursor-zoom-in overflow-hidden group/thumb',
+                                                            currentImageIndex === i
+                                                                ? 'border-brand-primary opacity-100 shadow-md'
+                                                                : 'opacity-60 hover:opacity-100',
+                                                        )}
+                                                        onClick={() => openLightbox(i)}
+                                                    >
+                                                        <Image
+                                                            src={img}
+                                                            alt={`Thumbnail ${i}`}
+                                                            fill
+                                                            className="object-contain p-2 group-hover/thumb:scale-110 transition-transform"
+                                                        />
+                                                    </div>
+                                                </CarouselItem>
+                                            ))
+                                        ) : (
+                                            <CarouselItem className="pl-4 basis-1/4">
+                                                <div className="aspect-square bg-slate-50 border border-slate-100 p-4 opacity-100 shadow-inner">
+                                                    <Image
+                                                        src={
+                                                            product.image_url ||
+                                                            'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
+                                                        }
+                                                        alt="Thumb"
+                                                        width={100}
+                                                        height={100}
+                                                        className="object-contain"
+                                                    />
+                                                </div>
+                                            </CarouselItem>
+                                        )}
+                                    </CarouselContent>
+                                    {allImages.length > 4 && (
+                                        <>
+                                            <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden xl:flex" />
+                                            <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden xl:flex" />
+                                        </>
+                                    )}
+                                </Carousel>
                             </div>
                         </div>
 
@@ -248,9 +277,10 @@ export default function ProductDetailPage() {
                                 <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
                                     {product.name}
                                 </h1>
-                                <p className="text-xl text-muted-foreground font-medium leading-relaxed italic border-l-4 border-slate-100 pl-8">
-                                    {product.description}
-                                </p>
+                                <p
+                                    className="text-xl text-muted-foreground font-medium leading-relaxed italic border-l-4 border-slate-100 pl-8"
+                                    dangerouslySetInnerHTML={{ __html: product.description }}
+                                />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-10 border-y border-slate-100">
@@ -337,33 +367,33 @@ export default function ProductDetailPage() {
                         </div>
 
                         <div className="space-y-12">
-                            <div className="bg-slate-900 p-12 text-white space-y-8 relative overflow-hidden">
+                            <div className="bg-brand-primary p-12 text-white space-y-8 relative overflow-hidden">
                                 <Globe2
                                     size={120}
-                                    className="absolute -bottom-10 -right-10 text-white/5"
+                                    className="absolute -bottom-10 -right-10 text-white"
                                 />
                                 <h4 className="text-xl font-bold uppercase leading-tight italic text-brand-accent">
                                     Hỗ trợ dự án
                                 </h4>
-                                <p className="text-xs font-medium text-slate-400 leading-relaxed">
+                                <p className="text-xs font-medium text-slate-200 leading-relaxed">
                                     {product.tech_summary ||
                                         'Sài Gòn Valve cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi cho các dự án trọng điểm.'}
                                 </p>
                                 <div className="space-y-6 pt-6 pt-b">
                                     <div className="flex items-center gap-4">
-                                        <ShieldCheck className="text-brand-primary" size={24} />
+                                        <ShieldCheck className="text-white" size={24} />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">
                                             Bảo hành {product.warranty || '12 tháng'}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <FileText className="text-brand-primary" size={24} />
+                                        <FileText className="text-white" size={24} />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">
                                             Đầy đủ CO/CQ chính hãng
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <Globe2 className="text-brand-primary" size={24} />
+                                        <Globe2 className="text-white" size={24} />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">
                                             Xuất xứ: {product.origin || 'Chính hãng'}
                                         </span>

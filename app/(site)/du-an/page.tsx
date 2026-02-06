@@ -81,23 +81,25 @@ export default function ProjectsPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="relative pt-40 pb-20 bg-slate-900 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-40">
+            <section className="relative pt-40 pb-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-30">
                     <Image
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="Projects Background"
                         fill
-                        className="object-cover"
+                        className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-linear-to-b from-slate-950/80 via-slate-950/40 to-white/0"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="max-w-3xl space-y-6">
-                        <div className="inline-flex items-center gap-3  border-accent text-white  border bg-amber-600/10  px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em]  backdrop-blur-md">
+                        <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
                             DỰ ÁN TIÊU BIỂU
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight uppercase leading-[1.3]">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
                             KHẲNG ĐỊNH <br />
                             <span className="text-brand-accent">NĂNG LỰC DỰ ÁN</span>
                         </h1>
@@ -225,31 +227,6 @@ export default function ProjectsPage() {
                             </Pagination>
                         </div>
                     )}
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="py-20 bg-slate-950 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-carbon opacity-10"></div>
-                <div className="container relative z-10 mx-auto px-4 lg:px-8 text-center sm:text-left">
-                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-                        <div className="space-y-4 max-w-2xl">
-                            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight">
-                                HỢP TÁC CÙNG SGV
-                            </h2>
-                            <p className="text-slate-400 font-medium leading-relaxed">
-                                Bạn có dự án mới cần tư vấn về thiết bị và giải pháp công nghệ? Liên
-                                hệ ngay với đội ngũ chuyên gia của chúng tôi để được hỗ trợ tối ưu
-                                nhất.
-                            </p>
-                        </div>
-                        <Link
-                            href={SITE_ROUTES.CONTACT}
-                            className="shrink-0 inline-flex items-center gap-4 px-12 py-5 bg-white text-slate-950 font-black uppercase tracking-[0.2em] hover:bg-brand-primary hover:text-white transition-all transform hover:-translate-y-1"
-                        >
-                            LIÊN HỆ CHUYÊN GIA <MoveRight size={20} />
-                        </Link>
-                    </div>
                 </div>
             </section>
         </div>

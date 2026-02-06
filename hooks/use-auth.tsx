@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { RBAC_ROLES } from '@/constants/rbac';
 import { useAuthStore, AuthUser, SidebarModule } from '@/stores/auth-store';
 

@@ -1,413 +1,295 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams, notFound } from "next/navigation";
-import { motion } from "motion/react";
-import { 
-  ChevronRight, 
-  ArrowRight,
-  ShieldCheck,
-  Activity,
-  Cpu,
-  BarChart3,
-  Waves,
-  Sprout,
-  Fish,
-  CheckCircle2,
-  Clock,
-  Layers,
-  Zap,
-  Maximize2
-} from "lucide-react";
-import { cn } from "@/lib/utils";
-import { SITE_ROUTES } from "@/constants/routes";
-import Lightbox from "@/components/shared/Lightbox";
+import * as React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams, notFound } from 'next/navigation';
+import { motion } from 'motion/react';
 
 const SOLUTIONS_DATA: Record<string, any> = {
-  "quan-ly-nuoc-thong-minh": {
-    title: "Quản lý nước thông minh",
-    subtitle: "Giải pháp giám sát và điều khiển mạng lưới cấp nước tự động",
-    banner: "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&q=80&w=2000",
-    icon: <Waves className="size-6" />,
-    description: "Hệ thống quản lý nước thông minh của Sài Gòn Valve kết hợp công nghệ IoT tiên tiến với các thiết bị đo lường chính xác cao, giúp các đơn vị vận hành quản lý mạng lưới cấp nước một cách toàn diện, giảm thiểu thất thoát và tối ưu hóa chi phí vận hành.",
-    gallery: [
-      "https://images.unsplash.com/photo-1542013936693-884638332954?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1584433144859-1ff3ab9d3558?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1581093458391-9f42e5539c0c?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1617155093730-a8bf47be7921?auto=format&fit=crop&q=80&w=1200"
-    ],
-    features: [
-      {
-        title: "Giám sát thời gian thực",
-        desc: "Theo dõi lưu lượng, áp lực và chất lượng nước 24/7 qua nền tảng Cloud.",
-        icon: <Activity className="size-5" />
-      },
-      {
-        title: "Cảnh báo rò rỉ sớm",
-        desc: "Thuật toán AI phát hiện bất thường và cảnh báo điểm rò rỉ ngay lập tức.",
-        icon: <ShieldCheck className="size-5" />
-      },
-      {
-        title: "Điều khiển từ xa",
-        desc: "Đóng/mở van và điều chỉnh áp suất mạng lưới trực tiếp từ trung tâm điều hành.",
-        icon: <Zap className="size-5" />
-      },
-      {
-        title: "Phân tích dữ liệu",
-        desc: "Báo cáo chi tiết về xu hướng tiêu thụ và hiệu suất mạng lưới theo kỳ.",
-        icon: <BarChart3 className="size-5" />
-      }
-    ],
-    technical_specs: [
-      "Hỗ trợ kết nối NB-IoT, LoRaWAN, 4G/5G",
-      "Tích hợp chuẩn truyền thông công nghiệp Modbus, BACnet",
-      "Pin dung lượng cao, tuổi thọ lên đến 5-10 năm",
-      "Tiêu chuẩn chống nước IP68 cho thiết bị đầu cuối",
-      "Nền tảng phần mềm SaaS bảo mật cao"
-    ],
-    benefits: [
-      "Giảm tỷ lệ thất thoát nước (NRW) đáng kể",
-      "Tối ưu hóa áp lực mạng lưới, giảm vỡ ống",
-      "Cắt giảm chi phí nhân sự kiểm tra thủ công",
-      "Nâng cao độ tin cậy của dịch vụ cấp nước"
-    ]
-  },
-  "nong-nghiep-chinh-xac": {
-    title: "Nông nghiệp chính xác",
-    subtitle: "Ứng dụng IoT trong quản lý tưới tiêu và dinh dưỡng thông minh",
-    banner: "https://images.unsplash.com/photo-1558444479-c8f010b91939?auto=format&fit=crop&q=80&w=2000",
-    icon: <Sprout className="size-6" />,
-    description: "Giải pháp nông nghiệp chính xác giúp người nông dân và các trang trại quy mô lớn tự động hóa quy trình chăm sóc cây trồng dựa trên dữ liệu thực tế từ đất và môi trường, đảm bảo cây trồng phát triển tối ưu với mức tiêu thụ tài nguyên thấp nhất.",
-    gallery: [
-      "https://images.unsplash.com/photo-1523348830342-d31bbfa81395?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1560493676-04071c5f467b?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1586771107445-d3ca888129ee?auto=format&fit=crop&q=80&w=1200"
-    ],
-    features: [
-      {
-        title: "Quan trắc độ ẩm đất",
-        desc: "Cảm biến đa điểm đo chính xác độ ẩm, nhiệt độ và EC trong đất.",
-        icon: <Layers className="size-5" />
-      },
-      {
-        title: "Tưới tiêu tự động",
-        desc: "Lập lịch và kích hoạt tưới dựa trên ngưỡng độ ẩm thực tế của cây trồng.",
-        icon: <Cpu className="size-5" />
-      },
-      {
-        title: "Dự báo thời tiết chuyên sâu",
-        desc: "Tích hợp dữ liệu khí tượng cục bộ để điều chỉnh kế hoạch sản xuất.",
-        icon: <Clock className="size-5" />
-      },
-      {
-        title: "Châm phân thông minh",
-        desc: "Điều khiển chính xác tỷ lệ phân bón hòa tan theo từng giai đoạn phát triển.",
-        icon: <CheckCircle2 className="size-5" />
-      }
-    ],
-    technical_specs: [
-      "Cảm biến độ ẩm đất FDR/TDR độ chính xác cao",
-      "Kết nối không dây tầm xa LoRaWAN lên đến 10km",
-      "Sử dụng năng lượng mặt trời (Solar Powered)",
-      "Ứng dụng di động (iOS/Android) quản lý mọi lúc mọi nơi",
-      "Khả năng mở rộng quy mô linh hoạt"
-    ],
-    benefits: [
-      "Tiết kiệm 30-50% lượng nước tưới và phân bón",
-      "Tăng năng suất và chất lượng nông sản",
-      "Giảm thiểu rủi ro từ thời tiết và dịch bệnh",
-      "Xây dựng mô hình nông nghiệp bền vững"
-    ]
-  },
-  "quan-trac-nuoi-trong-thuy-san": {
-    title: "Quan trắc nuôi trồng thủy sản",
-    subtitle: "Hệ thống kiểm soát chất lượng môi trường nước 24/7",
-    banner: "https://images.unsplash.com/photo-1544526226-d4568090ffb8?auto=format&fit=crop&q=80&w=2000",
-    icon: <Fish className="size-6" />,
-    description: "Trong nuôi trồng thủy sản, chất lượng nước là yếu tố sống còn. Giải pháp quan trắc của chúng tôi cung cấp hệ thống giám sát liên tục các chỉ số quan trọng, tự động kích hoạt thiết bị hỗ trợ để đảm bảo môi trường sống tốt nhất cho vật nuôi.",
-    gallery: [
-      "https://images.unsplash.com/photo-1516466723877-e4ec1d736c8a?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1520116468409-94ee2953a99e?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1524311583144-d2393d9bb331?auto=format&fit=crop&q=80&w=1200",
-      "https://images.unsplash.com/photo-1516466380602-53fde93a2e3f?auto=format&fit=crop&q=80&w=1200"
-    ],
-    features: [
-      {
-        title: "Giám sát Oxy hòa tan (DO)",
-        desc: "Duy trì ngưỡng Oxy tối ưu, tự động bật máy quạt nước khi cần thiết.",
-        icon: <Zap className="size-5" />
-      },
-      {
-        title: "Đo lường pH và Salinity",
-        desc: "Theo dõi biến động độ mặn và pH để xử lý kịp thời các tình huống sốc nước.",
-        icon: <Activity className="size-5" />
-      },
-      {
-        title: "Cảnh báo khẩn cấp",
-        desc: "Gửi thông báo tức thì qua cuộc gọi hoặc SMS khi chỉ số vượt ngưỡng an toàn.",
-        icon: <ShieldCheck className="size-5" />
-      },
-      {
-        title: "Lịch sử môi trường",
-        desc: "Lưu trữ dữ liệu phục vụ truy xuất nguồn gốc và phân tích dịch bệnh.",
-        icon: <BarChart3 className="size-5" />
-      }
-    ],
-    technical_specs: [
-      "Cảm biến DO quang học không cần bảo trì thường xuyên",
-      "Thiết bị phao nổi thông minh tích hợp trạm truyền tin",
-      "Vật liệu chống ăn mòn trong môi trường nước mặn",
-      "Tích hợp điều khiển tủ điện quạt nước/máy sục khí",
-      "Thiết kế Plug-and-Play dễ dàng lắp đặt"
-    ],
-    benefits: [
-      "Giảm tỷ lệ hao hụt vật nuôi đáng kể",
-      "Giảm chi phí điện năng vận hành máy quạt nước",
-      "Yên tâm quản lý trang trại từ xa",
-      "Đáp ứng tiêu chuẩn nuôi trồng quốc tế (VietGAP, GlobalGAP)"
-    ]
-  }
+    'quan-ly-nuoc-thong-minh': {
+        brand: 'SÀI GÒN VALVE WATER',
+        title: 'QUẢN LÝ CẤP NƯỚC THÔNG MINH',
+        headerTitle: 'SÀI GÒN VALVE WATER - QUẢN LÝ CẤP NƯỚC THÔNG MINH',
+        description:
+            'Ngành cấp nước Việt Nam đang đứng trước những thách thức lớn. Tỷ lệ thất thoát nước sạch trên 20% mỗi năm không chỉ gây lãng phí hàng nghìn tỷ đồng mà còn ảnh hưởng trực tiếp đến hiệu quả kinh doanh của các đơn vị cấp nước. Bên cạnh đó, việc quản lý và vận hành mạng lưới đường ống theo phương pháp thủ công, thiếu chính xác và tốn nhiều nhân lực đã trở thành "nỗi đau" dai dẳng mà công nghệ cần phải giải quyết triệt để.',
+        intro: 'Để đáp ứng nhu cầu cấp thiết này, SÀI GÒN VALVE đã phát triển giải pháp SÀI GÒN VALVE WATER - Chuyển đổi số ngành cấp nước, một nền tảng quản lý thông minh mang tính đột phá. Giải pháp này không chỉ giải quyết các vấn đề hiện hữu mà còn kiến tạo một tương lai nơi mọi nguồn lực được quản lý một cách thông minh và hiệu quả hơn.',
+        banner: '/uploads/images/2026/02/02/1770024627773-di5jqj.png',
+        image1: '/uploads/images/2026/02/02/1770024627773-di5jqj.png',
+        image2: '/uploads/images/2026/02/02/1770024641404-d0g5xi.png',
+        core: {
+            title: 'THÀNH PHẦN CỐT LÕI',
+            intro: 'Giải pháp SÀI GÒN VALVE WATER là sự kết hợp nhuần nhuyễn giữa các công nghệ lõi tiên tiến, tạo nên một hệ thống quản lý toàn diện:',
+            items: [
+                {
+                    title: 'Nền tảng quản lý trên Bản đồ số (GIS)',
+                    desc: 'Toàn bộ mạng lưới hạ tầng cấp nước, bao gồm đường ống, van, đồng hồ, trạm bơm, được số hóa và trực quan hóa trên một bản đồ số 2D/3D duy nhất. Điều này giúp các nhà quản lý có cái nhìn tổng quan và chính xác về toàn bộ hệ thống, dễ dàng quản lý tài sản và theo dõi trạng thái vận hành của từng thiết bị.',
+                },
+                {
+                    title: 'Hệ thống cảm biến và Internet vạn vật (IoT)',
+                    desc: 'Các cảm biến IoT được lắp đặt tại các điểm quan trọng để thu thập dữ liệu về áp lực, lưu lượng nước theo thời gian thực. Dữ liệu này là "linh hồn" của hệ thống, cung cấp thông tin sống động về "dòng chảy Việt" cho các nhà quản lý.',
+                },
+                {
+                    title: 'Trí tuệ nhân tạo (AI) và Phân tích dữ liệu',
+                    desc: 'Dữ liệu thu thập từ các cảm biến IoT được AI phân tích để khoanh vùng và cảnh báo sớm các điểm rò rỉ, vỡ ống. Bên cạnh đó, AI còn giúp phân tích dữ liệu lịch sử để dự báo các khu vực có nguy cơ xảy ra sự cố cao, từ đó hỗ trợ công tác bảo trì dự báo một cách chủ động và hiệu quả.',
+                },
+            ],
+        },
+        benefits: {
+            title: 'GIÁ TRỊ SÀI GÒN VALVE MANG LẠI',
+            intro: 'SÀI GÒN VALVE WATER không chỉ là một giải pháp công nghệ, mà còn là một khoản đầu tư mang lại lợi ích kinh tế và vận hành vượt trội:',
+            items: [
+                {
+                    title: 'Giảm thất thoát nước đáng kể',
+                    desc: 'Giải pháp giúp giảm tỷ lệ thất thoát nước sạch trên 15%.',
+                },
+                {
+                    title: 'Tiết kiệm chi phí vận hành',
+                    desc: 'Việc tối ưu hóa quy trình quản lý và vận hành giúp tiết kiệm chi phí lên đến hơn 20%.',
+                },
+                {
+                    title: 'Tăng tốc độ xử lý sự cố',
+                    desc: 'Khả năng phát hiện và cảnh báo sớm giúp tăng tốc độ xử lý sự cố gấp 2-3 lần.',
+                },
+                {
+                    title: 'Hỗ trợ ra quyết định thông minh',
+                    desc: 'Dashboard thống kê thông minh cung cấp các số liệu quan trọng, giúp lãnh đạo đưa ra các quyết định chính xác và kịp thời.',
+                },
+            ],
+            outro: 'Với những ưu điểm trên, SÀI GÒN VALVE WATER là giải pháp toàn diện và tối ưu, giúp các doanh nghiệp ngành nước giải quyết các thách thức, nâng cao hiệu quả hoạt động và hướng đến mục tiêu phát triển bền vững.',
+        },
+    },
+    'nong-nghiep-chinh-xac': {
+        brand: 'SÀI GÒN VALVE FARM',
+        title: 'NÔNG NGHIỆP CHÍNH XÁC',
+        headerTitle: 'SÀI GÒN VALVE FARM - NÔNG NGHIỆP CHÍNH XÁC',
+        description:
+            'Giải pháp nông nghiệp chính xác giúp người nông dân và các trang trại quy mô lớn tự động hóa quy trình chăm sóc cây trồng dựa trên dữ liệu thực tế từ đất và môi trường.',
+        intro: 'Bằng cách ứng dụng công nghệ IoT và cảm biến thông minh, chúng tôi giúp tối ưu hóa việc sử dụng tài nguyên, nâng cao năng suất và đảm bảo chất lượng nông sản một cách bền vững.',
+        banner: '/uploads/images/2026/02/02/1770024634433-tfvl2o.png',
+        image1: '/uploads/images/2026/02/02/1770024634433-tfvl2o.png',
+        image2: '/uploads/images/2026/02/02/1770024627773-di5jqj.png',
+        core: {
+            title: 'THÀNH PHẦN CỐT LÕI',
+            intro: 'Hệ thống nông nghiệp thông minh bao gồm các thành phần kỹ thuật then chốt:',
+            items: [
+                {
+                    title: 'Quan trắc độ ẩm đất',
+                    desc: 'Các cảm biến đa điểm đo chính xác độ ẩm, nhiệt độ và chỉ số EC trong đất theo thời gian thực.',
+                },
+                {
+                    title: 'Tưới tiêu tự động',
+                    desc: 'Hệ thống tự động lập lịch và kích hoạt tưới dựa trên ngưỡng độ ẩm thực tế của từng loại cây trồng.',
+                },
+                {
+                    title: 'Phân tích khí hậu',
+                    desc: 'Tích hợp dữ liệu trạm thời tiết để điều chỉnh lượng nước và phân bón phù hợp với điều kiện môi trường.',
+                },
+            ],
+        },
+        benefits: {
+            title: 'GIÁ TRỊ SÀI GÒN VALVE MANG LẠI',
+            intro: 'Giải pháp mang lại hiệu quả kinh tế rõ rệt thông qua việc tối ưu tài nguyên:',
+            items: [
+                {
+                    title: 'Tiết kiệm tài nguyên',
+                    desc: 'Tiết kiệm 30-50% lượng nước tưới và lượng phân bón sử dụng hàng năm.',
+                },
+                {
+                    title: 'Nâng cao năng suất',
+                    desc: 'Tăng sản lượng và cải thiện đồng nhất chất lượng nông sản thu hoạch.',
+                },
+                {
+                    title: 'Giảm thiểu rủi ro',
+                    desc: 'Phát hiện sớm các dấu hiệu bất thường của đất và cây trồng để ứng phó kịp thời.',
+                },
+            ],
+            outro: 'SÀI GÒN VALVE FARM là người đồng hành tin cậy, giúp hiện đại hóa nền nông nghiệp Việt Nam theo hướng thông minh và bền vững.',
+        },
+    },
+    'quan-trac-nuoi-trong-thuy-san': {
+        brand: 'SÀI GÒN VALVE AQUA',
+        title: 'QUAN TRẮC NUÔI TRỒNG THỦY SẢN',
+        headerTitle: 'SÀI GÒN VALVE AQUA - QUAN TRẮC NUÔI TRỒNG THỦY SẢN',
+        description:
+            'Trong nuôi trồng thủy sản, chất lượng nước là yếu tố sống còn. Giải pháp quan trắc của chúng tôi cung cấp hệ thống giám sát liên tục các chỉ số quan trọng.',
+        intro: 'Hệ thống tự động hóa việc theo dõi các chỉ số môi trường, giúp người nuôi giảm bớt lo âu và tối ưu hóa quy trình chăm sóc vật nuôi.',
+        banner: '/uploads/images/2026/02/02/1770024641404-d0g5xi.png',
+        image1: '/uploads/images/2026/02/02/1770024641404-d0g5xi.png',
+        image2: '/uploads/images/2026/02/02/1770024634433-tfvl2o.png',
+        core: {
+            title: 'THÀNH PHẦN CỐT LÕI',
+            intro: 'Các công nghệ giám sát môi trường nước tiên tiến nhất được tích hợp trong hệ thống:',
+            items: [
+                {
+                    title: 'Giám sát Oxy hòa tan (DO)',
+                    desc: 'Duy trì ngưỡng Oxy tối ưu, tự động kích hoạt máy quạt nước khi nồng độ Oxy giảm thấp.',
+                },
+                {
+                    title: 'Đo lường pH và Salinity',
+                    desc: 'Theo dõi liên tục độ pH và độ mặn để phát hiện kịp thời các tình huống sốc môi trường.',
+                },
+                {
+                    title: 'Hệ thống cảnh báo SMS/App',
+                    desc: 'Gửi thông báo tức thì đến điện thoại chủ trang trại khi có bất kỳ chỉ số nào vượt ngưỡng an toàn.',
+                },
+            ],
+        },
+        benefits: {
+            title: 'GIÁ TRỊ SÀI GÒN VALVE MANG LẠI',
+            intro: 'Giúp bảo vệ tài sản và nâng cao lợi nhuận cho các hộ nuôi trồng:',
+            items: [
+                {
+                    title: 'Giảm tỷ lệ hao hụt',
+                    desc: 'Hạn chế tối đa rủi ro vật nuôi chết hàng loạt do sốc nước hoặc thiếu Oxy.',
+                },
+                {
+                    title: 'Tiết kiệm điện năng',
+                    desc: 'Việc tự động hóa máy quạt nước giúp giảm chi phí điện vận hành lên đến 30%.',
+                },
+                {
+                    title: 'Quản lý từ xa',
+                    desc: 'Yên tâm theo dõi tình trạng ao nuôi mọi lúc mọi nơi thông qua ứng dụng di động.',
+                },
+            ],
+            outro: 'Với SÀI GÒN VALVE AQUA, việc nuôi trồng thủy sản trở nên dễ dàng, khoa học và đạt hiệu quả cao hơn bao giờ hết.',
+        },
+    },
 };
 
 export default function SolutionDetailPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-  const data = SOLUTIONS_DATA[slug];
+    const params = useParams();
+    const slug = params.slug as string;
+    const data = SOLUTIONS_DATA[slug];
 
-  const [lightboxOpen, setLightboxOpen] = React.useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+    if (!data) {
+        notFound();
+    }
 
-  if (!data) {
-    notFound();
-  }
-
-  const allImages = [data.banner, ...(data.gallery || [])];
-
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
-  };
-
-  return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden bg-slate-950">
-        <div 
-          className="absolute inset-0 z-0 opacity-40 cursor-zoom-in group"
-          onClick={() => openLightbox(0)}
-        >
-          <Image
-            src={data.banner}
-            alt={data.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            priority
-          />
-          <div className="absolute inset-0 bg-linear-to-b from-slate-950/80 via-slate-950/40 to-slate-950/80"></div>
-          
-          {/* Zoom Hint */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="bg-white/10 backdrop-blur-md p-4 rounded-full border border-white/20">
-              <Maximize2 className="text-white size-8" />
-            </div>
-          </div>
-        </div>
-
-        <div className="container relative z-10 mx-auto px-4 lg:px-8">
-          <div className="max-w-4xl pt-20">
-            <motion.nav 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 text-[10px] font-bold text-white/60 uppercase tracking-widest mb-8"
-            >
-              <Link href="/" className="hover:text-brand-primary transition-colors">TRANG CHỦ</Link>
-              <ChevronRight size={10} />
-              <span className="text-brand-primary">GIẢI PHÁP</span>
-            </motion.nav>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              <div className="inline-flex items-center gap-3 bg-brand-primary/20 border border-brand-primary/30 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] text-white backdrop-blur-md">
-                {data.icon}
-                <span className="ml-1">Solution Vertical</span>
-              </div>
-              <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight uppercase leading-[1.1]">
-                {data.title.split(' ').slice(0, -2).join(' ')} <br />
-                <span className="text-brand-primary">
-                  {data.title.split(' ').slice(-2).join(' ')}
-                </span>
-              </h1>
-              <p className="text-lg sm:text-xl text-white/70 font-medium max-w-2xl leading-relaxed">
-                {data.subtitle}
-              </p>
-            </motion.div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-white to-transparent"></div>
-      </section>
-
-      {/* Main Content */}
-      <section className="py-24 sm:py-32">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-            {/* Left: Description & Features */}
-            <div className="space-y-16">
-              <div className="space-y-6">
-                <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">TỔNG QUAN GIẢI PHÁP</h2>
-                <div className="h-1.5 w-20 bg-brand-primary"></div>
-                <p className="text-xl text-slate-600 leading-relaxed font-medium capitalize">
-                  {data.description}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                {data.features.map((feature: any, idx: number) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="p-8 border border-slate-100 bg-slate-50/50 hover:bg-white hover:shadow-xl transition-all group"
-                  >
-                    <div className="size-12 bg-white flex items-center justify-center text-brand-primary shadow-sm mb-6 group-hover:bg-brand-primary group-hover:text-white transition-colors">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight mb-3">{feature.title}</h3>
-                    <p className="text-xs text-slate-500 font-medium leading-relaxed">{feature.desc}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: Technical Specs & Benefits */}
-            <div className="space-y-12 lg:sticky lg:top-44">
-              <div className="bg-slate-900 text-white p-10 sm:p-12 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 size-32 bg-brand-primary/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-                <h3 className="text-lg font-black uppercase tracking-widest mb-10 flex items-center gap-4">
-                  <Cpu className="text-brand-primary" /> THÔNG SỐ KỸ THUẬT
-                </h3>
-                <ul className="space-y-6">
-                  {data.technical_specs.map((spec: string, idx: number) => (
-                    <li key={idx} className="flex items-start gap-4">
-                      <div className="mt-1.5 size-1.5 rounded-full bg-brand-primary shrink-0"></div>
-                      <span className="text-sm font-bold text-white/80 leading-relaxed uppercase tracking-tight">{spec}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="p-10 sm:p-12 border-2 border-slate-100 bg-white shadow-sm">
-                <h3 className="text-lg font-black text-slate-900 uppercase tracking-widest mb-10">LỢI ÍCH KHÁCH HÀNG</h3>
-                <div className="space-y-6">
-                  {data.benefits.map((benefit: string, idx: number) => (
-                    <div key={idx} className="flex items-center gap-4 group">
-                      <div className="size-6 bg-slate-50 flex items-center justify-center rounded-full group-hover:bg-green-50 transition-colors">
-                        <CheckCircle2 className="size-4 text-slate-300 group-hover:text-green-500 transition-colors" />
-                      </div>
-                      <span className="text-sm font-bold text-slate-700 uppercase">{benefit}</span>
-                    </div>
-                  ))}
+    return (
+        <div className="flex flex-col min-h-screen bg-white text-slate-900 antialiased">
+            {/* Header / Hero Strip */}
+            <header className="bg-brand-primary pt-32  text-center text-white relative">
+                <div className="container mx-auto px-4 py-10  space-y-4">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-widest leading-tight">
+                        {data.headerTitle}
+                    </h1>
+                    <nav className="flex items-center justify-center gap-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">
+                        <Link href="/" className="hover:text-brand-accent transition-colors">
+                            Trang chủ
+                        </Link>
+                        <span>/</span>
+                        <span className="text-brand-accent font-black">Giải pháp</span>
+                    </nav>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </header>
 
-      {/* Gallery Section */}
-      {data.gallery && data.gallery.length > 0 && (
-        <section className="py-24 bg-slate-50 border-y border-slate-100">
-          <div className="container mx-auto px-4 lg:px-8">
-            <div className="flex items-end justify-between mb-16 px-4">
-              <div className="space-y-4">
-                <h2 className="text-sm font-black text-brand-primary uppercase tracking-[0.4em]">Bộ sưu tập giải pháp</h2>
-                <h3 className="text-3xl font-black text-slate-900 uppercase tracking-tight">HÌNH ẢNH THỰC TẾ</h3>
-              </div>
-              <div className="hidden sm:block text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                Technical Insights & Deployment
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4">
-              {data.gallery.map((img: string, idx: number) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="relative aspect-square cursor-zoom-in group overflow-hidden"
-                  onClick={() => openLightbox(idx + 1)}
-                >
-                  <Image
-                    src={img}
-                    alt={`${data.title} gallery ${idx + 1}`}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-slate-950/20 group-hover:bg-brand-primary/20 transition-colors" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="bg-white/90 backdrop-blur-sm p-3 rounded-full text-slate-900 shadow-xl">
-                      <Maximize2 size={20} />
+            {/* Main Content Area */}
+            <main className="container mx-auto  px-4 sm:px-8 py-12 sm:py-20 space-y-16 sm:space-y-24">
+                {/* 1. Overview Section */}
+                <article className="space-y-10">
+                    {/* Brand Heading with Gold Bar */}
+                    <div className="flex gap-4 sm:gap-6 border-l-[6px] border-brand-accent pl-6 py-1">
+                        <div className="space-y-1">
+                            <h2 className="text-2xl sm:text-3xl font-black text-brand-primary uppercase tracking-tight leading-none">
+                                {data.brand}
+                            </h2>
+                            <h3 className="text-xl sm:text-2xl font-black text-brand-secondary uppercase tracking-tight">
+                                {data.title}
+                            </h3>
+                        </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* CTA Section */}
-      <section className="bg-slate-950 py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-brand-primary/5"></div>
-        <div className="container relative z-10 mx-auto px-4 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto space-y-12"
-          >
-            <div className="space-y-4">
-              <h2 className="text-3xl sm:text-5xl font-black text-white uppercase tracking-tight">SẴN SÀNG ĐỂ CHUYỂN ĐỔI SỐ?</h2>
-              <p className="text-xl text-white/60 font-medium">Đội ngũ chuyên gia của chúng tôi luôn sẵn sàng hỗ trợ bạn khảo sát và thiết kế giải pháp tối ưu nhất cho nhu cầu của bạn.</p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link 
-                href={SITE_ROUTES.CONTACT} 
-                className="group relative flex items-center justify-center gap-4 px-12 py-5 bg-white text-slate-950 font-black uppercase tracking-[0.2em] transform transition-all hover:-translate-y-1 hover:shadow-2xl overflow-hidden"
-              >
-                <span className="relative z-10">NHẬN TƯ VẤN NGAY</span>
-                <ArrowRight size={20} className="relative z-10 transform group-hover:translate-x-1.5 transition-transform" />
-              </Link>
-              <Link 
-                href={SITE_ROUTES.PROJECTS} 
-                className="px-12 py-5 border border-white/20 text-white font-black uppercase tracking-[0.2em] hover:bg-white/5 transition-all"
-              >
-                XEM THỰC TẾ DỰ ÁN
-              </Link>
-            </div>
-          </motion.div>
+                    <div className="space-y-10">
+                        <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
+                            {data.description}
+                        </p>
+
+                        <div className="relative aspect-video w-full overflow-hidden shadow-2xl ring-1 ring-slate-100 rounded-sm">
+                            <Image
+                                src={data.image1}
+                                alt={data.title}
+                                fill
+                                className="object-cover"
+                                priority
+                            />
+                        </div>
+
+                        <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
+                            {data.intro}
+                        </p>
+                    </div>
+                </article>
+
+                {/* 2. Core Components Section */}
+                <section className="space-y-10 sm:space-y-12">
+                    <div className="text-center">
+                        <h4 className="text-xl sm:text-2xl font-black text-brand-accent uppercase tracking-[0.25em]">
+                            {data.core.title}
+                        </h4>
+                    </div>
+
+                    <div className="space-y-8">
+                        <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
+                            {data.core.intro}
+                        </p>
+
+                        <div className="space-y-6">
+                            {data.core.items.map((item: any, idx: number) => (
+                                <div key={idx} className="space-y-2">
+                                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
+                                        <strong className="font-extrabold text-slate-900 uppercase tracking-tight">
+                                            {item.title}:
+                                        </strong>{' '}
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="relative aspect-video lg:aspect-21/9 w-full mt-10 overflow-hidden shadow-2xl rounded-sm">
+                        <Image
+                            src={data.image2}
+                            alt="Deployment Visual"
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                </section>
+
+                {/* 3. Value Proposition Section */}
+                <section className="space-y-10 sm:space-y-12 pb-20">
+                    <div className="text-center">
+                        <h4 className="text-xl sm:text-2xl font-black text-brand-accent uppercase tracking-[0.25em]">
+                            {data.benefits.title}
+                        </h4>
+                    </div>
+
+                    <div className="space-y-8">
+                        <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
+                            {data.benefits.intro}
+                        </p>
+
+                        <div className="space-y-6">
+                            {data.benefits.items.map((item: any, idx: number) => (
+                                <div key={idx} className="space-y-1">
+                                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
+                                        <strong className="font-extrabold text-slate-900 uppercase tracking-tight">
+                                            {item.title}:
+                                        </strong>{' '}
+                                        {item.desc}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+
+                        <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium pt-12">
+                            {data.benefits.outro}
+                        </p>
+                    </div>
+                </section>
+            </main>
         </div>
-      </section>
-
-      {/* Lightbox Integration */}
-      <Lightbox
-        images={allImages}
-        currentIndex={currentImageIndex}
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        onNavigate={(index) => setCurrentImageIndex(index)}
-      />
-    </div>
-  );
+    );
 }

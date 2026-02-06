@@ -10,7 +10,6 @@ import {
     Maximize2,
     Loader2,
     Image as ImageIcon,
-    X,
     HardDrive,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -39,6 +38,8 @@ export default function MediaManagementPage() {
     const [itemToDelete, setItemToDelete] = useState<UploadedImage | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     // Lightbox state
     const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -65,7 +66,7 @@ export default function MediaManagementPage() {
         fetchImages();
     }, []);
 
-    const handleUpload = async (file: File) => {
+    const handleSelectFile = (file: File) => {
         if (!file) return;
 
         // Validate file type
@@ -81,10 +82,25 @@ export default function MediaManagementPage() {
             return;
         }
 
+        setSelectedFile(file);
+        setPreviewUrl(URL.createObjectURL(file));
+    };
+
+    const handleClearSelection = () => {
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+        }
+        setSelectedFile(null);
+        setPreviewUrl(null);
+    };
+
+    const handleUpload = async () => {
+        if (!selectedFile) return;
+
         setIsUploading(true);
         try {
             const formData = new FormData();
-            formData.append('file', file);
+            formData.append('file', selectedFile);
 
             const response = await $api.post(API_ROUTES.UPLOAD, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
@@ -92,6 +108,7 @@ export default function MediaManagementPage() {
 
             if (response.data.success) {
                 toast.success('Tải ảnh thành công!');
+                handleClearSelection();
                 fetchImages();
                 setUploadDialogOpen(false);
             }
@@ -263,26 +280,45 @@ export default function MediaManagementPage() {
 
             {/* Upload Dialog */}
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-                <DialogContent className="max-w-xl p-0 overflow-hidden rounded-none border-none">
-                    <div className="bg-slate-900 p-8 text-white relative">
-                        <div className="flex items-center gap-4 mb-2">
-                            <Upload className="text-brand-accent" size={20} />
-                            <DialogTitle className="text-lg font-black uppercase tracking-tight italic text-white">
-                                Tải tài sản mới
-                            </DialogTitle>
-                        </div>
-                        <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                            Hỗ trợ định dạng JPEG, PNG, WebP (Tối đa 10MB)
+                <DialogContent className="max-w-md p-6 bg-white">
+                    <DialogHeader>
+                        <DialogTitle className="text-lg font-semibold text-slate-900">
+                            Tải ảnh mới
+                        </DialogTitle>
+                        <p className="text-sm text-slate-500">
+                            Hỗ trợ JPEG, PNG, WebP, GIF (Tối đa 10MB)
                         </p>
-                        <button
-                            onClick={() => setUploadDialogOpen(false)}
-                            className="absolute top-8 right-8 text-white/40 hover:text-white transition-all"
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
+                    </DialogHeader>
 
-                    <div className="p-8 bg-white">
+                    {selectedFile && previewUrl ? (
+                        // Preview selected file
+                        <div className="space-y-4">
+                            <div className="relative h-48 border border-slate-200 rounded-none overflow-hidden bg-slate-50">
+                                <Image
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    fill
+                                    className="object-contain"
+                                />
+                                <button
+                                    onClick={handleClearSelection}
+                                    className="absolute top-2 right-2 bg-rose-500 hover:bg-rose-600 text-white p-1.5 rounded-none transition-colors"
+                                    title="Xóa ảnh đã chọn"
+                                >
+                                    <Trash2 size={14} />
+                                </button>
+                            </div>
+                            <div className="bg-slate-50 p-3 rounded-none">
+                                <p className="text-xs font-bold text-slate-700 truncate">
+                                    {selectedFile.name}
+                                </p>
+                                <p className="text-[10px] text-slate-400 mt-1">
+                                    {formatFileSize(selectedFile.size)}
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        // Dropzone for selecting file
                         <div
                             onDragOver={(e) => {
                                 e.preventDefault();
@@ -296,42 +332,30 @@ export default function MediaManagementPage() {
                                 e.preventDefault();
                                 setIsDragging(false);
                                 const file = e.dataTransfer.files[0];
-                                if (file) handleUpload(file);
+                                if (file) handleSelectFile(file);
                             }}
                             onClick={() => fileInputRef.current?.click()}
                             className={cn(
-                                'h-64 border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all duration-300 group',
+                                'h-48 border-2 border-dashed rounded-none flex flex-col items-center justify-center cursor-pointer transition-all group',
                                 isDragging
                                     ? 'border-brand-primary bg-brand-primary/5'
-                                    : 'border-slate-100 hover:border-brand-primary/40 hover:bg-slate-50/50',
+                                    : 'border-slate-200 hover:border-brand-primary/50 hover:bg-slate-50',
                             )}
                         >
-                            {isUploading ? (
-                                <div className="flex flex-col items-center gap-4">
-                                    <Loader2 className="h-12 w-12 animate-spin text-brand-primary" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        Đang xử lý dữ liệu...
-                                    </span>
+                            <div className="flex flex-col items-center gap-3">
+                                <div className="p-3 rounded-none bg-slate-100 group-hover:bg-brand-primary/10 transition-colors">
+                                    <Upload className="h-6 w-6 text-slate-400 group-hover:text-brand-primary transition-colors" />
                                 </div>
-                            ) : (
-                                <div className="flex flex-col items-center gap-6">
-                                    <div className="relative">
-                                        <ImageIcon className="h-16 w-16 text-slate-100 group-hover:text-brand-primary/10 transition-colors" />
-                                        <Upload className="absolute -bottom-2 -right-2 h-8 w-8 text-brand-primary group-hover:scale-110 transition-transform" />
-                                    </div>
-                                    <div className="space-y-2 text-center">
-                                        <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">
-                                            Kéo thả hoặc{' '}
-                                            <span className="text-brand-primary italic">
-                                                Nhấn để chọn file
-                                            </span>
-                                        </p>
-                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
-                                            Hệ thống tự động tối ưu hóa dung lượng cho Web
-                                        </p>
-                                    </div>
+                                <div className="text-center">
+                                    <p className="text-sm font-medium text-slate-700">
+                                        Kéo thả hoặc{' '}
+                                        <span className="text-brand-primary">nhấn để chọn</span>
+                                    </p>
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Tự động tối ưu hóa cho web
+                                    </p>
                                 </div>
-                            )}
+                            </div>
                             <input
                                 ref={fileInputRef}
                                 type="file"
@@ -339,21 +363,43 @@ export default function MediaManagementPage() {
                                 className="hidden"
                                 onChange={(e) => {
                                     const file = e.target.files?.[0];
-                                    if (file) handleUpload(file);
+                                    if (file) handleSelectFile(file);
                                     e.target.value = '';
                                 }}
                             />
                         </div>
+                    )}
 
-                        <div className="mt-8 flex justify-end gap-3">
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                handleClearSelection();
+                                setUploadDialogOpen(false);
+                            }}
+                            className="text-sm rounded-none"
+                        >
+                            Hủy
+                        </Button>
+                        {selectedFile && (
                             <Button
-                                variant="ghost"
-                                onClick={() => setUploadDialogOpen(false)}
-                                className="text-[10px] font-black uppercase tracking-widest rounded-none h-14 px-8 border-transparent"
+                                onClick={handleUpload}
+                                disabled={isUploading}
+                                className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 rounded-none"
                             >
-                                Hủy bỏ
+                                {isUploading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Đang tải...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload className="mr-2 h-4 w-4" />
+                                        Xác nhận tải lên
+                                    </>
+                                )}
                             </Button>
-                        </div>
+                        )}
                     </div>
                 </DialogContent>
             </Dialog>

@@ -1,16 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, User, Loader2, Trash2, Smile, Reply } from 'lucide-react';
+import { MessageCircle, X, Send, User, Loader2, Smile, Reply, Headphones } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import $api from '@/utils/axios';
+import { $publicApi } from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { io, Socket } from 'socket.io-client';
-import { SimpleConfirmDialog } from '@/components/shared/simple-confirm-dialog';
 
 interface Message {
     id: string;
@@ -39,10 +37,27 @@ export default function ChatWidget() {
     const [isAdminTyping, setIsAdminTyping] = useState(false);
     const [showEmojis, setShowEmojis] = useState(false);
     const [replyingTo, setReplyingTo] = useState<Message | null>(null);
-    const [isClearDialogOpen, setIsClearDialogOpen] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const socketRef = useRef<Socket | null>(null);
+    const chatContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                isOpen &&
+                chatContainerRef.current &&
+                !chatContainerRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
 
     // Initialize Guest ID
     useEffect(() => {
@@ -62,12 +77,12 @@ export default function ChatWidget() {
 
         const initSession = async () => {
             try {
-                const res = await $api.post(API_ROUTES.CHAT.SESSIONS, { guestId });
+                const res = await $publicApi.post(API_ROUTES.CHAT.SESSIONS, { guestId });
                 const sessionPayload = res.data.data;
                 setSessionId(sessionPayload.id);
                 setSessionData(sessionPayload);
 
-                const msgRes = await $api.get(
+                const msgRes = await $publicApi.get(
                     `${API_ROUTES.CHAT.MESSAGES}?sessionId=${sessionPayload.id}`,
                 );
                 setMessages(msgRes.data.data || []);
@@ -86,7 +101,7 @@ export default function ChatWidget() {
 
     const handleUpdateSeen = async (id: string) => {
         try {
-            await $api.patch(`${API_ROUTES.CHAT.SESSIONS}/${id}`, { guestLastSeen: true });
+            await $publicApi.patch(`${API_ROUTES.CHAT.SESSIONS}/${id}`, { guestLastSeen: true });
         } catch (error) {
             // Silently fail
         }
@@ -169,7 +184,7 @@ export default function ChatWidget() {
         sendTypingStatus(false);
 
         try {
-            const res = await $api.post(API_ROUTES.CHAT.MESSAGES, {
+            const res = await $publicApi.post(API_ROUTES.CHAT.MESSAGES, {
                 sessionId,
                 content,
                 isFromWidget: true,
@@ -187,21 +202,6 @@ export default function ChatWidget() {
             console.error('Failed to send message:', error);
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const handleClearHistory = () => {
-        if (!sessionId) return;
-        setIsClearDialogOpen(true);
-    };
-
-    const confirmClearHistory = async () => {
-        if (!sessionId) return;
-        try {
-            await $api.delete(`${API_ROUTES.CHAT.SESSIONS}/${sessionId}`);
-            setIsClearDialogOpen(false);
-        } catch (error) {
-            console.error('Failed to clear history:', error);
         }
     };
 
@@ -230,45 +230,46 @@ export default function ChatWidget() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div ref={chatContainerRef} className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
-                        className="mb-4 w-80 md:w-96 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden flex flex-col h-[500px]"
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        className="mb-4 w-[340px] md:w-[400px] bg-white dark:bg-slate-900 shadow-2xl shadow-slate-900/20 overflow-hidden flex flex-col h-[520px] border border-slate-200 dark:border-slate-800"
                     >
                         {/* Header */}
-                        <div className="bg-primary p-4 flex items-center justify-between text-white relative">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                                    <User className="w-6 h-6 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-sm">Hỗ trợ trực tuyến</h3>
-                                    <p className="text-xs text-white/80">
-                                        Chúng tôi thường trả lời ngay
-                                    </p>
-                                </div>
+                        <div className="bg-gradient-to-r from-[#002d6b] to-[#003d8f] p-5 text-white relative overflow-hidden">
+                            {/* Background Pattern */}
+                            <div className="absolute inset-0 opacity-10">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
+                                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
                             </div>
-                            <div className="flex items-center gap-1">
-                                {sessionId && (
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={handleClearHistory}
-                                        className="text-white hover:bg-white/10"
-                                        title="Xóa lịch sử"
-                                    >
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                )}
+
+                            <div className="relative flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
+                                        <Headphones className="w-6 h-6 text-[#fbbf24]" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-black uppercase tracking-wider">
+                                            Hỗ trợ trực tuyến
+                                        </h3>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                                            <p className="text-[10px] text-white/70 font-medium uppercase tracking-widest">
+                                                Đang hoạt động
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => setIsOpen(false)}
-                                    className="text-white hover:bg-white/10"
+                                    className="text-white/80 hover:text-white hover:bg-white/10 h-9 w-9 transition-colors"
                                 >
                                     <X className="w-5 h-5" />
                                 </Button>
@@ -276,11 +277,19 @@ export default function ChatWidget() {
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4">
-                            <div className="flex flex-col gap-3">
+                        <div className="flex-1 overflow-y-auto p-5 bg-slate-50 dark:bg-slate-900/50">
+                            <div className="flex flex-col gap-4">
                                 {messages.length === 0 && (
-                                    <div className="text-center py-10 text-zinc-500">
-                                        Xin chào! Bạn cần chúng tôi giúp gì không?
+                                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                                        <div className="w-16 h-16 bg-[#002d6b]/5 flex items-center justify-center mb-4 border border-[#002d6b]/10">
+                                            <MessageCircle className="w-8 h-8 text-[#002d6b]/30" />
+                                        </div>
+                                        <p className="text-sm font-bold text-slate-600 dark:text-slate-400 mb-1">
+                                            Xin chào!
+                                        </p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500 max-w-[200px]">
+                                            Bạn cần chúng tôi hỗ trợ điều gì?
+                                        </p>
                                     </div>
                                 )}
                                 {messages.map((msg) => {
@@ -292,20 +301,20 @@ export default function ChatWidget() {
                                     return (
                                         <div
                                             key={msg.id}
-                                            className={`flex ${isGuest ? 'justify-end' : 'justify-start'}`}
+                                            className={`flex ${isGuest ? 'justify-end' : 'justify-start'} group`}
                                         >
                                             <div
-                                                className={`flex items-end gap-2 max-w-[80%] ${isGuest ? 'flex-row-reverse' : ''}`}
+                                                className={`flex items-end gap-2 max-w-[85%] ${isGuest ? 'flex-row-reverse' : ''}`}
                                             >
                                                 {!isGuest && (
-                                                    <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shrink-0">
+                                                    <div className="w-8 h-8 bg-[#002d6b] flex items-center justify-center shrink-0">
                                                         <User className="w-4 h-4 text-white" />
                                                     </div>
                                                 )}
                                                 <div className="flex flex-col">
                                                     <div
                                                         className={cn(
-                                                            'text-[10px] text-zinc-400 mb-0.5 px-1 flex items-center gap-2',
+                                                            'text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-1 px-1 flex items-center gap-2',
                                                             isGuest &&
                                                                 'text-right flex-row-reverse',
                                                         )}
@@ -314,7 +323,7 @@ export default function ChatWidget() {
                                                         {!msg.is_deleted && (
                                                             <button
                                                                 onClick={() => setReplyingTo(msg)}
-                                                                className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary"
+                                                                className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-[#002d6b]"
                                                             >
                                                                 <Reply className="w-3 h-3" />
                                                             </button>
@@ -323,7 +332,7 @@ export default function ChatWidget() {
 
                                                     {repliedMessage && !msg.is_deleted && (
                                                         <div
-                                                            className={`text-[10px] bg-zinc-50 dark:bg-zinc-800 p-1.5 rounded-t-lg border-l-2 border-primary mb-[-2px] opacity-70 truncate max-w-[150px] ${isGuest ? 'ml-auto text-right' : ''}`}
+                                                            className={`text-[10px] bg-white dark:bg-slate-800 p-2 border-l-2 border-[#fbbf24] mb-1 opacity-80 truncate max-w-[180px] ${isGuest ? 'ml-auto text-right' : ''}`}
                                                         >
                                                             {repliedMessage.is_deleted
                                                                 ? 'Tin nhắn đã bị gỡ'
@@ -333,18 +342,18 @@ export default function ChatWidget() {
 
                                                     <div
                                                         className={cn(
-                                                            'px-3 py-2 text-sm rounded-2xl',
+                                                            'px-4 py-2.5 text-sm',
                                                             isGuest
-                                                                ? 'bg-primary text-white rounded-br-sm'
-                                                                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-bl-sm',
+                                                                ? 'bg-[#002d6b] text-white'
+                                                                : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700',
                                                             msg.is_deleted &&
-                                                                'italic opacity-50 bg-transparent border-dashed border border-zinc-200',
+                                                                'italic opacity-50 bg-transparent border-dashed border border-slate-300',
                                                         )}
                                                     >
                                                         {msg.content}
                                                     </div>
                                                     <div
-                                                        className={`text-[10px] text-zinc-400 mt-0.5 px-1 flex items-center gap-1 ${isGuest ? 'justify-end' : ''}`}
+                                                        className={`text-[9px] font-medium text-slate-400 mt-1 px-1 flex items-center gap-1.5 ${isGuest ? 'justify-end' : ''}`}
                                                     >
                                                         {new Date(
                                                             msg.created_at,
@@ -353,14 +362,28 @@ export default function ChatWidget() {
                                                             minute: '2-digit',
                                                         })}
                                                         {isGuest && (
-                                                            <span>
+                                                            <span className="flex items-center gap-1">
                                                                 •{' '}
-                                                                {sessionData?.admin_last_seen_at &&
-                                                                new Date(
-                                                                    sessionData.admin_last_seen_at,
-                                                                ) >= new Date(msg.created_at)
-                                                                    ? 'Đã xem'
-                                                                    : 'Đã gửi'}
+                                                                <span
+                                                                    className={cn(
+                                                                        sessionData?.admin_last_seen_at &&
+                                                                            new Date(
+                                                                                sessionData.admin_last_seen_at,
+                                                                            ) >=
+                                                                                new Date(
+                                                                                    msg.created_at,
+                                                                                )
+                                                                            ? 'text-emerald-500'
+                                                                            : 'text-slate-400',
+                                                                    )}
+                                                                >
+                                                                    {sessionData?.admin_last_seen_at &&
+                                                                    new Date(
+                                                                        sessionData.admin_last_seen_at,
+                                                                    ) >= new Date(msg.created_at)
+                                                                        ? 'Đã xem'
+                                                                        : 'Đã gửi'}
+                                                                </span>
                                                             </span>
                                                         )}
                                                     </div>
@@ -372,19 +395,24 @@ export default function ChatWidget() {
 
                                 {isAdminTyping && (
                                     <div className="flex justify-start">
-                                        <div className="bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-full flex gap-1 items-center">
-                                            <span
-                                                className="w-1 h-1 bg-zinc-400 rounded-full animate-bounce"
-                                                style={{ animationDelay: '0s' }}
-                                            ></span>
-                                            <span
-                                                className="w-1 h-1 bg-zinc-400 rounded-full animate-bounce"
-                                                style={{ animationDelay: '0.2s' }}
-                                            ></span>
-                                            <span
-                                                className="w-1 h-1 bg-zinc-400 rounded-full animate-bounce"
-                                                style={{ animationDelay: '0.4s' }}
-                                            ></span>
+                                        <div className="flex items-end gap-2">
+                                            <div className="w-8 h-8 bg-[#002d6b] flex items-center justify-center shrink-0">
+                                                <User className="w-4 h-4 text-white" />
+                                            </div>
+                                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3 flex gap-1 items-center">
+                                                <span
+                                                    className="w-1.5 h-1.5 bg-[#002d6b] rounded-full animate-bounce"
+                                                    style={{ animationDelay: '0s' }}
+                                                ></span>
+                                                <span
+                                                    className="w-1.5 h-1.5 bg-[#002d6b] rounded-full animate-bounce"
+                                                    style={{ animationDelay: '0.15s' }}
+                                                ></span>
+                                                <span
+                                                    className="w-1.5 h-1.5 bg-[#002d6b] rounded-full animate-bounce"
+                                                    style={{ animationDelay: '0.3s' }}
+                                                ></span>
+                                            </div>
                                         </div>
                                     </div>
                                 )}
@@ -394,30 +422,30 @@ export default function ChatWidget() {
                         </div>
 
                         {/* Input */}
-                        <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 relative">
+                        <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 relative">
                             <AnimatePresence>
                                 {replyingTo && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
-                                        className="mb-2 p-2 bg-white dark:bg-zinc-800 rounded-lg flex items-center justify-between border-l-4 border-primary shadow-sm"
+                                        className="mb-3 p-3 bg-slate-50 dark:bg-slate-800 flex items-center justify-between border-l-4 border-[#fbbf24]"
                                     >
                                         <div className="min-w-0">
-                                            <p className="text-[10px] text-primary font-bold">
+                                            <p className="text-[9px] text-[#002d6b] font-black uppercase tracking-widest">
                                                 Trả lời{' '}
                                                 {replyingTo.sender_type === 'guest'
                                                     ? 'Bạn'
                                                     : 'Admin'}
                                             </p>
-                                            <p className="text-xs text-zinc-500 truncate">
+                                            <p className="text-xs text-slate-500 truncate mt-0.5">
                                                 {replyingTo.content}
                                             </p>
                                         </div>
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className="h-5 w-5"
+                                            className="h-6 w-6 hover:bg-slate-200 dark:hover:bg-slate-700"
                                             onClick={() => setReplyingTo(null)}
                                         >
                                             <X className="w-3 h-3" />
@@ -426,12 +454,12 @@ export default function ChatWidget() {
                                 )}
                             </AnimatePresence>
                             {showEmojis && (
-                                <div className="absolute bottom-full left-4 mb-2 p-2 bg-white dark:bg-zinc-800 rounded-xl shadow-xl border border-zinc-200 dark:border-zinc-700 flex gap-2">
+                                <div className="absolute bottom-full left-4 mb-2 p-3 bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 flex gap-3">
                                     {['😊', '❤️', '👍', '😂', '🔥', '🤔'].map((e) => (
                                         <button
                                             key={e}
                                             onClick={() => addEmoji(e)}
-                                            className="hover:scale-125 transition-transform"
+                                            className="text-xl hover:scale-125 transition-transform"
                                         >
                                             {e}
                                         </button>
@@ -449,7 +477,7 @@ export default function ChatWidget() {
                                     type="button"
                                     variant="ghost"
                                     size="icon"
-                                    className="shrink-0 text-zinc-400 hover:text-primary"
+                                    className="shrink-0 text-slate-400 hover:text-[#fbbf24] hover:bg-[#fbbf24]/10 h-10 w-10"
                                     onClick={() => setShowEmojis(!showEmojis)}
                                 >
                                     <Smile className="w-5 h-5" />
@@ -458,12 +486,13 @@ export default function ChatWidget() {
                                     value={inputValue}
                                     onChange={handleInputChange}
                                     placeholder="Nhập tin nhắn..."
-                                    className="bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800"
+                                    className="h-10 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus-visible:ring-[#002d6b] focus-visible:ring-offset-0 text-sm placeholder:text-slate-400"
                                 />
                                 <Button
                                     type="submit"
                                     size="icon"
                                     disabled={!inputValue.trim() || isLoading}
+                                    className="h-10 w-10 bg-[#002d6b] hover:bg-[#002d6b]/90 text-white shrink-0"
                                 >
                                     {isLoading ? (
                                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -477,23 +506,16 @@ export default function ChatWidget() {
                 )}
             </AnimatePresence>
 
-            <Button
-                onClick={() => setIsOpen(!isOpen)}
-                size="icon"
-                className="w-14 h-14 rounded-full shadow-lg ring-4 ring-primary/20 transition-all hover:scale-110 active:scale-95"
-            >
-                {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
-            </Button>
-
-            <SimpleConfirmDialog
-                open={isClearDialogOpen}
-                onOpenChange={setIsClearDialogOpen}
-                onConfirm={confirmClearHistory}
-                title="Xóa lịch sử trò chuyện?"
-                description="Bạn sắp xóa toàn bộ nội dung cuộc trò chuyện này. Hành động này không thể hoàn tác và dữ liệu sẽ mất mãi mãi."
-                confirmText="Xác nhận xóa"
-                variant="destructive"
-            />
+            {/* Floating Button */}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="w-14 h-14 bg-gradient-to-br from-[#002d6b] to-[#003d8f] hover:from-[#001d4b] hover:to-[#002d6b] text-white shadow-xl shadow-[#002d6b]/30 transition-all relative overflow-hidden group"
+                >
+                    <div className="absolute inset-0 bg-[#fbbf24] opacity-0 group-hover:opacity-10 transition-opacity" />
+                    {isOpen ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}
+                </Button>
+            </motion.div>
         </div>
     );
 }

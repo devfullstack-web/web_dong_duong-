@@ -97,23 +97,25 @@ export default function ContactPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Page Header */}
-            <section className="relative pt-40 pb-20 bg-slate-900 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-40">
+            <section className="relative pt-40 pb-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-30">
                     <Image
                         src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&q=80&w=2000"
                         alt="Contact Background"
                         fill
-                        className="object-cover"
+                        className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-linear-to-b from-slate-950/80 via-slate-950/40 to-white/0"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8 text-center sm:text-left">
                     <div className="max-w-3xl space-y-6">
-                        <div className="inline-flex items-center gap-3  border-accent text-white  border bg-amber-600/10  px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em]  backdrop-blur-md">
+                        <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
                             TRUNG TÂM HỖ TRỢ CHIẾN LƯỢC
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight uppercase leading-[1.3]">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
                             KẾT NỐI VỚI <br />
                             <span className="text-brand-accent">SÀI GÒN VALVE</span>
                         </h1>

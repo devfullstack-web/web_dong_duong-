@@ -18,7 +18,7 @@ export default function TopBar() {
     return (
         <div
             className={cn(
-                'hidden lg:block fixed top-0 left-0 right-0 z-60 bg-brand-secondary py-2 border-b border-white/5 transition-all duration-300',
+                'hidden lg:block fixed top-0 left-0 right-0 z-60 bg-brand-primary py-2 border-b border-white/5 transition-all duration-300',
                 isScrolled && '-translate-y-full opacity-0',
             )}
         >

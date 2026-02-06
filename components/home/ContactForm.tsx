@@ -70,24 +70,27 @@ export default function ContactForm() {
     };
 
     return (
-        <section className="bg-slate-900 py-24 sm:py-32 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <section className="bg-brand-primary py-24 sm:py-32 relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute top-0 left-0 w-full h-px bg-white/10"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-secondary/20 rounded-full blur-3xl -translate-y-20 translate-x-20"></div>
+            <div className="absolute top-20 left-10 w-40 h-40 bg-brand-accent/10 rounded-full blur-2xl"></div>
 
             <div className="container relative z-10 mx-auto px-4 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-stretch">
-                    <div className="flex flex-col justify-center space-y-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-stretch">
+                    <div className="flex flex-col justify-center space-y-10">
                         <div className="space-y-6">
-                            <h2 className="text-5xl sm:text-6xl font-bold text-white tracking-tighter uppercase leading-none">
+                            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tighter uppercase leading-none">
                                 LIÊN HỆ VỚI CHUYÊN GIA{' '}
-                                <span className="text-white">SÀI GÒN VALVE</span>
+                                <span className="text-brand-accent">SÀI GÒN VALVE</span>
                             </h2>
-                            <p className="text-lg text-slate-400 font-medium leading-relaxed max-w-lg">
+                            <p className="text-base text-slate-300 font-medium leading-relaxed max-w-lg">
                                 Đội ngũ kỹ thuật của Sài Gòn Valve luôn sẵn sàng hỗ trợ tư vấn và
                                 cung cấp giải pháp tối ưu cho mọi thách thức hạ tầng của bạn.
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             {[
                                 {
                                     icon: Phone,
@@ -114,18 +117,21 @@ export default function ContactForm() {
                                     sub: 'Hỗ trợ kỹ thuật',
                                 },
                             ].map((item, i) => (
-                                <div key={i} className="space-y-3">
+                                <div
+                                    key={i}
+                                    className="space-y-3 p-4 bg-white/5 border border-white/10 rounded-sm hover:bg-white/10 transition-colors"
+                                >
                                     <div className="flex items-center gap-3 text-brand-accent">
-                                        <item.icon size={20} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                        <item.icon size={18} />
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                             {item.label}
                                         </span>
                                     </div>
                                     <div className="space-y-1">
-                                        <div className="text-lg font-bold text-white">
+                                        <div className="text-sm font-bold text-white leading-snug">
                                             {item.value}
                                         </div>
-                                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                             {item.sub}
                                         </div>
                                     </div>
@@ -133,14 +139,14 @@ export default function ContactForm() {
                             ))}
                         </div>
 
-                        <div className="flex gap-4 pt-6">
+                        <div className="flex gap-4 pt-4">
                             {[Facebook, Linkedin, Youtube].map((Icon, i) => (
                                 <a
                                     key={i}
                                     href="#"
-                                    className="h-12 w-12 flex items-center justify-center bg-white/5 border border-white/10 text-white hover:bg-brand-primary hover:border-brand-primary transition-all"
+                                    className="h-11 w-11 flex items-center justify-center bg-white/5 border border-white/10 text-white hover:bg-brand-accent hover:border-brand-accent transition-all"
                                 >
-                                    <Icon size={20} />
+                                    <Icon size={18} />
                                 </a>
                             ))}
                         </div>
@@ -150,14 +156,14 @@ export default function ContactForm() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="bg-white p-10 sm:p-16 shadow-2xl relative"
+                        className="bg-white p-8 sm:p-12 lg:p-14 shadow-2xl relative"
                     >
                         {/* Simple Border Accent */}
-                        <div className="absolute top-0 right-0 h-2 w-full bg-brand-primary"></div>
+                        <div className="absolute top-0 right-0 h-1.5 w-full bg-brand-accent"></div>
 
-                        <div className="space-y-10">
+                        <div className="space-y-8">
                             <div className="space-y-2">
-                                <h3 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
+                                <h3 className="text-2xl sm:text-3xl font-bold text-brand-primary uppercase tracking-tight">
                                     Gửi yêu cầu tư vấn
                                 </h3>
                                 <p className="text-sm text-slate-500 font-medium">
@@ -166,8 +172,8 @@ export default function ContactForm() {
                                 </p>
                             </div>
 
-                            <form className="space-y-8" onSubmit={handleSubmit}>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <form className="space-y-6" onSubmit={handleSubmit}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                             Họ tên *
@@ -178,7 +184,7 @@ export default function ContactForm() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full border-b-2 border-slate-100 py-3 text-sm font-bold focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
                                             placeholder="Nguyễn Văn A"
                                         />
                                     </div>
@@ -192,13 +198,13 @@ export default function ContactForm() {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             required
-                                            className="w-full border-b-2 border-slate-100 py-3 text-sm font-bold focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
                                             placeholder="09xx xxx xxx"
                                         />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                             Email *
@@ -209,7 +215,7 @@ export default function ContactForm() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full border-b-2 border-slate-100 py-3 text-sm font-bold focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
                                             placeholder="example@gmail.com"
                                         />
                                     </div>
@@ -223,7 +229,7 @@ export default function ContactForm() {
                                             value={formData.address}
                                             onChange={handleChange}
                                             required
-                                            className="w-full border-b-2 border-slate-100 py-3 text-sm font-bold focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
                                             placeholder="Số nhà, Tên đường, Quận/Huyện, Tỉnh/TP"
                                         />
                                     </div>
@@ -238,8 +244,8 @@ export default function ContactForm() {
                                         value={formData.message}
                                         onChange={handleChange}
                                         required
-                                        rows={2}
-                                        className="w-full border-b-2 border-slate-100 py-3 text-sm font-bold focus:outline-none focus:border-brand-primary transition-colors resize-none"
+                                        rows={3}
+                                        className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors resize-none bg-transparent"
                                         placeholder="Vui lòng mô tả yêu cầu của bạn..."
                                     ></textarea>
                                 </div>
@@ -247,16 +253,16 @@ export default function ContactForm() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="flex w-full items-center justify-center gap-4 bg-brand-primary py-6 text-xs font-black uppercase tracking-[0.2em] text-white hover:bg-brand-secondary transition-all shadow-xl shadow-brand-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex w-full items-center justify-center gap-4 bg-brand-primary py-5 text-xs font-black uppercase tracking-[0.2em] text-white hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isSubmitting ? (
                                         <>
                                             ĐANG GỬI...{' '}
-                                            <Loader2 size={18} className="animate-spin" />
+                                            <Loader2 size={16} className="animate-spin" />
                                         </>
                                     ) : (
                                         <>
-                                            GỬI YÊU CẦU NGAY <Send size={18} />
+                                            GỬI YÊU CẦU NGAY <Send size={16} />
                                         </>
                                     )}
                                 </button>

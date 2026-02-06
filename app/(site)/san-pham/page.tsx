@@ -3,20 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-    Search,
-    ChevronRight,
-    LayoutGrid,
-    List,
-    SlidersHorizontal,
-    ArrowRight,
-    X,
-    Shield,
-    Settings,
-    Info,
-    ChevronLeft,
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
+import { Search, LayoutGrid, List, ArrowRight, Shield, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
     Pagination,
@@ -41,13 +29,18 @@ interface Product {
     status: string;
 }
 
+interface Category {
+    id: string;
+    name: string;
+}
+
 const ITEMS_PER_PAGE = 6;
 
 export default function ProductArchive() {
     const [products, setProducts] = useState<Product[]>([]);
-    const [categories, setCategories] = useState<string[]>(['Tất cả']);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
     const [currentPage, setCurrentPage] = useState(1);
@@ -69,7 +62,7 @@ export default function ProductArchive() {
                     page,
                     limit: ITEMS_PER_PAGE,
                     search: debouncedSearch || undefined,
-                    category: selectedCategory !== 'Tất cả' ? selectedCategory : undefined,
+                    categoryId: selectedCategoryId || undefined,
                 },
             });
             if (response.data.success) {
@@ -93,14 +86,10 @@ export default function ProductArchive() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await $api.get(`${API_ROUTES.PRODUCTS}?status=active&limit=100`);
+                const response = await $api.get(`${API_ROUTES.CATEGORIES}?type=product`);
                 if (response.data.success) {
                     const data = response.data.data || [];
-                    const uniqueCategories = [
-                        'Tất cả',
-                        ...new Set(data.map((p: Product) => p.category).filter(Boolean)),
-                    ];
-                    setCategories(uniqueCategories as string[]);
+                    setCategories(data);
                 }
             } catch (error) {
                 console.error('Error fetching categories:', error);
@@ -111,7 +100,7 @@ export default function ProductArchive() {
 
     useEffect(() => {
         fetchProducts(currentPage);
-    }, [currentPage, debouncedSearch, selectedCategory]);
+    }, [currentPage, debouncedSearch, selectedCategoryId]);
 
     if (loading && products.length === 0) {
         return (
@@ -123,8 +112,8 @@ export default function ProductArchive() {
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
-    const handleCategoryChange = (cat: string) => {
-        setSelectedCategory(cat);
+    const handleCategoryChange = (categoryId: string | null) => {
+        setSelectedCategoryId(categoryId);
         setCurrentPage(1);
     };
 
@@ -132,37 +121,38 @@ export default function ProductArchive() {
         setSearchQuery(query);
     };
 
-    // const handlePageChange = (page: number) => {
-    //     setCurrentPage(page);
-    //     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // };
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     return (
         <div className="flex flex-col min-h-screen bg-white pt-24">
             {/* Page Header */}
-            <section className="relative py-20 bg-slate-950 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-40">
+            <section className="relative py-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-30">
                     <Image
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="Projects Background"
                         fill
-                        className="object-cover"
+                        className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-linear-to-b from-slate-950/80 via-slate-950/40 to-white/0"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
                         <div className="space-y-6 max-w-2xl">
-                            <div className="inline-flex items-center gap-3  border-accent text-white  border bg-amber-600/10  px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em]  backdrop-blur-md">
-                                <span className="h-1.5 w-1.5 rounded-full bg-brand-accent"></span>
+                            <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
+                                <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
                                 Sản phẩm & Giải pháp
                             </div>
-                            <h1 className="text-5xl sm:text-6xl font-black text-white tracking-tighter uppercase leading-none">
+                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none drop-shadow-lg">
                                 THIẾT BỊ <br />
                                 <span className="text-brand-accent">CHUYÊN DỤNG</span>
                             </h1>
-                            <p className="text-slate-400 font-medium text-lg max-w-xl">
+                            <p className="text-slate-200 font-medium text-base sm:text-lg max-w-xl">
                                 Van công nghiệp, thiết bị đo lường và giải pháp IoT tiêu chuẩn Nhật
                                 Bản & Hàn Quốc cho ngành nước và hạ tầng kỹ thuật.
                             </p>
@@ -174,10 +164,10 @@ export default function ProductArchive() {
                                 placeholder="Tìm kiếm sản phẩm..."
                                 value={searchQuery}
                                 onChange={(e) => handleSearchChange(e.target.value)}
-                                className="w-full bg-white/5 backdrop-blur-md px-6 py-5 pl-14 text-sm font-bold border border-white/10 focus:outline-none focus:border-brand-accent text-white placeholder:text-white/30 transition-all"
+                                className="w-full bg-white/10 backdrop-blur-md px-6 py-5 pl-14 text-sm font-bold border border-white/20 focus:outline-none focus:border-brand-accent text-white placeholder:text-white/40 transition-all"
                             />
                             <Search
-                                className="absolute left-6 top-1/2 -translate-y-1/2 text-white/30"
+                                className="absolute left-6 top-1/2 -translate-y-1/2 text-white/40"
                                 size={20}
                             />
                         </div>
@@ -197,40 +187,33 @@ export default function ProductArchive() {
                                         CHUYÊN MỤC
                                     </h4>
                                     <div className="flex flex-wrap gap-2 lg:flex-col">
+                                        {/* "Tất cả" button */}
+                                        <button
+                                            onClick={() => handleCategoryChange(null)}
+                                            className={cn(
+                                                'px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer',
+                                                selectedCategoryId === null
+                                                    ? 'bg-brand-primary text-white '
+                                                    : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary',
+                                            )}
+                                        >
+                                            Tất cả
+                                        </button>
                                         {categories.map((cat) => (
                                             <button
-                                                key={cat}
-                                                onClick={() => handleCategoryChange(cat)}
+                                                key={cat.id}
+                                                onClick={() => handleCategoryChange(cat.id)}
                                                 className={cn(
-                                                    'px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all',
-                                                    selectedCategory === cat
-                                                        ? 'bg-brand-primary text-white shadow-xl'
+                                                    'px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer',
+                                                    selectedCategoryId === cat.id
+                                                        ? 'bg-brand-primary text-white '
                                                         : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary',
                                                 )}
                                             >
-                                                {cat}
+                                                {cat.name}
                                             </button>
                                         ))}
                                     </div>
-                                </div>
-
-                                <div className="bg-slate-900 p-8 text-white space-y-6">
-                                    <h4 className="text-lg font-bold uppercase leading-tight italic text-brand-accent">
-                                        Nhận báo giá ngay?
-                                    </h4>
-                                    <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest">
-                                        Phản hồi trong 2 giờ làm việc.
-                                    </p>
-                                    <Link
-                                        href="/lien-he"
-                                        className="flex items-center justify-between group py-4 border-t border-white/10 hover:text-brand-accent transition-all text-xs font-black uppercase tracking-widest"
-                                    >
-                                        Liên hệ
-                                        <ArrowRight
-                                            size={16}
-                                            className="transition-transform group-hover:translate-x-2"
-                                        />
-                                    </Link>
                                 </div>
                             </div>
                         </aside>
@@ -276,18 +259,68 @@ export default function ProductArchive() {
 
                             {/* Grid View */}
                             {viewMode === 'grid' && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-px bg-slate-100 border border-slate-100">
-                                    <AnimatePresence mode="popLayout">
-                                        {products.map((product) => (
-                                            <motion.div
-                                                layout
-                                                key={product.id}
-                                                initial={{ opacity: 0, scale: 0.9 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.9 }}
-                                                className="group bg-white p-8 space-y-8 flex flex-col justify-between hover:z-10 hover:shadow-2xl transition-all h-full"
+                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                                    {products.map((product, i) => (
+                                        <motion.div
+                                            key={product.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.05 }}
+                                            className="group bg-white p-8 space-y-8 flex flex-col justify-between hover:z-10 hover:shadow-2xl transition-all duration-500 h-full border border-slate-100"
+                                        >
+                                            <div className="relative aspect-square w-full overflow-hidden transition-all duration-500">
+                                                <Image
+                                                    src={
+                                                        product.image_url ||
+                                                        'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
+                                                    }
+                                                    alt={product.name}
+                                                    fill
+                                                    className="object-contain p-4 group-hover:scale-110 transition-transform duration-1000"
+                                                />
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
+                                                    <Shield size={10} /> {product.category}
+                                                </div>
+                                                <h3 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-10">
+                                                    {product.name}
+                                                </h3>
+                                                <p className="text-[11px] text-muted-foreground font-medium line-clamp-2">
+                                                    {product.tech_summary ||
+                                                        'Thiết bị chuyên dụng ngành nước và công nghiệp.'}
+                                                </p>
+                                                <Link
+                                                    href={`/san-pham/${product.slug}`}
+                                                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-4 border-t border-slate-50 w-full"
+                                                >
+                                                    CHI TIẾT SẢN PHẨM{' '}
+                                                    <ArrowRight size={12} className="ml-auto" />
+                                                </Link>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* List View */}
+                            {viewMode === 'list' && (
+                                <div className="space-y-4">
+                                    {products.map((product, i) => (
+                                        <motion.div
+                                            key={product.id}
+                                            initial={{ opacity: 0, y: 20 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.05 }}
+                                            className="group bg-white border border-slate-100 hover:shadow-xl transition-all duration-500"
+                                        >
+                                            <Link
+                                                href={`/san-pham/${product.slug}`}
+                                                className="flex flex-col sm:flex-row gap-6 p-6"
                                             >
-                                                <div className="relative aspect-square w-full overflow-hidden transition-all duration-500">
+                                                <div className="relative w-full sm:w-48 h-48 sm:h-32 shrink-0 overflow-hidden bg-slate-50">
                                                     <Image
                                                         src={
                                                             product.image_url ||
@@ -295,82 +328,27 @@ export default function ProductArchive() {
                                                         }
                                                         alt={product.name}
                                                         fill
-                                                        className="object-contain p-4 group-hover:scale-110 transition-transform duration-1000"
+                                                        className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
                                                     />
                                                 </div>
-                                                <div className="space-y-4">
+                                                <div className="flex-1 space-y-3">
                                                     <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
                                                         <Shield size={10} /> {product.category}
                                                     </div>
-                                                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-10">
+                                                    <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase">
                                                         {product.name}
                                                     </h3>
-                                                    <p className="text-[11px] text-muted-foreground font-medium line-clamp-2">
+                                                    <p className="text-xs text-muted-foreground font-medium line-clamp-2">
                                                         {product.tech_summary ||
                                                             'Thiết bị chuyên dụng ngành nước và công nghiệp.'}
                                                     </p>
-                                                    <Link
-                                                        href={`/san-pham/${product.slug}`}
-                                                        className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-4 border-t border-slate-50 w-full"
-                                                    >
-                                                        CHI TIẾT SẢN PHẨM{' '}
-                                                        <ArrowRight size={12} className="ml-auto" />
-                                                    </Link>
+                                                    <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2">
+                                                        CHI TIẾT SẢN PHẨM <ArrowRight size={12} />
+                                                    </div>
                                                 </div>
-                                            </motion.div>
-                                        ))}
-                                    </AnimatePresence>
-                                </div>
-                            )}
-
-                            {/* List View */}
-                            {viewMode === 'list' && (
-                                <div className="space-y-4">
-                                    <AnimatePresence mode="popLayout">
-                                        {products.map((product) => (
-                                            <motion.div
-                                                layout
-                                                key={product.id}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -20 }}
-                                                className="group bg-white border border-slate-100 hover:shadow-xl transition-all"
-                                            >
-                                                <Link
-                                                    href={`/san-pham/${product.slug}`}
-                                                    className="flex flex-col sm:flex-row gap-6 p-6"
-                                                >
-                                                    <div className="relative w-full sm:w-48 h-48 sm:h-32 shrink-0 overflow-hidden bg-slate-50">
-                                                        <Image
-                                                            src={
-                                                                product.image_url ||
-                                                                'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
-                                                            }
-                                                            alt={product.name}
-                                                            fill
-                                                            className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
-                                                        />
-                                                    </div>
-                                                    <div className="flex-1 space-y-3">
-                                                        <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
-                                                            <Shield size={10} /> {product.category}
-                                                        </div>
-                                                        <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase">
-                                                            {product.name}
-                                                        </h3>
-                                                        <p className="text-xs text-muted-foreground font-medium line-clamp-2">
-                                                            {product.tech_summary ||
-                                                                'Thiết bị chuyên dụng ngành nước và công nghiệp.'}
-                                                        </p>
-                                                        <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2">
-                                                            CHI TIẾT SẢN PHẨM{' '}
-                                                            <ArrowRight size={12} />
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            </motion.div>
-                                        ))}
-                                    </AnimatePresence>
+                                            </Link>
+                                        </motion.div>
+                                    ))}
                                 </div>
                             )}
 
@@ -385,7 +363,7 @@ export default function ProductArchive() {
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         if (currentPage > 1)
-                                                            setCurrentPage(currentPage - 1);
+                                                            handlePageChange(currentPage - 1);
                                                     }}
                                                     className={cn(
                                                         'text-[9px] font-black uppercase tracking-widest',
@@ -404,7 +382,7 @@ export default function ProductArchive() {
                                                         href="#"
                                                         onClick={(e) => {
                                                             e.preventDefault();
-                                                            setCurrentPage(page);
+                                                            handlePageChange(page);
                                                         }}
                                                         isActive={currentPage === page}
                                                         className="text-[11px] font-black"
@@ -420,7 +398,7 @@ export default function ProductArchive() {
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         if (currentPage < totalPages)
-                                                            setCurrentPage(currentPage + 1);
+                                                            handlePageChange(currentPage + 1);
                                                     }}
                                                     className={cn(
                                                         'text-[9px] font-black uppercase tracking-widest',
@@ -440,12 +418,6 @@ export default function ProductArchive() {
                                     <p className="text-muted-foreground font-bold uppercase tracking-widest">
                                         Không tìm thấy sản phẩm nào.
                                     </p>
-                                </div>
-                            )}
-
-                            {loading && products.length > 0 && (
-                                <div className="py-10 text-center">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary mx-auto"></div>
                                 </div>
                             )}
                         </div>

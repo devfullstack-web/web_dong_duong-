@@ -95,27 +95,29 @@ export default function RecruitmentPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="relative pt-40 pb-20 bg-slate-900 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-40">
+            <section className="relative pt-40 pb-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-30">
                     <Image
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="Recruitment Background"
                         fill
-                        className="object-cover"
+                        className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-linear-to-b from-slate-950/80 via-slate-950/40 to-white/0"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="max-w-3xl space-y-6">
-                        <div className="inline-flex items-center gap-3  border-accent text-white  border bg-amber-600/10  px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em]  backdrop-blur-md">
+                        <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
                             CƠ HỘI NGHỀ NGHIỆP
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight uppercase leading-[1.3]">
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
                             GIA NHẬP <br />
                             <span className="text-brand-accent">ĐỘI NGŨ SGV</span>
                         </h1>
-                        <p className="text-xl text-slate-400 font-medium max-w-xl">
+                        <p className="text-lg text-slate-200 font-medium max-w-xl">
                             Khám phá cơ hội nghề nghiệp tại Sài Gòn Valve - Nơi bạn có thể phát
                             triển sự nghiệp cùng đội ngũ chuyên gia hàng đầu trong lĩnh vực công
                             nghệ ngành nước.

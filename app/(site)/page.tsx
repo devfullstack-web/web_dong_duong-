@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       <Hero />
-      <FeaturedGrid />
+      {/* <FeaturedGrid /> */}
       <ProductSpotlight />
       <SystemHighlight />
       <Solutions />

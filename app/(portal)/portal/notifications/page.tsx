@@ -13,12 +13,13 @@ import {
     Filter,
     ChevronLeft,
     ChevronRight,
+    LayoutList,
+    PieChart as PieChartIcon,
 } from 'lucide-react';
 import * as React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
     Select,
     SelectContent,
@@ -26,7 +27,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
@@ -200,58 +201,52 @@ export default function NotificationsPage() {
                 <Button
                     onClick={handleMarkAllAsRead}
                     disabled={unreadCount === 0}
-                    className="h-14 px-10 bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10"
+                    className="h-10 hover:cursor-pointer px-10 bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center gap-3"
                 >
-                    <CheckCheck size={18} className="mr-2" />
+                    <CheckCheck size={18} />
                     Đánh dấu tất cả đã đọc
                 </Button>
             </div>
 
-            {/* Visual Analytics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <RadialChartGrid
-                    title="Phân loại thông báo"
-                    description="Tỷ lệ thông báo theo từng loại"
-                    data={notificationChartData}
-                    config={{
-                        visitors: { label: 'Thông báo' },
-                        comment: { label: 'Bình luận', color: '#3b82f6' },
-                        contact: { label: 'Liên hệ', color: '#10b981' },
-                        application: { label: 'Ứng tuyển', color: '#a855f7' },
-                    }}
-                    footerTitle="Phân bố hoạt động"
-                    footerDescription="Cập nhật theo thời gian thực"
-                    className="lg:col-span-1"
-                />
-                <RadialChartGrid
-                    title="Trạng thái xử lý"
-                    description="Tỷ lệ thông báo đã đọc vs chưa đọc"
-                    data={notificationStatusData}
-                    config={{
-                        visitors: { label: 'Thông báo' },
-                        read: { label: 'Đã đọc', color: '#10b981' },
-                        unread: { label: 'Chưa đọc', color: '#f59e0b' },
-                    }}
-                    footerTitle="Mức độ phản hồi"
-                    footerDescription={`${stats.unread} thông báo cần xử lý`}
-                    className="lg:col-span-1"
-                />
-            </div>
+            <Tabs defaultValue="list" className="space-y-8">
+                <div className="flex items-center justify-between">
+                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
+                        <TabsTrigger
+                            value="list"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                        >
+                            <LayoutList size={14} /> Danh sách thông báo
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="analytics"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                        >
+                            <PieChartIcon size={14} /> Biểu đồ phân tích
+                        </TabsTrigger>
+                    </TabsList>
 
-            <div className="grid gap-4">
-                <Card className="rounded-none border border-slate-100 shadow-sm overflow-hidden">
-                    <CardHeader className="bg-slate-50/50 pb-6 border-b border-slate-100">
+                    <div className="hidden md:flex items-center gap-3">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                            Tổng thông báo: <span className="text-[#002d6b]">{stats.total}</span>
+                        </span>
+                        <span className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">
+                            Chưa đọc: <span className="text-amber-600">{stats.unread}</span>
+                        </span>
+                    </div>
+                </div>
+
+                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
+                    {/* Filters */}
+                    <div className="p-8 bg-slate-50 border border-slate-100">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="flex items-center gap-2 flex-1 max-w-md">
-                                <div className="relative w-full">
-                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                                    <Input
-                                        placeholder="TÌM KIẾM THÔNG BÁO..."
-                                        className="pl-12 h-12 rounded-none border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
+                            <div className="relative max-w-md group flex-1">
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-[#002d6b] transition-colors" />
+                                <input
+                                    placeholder="TÌM KIẾM THÔNG BÁO..."
+                                    className="w-full h-12 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20 rounded-none outline-none"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">
@@ -261,7 +256,7 @@ export default function NotificationsPage() {
                                     </span>
                                 </div>
                                 <Select value={activeTab} onValueChange={setActiveTab}>
-                                    <SelectTrigger className="h-12 w-[200px] rounded-none border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest focus:ring-0 focus:ring-offset-0">
+                                    <SelectTrigger className="h-12 w-50 rounded-none border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest focus:ring-0 focus:ring-offset-0">
                                         <SelectValue placeholder="Tất cả" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-none border-slate-100">
@@ -299,8 +294,10 @@ export default function NotificationsPage() {
                                 </Select>
                             </div>
                         </div>
-                    </CardHeader>
-                    <CardContent className="p-0">
+                    </div>
+
+                    {/* Notifications List */}
+                    <div className="bg-white border border-slate-100 shadow-sm overflow-hidden">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 opacity-30">
                                 <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
@@ -321,7 +318,7 @@ export default function NotificationsPage() {
                                 </p>
                             </div>
                         ) : (
-                            <div className="divide-y divide-slate-100">
+                            <div className="divide-y divide-slate-50">
                                 {filteredNotifications.map((notification) => {
                                     const label = notificationLabels[notification.type];
 
@@ -403,41 +400,76 @@ export default function NotificationsPage() {
                                 })}
                             </div>
                         )}
-                    </CardContent>
-                </Card>
-
-                {/* Pagination */}
-                {totalItems > 10 && (
-                    <div className="flex items-center justify-between px-2">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            Hiển thị {filteredNotifications.length} / {totalItems} thông báo
-                        </p>
-                        <div className="flex items-center gap-3">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-10 w-10 rounded-none border-slate-200 transition-all hover:bg-slate-50"
-                                onClick={() => setPage(page - 1)}
-                                disabled={page === 1}
-                            >
-                                <ChevronLeft size={16} />
-                            </Button>
-                            <div className="h-10 min-w-[60px] flex items-center justify-center text-[10px] font-black border border-slate-200 px-4 bg-white uppercase tracking-widest">
-                                TRANG {page}
-                            </div>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-10 w-10 rounded-none border-slate-200 transition-all hover:bg-slate-50"
-                                onClick={() => setPage(page + 1)}
-                                disabled={page * 10 >= totalItems}
-                            >
-                                <ChevronRight size={16} />
-                            </Button>
-                        </div>
                     </div>
-                )}
-            </div>
+
+                    {/* Pagination */}
+                    {totalItems > 10 && (
+                        <div className="flex items-center justify-between px-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                Hiển thị {filteredNotifications.length} / {totalItems} thông báo
+                            </p>
+                            <div className="flex items-center gap-3">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-10 w-10 rounded-none border-slate-200 transition-all hover:bg-slate-50"
+                                    onClick={() => setPage(page - 1)}
+                                    disabled={page === 1}
+                                >
+                                    <ChevronLeft size={16} />
+                                </Button>
+                                <div className="h-10 min-w-15 flex items-center justify-center text-[10px] font-black border border-slate-200 px-4 bg-white uppercase tracking-widest">
+                                    TRANG {page}
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-10 w-10 rounded-none border-slate-200 transition-all hover:bg-slate-50"
+                                    onClick={() => setPage(page + 1)}
+                                    disabled={page * 10 >= totalItems}
+                                >
+                                    <ChevronRight size={16} />
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </TabsContent>
+
+                <TabsContent
+                    value="analytics"
+                    className="space-y-8 mt-0 border-none p-0 animate-in fade-in duration-500"
+                >
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <RadialChartGrid
+                            title="Phân loại thông báo"
+                            description="Tỷ lệ thông báo theo từng loại"
+                            data={notificationChartData}
+                            config={{
+                                visitors: { label: 'Thông báo' },
+                                comment: { label: 'Bình luận', color: '#3b82f6' },
+                                contact: { label: 'Liên hệ', color: '#10b981' },
+                                application: { label: 'Ứng tuyển', color: '#a855f7' },
+                            }}
+                            footerTitle="Phân bố hoạt động"
+                            footerDescription="Cập nhật theo thời gian thực"
+                            className="lg:col-span-1"
+                        />
+                        <RadialChartGrid
+                            title="Trạng thái xử lý"
+                            description="Tỷ lệ thông báo đã đọc vs chưa đọc"
+                            data={notificationStatusData}
+                            config={{
+                                visitors: { label: 'Thông báo' },
+                                read: { label: 'Đã đọc', color: '#10b981' },
+                                unread: { label: 'Chưa đọc', color: '#f59e0b' },
+                            }}
+                            footerTitle="Mức độ phản hồi"
+                            footerDescription={`${stats.unread} thông báo cần xử lý`}
+                            className="lg:col-span-1"
+                        />
+                    </div>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }

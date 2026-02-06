@@ -7,14 +7,10 @@ import {
     MoreHorizontal,
     Edit2,
     Trash2,
-    Loader2,
     Briefcase,
     MapPin,
     Clock,
     ExternalLink,
-    ChevronLeft,
-    ChevronRight,
-    Filter,
     AlertCircle,
     CheckCircle2,
     Calendar,
@@ -43,6 +39,8 @@ import { PERMISSIONS } from '@/constants/rbac';
 import { cn } from '@/lib/utils';
 import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
 import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LayoutList, PieChart as PieChartIcon } from 'lucide-react';
 
 interface JobPosting {
     id: string;
@@ -214,247 +212,278 @@ export default function JobsManagementPage() {
                 )}
             </div>
 
-            {/* Visual Analytics */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <PieChartLabel
-                    title="Trạng thái tuyển dụng"
-                    description="Phân bổ tin tuyển dụng theo trạng thái"
-                    data={statusChartData}
-                    config={statusConfig}
-                    dataKey="count"
-                    nameKey="status"
-                    footerTitle="Tỷ lệ lấp đầy"
-                    footerDescription="Tình trạng tin tuyển dụng đang hoạt động"
-                    className="lg:col-span-1"
-                />
-                <AreaChartGradient
-                    title="Mật độ đăng tin"
-                    description="Số lượng tin tuyển dụng mới qua các tháng"
-                    data={trendData}
-                    config={{ jobs: { label: 'Tin tuyển dụng', color: '#002d6b' } }}
-                    dataKeys={['jobs']}
-                    xAxisKey="month"
-                    footerTitle="Tăng trưởng nhân sự"
-                    footerDescription="Phân tích nhu cầu tuyển dụng 6 tháng qua"
-                    className="lg:col-span-2"
-                />
-            </div>
+            <Tabs defaultValue="list" className="space-y-8">
+                <div className="flex items-center justify-between">
+                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
+                        <TabsTrigger
+                            value="list"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                        >
+                            <LayoutList size={14} /> Danh sách tin tuyển dụng
+                        </TabsTrigger>
+                        <TabsTrigger
+                            value="analytics"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                        >
+                            <PieChartIcon size={14} /> Biểu đồ phân tích
+                        </TabsTrigger>
+                    </TabsList>
 
-            <div className="space-y-6">
-                <div className="flex flex-col md:flex-row gap-4 p-6 bg-slate-50 border border-slate-100">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <input
-                            placeholder="TÌM KIẾM THEO TIÊU ĐỀ, PHÒNG BAN..."
-                            className="w-full h-12 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+                    <div className="hidden md:flex items-center gap-3">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                            Tổng tin: <span className="text-[#002d6b]">{totalItems}</span>
+                        </span>
                     </div>
                 </div>
 
-                <div className="bg-white border border-slate-100 shadow-sm overflow-hidden">
-                    {isLoading ? (
-                        <div className="flex flex-col items-center justify-center py-20 opacity-30">
-                            <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
-                            <p className="text-[10px] font-black uppercase tracking-widest">
-                                Đang tải dữ liệu...
-                            </p>
+                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
+                    <div className="flex flex-col md:flex-row gap-4 p-6 bg-slate-50 border border-slate-100">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                            <input
+                                placeholder="TÌM KIẾM THEO TIÊU ĐỀ, PHÒNG BAN..."
+                                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
-                    ) : jobs.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                            <Briefcase size={48} className="mb-4 opacity-10" />
-                            <p className="text-[10px] font-black uppercase tracking-widest">
-                                Không có tin tuyển dụng nào.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead>
-                                    <tr className="border-b border-slate-50 bg-slate-50/50">
-                                        <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                            Vị trí & Phòng ban
-                                        </th>
-                                        <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                            Địa điểm & Loại hình
-                                        </th>
-                                        <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                            Trạng thái
-                                        </th>
-                                        <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                            Hạn nộp
-                                        </th>
-                                        <th className="text-right p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                            Thao tác
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-50">
-                                    {jobs.map((job) => (
-                                        <tr
-                                            key={job.id}
-                                            className="hover:bg-slate-50/30 transition-colors group"
-                                        >
-                                            <td className="p-6">
-                                                <div className="space-y-1">
-                                                    <p className="text-sm font-black text-slate-900 uppercase tracking-tight line-clamp-1">
-                                                        {job.title}
-                                                    </p>
-                                                    {job.department && (
-                                                        <p className="text-[10px] font-black text-[#002d6b] uppercase tracking-wider">
-                                                            {job.department}
+                    </div>
+
+                    <div className="bg-white border border-slate-100 shadow-sm overflow-hidden">
+                        {isLoading ? (
+                            <div className="flex flex-col items-center justify-center py-20 opacity-30">
+                                <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
+                                <p className="text-[10px] font-black uppercase tracking-widest">
+                                    Đang tải dữ liệu...
+                                </p>
+                            </div>
+                        ) : jobs.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                                <Briefcase size={48} className="mb-4 opacity-10" />
+                                <p className="text-[10px] font-black uppercase tracking-widest">
+                                    Không có tin tuyển dụng nào.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b border-slate-50 bg-slate-50/50">
+                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                Vị trí & Phòng ban
+                                            </th>
+                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                Địa điểm & Loại hình
+                                            </th>
+                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                Trạng thái
+                                            </th>
+                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                Hạn nộp
+                                            </th>
+                                            <th className="text-right p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                Thao tác
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {jobs.map((job) => (
+                                            <tr
+                                                key={job.id}
+                                                className="hover:bg-slate-50/30 transition-colors group"
+                                            >
+                                                <td className="p-6">
+                                                    <div className="space-y-1">
+                                                        <p className="text-sm font-black text-slate-900 uppercase tracking-tight line-clamp-1">
+                                                            {job.title}
                                                         </p>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="p-6 text-xs font-bold text-slate-600">
-                                                <div className="flex flex-col gap-1.5">
-                                                    <div className="flex items-center gap-2">
-                                                        <MapPin
-                                                            size={12}
-                                                            className="text-slate-300"
-                                                        />
-                                                        {job.location || 'Chưa xác định'}
-                                                    </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <Clock
-                                                            size={12}
-                                                            className="text-slate-300"
-                                                        />
-                                                        {EMPLOYMENT_TYPE_LABELS[
-                                                            job.employment_type
-                                                        ] || job.employment_type}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="p-6">
-                                                <Badge
-                                                    className={cn(
-                                                        'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none',
-                                                        STATUS_CONFIG[
-                                                            job.status as keyof typeof STATUS_CONFIG
-                                                        ]?.color,
-                                                    )}
-                                                >
-                                                    {
-                                                        STATUS_CONFIG[
-                                                            job.status as keyof typeof STATUS_CONFIG
-                                                        ]?.label
-                                                    }
-                                                </Badge>
-                                            </td>
-                                            <td className="p-6 whitespace-nowrap">
-                                                {job.deadline ? (
-                                                    <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase">
-                                                        <Calendar
-                                                            size={12}
-                                                            className="text-slate-300"
-                                                        />
-                                                        {format(
-                                                            new Date(job.deadline),
-                                                            'dd/MM/yyyy',
-                                                            { locale: vi },
+                                                        {job.department && (
+                                                            <p className="text-[10px] font-black text-[#002d6b] uppercase tracking-wider">
+                                                                {job.department}
+                                                            </p>
                                                         )}
                                                     </div>
-                                                ) : (
-                                                    <span className="text-[10px] text-slate-300 font-black uppercase">
-                                                        —
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="p-6 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    {hasPermission(
-                                                        PERMISSIONS.RECRUITMENT_UPDATE,
-                                                    ) && (
-                                                        <Link
-                                                            href={PORTAL_ROUTES.cms.jobs.edit(
-                                                                job.id,
+                                                </td>
+                                                <td className="p-6 text-xs font-bold text-slate-600">
+                                                    <div className="flex flex-col gap-1.5">
+                                                        <div className="flex items-center gap-2">
+                                                            <MapPin
+                                                                size={12}
+                                                                className="text-slate-300"
+                                                            />
+                                                            {job.location || 'Chưa xác định'}
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <Clock
+                                                                size={12}
+                                                                className="text-slate-300"
+                                                            />
+                                                            {EMPLOYMENT_TYPE_LABELS[
+                                                                job.employment_type
+                                                            ] || job.employment_type}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-6">
+                                                    <Badge
+                                                        className={cn(
+                                                            'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none',
+                                                            STATUS_CONFIG[
+                                                                job.status as keyof typeof STATUS_CONFIG
+                                                            ]?.color,
+                                                        )}
+                                                    >
+                                                        {
+                                                            STATUS_CONFIG[
+                                                                job.status as keyof typeof STATUS_CONFIG
+                                                            ]?.label
+                                                        }
+                                                    </Badge>
+                                                </td>
+                                                <td className="p-6 whitespace-nowrap">
+                                                    {job.deadline ? (
+                                                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase">
+                                                            <Calendar
+                                                                size={12}
+                                                                className="text-slate-300"
+                                                            />
+                                                            {format(
+                                                                new Date(job.deadline),
+                                                                'dd/MM/yyyy',
+                                                                { locale: vi },
                                                             )}
-                                                        >
-                                                            <Button
-                                                                variant="ghost"
-                                                                size="icon"
-                                                                className="h-9 w-9 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none"
-                                                            >
-                                                                <Edit2 size={14} />
-                                                            </Button>
-                                                        </Link>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-[10px] text-slate-300 font-black uppercase">
+                                                            —
+                                                        </span>
                                                     )}
-
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button
-                                                                variant="ghost"
-                                                                className="h-9 w-9 p-0 rounded-none hover:bg-slate-50"
+                                                </td>
+                                                <td className="p-6 text-right">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        {hasPermission(
+                                                            PERMISSIONS.RECRUITMENT_UPDATE,
+                                                        ) && (
+                                                            <Link
+                                                                href={PORTAL_ROUTES.cms.jobs.edit(
+                                                                    job.id,
+                                                                )}
                                                             >
-                                                                <MoreHorizontal className="h-4 w-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent
-                                                            align="end"
-                                                            className="rounded-none border-slate-100 shadow-xl w-56 p-2"
-                                                        >
-                                                            <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
-                                                                Quản trị tin
-                                                            </DropdownMenuLabel>
-                                                            <DropdownMenuSeparator className="bg-slate-50" />
-                                                            <DropdownMenuItem
-                                                                asChild
-                                                                className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
-                                                            >
-                                                                <Link
-                                                                    href={`/tuyen-dung/${job.slug}`}
-                                                                    target="_blank"
-                                                                    className="flex items-center gap-3"
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    size="icon"
+                                                                    className="h-9 w-9 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none"
                                                                 >
-                                                                    <ExternalLink
-                                                                        size={14}
-                                                                        className="text-blue-500"
-                                                                    />{' '}
-                                                                    Xem trực tiếp
-                                                                </Link>
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuSeparator className="bg-slate-50" />
-                                                            {hasPermission(
-                                                                PERMISSIONS.RECRUITMENT_DELETE,
-                                                            ) && (
+                                                                    <Edit2 size={14} />
+                                                                </Button>
+                                                            </Link>
+                                                        )}
+
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button
+                                                                    variant="ghost"
+                                                                    className="h-9 w-9 p-0 rounded-none hover:bg-slate-50"
+                                                                >
+                                                                    <MoreHorizontal className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+                                                            <DropdownMenuContent
+                                                                align="end"
+                                                                className="rounded-none border-slate-100 shadow-xl w-56 p-2"
+                                                            >
+                                                                <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
+                                                                    Quản trị tin
+                                                                </DropdownMenuLabel>
+                                                                <DropdownMenuSeparator className="bg-slate-50" />
                                                                 <DropdownMenuItem
-                                                                    onClick={() => {
-                                                                        setItemToDelete(job);
-                                                                        setDeleteDialogOpen(true);
-                                                                    }}
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 text-rose-500 hover:bg-rose-50 px-3 py-2"
+                                                                    asChild
+                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
                                                                 >
-                                                                    <Trash2 size={14} /> Xóa tin
-                                                                    đăng
+                                                                    <Link
+                                                                        href={`/tuyen-dung/${job.slug}`}
+                                                                        target="_blank"
+                                                                        className="flex items-center gap-3"
+                                                                    >
+                                                                        <ExternalLink
+                                                                            size={14}
+                                                                            className="text-blue-500"
+                                                                        />{' '}
+                                                                        Xem trực tiếp
+                                                                    </Link>
                                                                 </DropdownMenuItem>
-                                                            )}
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
+                                                                <DropdownMenuSeparator className="bg-slate-50" />
+                                                                {hasPermission(
+                                                                    PERMISSIONS.RECRUITMENT_DELETE,
+                                                                ) && (
+                                                                    <DropdownMenuItem
+                                                                        onClick={() => {
+                                                                            setItemToDelete(job);
+                                                                            setDeleteDialogOpen(
+                                                                                true,
+                                                                            );
+                                                                        }}
+                                                                        className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 text-rose-500 hover:bg-rose-50 px-3 py-2"
+                                                                    >
+                                                                        <Trash2 size={14} /> Xóa tin
+                                                                        đăng
+                                                                    </DropdownMenuItem>
+                                                                )}
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
 
-                {/* Pagination */}
-                <TablePagination
-                    currentPage={currentPage}
-                    pageSize={pageSize}
-                    totalItems={totalItems}
-                    onPageChange={setCurrentPage}
-                    onPageSizeChange={(size) => {
-                        setPageSize(size);
-                        setCurrentPage(1);
-                    }}
-                />
-            </div>
+                    {/* Pagination */}
+                    <TablePagination
+                        currentPage={currentPage}
+                        pageSize={pageSize}
+                        totalItems={totalItems}
+                        onPageChange={setCurrentPage}
+                        onPageSizeChange={(size) => {
+                            setPageSize(size);
+                            setCurrentPage(1);
+                        }}
+                    />
+                </TabsContent>
+
+                <TabsContent
+                    value="analytics"
+                    className="space-y-8 mt-0 border-none p-0 animate-in fade-in duration-500"
+                >
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <PieChartLabel
+                            title="Trạng thái tuyển dụng"
+                            description="Phân bổ tin tuyển dụng theo trạng thái"
+                            data={statusChartData}
+                            config={statusConfig}
+                            dataKey="count"
+                            nameKey="status"
+                            footerTitle="Tỷ lệ lấp đầy"
+                            footerDescription="Tình trạng tin tuyển dụng đang hoạt động"
+                            className="lg:col-span-1"
+                        />
+                        <AreaChartGradient
+                            title="Mật độ đăng tin"
+                            description="Số lượng tin tuyển dụng mới qua các tháng"
+                            data={trendData}
+                            config={{ jobs: { label: 'Tin tuyển dụng', color: '#002d6b' } }}
+                            dataKeys={['jobs']}
+                            xAxisKey="month"
+                            footerTitle="Tăng trưởng nhân sự"
+                            footerDescription="Phân tích nhu cầu tuyển dụng 6 tháng qua"
+                            className="lg:col-span-2"
+                        />
+                    </div>
+                </TabsContent>
+            </Tabs>
 
             <DeleteConfirmationDialog
                 open={deleteDialogOpen}

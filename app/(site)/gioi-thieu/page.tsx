@@ -24,42 +24,44 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { COMPANY_INFO } from '@/constants/site-info';
+import { PARTNERS } from '@/components/home/Partners';
 
 export default function AboutPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white pt-24">
             {/* Hero Section */}
-            <section className="relative h-[60vh] min-h-[550px] w-full bg-slate-900 overflow-hidden">
+            <section className="relative h-[60vh] min-h-[550px] w-full bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
                 <Image
                     src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                     alt="Introduce Background"
                     fill
-                    className="object-cover"
+                    className="object-cover opacity-40 brightness-110"
                     priority
                 />
-                <div className="absolute inset-0 bg-linear-to-b from-slate-900/40 via-slate-900/60 to-slate-900"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/60 via-brand-secondary/40 to-brand-primary/90"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8 h-full flex flex-col justify-center">
                     <div className="max-w-4xl space-y-8">
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="inline-flex items-center gap-3  border-accent text-white  border bg-amber-600/10  px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em]  backdrop-blur-md"
+                            className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md"
                         >
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
                             GIẢI PHÁP CÔNG NGHIỆP THÔNG MINH
                         </motion.div>
                         <motion.h1
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-6xl sm:text-7xl font-bold text-white tracking-tighter uppercase"
+                            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter uppercase drop-shadow-lg"
                         >
                             SÀI GÒN VALVE <br />
-                            <span className="text-accent">LẬP TINH CÔNG NGHỆ</span>
+                            <span className="text-brand-accent">LẬP TINH CÔNG NGHỆ</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.3 }}
-                            className="text-lg text-slate-300 font-medium max-w-2xl leading-relaxed italic border-l-4 border-accent pl-8"
+                            className="text-base sm:text-lg text-slate-200 font-medium max-w-2xl leading-relaxed italic border-l-4 border-brand-accent pl-8"
                         >
                             "Giải pháp đáng tin cậy cho cấp thoát nước và xử lý nước thải từ SG-VAL.
                             Kiến tạo hạ tầng ngành nước hiện đại và bền vững."
@@ -287,7 +289,9 @@ export default function AboutPage() {
             </section>
 
             {/* SCADA Features */}
-            <section className="py-24 bg-slate-900 text-white overflow-hidden relative">
+            <section className="py-24 bg-brand-primary text-white overflow-hidden relative">
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-secondary/30 rounded-full blur-3xl"></div>
+                <div className="absolute top-20 left-10 w-40 h-40 bg-brand-accent/10 rounded-full blur-2xl"></div>
                 <Globe2
                     size={400}
                     className="absolute -bottom-20 -right-20 text-white/5 pointer-events-none"
@@ -298,7 +302,7 @@ export default function AboutPage() {
                             CÔNG NGHỆ ĐIỀU KHIỂN
                         </div>
                         <h2 className="text-4xl sm:text-6xl font-bold uppercase tracking-tighter leading-none">
-                            HỆ THỐNG <span className="text-brand-primary">SCADA</span>
+                            HỆ THỐNG <span className="text-brand-accent">SCADA</span>
                         </h2>
                         <p className="text-slate-400 font-medium max-w-2xl leading-relaxed">
                             Giải pháp quản lý, giám sát và điều khiển tập trung giúp tối ưu hóa hiệu
@@ -424,89 +428,73 @@ export default function AboutPage() {
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="aspect-square bg-white border border-slate-100 flex items-center justify-center p-8 hover:shadow-lg transition-all">
-                                <Image
-                                    src="/uploads/images/2026/01/19/1768812644117-llzziw.png"
-                                    alt="OKM"
-                                    width={150}
-                                    height={150}
-                                    className="object-contain"
-                                />
-                            </div>
-                            <div className="aspect-square bg-white border border-slate-100 flex items-center justify-center p-8 hover:shadow-lg transition-all">
-                                <Image
-                                    src="/uploads/images/2026/01/19/1768812644117-llzziw.png"
-                                    alt="Noah"
-                                    width={150}
-                                    height={150}
-                                    className="object-contain"
-                                />
-                            </div>
-                            <div className="aspect-square bg-white border border-slate-100 flex items-center justify-center p-8 hover:shadow-lg transition-all">
-                                <Image
-                                    src="/uploads/images/2026/01/19/1768812644117-llzziw.png"
-                                    alt="Niigata"
-                                    width={150}
-                                    height={150}
-                                    className="object-contain"
-                                />
-                            </div>
-                            <div className="aspect-square bg-white border border-slate-100 flex items-center justify-center p-8 hover:shadow-lg transition-all">
-                                <Image
-                                    src="/uploads/images/2026/01/19/1768812644117-llzziw.png"
-                                    alt="Toaflex"
-                                    width={150}
-                                    height={150}
-                                    className="object-contain"
-                                />
-                            </div>
+                            {PARTNERS.map((partner, i) => (
+                                <div
+                                    key={i}
+                                    className="aspect-square bg-white border border-slate-100 flex items-center justify-center p-6 hover:shadow-lg hover:border-brand-primary/30 transition-all group"
+                                >
+                                    <div className="relative w-full h-full group-hover:scale-105 transition-transform duration-300">
+                                        <Image
+                                            src={partner.logo}
+                                            alt={partner.name}
+                                            fill
+                                            quality={100}
+                                            sizes="(max-width: 768px) 50vw, 25vw"
+                                            className="object-contain"
+                                            style={{ imageRendering: 'auto' }}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* CTA Section - Updated with Contact Details */}
-            <section className="py-24 bg-brand-secondary relative overflow-hidden">
+            <section className="py-24 bg-brand-primary relative overflow-hidden">
+                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-secondary/20 rounded-full blur-3xl"></div>
+                <div className="absolute top-10 left-20 w-48 h-48 bg-brand-accent/10 rounded-full blur-2xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                        <div className="text-white space-y-10">
-                            <h2 className="text-5xl sm:text-6xl font-bold uppercase tracking-tight leading-none text-brand-accent">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+                        <div className="text-white space-y-8">
+                            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-tight leading-none text-brand-accent">
                                 HỢP TÁC CHIẾN LƯỢC
                             </h2>
-                            <p className="text-lg text-white/70 font-medium">
+                            <p className="text-base text-slate-300 font-medium leading-relaxed">
                                 Hãy liên hệ với chúng tôi ngay hôm nay để khám phá thêm về các sản
                                 phẩm và giải pháp tiên tiến mà chúng tôi cung cấp cho doanh nghiệp
                                 của bạn.
                             </p>
 
-                            <div className="flex flex-col gap-6">
-                                <div className="flex items-center gap-6 group">
-                                    <div className="h-12 w-12 bg-white/10 flex items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-slate-900 transition-all">
-                                        <Phone size={20} />
+                            <div className="flex flex-col gap-4">
+                                <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-sm hover:bg-white/10 transition-colors group">
+                                    <div className="h-10 w-10 bg-brand-accent/20 flex items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-brand-primary transition-all">
+                                        <Phone size={18} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">
                                             Hotline Tư vấn
                                         </div>
                                         <a
                                             href={`tel:${COMPANY_INFO.phoneRaw}`}
-                                            className="text-lg font-bold hover:text-brand-accent transition-colors"
+                                            className="text-sm font-bold hover:text-brand-accent transition-colors"
                                         >
                                             {COMPANY_INFO.phone}
                                         </a>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-6 group">
-                                    <div className="h-12 w-12 bg-white/10 flex items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-slate-900 transition-all">
-                                        <Mail size={20} />
+                                <div className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-sm hover:bg-white/10 transition-colors group">
+                                    <div className="h-10 w-10 bg-brand-accent/20 flex items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-brand-primary transition-all">
+                                        <Mail size={18} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">
                                             Email Liên hệ
                                         </div>
                                         <a
                                             href={`mailto:${COMPANY_INFO.email}`}
-                                            className="text-lg font-bold hover:text-brand-accent transition-colors"
+                                            className="text-sm font-bold hover:text-brand-accent transition-colors"
                                         >
                                             {COMPANY_INFO.email}
                                         </a>
@@ -518,9 +506,9 @@ export default function AboutPage() {
                         <div className="flex justify-center lg:justify-end">
                             <Link
                                 href="/lien-he"
-                                className="inline-flex items-center gap-4 px-16 py-6 bg-brand-accent text-slate-900 font-black uppercase tracking-widest shadow-2xl hover:bg-white transition-all transform hover:-translate-y-2"
+                                className="inline-flex items-center gap-4 px-12 py-5 bg-brand-accent text-brand-primary font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 hover:bg-white transition-all transform hover:-translate-y-1 hover:scale-105"
                             >
-                                LIÊN HỆ NGAY <MoveRight size={24} />
+                                LIÊN HỆ NGAY <MoveRight size={20} />
                             </Link>
                         </div>
                     </div>

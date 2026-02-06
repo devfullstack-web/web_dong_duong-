@@ -96,7 +96,7 @@ function SortableMenuItem({ module, isActive }: SortableMenuItemProps) {
                 className={cn(
                     'text-[10px] font-black px-4 transition-none! uppercase tracking-widest rounded-none h-auto group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center relative',
                     isActive
-                        ? 'bg-white text-[#002d6b] hover:bg-white hover:text-[#002d6b]'
+                        ? 'bg-white text-brand hover:bg-white hover:text-brand'
                         : 'text-white/70 hover:bg-white/5 hover:text-white',
                 )}
             >
@@ -117,10 +117,7 @@ function SortableMenuItem({ module, isActive }: SortableMenuItemProps) {
                         <div className="flex items-center justify-center shrink-0 size-5">
                             <DynamicIcon
                                 name={module.icon}
-                                className={cn(
-                                    'size-4',
-                                    isActive ? 'text-[#002d6b]' : 'text-[#fbbf24]',
-                                )}
+                                className={cn('size-4', isActive ? 'text-brand' : 'text-[#fbbf24]')}
                             />
                         </div>
                         <span className="truncate group-data-[collapsible=icon]:hidden">
@@ -220,13 +217,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Sidebar
             collapsible="icon"
             {...props}
-            className="border-none bg-[#002d6b]"
+            className="border-none bg-brand"
             style={
                 {
-                    '--sidebar-background': '#002d6b',
+                    '--sidebar-background': '#004395',
                     '--sidebar-foreground': 'white',
                     '--sidebar-primary': 'white',
-                    '--sidebar-primary-foreground': '#002d6b',
+                    '--sidebar-primary-foreground': '#004395',
                     '--sidebar-accent': 'rgba(255, 255, 255, 0.08)',
                     '--sidebar-accent-foreground': 'white',
                     '--sidebar-border': 'rgba(255, 255, 255, 0.05)',
@@ -234,7 +231,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 } as React.CSSProperties
             }
         >
-            <SidebarHeader className="border-b border-white/5 flex items-center justify-start px-4 bg-[#002d6b] shrink-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+            <SidebarHeader className="border-b border-white/5 flex items-center justify-start px-4 bg-brand shrink-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
                 <Link
                     href={PORTAL_ROUTES.dashboard}
                     className="flex items-center gap-3 group/logo relative w-full h-full justify-center px-4"
@@ -265,7 +262,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </Link>
             </SidebarHeader>
 
-            <SidebarContent className="scrollbar-hide bg-[#002d6b] py-2 overflow-x-hidden">
+            <SidebarContent className="scrollbar-hide bg-brand py-2 overflow-x-hidden">
                 <SidebarGroup className="p-0">
                     <DndContext
                         sensors={sensors}
@@ -294,9 +291,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarGroup>
             </SidebarContent>
 
-            <SidebarFooter className="p-0 bg-[#002d6b] gap-0 border-t border-white/5 shrink-0 flex flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:py-2">
+            <SidebarFooter className="p-0 bg-brand gap-0 border-t border-white/5 shrink-0 flex flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:py-2">
                 {!isMounted || !user ? (
-                    <div className="w-full h-14 flex items-center gap-3 px-4 bg-[#001d4a] text-white group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+                    <div className="w-full h-14 flex items-center gap-3 px-4 bg-black/20 text-white group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
                         <div className="flex h-8 w-8 items-center justify-center rounded-none bg-white/20 animate-pulse shrink-0" />
                         <div className="flex flex-col items-start leading-none group-data-[collapsible=icon]:hidden overflow-hidden ms-1 gap-1.5">
                             <div className="h-2.5 w-20 bg-white/20 rounded animate-pulse" />
@@ -308,9 +305,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <DropdownMenuTrigger asChild>
                             <SidebarMenuButton
                                 size="lg"
-                                className="w-full h-14 items-center gap-3 px-4   bg-[#001d4a] hover:bg-[#001d4a] text-white rounded-none group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center cursor-pointer"
+                                className="w-full h-14 items-center gap-3 px-4 bg-black/20 hover:bg-black/30 text-white rounded-none group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center cursor-pointer"
                             >
-                                <div className="flex h-8 w-8  items-center justify-center rounded-none  bg-[#fbbf24] text-[10px] font-black text-[#002d6b] shrink-0 overflow-hidden">
+                                <div className="flex h-8 w-8  items-center justify-center rounded-none  bg-[#fbbf24] text-[10px] font-black text-brand shrink-0 overflow-hidden">
                                     {user.avatarUrl ? (
                                         <Image
                                             src={user.avatarUrl}
@@ -340,9 +337,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             side="top"
                             align="center"
                             sideOffset={4}
-                            className="w-60 p-0 rounded-none border border-white/10 bg-[#011c42] text-white shadow-2xl"
+                            className="w-60 p-0 rounded-none border border-white/10 bg-brand-secondary text-white shadow-2xl"
                         >
-                            <DropdownMenuLabel className="px-5 py-3 bg-[#001d4a]/80 ">
+                            <DropdownMenuLabel className="px-5 py-3 bg-black/40 ">
                                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
                                     Tài khoản
                                 </p>

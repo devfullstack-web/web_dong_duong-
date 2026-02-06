@@ -1,18 +1,9 @@
-/**
- * Security Middleware Utilities
- * Helper functions for authentication, authorization, and input validation
- */
-
 import { NextRequest } from 'next/server';
 import { decrypt } from '@/services/auth';
 import { ZodSchema, ZodError } from 'zod';
 import { apiError } from '@/utils/api-response';
 import { RBAC_ROLES } from '@/constants/rbac';
-// SUPER_ADMIN_ROLE removed, using is_super flag instead
 
-/**
- * User session interface
- */
 export interface UserSession {
     user: {
         id: string;
@@ -24,10 +15,6 @@ export interface UserSession {
     };
 }
 
-/**
- * Verify authentication from request
- * Checks session cookie and returns user data
- */
 export async function verifyAuth(request: NextRequest): Promise<UserSession | null> {
     const session = request.cookies.get('session')?.value;
 
@@ -43,10 +30,6 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
     }
 }
 
-/**
- * Require authentication
- * Returns 401 if not authenticated
- */
 export async function requireAuth(request: NextRequest): Promise<UserSession | Response> {
     const session = await verifyAuth(request);
 
@@ -58,23 +41,15 @@ export async function requireAuth(request: NextRequest): Promise<UserSession | R
 }
 
 export function hasRole(user: UserSession['user'], allowedRoles: string[]): boolean {
-    // Only check RBAC roles array, not legacy role field
     return user.roles?.some((r) => allowedRoles.includes(r)) || false;
 }
 
-/**
- * Check if user has specific permission
- */
 export function hasPermission(user: UserSession['user'], permission: string): boolean {
-    // Check is_super flag instead of hardcoded role name
     if (user.is_super) return true;
 
     return user.permissions?.includes(permission) || false;
 }
 
-/**
- * Require specific permission
- */
 export async function requirePermission(
     request: NextRequest,
     permission: string,
@@ -92,10 +67,6 @@ export async function requirePermission(
     return sessionOrError;
 }
 
-/**
- * Require specific role(s)
- * Returns 403 if user doesn't have required role
- */
 export async function requireRole(
     request: NextRequest,
     allowedRoles: string[],
@@ -113,10 +84,6 @@ export async function requireRole(
     return sessionOrError;
 }
 
-/**
- * Validate request body against Zod schema
- * Returns validated data or error response
- */
 export async function validateBody<T>(
     request: Request,
     schema: ZodSchema<T>,
@@ -133,9 +100,6 @@ export async function validateBody<T>(
     }
 }
 
-/**
- * Validate query parameters against Zod schema
- */
 export function validateQuery<T>(
     searchParams: URLSearchParams,
     schema: ZodSchema<T>,
@@ -152,14 +116,9 @@ export function validateQuery<T>(
     }
 }
 
-/**
- * Sanitize HTML input to prevent XSS
- * Basic implementation - consider using a library like DOMPurify for production
- */
 export function sanitizeHtml(html: string): string {
     if (!html) return '';
 
-    // Basic sanitization - remove script tags and event handlers
     return html
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
         .replace(/on\w+="[^"]*"/gi, '')
@@ -168,28 +127,18 @@ export function sanitizeHtml(html: string): string {
 }
 
 export function isAdmin(user: UserSession['user']): boolean {
-    // Check is_super flag OR ADMIN role code
     return user.is_super || user.roles?.includes(RBAC_ROLES.ADMIN) || false;
 }
 
-/**
- * Check if user is a TRUE SuperAdmin (is_super flag)
- */
 export function isSuperAdmin(user: UserSession['user']): boolean {
     return user.is_super || false;
 }
 
-/**
- * Check if user can edit (admin or editor)
- */
 export function canEdit(user: UserSession['user']): boolean {
     if (isAdmin(user)) return true;
     return user.roles?.some((r) => r.toLowerCase() === 'editor') || false;
 }
 
-/**
- * Get user from request or return error
- */
 export async function getUserOrError(
     request: NextRequest,
 ): Promise<{ user: UserSession['user'] } | Response> {
@@ -202,9 +151,6 @@ export async function getUserOrError(
     return { user: session.user };
 }
 
-/**
- * Wrapper for API route handlers with auth and validation
- */
 export function withAuth(
     handler: (request: NextRequest, session: UserSession, context?: any) => Promise<Response>,
     options?: {
@@ -241,9 +187,6 @@ export function withAuth(
     };
 }
 
-/**
- * Wrapper for API route handlers with validation
- */
 export function withValidation<T>(
     handler: (request: NextRequest, data: T, context?: unknown) => Promise<Response>,
     schema: ZodSchema<T>,
@@ -258,12 +201,6 @@ export function withValidation<T>(
         return handler(request, dataOrError, context);
     };
 }
-/**
- * Wrapper for API route handlers that allow public access but enforce RBAC for authenticated users.
- * - Guests (no session): Allowed to access (handler must handle guest logic, usually limited to published items).
- * - Portal Requests: Strictly require permissions (403 if missing).
- * - Site Requests: Allowed for public-safe data even if logged in but unprivileged.
- */
 export function withHybridAuth(
     handler: (
         request: NextRequest,
@@ -281,11 +218,9 @@ export function withHybridAuth(
         const requestedStatus = searchParams.get('status');
         const includeDeleted = searchParams.get('includeDeleted') === 'true';
 
-        // Detect if request is from the admin portal
         const referer = request.headers.get('referer') || '';
         const isPortalRequest = referer.includes('/portal');
 
-        // If authenticated, check permissions
         if (session) {
             if (options?.requiredPermissions && options.requiredPermissions.length > 0) {
                 const hasAll = options.requiredPermissions.every((p) =>
@@ -293,7 +228,6 @@ export function withHybridAuth(
                 );
 
                 if (!hasAll && !isAdmin(session.user)) {
-                    // In PORTAL: Strictly block if no permission
                     if (isPortalRequest) {
                         return apiError(
                             `Forbidden - Required permissions: ${options.requiredPermissions.join(', ')}`,
@@ -301,8 +235,6 @@ export function withHybridAuth(
                         );
                     }
 
-                    // In SITE: Allow if it's "Public-Safe"
-                    // Safe if: explicit public status OR (no status AND no sensitive flags)
                     const isPublicSafe =
                         (requestedStatus && options.publicStatuses?.includes(requestedStatus)) ||
                         (!requestedStatus && !includeDeleted);
@@ -314,7 +246,6 @@ export function withHybridAuth(
             }
         }
 
-        // Guest or Authorized user (or unprivileged site visitor), proceed to handler
         return handler(request, session, context);
     };
 }

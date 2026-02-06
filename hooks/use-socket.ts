@@ -16,12 +16,10 @@ export function useSocket(options: UseSocketOptions = {}) {
     const [isConnected, setIsConnected] = useState(false);
     const socketRef = useRef<Socket | null>(null);
 
-    // Use a stable reference for options to avoid unnecessary reconnections
     const queryStr = JSON.stringify(options.query || {});
     const transportsStr = JSON.stringify(options.transports || ['websocket', 'polling']);
 
     useEffect(() => {
-        // Initialize socket
         const socket = io({
             query: options.query,
             transports: options.transports || ['websocket', 'polling'],
