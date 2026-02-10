@@ -5,7 +5,7 @@ set -e
 
 echo "Waiting for database to be ready..."
 # Use nc (netcat) to wait for the db port to be open
-until nc -z db 5432; do
+until nc -z ${POSTGRES_HOST} ${POSTGRES_PORT}; do
   echo "Database is unavailable - sleeping"
   sleep 2
 done
