@@ -98,6 +98,7 @@ export default function Solutions() {
                                 src={item.image}
                                 alt={item.brand}
                                 fill
+                                unoptimized
                                 className="object-cover"
                             />
                         </div>
@@ -123,6 +124,7 @@ export default function Solutions() {
                                                 src="https://saigonvalve.vn/uploads/files/2024/08/05/NH-_PH-N_PH-I_-C_QUY-N__25_-removebg-preview.png"
                                                 alt="Sài Gòn Valve Logo"
                                                 fill
+                                                unoptimized
                                                 className="object-contain p-2 sm:p-3"
                                             />
                                         </div>

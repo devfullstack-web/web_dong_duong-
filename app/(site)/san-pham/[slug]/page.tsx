@@ -217,6 +217,7 @@ export default function ProductDetailPage() {
                                     }
                                     alt={product.name}
                                     fill
+                                    unoptimized
                                     className="object-contain p-20 transition-transform duration-1000 group-hover:scale-110"
                                 />
                                 <div className="absolute top-8 left-8">
@@ -260,6 +261,7 @@ export default function ProductDetailPage() {
                                                             src={img}
                                                             alt={`Thumbnail ${i}`}
                                                             fill
+                                                            unoptimized
                                                             className="object-contain p-2 group-hover/thumb:scale-110 transition-transform"
                                                         />
                                                     </div>
@@ -276,6 +278,7 @@ export default function ProductDetailPage() {
                                                         alt="Thumb"
                                                         width={100}
                                                         height={100}
+                                                        unoptimized
                                                         className="object-contain"
                                                     />
                                                 </div>

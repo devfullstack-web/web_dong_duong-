@@ -210,6 +210,7 @@ export default function SolutionDetailPage() {
                                 src={data.image1}
                                 alt={data.title}
                                 fill
+                                unoptimized
                                 className="object-cover"
                                 priority
                             />
@@ -253,6 +254,7 @@ export default function SolutionDetailPage() {
                             src={data.image2}
                             alt="Deployment Visual"
                             fill
+                            unoptimized
                             className="object-cover"
                         />
                     </div>

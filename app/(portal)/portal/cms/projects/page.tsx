@@ -303,6 +303,7 @@ export default function ProjectsManagementPage() {
                                                             src={project.image_url}
                                                             alt={project.name}
                                                             fill
+                                                            unoptimized
                                                             className="object-cover"
                                                         />
                                                     ) : (

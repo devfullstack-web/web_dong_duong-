@@ -203,6 +203,7 @@ export default function ProjectDetailPage() {
                                             src={project.image_url}
                                             alt={project.name}
                                             fill
+                                            unoptimized
                                             className="object-cover"
                                             priority
                                         />
@@ -374,6 +375,7 @@ export default function ProjectDetailPage() {
                                                 src={proj.image_url}
                                                 alt={proj.name}
                                                 fill
+                                                unoptimized
                                                 className="object-cover group-hover:scale-110 transition-transform duration-700"
                                             />
                                         ) : (

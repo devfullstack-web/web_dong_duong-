@@ -325,6 +325,7 @@ export default function NewsDetailPage() {
                                             src={news.image_url}
                                             alt={news.title}
                                             fill
+                                            unoptimized
                                             className="object-cover group-hover:scale-110 transition-transform duration-700"
                                         />
                                     ) : (

@@ -360,6 +360,7 @@ export default function EditNewsPage() {
                                                     src={formData.image_url}
                                                     alt="Featured"
                                                     fill
+                                                    unoptimized
                                                     className="object-cover"
                                                 />
                                             </div>

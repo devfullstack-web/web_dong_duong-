@@ -296,6 +296,7 @@ export default function ProductsManagementPage() {
                                                             src={product.image_url}
                                                             alt={product.name}
                                                             fill
+                                                            unoptimized
                                                             className="object-cover"
                                                         />
                                                     ) : (

@@ -35,6 +35,7 @@ export default function AboutPage() {
                     src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                     alt="Introduce Background"
                     fill
+                    unoptimized
                     className="object-cover opacity-40 brightness-110"
                     priority
                 />
@@ -136,6 +137,7 @@ export default function AboutPage() {
                                     src="https://saigonvalve.vn/uploads/files/2024/09/13/Standee-h-i-ngh-2407-40-x-140-cm-.png"
                                     alt="Sài Gòn Valve Profile"
                                     fill
+                                    unoptimized
                                     className="object-cover transition-transform duration-1000 group-hover:scale-110"
                                 />
                             </div>
@@ -438,6 +440,7 @@ export default function AboutPage() {
                                             src={partner.logo}
                                             alt={partner.name}
                                             fill
+                                            unoptimized
                                             quality={100}
                                             sizes="(max-width: 768px) 50vw, 25vw"
                                             className="object-contain"

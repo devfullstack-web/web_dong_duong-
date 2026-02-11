@@ -31,6 +31,7 @@ export default function Footer() {
                                 src="/images/logo/logo.png"
                                 alt="Sài Gòn Valve Logo"
                                 fill
+                                unoptimized
                                 className="object-contain brightness-0 invert group-hover:scale-105 transition-transform"
                                 priority
                             />

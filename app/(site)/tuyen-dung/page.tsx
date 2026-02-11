@@ -98,6 +98,7 @@ export default function RecruitmentPage() {
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="Recruitment Background"
                         fill
+                        unoptimized
                         className="object-cover brightness-110"
                         priority
                     />

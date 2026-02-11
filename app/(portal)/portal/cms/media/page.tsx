@@ -292,6 +292,7 @@ export default function MediaManagementPage() {
                                     src={previewUrl}
                                     alt="Preview"
                                     fill
+                                    unoptimized
                                     className="object-contain"
                                 />
                                 <button

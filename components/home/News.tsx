@@ -87,6 +87,7 @@ export default function News() {
                                         src={item.image_url}
                                         alt={item.title}
                                         fill
+                                        unoptimized
                                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
                                 ) : (

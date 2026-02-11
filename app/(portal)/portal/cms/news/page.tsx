@@ -294,6 +294,7 @@ export default function NewsManagementPage() {
                                                             src={news.image_url}
                                                             alt={news.title}
                                                             fill
+                                                            unoptimized
                                                             className="object-cover"
                                                         />
                                                     ) : (

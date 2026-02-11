@@ -48,6 +48,7 @@ export default function Partners() {
                                         src={partner.logo}
                                         alt={partner.name}
                                         fill
+                                        unoptimized
                                         quality={100}
                                         className="object-contain p-2 hover:cursor-pointer"
                                         sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"

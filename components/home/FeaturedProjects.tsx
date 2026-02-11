@@ -89,6 +89,7 @@ export default function FeaturedProjects() {
                                 }
                                 alt={project.name}
                                 fill
+                                unoptimized
                                 className="object-cover transition-transform duration-1000 group-hover:scale-110"
                             />
                             <div className="absolute inset-0 bg-linear-to-t from-slate-900/95 via-slate-900/10 to-transparent"></div>

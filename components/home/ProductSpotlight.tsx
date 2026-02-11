@@ -89,6 +89,7 @@ export default function ProductSpotlight() {
                                             }
                                             alt={product.name}
                                             fill
+                                            unoptimized
                                             className="object-contain"
                                         />
                                     </div>

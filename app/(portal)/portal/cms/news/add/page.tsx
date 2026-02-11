@@ -297,6 +297,7 @@ export default function AddNewsPage() {
                                                     src={formData.image_url}
                                                     alt="Featured"
                                                     fill
+                                                    unoptimized
                                                     className="object-cover"
                                                 />
                                             </div>

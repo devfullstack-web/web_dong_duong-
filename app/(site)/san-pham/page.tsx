@@ -127,6 +127,7 @@ export default function ProductArchive() {
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="Projects Background"
                         fill
+                        unoptimized
                         className="object-cover brightness-110"
                         priority
                     />
@@ -268,6 +269,7 @@ export default function ProductArchive() {
                                                     }
                                                     alt={product.name}
                                                     fill
+                                                    unoptimized
                                                     className="object-contain p-4 group-hover:scale-110 transition-transform duration-1000"
                                                 />
                                             </div>
@@ -319,6 +321,7 @@ export default function ProductArchive() {
                                                         }
                                                         alt={product.name}
                                                         fill
+                                                        unoptimized
                                                         className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
                                                     />
                                                 </div>

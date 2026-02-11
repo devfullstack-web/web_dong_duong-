@@ -83,6 +83,7 @@ export default function ProjectsPage() {
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="Projects Background"
                         fill
+                        unoptimized
                         className="object-cover brightness-110"
                         priority
                     />
@@ -128,6 +129,7 @@ export default function ProjectsPage() {
                                         }
                                         alt={project.name}
                                         fill
+                                        unoptimized
                                         className="object-cover transition-transform duration-1000 group-hover:scale-110"
                                     />
                                     <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>

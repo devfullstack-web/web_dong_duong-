@@ -103,6 +103,7 @@ export default function ContactPage() {
                         src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&q=80&w=2000"
                         alt="Contact Background"
                         fill
+                        unoptimized
                         className="object-cover brightness-110"
                         priority
                     />

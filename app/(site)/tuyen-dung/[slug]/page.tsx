@@ -122,6 +122,7 @@ export default function JobDetailPage() {
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
                         alt="News Background"
                         fill
+                        unoptimized
                         className="object-cover"
                         priority
                     />

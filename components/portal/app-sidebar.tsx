@@ -243,6 +243,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 alt="Logo"
                                 width={22}
                                 height={22}
+                                unoptimized
                                 className="object-contain"
                             />
                         </div>
@@ -256,6 +257,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             alt="Logo"
                             width={20}
                             height={20}
+                            unoptimized
                             className="object-contain"
                         />
                     </div>
@@ -314,6 +316,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                             alt={user.fullName || user.username}
                                             width={32}
                                             height={32}
+                                            unoptimized
                                             className="object-cover w-full h-full"
                                         />
                                     ) : (
