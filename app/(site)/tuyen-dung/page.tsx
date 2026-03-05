@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
@@ -18,6 +18,7 @@ import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { useQuery } from '@tanstack/react-query';
 
 interface JobPosting {
     id: string;
@@ -42,40 +43,36 @@ const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
 };
 
 export default function RecruitmentPage() {
-    const [jobs, setJobs] = useState<JobPosting[]>([]);
-    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [total, setTotal] = useState(0);
     const jobsListRef = useRef<HTMLDivElement>(null);
 
-    const fetchJobs = async (page: number = 1) => {
-        setLoading(true);
-        try {
+    // Fetch jobs using react-query
+    const { data: jobsData, isLoading } = useQuery<{
+        data: JobPosting[];
+        meta: { total: number; totalPages: number };
+    }>({
+        queryKey: ['jobs', { page: currentPage }],
+        queryFn: async () => {
             const response = await $api.get(API_ROUTES.JOBS, {
                 params: {
                     status: 'open',
-                    page,
+                    page: currentPage,
                     limit: 10,
                 },
             });
             if (response.data.success) {
-                setJobs(response.data.data || []);
-                if (response.data.meta) {
-                    setTotalPages(response.data.meta.totalPages || 1);
-                    setTotal(response.data.meta.total || 0);
-                }
+                return {
+                    data: response.data.data || [],
+                    meta: response.data.meta || { total: 0, totalPages: 1 },
+                };
             }
-        } catch (error) {
-            console.error('Error fetching jobs:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+            throw new Error('Failed to fetch jobs');
+        },
+    });
 
-    useEffect(() => {
-        fetchJobs(currentPage);
-    }, [currentPage]);
+    const jobs = jobsData?.data || [];
+    const totalPages = jobsData?.meta?.totalPages || 1;
+    const total = jobsData?.meta?.total || 0;
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -84,7 +81,7 @@ export default function RecruitmentPage() {
         }
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
@@ -95,7 +92,7 @@ export default function RecruitmentPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="relative pt-40 pb-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+            <section className="relative pt-40 pb-20 bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
                 <div className="absolute inset-0 z-0 opacity-30">
                     <Image
                         src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
@@ -104,7 +101,7 @@ export default function RecruitmentPage() {
                         className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
+                    <div className="absolute inset-0 bg-linear-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">

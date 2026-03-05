@@ -13,7 +13,7 @@ import {
     Activity,
     Users,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import {
     DropdownMenu,
@@ -36,42 +36,51 @@ import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
 import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LayoutList, PieChart as PieChartIcon } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function UsersManagementPage() {
-    const [users, setUsers] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [stats, setStats] = useState<any>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<User | null>(null);
     const { user: currentUser, hasPermission } = useAuth();
+    const queryClient = useQueryClient();
 
-    const fetchUsers = async () => {
-        setIsLoading(true);
-        try {
+    // Fetch users using react-query
+    const { data: usersData, isLoading } = useQuery<User[]>({
+        queryKey: ['admin-users'],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.USERS);
-            setUsers(res.data.data || []);
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh sách tài khoản');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            return res.data.data || [];
+        },
+    });
 
-    const fetchStats = async () => {
-        try {
+    // Fetch stats using react-query
+    const { data: stats } = useQuery<any>({
+        queryKey: ['admin-stats'],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.STATS);
-            setStats(res.data.data);
-        } catch (error) {
-            console.error('Failed to fetch user stats', error);
-        }
-    };
+            return res.data.data;
+        },
+    });
 
-    useEffect(() => {
-        fetchUsers();
-        fetchStats();
-    }, []);
+    const users = usersData || [];
+
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.USERS}/${id}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa tài khoản thành công');
+            queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Lỗi khi xóa tài khoản');
+        },
+    });
 
     const handleDeleteClick = (user: User) => {
         setItemToDelete(user);
@@ -80,18 +89,7 @@ export default function UsersManagementPage() {
 
     const handleDeleteConfirm = async () => {
         if (!itemToDelete) return;
-        try {
-            await $api.delete(`${API_ROUTES.USERS}/${itemToDelete.id}`);
-            toast.success('Đã xóa tài khoản thành công');
-            setUsers(users.filter((u) => u.id !== itemToDelete.id));
-            fetchStats();
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi xóa tài khoản');
-        } finally {
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.id);
     };
 
     const filteredUsers = users.filter(
@@ -129,10 +127,10 @@ export default function UsersManagementPage() {
         })) || [];
 
     return (
-        <div className="flex-1 space-y-10 py-8 pt-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex-1 space-y-6 md:space-y-10 py-4 md:py-8 pt-4 md:pt-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                 <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest text-[#fbbf24]">
                             Sài Gòn Valve CMS
                         </span>
@@ -141,7 +139,7 @@ export default function UsersManagementPage() {
                             Security Pulse
                         </span>
                     </div>
-                    <h2 className="text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-8 border-[#002d6b] pl-6 leading-none">
+                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 md:border-l-8 border-[#002d6b] pl-4 md:pl-6 leading-none">
                         Quản lý Tài khoản
                     </h2>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
@@ -152,27 +150,29 @@ export default function UsersManagementPage() {
                 </div>
                 {hasPermission(PERMISSIONS.USERS_CREATE) && (
                     <Link href={PORTAL_ROUTES.users.add}>
-                        <Button className="h-10 hover:cursor-pointer px-10  bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center gap-3">
+                        <Button className="h-10 hover:cursor-pointer px-6 md:px-10 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3">
                             <Plus size={18} /> Tạo tài khoản mới
                         </Button>
                     </Link>
                 )}
             </div>
 
-            <Tabs defaultValue="list" className="space-y-8">
-                <div className="flex items-center justify-between">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
+            <Tabs defaultValue="list" className="space-y-4 md:space-y-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <LayoutList size={14} /> Danh sách tài khoản
+                            <LayoutList size={14} />{' '}
+                            <span className="hidden sm:inline">Danh sách</span> tài khoản
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <PieChartIcon size={14} /> Biểu đồ phân tích
+                            <PieChartIcon size={14} />{' '}
+                            <span className="hidden sm:inline">Biểu đồ</span> phân tích
                         </TabsTrigger>
                     </TabsList>
 
@@ -184,8 +184,8 @@ export default function UsersManagementPage() {
                     </div>
                 </div>
 
-                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
-                    <div className="p-8 bg-slate-50 border border-slate-100">
+                <TabsContent value="list" className="space-y-4 md:space-y-6 mt-0 border-none p-0">
+                    <div className="p-4 md:p-8 bg-slate-50 border border-slate-100">
                         <div className="relative max-w-md group">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-[#002d6b] transition-colors" />
                             <input
@@ -207,22 +207,22 @@ export default function UsersManagementPage() {
                             </div>
                         ) : filteredUsers.length > 0 ? (
                             <div className="overflow-x-auto">
-                                <table className="w-full">
+                                <table className="w-full min-w-[600px]">
                                     <thead>
                                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                                            <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Người dùng
                                             </th>
-                                            <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
                                                 Thông tin chi tiết
                                             </th>
-                                            <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
                                                 Phân quyền
                                             </th>
-                                            <th className="px-8 py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
                                                 Ngày gia nhập
                                             </th>
-                                            <th className="px-8 py-6 text-right text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="px-4 md:px-8 py-4 md:py-6 text-right text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Thao tác
                                             </th>
                                         </tr>
@@ -233,9 +233,9 @@ export default function UsersManagementPage() {
                                                 key={user.id}
                                                 className="hover:bg-slate-50/30 transition-colors group"
                                             >
-                                                <td className="px-8 py-6">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="size-10 bg-slate-100 flex items-center justify-center border border-slate-200">
+                                                <td className="px-4 md:px-8 py-4 md:py-6">
+                                                    <div className="flex items-center gap-3 md:gap-4">
+                                                        <div className="size-8 md:size-10 bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
                                                             <UserIcon
                                                                 size={18}
                                                                 className="text-slate-400"
@@ -252,12 +252,12 @@ export default function UsersManagementPage() {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-8 py-6">
+                                                <td className="px-4 md:px-8 py-4 md:py-6 hidden lg:table-cell">
                                                     <span className="text-[11px] font-bold text-slate-600 uppercase italic">
                                                         {user.full_name || user.fullName || '---'}
                                                     </span>
                                                 </td>
-                                                <td className="px-8 py-6">
+                                                <td className="px-4 md:px-8 py-4 md:py-6 hidden md:table-cell">
                                                     <div className="flex flex-wrap gap-2">
                                                         {user.roles && user.roles.length > 0 ? (
                                                             user.roles.map((r: any) => (
@@ -279,7 +279,7 @@ export default function UsersManagementPage() {
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="px-8 py-6">
+                                                <td className="px-4 md:px-8 py-4 md:py-6 hidden sm:table-cell">
                                                     <span className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-2">
                                                         <Activity
                                                             size={12}
@@ -301,7 +301,7 @@ export default function UsersManagementPage() {
                                                     </span>
                                                 </td>
 
-                                                <td className="px-8 py-6 text-right">
+                                                <td className="px-4 md:px-8 py-4 md:py-6 text-right">
                                                     <div className="flex items-center justify-end gap-2">
                                                         {hasPermission(
                                                             PERMISSIONS.USERS_UPDATE,

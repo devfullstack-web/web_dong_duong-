@@ -16,6 +16,8 @@ import {
     Eye,
     LayoutList,
     PieChart as PieChartIcon,
+    FileSpreadsheet,
+    X,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import {
@@ -49,30 +51,45 @@ import { TablePagination } from '@/components/portal/table-pagination';
 import { API_ROUTES } from '@/constants/routes';
 import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
 import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Contact {
     id: string;
-    full_name: string;
+    name: string;
     email: string;
-    phone: string;
-    subject: string;
+    phone: string | null;
+    address: string | null;
+    subject: string | null;
     message: string;
-    status: 'pending' | 'processed' | 'spam';
+    status: 'new' | 'read' | 'replied' | 'archived' | 'spam';
     created_at: string;
+    updated_at: string;
 }
 
 const STATUS_CONFIG = {
-    pending: {
-        label: 'Cần xử lý',
+    new: {
+        label: 'Mới',
+        color: 'bg-blue-500/10 text-blue-600',
+        icon: MessageSquare,
+        chartColor: '#3b82f6',
+    },
+    read: {
+        label: 'Đã đọc',
         color: 'bg-amber-500/10 text-amber-600',
         icon: Clock,
         chartColor: '#f59e0b',
     },
-    processed: {
-        label: 'Đã xử lý',
+    replied: {
+        label: 'Đã trả lời',
         color: 'bg-emerald-500/10 text-emerald-600',
         icon: CheckCircle2,
         chartColor: '#10b981',
+    },
+    archived: {
+        label: 'Đã lưu trữ',
+        color: 'bg-slate-500/10 text-slate-500',
+        icon: Building,
+        chartColor: '#64748b',
     },
     spam: {
         label: 'Spam',
@@ -83,16 +100,13 @@ const STATUS_CONFIG = {
 };
 
 export default function ContactsManagementPage() {
-    const [contacts, setContacts] = useState<Contact[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [stats, setStats] = useState<any>(null);
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
 
     // Date Filter state
     const [dateRange, setDateRange] = useState<DateRange | undefined>();
@@ -104,76 +118,116 @@ export default function ContactsManagementPage() {
     // Delete Dialog state
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Contact | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
 
     // Reset to page 1 when search changes
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    const fetchContacts = async (page: number, limit: number, search: string, dr?: DateRange) => {
-        setIsLoading(true);
-        try {
+    // Fetch contacts using react-query
+    const { data: contactsData, isLoading } = useQuery<{
+        data: Contact[];
+        meta: { total: number };
+    }>({
+        queryKey: [
+            'admin-contacts',
+            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange },
+        ],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.CONTACTS, {
                 params: {
-                    page,
-                    limit,
-                    search: search || undefined,
-                    startDate: dr?.from?.toISOString(),
-                    endDate: dr?.to?.toISOString(),
+                    page: currentPage,
+                    limit: pageSize,
+                    search: debouncedSearch || undefined,
+                    startDate: dateRange?.from?.toISOString(),
+                    endDate: dateRange?.to?.toISOString(),
                 },
             });
-            setContacts(res.data.data || []);
-            if (res.data.meta) {
-                setTotalItems(res.data.meta.total || 0);
+            if (res.data.success !== false) {
+                return {
+                    data: res.data.data || [],
+                    meta: res.data.meta || { total: 0 },
+                };
             }
-        } catch (error) {
-            console.error('Error fetching contacts:', error);
-            toast.error('Không thể tải danh sách liên hệ');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            throw new Error('Failed to fetch contacts');
+        },
+    });
 
-    const fetchStats = async () => {
-        try {
+    // Fetch stats using react-query
+    const { data: stats } = useQuery<any>({
+        queryKey: ['admin-stats'],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.STATS);
-            setStats(res.data.data);
-        } catch (error) {
-            console.error('Failed to fetch contact stats', error);
-        }
-    };
+            return res.data.data;
+        },
+    });
 
-    useEffect(() => {
-        fetchContacts(currentPage, pageSize, debouncedSearch, dateRange);
-        fetchStats();
-    }, [currentPage, pageSize, debouncedSearch, dateRange]);
+    const contacts = contactsData?.data || [];
+    const totalItems = contactsData?.meta?.total || 0;
 
-    const handleUpdateStatus = async (id: string, status: string) => {
-        try {
+    // Update status mutation
+    const updateStatusMutation = useMutation({
+        mutationFn: async ({ id, status }: { id: string; status: string }) => {
             await $api.patch(`${API_ROUTES.CONTACTS}/${id}`, { status });
+        },
+        onSuccess: () => {
             toast.success('Đã cập nhật trạng thái');
-            fetchContacts(currentPage, pageSize, debouncedSearch, dateRange);
-            fetchStats();
-        } catch {
+            queryClient.invalidateQueries({ queryKey: ['admin-contacts'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+        },
+        onError: () => {
             toast.error('Cập nhật thất bại');
-        }
-    };
+        },
+    });
 
-    const handleDelete = async () => {
-        if (!itemToDelete) return;
-        setIsDeleting(true);
-        try {
-            await $api.delete(`${API_ROUTES.CONTACTS}/${itemToDelete.id}`);
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.CONTACTS}/${id}`);
+        },
+        onSuccess: () => {
             toast.success('Đã xóa liên hệ');
-            fetchContacts(currentPage, pageSize, debouncedSearch, dateRange);
-            fetchStats();
+            queryClient.invalidateQueries({ queryKey: ['admin-contacts'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
-        } catch {
+        },
+        onError: () => {
             toast.error('Xóa liên hệ thất bại');
-        } finally {
-            setIsDeleting(false);
+        },
+    });
+
+    const handleUpdateStatus = (id: string, status: string) => {
+        updateStatusMutation.mutate({ id, status });
+    };
+
+    const handleDelete = () => {
+        if (!itemToDelete) return;
+        deleteMutation.mutate(itemToDelete.id);
+    };
+
+    const handleExportExcel = async () => {
+        try {
+            const res = await $api.get(`${API_ROUTES.CONTACTS}/export`, {
+                params: {
+                    search: debouncedSearch || undefined,
+                    startDate: dateRange?.from?.toISOString(),
+                    endDate: dateRange?.to?.toISOString(),
+                },
+                responseType: 'blob',
+            });
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `lien-he_${format(new Date(), 'dd-MM-yyyy')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+            toast.success('Đã xuất file Excel thành công');
+        } catch (error) {
+            console.error('Export failed:', error);
+            toast.error('Không thể xuất file Excel');
         }
     };
 
@@ -207,10 +261,10 @@ export default function ContactsManagementPage() {
         })) || [];
 
     return (
-        <div className="flex-1 space-y-10 py-8 pt-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex-1 space-y-6 md:space-y-10 py-4 md:py-8 pt-4 md:pt-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                 <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest">
                             Sài Gòn Valve CMS
                         </span>
@@ -219,7 +273,7 @@ export default function ContactsManagementPage() {
                             Channel Monitoring
                         </span>
                     </div>
-                    <h2 className="text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-8 border-[#002d6b] pl-6 leading-none">
+                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 md:border-l-8 border-[#002d6b] pl-4 md:pl-6 leading-none">
                         Quản lý Liên hệ
                     </h2>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
@@ -230,20 +284,22 @@ export default function ContactsManagementPage() {
                 </div>
             </div>
 
-            <Tabs defaultValue="list" className="space-y-8">
-                <div className="flex items-center justify-between">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
+            <Tabs defaultValue="list" className="space-y-4 md:space-y-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <LayoutList size={14} /> Danh sách liên hệ
+                            <LayoutList size={14} />{' '}
+                            <span className="hidden sm:inline">Danh sách</span> liên hệ
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <PieChartIcon size={14} /> Biểu đồ phân tích
+                            <PieChartIcon size={14} />{' '}
+                            <span className="hidden sm:inline">Biểu đồ</span> phân tích
                         </TabsTrigger>
                     </TabsList>
 
@@ -254,63 +310,75 @@ export default function ContactsManagementPage() {
                     </div>
                 </div>
 
-                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
-                    <div className="flex flex-col md:flex-row gap-4 p-6 bg-slate-50 border border-slate-100">
+                <TabsContent value="list" className="space-y-4 md:space-y-6 mt-0 border-none p-0">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 md:p-4 bg-slate-50 border border-slate-100">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <input
-                                placeholder="TÌM THEO TÊN, EMAIL, SỐ ĐIỆN THOẠI, CHỦ ĐỀ..."
-                                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
+                                placeholder="TÌM THEO TÊN, EMAIL, SĐT, CHỦ ĐỀ..."
+                                className="w-full h-10 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
 
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className={cn(
-                                        'h-12 justify-start text-left font-black uppercase tracking-widest text-[10px] rounded-none border-slate-100 bg-white min-w-60',
-                                        !dateRange && 'text-slate-400',
-                                    )}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {dateRange?.from ? (
-                                        dateRange.to ? (
-                                            <>
-                                                {format(dateRange.from, 'dd/MM/yyyy')} -{' '}
-                                                {format(dateRange.to, 'dd/MM/yyyy')}
-                                            </>
+                        <div className="flex items-center gap-2">
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className={cn(
+                                            'h-10 justify-start text-left font-black uppercase tracking-widest text-[10px] rounded-none border-slate-100 bg-white w-[200px] shrink-0',
+                                            !dateRange && 'text-slate-400',
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                                        {dateRange?.from ? (
+                                            dateRange.to ? (
+                                                <>
+                                                    {format(dateRange.from, 'dd/MM/yy')} -{' '}
+                                                    {format(dateRange.to, 'dd/MM/yy')}
+                                                </>
+                                            ) : (
+                                                format(dateRange.from, 'dd/MM/yy')
+                                            )
                                         ) : (
-                                            format(dateRange.from, 'dd/MM/yyyy')
-                                        )
-                                    ) : (
-                                        'Lọc theo khoảng ngày'
-                                    )}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="end">
-                                <Calendar
-                                    initialFocus
-                                    mode="range"
-                                    defaultMonth={dateRange?.from}
-                                    selected={dateRange}
-                                    onSelect={setDateRange}
-                                    numberOfMonths={2}
-                                />
-                            </PopoverContent>
-                        </Popover>
+                                            'Lọc theo ngày'
+                                        )}
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="end">
+                                    <Calendar
+                                        initialFocus
+                                        mode="range"
+                                        defaultMonth={dateRange?.from}
+                                        selected={dateRange}
+                                        onSelect={setDateRange}
+                                        numberOfMonths={2}
+                                    />
+                                </PopoverContent>
+                            </Popover>
 
-                        {dateRange && (
+                            {dateRange && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setDateRange(undefined)}
+                                    className="h-10 w-10 shrink-0 rounded-none text-rose-500 hover:bg-rose-50"
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            )}
+
                             <Button
-                                variant="ghost"
-                                onClick={() => setDateRange(undefined)}
-                                className="h-12 px-4 rounded-none text-rose-500 hover:bg-rose-50 font-black text-[10px] uppercase tracking-widest"
+                                variant="outline"
+                                onClick={handleExportExcel}
+                                className="h-10 px-4 rounded-none  bg-green-600 hover:bg-green-600 hover:text-white hover:opacity-80 text-[10px] font-black uppercase tracking-widest text-white   shrink-0 gap-2 hover:cursor-pointer"
                             >
-                                Xóa lọc
+                                <FileSpreadsheet className="h-4 w-4" />
+                                <span className="hidden sm:inline">Xuất Excel</span>
                             </Button>
-                        )}
+                        </div>
                     </div>
 
                     <div className="bg-white border border-slate-100 shadow-sm overflow-hidden">
@@ -330,25 +398,25 @@ export default function ContactsManagementPage() {
                             </div>
                         ) : (
                             <div className="overflow-x-auto">
-                                <table className="w-full">
+                                <table className="w-full min-w-175">
                                     <thead>
                                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Khách hàng
                                             </th>
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
                                                 Chủ đề
                                             </th>
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
                                                 Thông tin liên hệ
                                             </th>
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
                                                 Ngày gửi
                                             </th>
-                                            <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Trạng thái
                                             </th>
-                                            <th className="text-right p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-right p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Thao tác
                                             </th>
                                         </tr>
@@ -359,17 +427,23 @@ export default function ContactsManagementPage() {
                                                 key={contact.id}
                                                 className="hover:bg-slate-50/30 transition-colors group"
                                             >
-                                                <td className="p-6">
+                                                <td className="p-3 md:p-6">
                                                     <p className="text-sm font-black text-slate-900 uppercase tracking-tight">
-                                                        {contact.full_name}
+                                                        {contact.name}
                                                     </p>
+                                                    {contact.address && (
+                                                        <p className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[200px]">
+                                                            {contact.address}
+                                                        </p>
+                                                    )}
                                                 </td>
-                                                <td className="p-6 max-w-50">
+                                                <td className="p-3 md:p-6 max-w-50 hidden lg:table-cell">
                                                     <p className="text-[10px] font-black text-[#002d6b] uppercase truncate flex items-center gap-2">
-                                                        <Building size={12} /> {contact.subject}
+                                                        <Building size={12} />{' '}
+                                                        {contact.subject || 'Không có chủ đề'}
                                                     </p>
                                                 </td>
-                                                <td className="p-6">
+                                                <td className="p-3 md:p-6 hidden md:table-cell">
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
                                                             <Mail
@@ -378,16 +452,18 @@ export default function ContactsManagementPage() {
                                                             />
                                                             {contact.email}
                                                         </div>
-                                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
-                                                            <Phone
-                                                                size={12}
-                                                                className="text-slate-300"
-                                                            />
-                                                            {contact.phone}
-                                                        </div>
+                                                        {contact.phone && (
+                                                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
+                                                                <Phone
+                                                                    size={12}
+                                                                    className="text-slate-300"
+                                                                />
+                                                                {contact.phone}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </td>
-                                                <td className="p-6 whitespace-nowrap">
+                                                <td className="p-3 md:p-6 whitespace-nowrap hidden sm:table-cell">
                                                     <span className="text-[10px] font-bold text-slate-500 italic">
                                                         {format(
                                                             new Date(contact.created_at),
@@ -396,7 +472,7 @@ export default function ContactsManagementPage() {
                                                         )}
                                                     </span>
                                                 </td>
-                                                <td className="p-6">
+                                                <td className="p-3 md:p-6">
                                                     <Badge
                                                         className={cn(
                                                             'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none',
@@ -412,7 +488,7 @@ export default function ContactsManagementPage() {
                                                         }
                                                     </Badge>
                                                 </td>
-                                                <td className="p-6 text-right">
+                                                <td className="p-3 md:p-6 text-right">
                                                     <div className="flex items-center justify-end gap-2">
                                                         <Button
                                                             variant="ghost"
@@ -448,22 +524,7 @@ export default function ContactsManagementPage() {
                                                                     onClick={() =>
                                                                         handleUpdateStatus(
                                                                             contact.id,
-                                                                            'processed',
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <CheckCircle2
-                                                                        size={14}
-                                                                        className="text-emerald-500"
-                                                                    />{' '}
-                                                                    Đã xử lý
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
-                                                                    onClick={() =>
-                                                                        handleUpdateStatus(
-                                                                            contact.id,
-                                                                            'pending',
+                                                                            'read',
                                                                         )
                                                                     }
                                                                 >
@@ -471,7 +532,37 @@ export default function ContactsManagementPage() {
                                                                         size={14}
                                                                         className="text-amber-500"
                                                                     />{' '}
-                                                                    Chờ xử lý
+                                                                    Đã đọc
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem
+                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
+                                                                    onClick={() =>
+                                                                        handleUpdateStatus(
+                                                                            contact.id,
+                                                                            'replied',
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <CheckCircle2
+                                                                        size={14}
+                                                                        className="text-emerald-500"
+                                                                    />{' '}
+                                                                    Đã trả lời
+                                                                </DropdownMenuItem>
+                                                                <DropdownMenuItem
+                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
+                                                                    onClick={() =>
+                                                                        handleUpdateStatus(
+                                                                            contact.id,
+                                                                            'archived',
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <Building
+                                                                        size={14}
+                                                                        className="text-slate-500"
+                                                                    />{' '}
+                                                                    Lưu trữ
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem
                                                                     className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
@@ -557,16 +648,16 @@ export default function ContactsManagementPage() {
 
             {/* Detail Sheet */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetContent className="sm:max-w-xl p-0 border-none overflow-hidden shadow-2xl rounded-none">
-                    <SheetHeader className="p-10 bg-[#002d6b] text-white">
-                        <div className="flex items-center gap-2 mb-4">
+                <SheetContent className="w-full sm:max-w-xl p-0 border-none overflow-hidden shadow-2xl rounded-none">
+                    <SheetHeader className="p-5 md:p-10 bg-[#002d6b] text-white">
+                        <div className="flex items-center gap-2 mb-2 md:mb-4">
                             <span className="px-2 py-0.5 bg-[#fbbf24] text-[#002d6b] text-[8px] font-black uppercase tracking-widest">
                                 Inquiry Ticket
                             </span>
                         </div>
-                        <SheetTitle className="text-3xl font-black uppercase tracking-tighter italic text-white flex items-center gap-4">
-                            <MessageSquare size={32} className="text-[#fbbf24]" />
-                            {selectedContact?.subject}
+                        <SheetTitle className="text-xl md:text-3xl font-black uppercase tracking-tighter italic text-white flex items-center gap-3 md:gap-4">
+                            <MessageSquare className="size-6 md:size-8 text-[#fbbf24] shrink-0" />
+                            {selectedContact?.subject || selectedContact?.name}
                         </SheetTitle>
                         <SheetDescription className="text-white/60 font-medium italic text-sm">
                             Thông tin liên hệ chi tiết được hệ thống ghi nhận từ Cổng thông tin
@@ -575,14 +666,14 @@ export default function ContactsManagementPage() {
                     </SheetHeader>
 
                     {selectedContact && (
-                        <div className="p-10 space-y-10">
-                            <div className="grid grid-cols-2 gap-8">
+                        <div className="p-5 md:p-10 space-y-6 md:space-y-10">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-1.5">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
                                         Khách hàng
                                     </span>
                                     <p className="text-sm font-black text-slate-900 uppercase">
-                                        {selectedContact.full_name}
+                                        {selectedContact.name}
                                     </p>
                                 </div>
                                 <div className="space-y-1.5 text-right">
@@ -610,10 +701,21 @@ export default function ContactsManagementPage() {
                                         Số điện thoại
                                     </span>
                                     <p className="text-sm font-black text-slate-900">
-                                        {selectedContact.phone}
+                                        {selectedContact.phone || 'Chưa cung cấp'}
                                     </p>
                                 </div>
                             </div>
+
+                            {selectedContact.address && (
+                                <div className="space-y-1.5">
+                                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
+                                        Địa chỉ
+                                    </span>
+                                    <p className="text-sm text-slate-700">
+                                        {selectedContact.address}
+                                    </p>
+                                </div>
+                            )}
 
                             <div className="space-y-4">
                                 <span className="text-[10px] font-black uppercase text-[#002d6b] tracking-[0.2em] flex items-center gap-2">
@@ -624,7 +726,7 @@ export default function ContactsManagementPage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-4 pt-10 border-t border-slate-100 flex items-center justify-between">
+                            <div className="space-y-4 pt-6 md:pt-10 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="space-y-1">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
                                         Trạng thái hiện tại
@@ -647,15 +749,15 @@ export default function ContactsManagementPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    {selectedContact.status !== 'processed' && (
+                                    {selectedContact.status !== 'replied' && (
                                         <Button
                                             className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-none h-12 px-6 text-[10px] font-black uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20"
                                             onClick={() => {
-                                                handleUpdateStatus(selectedContact.id, 'processed');
+                                                handleUpdateStatus(selectedContact.id, 'replied');
                                                 setIsSheetOpen(false);
                                             }}
                                         >
-                                            Phê duyệt xử lý
+                                            Đánh dấu đã trả lời
                                         </Button>
                                     )}
                                     {selectedContact.status !== 'spam' && (
@@ -681,8 +783,8 @@ export default function ContactsManagementPage() {
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 onConfirm={handleDelete}
-                loading={isDeleting}
-                itemName={itemToDelete?.full_name || ''}
+                loading={deleteMutation.isPending}
+                itemName={itemToDelete?.name || ''}
             />
         </div>
     );

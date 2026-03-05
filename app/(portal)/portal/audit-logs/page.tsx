@@ -1,18 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-    Search,
-    Calendar,
-    User,
-    Activity,
-    Info,
-    Filter,
-    ArrowUpDown,
-    ShieldAlert,
-    Clock,
-    Eye,
-} from 'lucide-react';
+import { Search, User, Activity, Info, ShieldAlert, Clock, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -26,20 +15,17 @@ import {
 import { TablePagination } from '@/components/portal/table-pagination';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
-import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useDebounce } from '@/hooks/use-debounce';
+import { useQuery } from '@tanstack/react-query';
 
 export default function AuditLogsPage() {
-    const [logs, setLogs] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
     const [moduleFilter, setModuleFilter] = useState('all');
     const [actionFilter, setActionFilter] = useState('all');
     const [selectedLog, setSelectedLog] = useState<any>(null);
@@ -49,9 +35,22 @@ export default function AuditLogsPage() {
         setPage(1);
     }, [debouncedSearch]);
 
-    const fetchLogs = async () => {
-        setIsLoading(true);
-        try {
+    // Fetch logs using react-query
+    const { data: logsData, isLoading } = useQuery<{
+        data: any[];
+        meta: { total: number };
+    }>({
+        queryKey: [
+            'admin-audit-logs',
+            {
+                page,
+                limit: pageSize,
+                search: debouncedSearch,
+                module: moduleFilter,
+                action: actionFilter,
+            },
+        ],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.AUDIT_LOGS, {
                 params: {
                     page,
@@ -61,19 +60,18 @@ export default function AuditLogsPage() {
                     action: actionFilter !== 'all' ? actionFilter : undefined,
                 },
             });
-            setLogs(res.data.data || []);
-            setTotalItems(res.data.meta?.total || 0);
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải nhật ký hoạt động');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            if (res.data.success !== false) {
+                return {
+                    data: res.data.data || [],
+                    meta: res.data.meta || { total: 0 },
+                };
+            }
+            throw new Error('Failed to fetch audit logs');
+        },
+    });
 
-    useEffect(() => {
-        fetchLogs();
-    }, [page, pageSize, debouncedSearch, moduleFilter, actionFilter]);
+    const logs = logsData?.data || [];
+    const totalItems = logsData?.meta?.total || 0;
 
     const getActionBadge = (action: string) => {
         switch (action) {
@@ -117,20 +115,20 @@ export default function AuditLogsPage() {
     };
 
     return (
-        <div className="space-y-8 pb-20">
+        <div className="space-y-4 md:space-y-8 pb-10 md:pb-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight uppercase leading-none border-l-8 border-[#002d6b] pl-6">
+                    <h1 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight uppercase leading-none border-l-4 md:border-l-8 border-[#002d6b] pl-4 md:pl-6">
                         Nhật ký Hệ thống
                     </h1>
-                    <p className="text-slate-500 font-medium italic mt-2 text-xs ml-6">
+                    <p className="text-slate-500 font-medium italic mt-2 text-xs ml-4 md:ml-6">
                         Giám sát và kiểm soát mọi hoạt động tác động đến dữ liệu của quản trị viên.
                     </p>
                 </div>
             </div>
 
             <div className="bg-white border border-slate-100 shadow-sm rounded-none overflow-hidden">
-                <div className="p-6 border-b border-slate-50 flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-slate-50/30">
+                <div className="p-3 md:p-6 border-b border-slate-50 flex flex-col xl:flex-row xl:items-center justify-between gap-3 md:gap-4 bg-slate-50/30">
                     <div className="relative flex-1 max-w-md">
                         <Search
                             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -233,23 +231,23 @@ export default function AuditLogsPage() {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto min-h-[400px]">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto min-h-100">
+                    <table className="w-full text-left min-w-[700px]">
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-100">
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     Thời gian / IP
                                 </th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
                                     Quản trị viên
                                 </th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     Hành động
                                 </th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
                                     Nội dung thay đổi
                                 </th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">
+                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">
                                     Chi tiết
                                 </th>
                             </tr>
@@ -281,7 +279,7 @@ export default function AuditLogsPage() {
                                         key={log.id}
                                         className="group hover:bg-slate-50/50 transition-colors"
                                     >
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-4 md:py-5">
                                             <div className="flex flex-col">
                                                 <span className="text-[11px] font-black text-slate-900 flex items-center gap-1.5">
                                                     <Clock size={12} className="text-slate-300" />
@@ -296,9 +294,9 @@ export default function AuditLogsPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-4 md:py-5 hidden sm:table-cell">
                                             <div className="flex items-center gap-3">
-                                                <div className="size-8 bg-slate-100 flex items-center justify-center rounded-none border border-slate-200">
+                                                <div className="size-8 bg-slate-100 flex items-center justify-center rounded-none border border-slate-200 shrink-0">
                                                     <User size={14} className="text-slate-400" />
                                                 </div>
                                                 <div className="flex flex-col">
@@ -313,7 +311,7 @@ export default function AuditLogsPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-4 md:py-5">
                                             <div className="flex flex-col gap-1.5">
                                                 {getActionBadge(log.action)}
                                                 <span className="text-[9px] font-black text-slate-400 flex items-center gap-1">
@@ -321,12 +319,12 @@ export default function AuditLogsPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-5">
+                                        <td className="px-4 md:px-8 py-4 md:py-5 hidden lg:table-cell">
                                             <p className="text-xs font-medium text-slate-600 max-w-xs truncate italic">
                                                 {log.description}
                                             </p>
                                         </td>
-                                        <td className="px-8 py-5 text-right">
+                                        <td className="px-4 md:px-8 py-4 md:py-5 text-right">
                                             <Button
                                                 variant="outline"
                                                 size="icon"
@@ -358,16 +356,16 @@ export default function AuditLogsPage() {
 
             {/* Log Detail Dialog */}
             <Dialog open={!!selectedLog} onOpenChange={() => setSelectedLog(null)}>
-                <DialogContent className="max-w-2xl rounded-none border-slate-100 p-0 overflow-hidden">
-                    <DialogHeader className="p-6 bg-slate-50 border-b border-slate-100">
+                <DialogContent className="max-w-2xl w-[95vw] rounded-none border-slate-100 p-0 overflow-hidden">
+                    <DialogHeader className="p-4 md:p-6 bg-slate-50 border-b border-slate-100">
                         <DialogTitle className="text-xl font-black uppercase tracking-tight text-[#002d6b] flex items-center gap-3">
                             <Info size={20} /> Chi tiết Nhật ký
                         </DialogTitle>
                     </DialogHeader>
 
                     {selectedLog && (
-                        <div className="p-8 space-y-6 overflow-y-auto max-h-[70vh] scrollbar-hide">
-                            <div className="grid grid-cols-2 gap-8">
+                        <div className="p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto max-h-[70vh] scrollbar-hide">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-4">
                                     <div>
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">

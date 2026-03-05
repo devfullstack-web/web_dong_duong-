@@ -3,57 +3,67 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Enable pnpm
+RUN corepack enable pnpm
+
+# Copy dependency files
+COPY package.json pnpm-lock.yaml* ./
+
 # Install dependencies
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
 # Build application
-RUN npm run build
+RUN pnpm run build
 
 # Run Stage
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
+# Enable pnpm
+RUN corepack enable pnpm
+
 ENV NODE_ENV=production
 
-# Copy necessary files from builder
-COPY --from=builder /app/next.config.ts ./
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/server.ts ./server.ts
-COPY --from=builder /app/tsconfig.json ./tsconfig.json
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
 
-# Copy additional services and libs if needed (based on your structure)
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile
+
+# Copy built files and necessary runtime files from builder
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.ts ./
+COPY --from=builder /app/server.ts ./
+COPY --from=builder /app/tsconfig.json ./
+COPY --from=builder /app/entrypoint.sh ./
+COPY --from=builder /app/drizzle.config.ts ./
+
+# Copy runtime dependencies
 COPY --from=builder /app/services ./services
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/db ./db
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/utils ./utils
-COPY --from=builder /app/entrypoint.sh ./entrypoint.sh
-COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
 COPY --from=builder /app/constants ./constants
 COPY --from=builder /app/validations ./validations
 COPY --from=builder /app/types ./types
 COPY --from=builder /app/middlewares ./middlewares
 
-# Install tsx to run server.ts
-RUN npm install -g tsx && chmod +x ./entrypoint.sh
+# Install tsx globally for running TypeScript
+RUN pnpm add -g tsx
 
-# Create uploads directory and set permissions
-RUN mkdir -p /app/public/uploads && chmod -R 777 /app/public/uploads
+# Make entrypoint executable
+RUN chmod +x ./entrypoint.sh
+
+# Create uploads directory
+RUN mkdir -p /app/public/uploads
 
 EXPOSE 3000
 
-# Start application using the entrypoint script
+# Start application
 ENTRYPOINT ["./entrypoint.sh"]

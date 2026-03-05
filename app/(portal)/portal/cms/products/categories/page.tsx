@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import $api from '@/utils/axios';
 import { Plus, Edit2, Trash2, FolderOpen, ArrowLeft, Loader2 } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Category {
     id: string;
@@ -18,27 +19,34 @@ interface Category {
 }
 
 export default function ProductCategoriesPage() {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Category | null>(null);
 
-    const fetchCategories = async () => {
-        setIsLoading(true);
-        try {
+    const { data: categoriesData, isLoading } = useQuery<{ data: Category[] }>({
+        queryKey: ['categories', 'product'],
+        queryFn: async () => {
             const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=product`);
-            setCategories(res.data.data || []);
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh mục');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            return res.data;
+        },
+    });
 
-    useEffect(() => {
-        fetchCategories();
-    }, []);
+    const categories = categoriesData?.data || [];
+
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.CATEGORIES}/${id}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa danh mục thành công');
+            queryClient.invalidateQueries({ queryKey: ['categories', 'product'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Lỗi khi xóa danh mục');
+        },
+    });
 
     const handleDeleteClick = (cat: Category) => {
         setItemToDelete(cat);
@@ -47,19 +55,7 @@ export default function ProductCategoriesPage() {
 
     const handleDeleteConfirm = async () => {
         if (!itemToDelete) return;
-
-        try {
-            await $api.delete(`${API_ROUTES.CATEGORIES}/${itemToDelete.id}`);
-
-            toast.success('Đã xóa danh mục thành công');
-            setCategories(categories.filter((cat) => cat.id !== itemToDelete.id));
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi xóa danh mục');
-        } finally {
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.id);
     };
 
     return (
@@ -90,9 +86,9 @@ export default function ProductCategoriesPage() {
                 </Link>
             </div>
 
-            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[400px]">
+            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-100">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-[400px]">
+                    <div className="flex items-center justify-center h-100">
                         <Loader2 size={32} className="animate-spin text-brand-primary opacity-20" />
                     </div>
                 ) : (
@@ -154,7 +150,7 @@ export default function ProductCategoriesPage() {
                         </div>
 
                         {categories.length === 0 && (
-                            <div className="p-12 text-center h-[400px] flex items-center justify-center flex-col">
+                            <div className="p-12 text-center h-100 flex items-center justify-center flex-col">
                                 <FolderOpen size={48} className="text-slate-100 mb-4" />
                                 <p className="text-slate-400 font-medium tracking-tight">
                                     Chưa có danh mục sản phẩm nào được tạo.
@@ -172,6 +168,7 @@ export default function ProductCategoriesPage() {
                 title="Xóa danh mục"
                 description="Danh mục sẽ bị xóa. Các sản phẩm thuộc danh mục này sẽ không còn được phân loại."
                 itemName={itemToDelete?.name}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

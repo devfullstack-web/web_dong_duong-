@@ -3,9 +3,6 @@
 import $api from '@/utils/axios';
 import {
     Bell,
-    MessageSquare,
-    Mail,
-    Briefcase,
     ExternalLink,
     Check,
     CheckCheck,
@@ -35,6 +32,7 @@ import { API_ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { RadialChartGrid } from '@/components/portal/charts/RadialChartGrid';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Notification {
     id: string;
@@ -53,61 +51,67 @@ const notificationLabels = {
 };
 
 export default function NotificationsPage() {
-    const [notifications, setNotifications] = React.useState<Notification[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
-    const [unreadCount, setUnreadCount] = React.useState(0);
+    const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = React.useState('all');
     const [searchTerm, setSearchTerm] = React.useState('');
     const [page, setPage] = React.useState(1);
-    const [totalItems, setTotalItems] = React.useState(0);
     const { user } = useAuth();
 
-    const fetchNotifications = async () => {
-        setIsLoading(true);
-        try {
+    // Query for notifications
+    const { data: notificationsData, isLoading } = useQuery<{
+        data: Notification[];
+        meta: { unreadCount: number; total: number };
+    }>({
+        queryKey: ['notifications', page],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.NOTIFICATIONS, {
                 params: {
                     page,
                     limit: 10,
                 },
             });
-            setNotifications(res.data.data || []);
-            setUnreadCount(res.data.meta?.unreadCount || 0);
-            setTotalItems(res.data.meta?.total || res.data.data?.length || 0);
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh sách thông báo');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            return res.data;
+        },
+    });
 
-    React.useEffect(() => {
-        fetchNotifications();
-    }, [page]);
+    const notifications = notificationsData?.data || [];
+    const unreadCount = notificationsData?.meta?.unreadCount || 0;
+    const totalItems = notificationsData?.meta?.total || notifications.length;
+
+    // Mark as read mutation
+    const markAsReadMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.patch(API_ROUTES.NOTIFICATIONS, { id });
+        },
+        onSuccess: () => {
+            toast.success('Đã đánh dấu là đã đọc');
+            queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        },
+        onError: () => {
+            toast.error('Lỗi khi đánh dấu đã đọc');
+        },
+    });
+
+    // Mark all as read mutation
+    const markAllAsReadMutation = useMutation({
+        mutationFn: async () => {
+            await $api.patch(API_ROUTES.NOTIFICATIONS, { all: true });
+        },
+        onSuccess: () => {
+            toast.success('Đã đánh dấu tất cả là đã đọc');
+            queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        },
+        onError: () => {
+            toast.error('Lỗi khi đánh dấu tất cả đã đọc');
+        },
+    });
 
     const handleMarkAsRead = async (id: string) => {
-        try {
-            await $api.patch(API_ROUTES.NOTIFICATIONS, { id });
-            setNotifications(notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n)));
-            setUnreadCount((prev) => Math.max(0, prev - 1));
-            toast.success('Đã đánh dấu là đã đọc');
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi đánh dấu đã đọc');
-        }
+        markAsReadMutation.mutate(id);
     };
 
     const handleMarkAllAsRead = async () => {
-        try {
-            await $api.patch(API_ROUTES.NOTIFICATIONS, { all: true });
-            setNotifications(notifications.map((n) => ({ ...n, is_read: true })));
-            setUnreadCount(0);
-            toast.success('Đã đánh dấu tất cả là đã đọc');
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi đánh dấu tất cả đã đọc');
-        }
+        markAllAsReadMutation.mutate();
     };
 
     const filteredNotifications = React.useMemo(() => {
@@ -177,11 +181,11 @@ export default function NotificationsPage() {
     ];
 
     return (
-        <div className="flex-1 space-y-10 py-8 pt-6">
+        <div className="flex-1 space-y-6 md:space-y-10 py-4 md:py-8 pt-4 md:pt-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                 <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest">
                             Notification Center
                         </span>
@@ -190,7 +194,7 @@ export default function NotificationsPage() {
                             Real-time Monitoring
                         </span>
                     </div>
-                    <h2 className="text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-8 border-[#002d6b] pl-6 leading-none">
+                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 md:border-l-8 border-[#002d6b] pl-4 md:pl-6 leading-none">
                         Trung tâm Thông báo
                     </h2>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
@@ -201,27 +205,29 @@ export default function NotificationsPage() {
                 <Button
                     onClick={handleMarkAllAsRead}
                     disabled={unreadCount === 0}
-                    className="h-10 hover:cursor-pointer px-10 bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center gap-3"
+                    className="h-10 hover:cursor-pointer px-6 md:px-10 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3"
                 >
                     <CheckCheck size={18} />
                     Đánh dấu tất cả đã đọc
                 </Button>
             </div>
 
-            <Tabs defaultValue="list" className="space-y-8">
-                <div className="flex items-center justify-between">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
+            <Tabs defaultValue="list" className="space-y-4 md:space-y-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <LayoutList size={14} /> Danh sách thông báo
+                            <LayoutList size={14} />{' '}
+                            <span className="hidden sm:inline">Danh sách</span> thông báo
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
-                            <PieChartIcon size={14} /> Biểu đồ phân tích
+                            <PieChartIcon size={14} />{' '}
+                            <span className="hidden sm:inline">Biểu đồ</span> phân tích
                         </TabsTrigger>
                     </TabsList>
 
@@ -235,9 +241,9 @@ export default function NotificationsPage() {
                     </div>
                 </div>
 
-                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
+                <TabsContent value="list" className="space-y-4 md:space-y-6 mt-0 border-none p-0">
                     {/* Filters */}
-                    <div className="p-8 bg-slate-50 border border-slate-100">
+                    <div className="p-4 md:p-8 bg-slate-50 border border-slate-100">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="relative max-w-md group flex-1">
                                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-[#002d6b] transition-colors" />
@@ -326,14 +332,14 @@ export default function NotificationsPage() {
                                         <div
                                             key={notification.id}
                                             className={cn(
-                                                'p-8 hover:bg-slate-50/30 transition-colors',
+                                                'p-4 md:p-8 hover:bg-slate-50/30 transition-colors',
                                                 !notification.is_read && 'bg-amber-50/20',
                                             )}
                                         >
-                                            <div className="flex items-start justify-between gap-8">
-                                                <div className="flex-1 space-y-4">
+                                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 md:gap-8">
+                                                <div className="flex-1 space-y-3 md:space-y-4 min-w-0">
                                                     {/* Header */}
-                                                    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                                                    <div className="flex flex-wrap items-center gap-x-3 md:gap-x-6 gap-y-2 md:gap-y-3">
                                                         <Badge className="rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none">
                                                             {label}
                                                         </Badge>
@@ -355,27 +361,29 @@ export default function NotificationsPage() {
 
                                                     {/* Content */}
                                                     <div className="space-y-2">
-                                                        <h3 className="text-sm font-black text-[#002d6b] uppercase tracking-tight">
+                                                        <h3 className="text-xs md:text-sm font-black text-[#002d6b] uppercase tracking-tight">
                                                             {notification.title}
                                                         </h3>
-                                                        <div className="bg-slate-50/50 border-l-4 border-l-[#002d6b] p-6 text-sm text-slate-700 leading-relaxed italic">
+                                                        <div className="bg-slate-50/50 border-l-4 border-l-[#002d6b] p-3 md:p-6 text-xs md:text-sm text-slate-700 leading-relaxed italic">
                                                             {notification.content}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 {/* Actions */}
-                                                <div className="flex items-center gap-2 pt-1">
+                                                <div className="flex items-center gap-2 pt-1 shrink-0">
                                                     {notification.link && (
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-10 rounded-none gap-3 text-[10px] font-black uppercase tracking-widest border-slate-200 hover:bg-[#002d6b] hover:text-white hover:border-[#002d6b] transition-all"
+                                                            className="h-9 md:h-10 rounded-none gap-2 md:gap-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest border-slate-200 hover:bg-[#002d6b] hover:text-white hover:border-[#002d6b] transition-all px-3 md:px-4"
                                                             asChild
                                                         >
                                                             <Link href={notification.link}>
                                                                 <ExternalLink size={14} />
-                                                                Xem chi tiết
+                                                                <span className="hidden sm:inline">
+                                                                    Xem chi tiết
+                                                                </span>
                                                             </Link>
                                                         </Button>
                                                     )}
@@ -384,13 +392,15 @@ export default function NotificationsPage() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-10 rounded-none gap-3 text-[10px] font-black uppercase tracking-widest border-slate-200 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all"
+                                                            className="h-9 md:h-10 rounded-none gap-2 md:gap-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest border-slate-200 hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all px-3 md:px-4"
                                                             onClick={() =>
                                                                 handleMarkAsRead(notification.id)
                                                             }
                                                         >
                                                             <Check size={14} />
-                                                            Đánh dấu đã đọc
+                                                            <span className="hidden sm:inline">
+                                                                Đánh dấu đã đọc
+                                                            </span>
                                                         </Button>
                                                     )}
                                                 </div>

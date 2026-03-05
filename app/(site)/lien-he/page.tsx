@@ -97,7 +97,7 @@ export default function ContactPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Page Header */}
-            <section className="relative pt-40 pb-20 bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+            <section className="relative pt-40 pb-20 bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
                 <div className="absolute inset-0 z-0 opacity-30">
                     <Image
                         src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&q=80&w=2000"
@@ -106,7 +106,7 @@ export default function ContactPage() {
                         className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
+                    <div className="absolute inset-0 bg-linear-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
                 </div>
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8 text-center sm:text-left">
@@ -345,7 +345,7 @@ export default function ContactPage() {
             </section>
 
             {/* Map Section */}
-            <section className="h-[500px] w-full contrast-125 opacity-80 hover:opacity-100 transition-all duration-1000 border-t border-slate-100">
+            <section className="h-125 w-full contrast-125 opacity-80 hover:opacity-100 transition-all duration-1000 border-t border-slate-100">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.471550974394!2d106.82424097485813!3d10.85170328930113!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752718ef0e9fd5%3A0x62831526487e49e2!2zMTI0LzE2IFbDtCBWxINuIEjDoXQsIExvbmcgVHLGsOG7nW5nLCBRdeG6rW4gOSwgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1721724213961!5m2!1svi!2s"
                     width="100%"

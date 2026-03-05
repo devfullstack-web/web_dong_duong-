@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import $api from '@/utils/axios';
 import { Plus, Edit2, Trash2, FolderOpen, ArrowLeft, Loader2 } from 'lucide-react';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Category {
     id: string;
@@ -18,27 +19,34 @@ interface Category {
 }
 
 export default function NewsCategoriesPage() {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Category | null>(null);
 
-    const fetchCategories = async () => {
-        setIsLoading(true);
-        try {
+    const { data: categoriesData, isLoading } = useQuery<{ data: Category[] }>({
+        queryKey: ['categories', 'news'],
+        queryFn: async () => {
             const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=news`);
-            setCategories(res.data.data || []);
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh mục');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            return res.data;
+        },
+    });
 
-    useEffect(() => {
-        fetchCategories();
-    }, []);
+    const categories = categoriesData?.data || [];
+
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.CATEGORIES}/${id}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa danh mục thành công');
+            queryClient.invalidateQueries({ queryKey: ['categories', 'news'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Lỗi khi xóa danh mục');
+        },
+    });
 
     const handleDeleteClick = (cat: Category) => {
         setItemToDelete(cat);
@@ -47,19 +55,7 @@ export default function NewsCategoriesPage() {
 
     const handleDeleteConfirm = async () => {
         if (!itemToDelete) return;
-
-        try {
-            await $api.delete(`${API_ROUTES.CATEGORIES}/${itemToDelete.id}`);
-
-            toast.success('Đã xóa danh mục thành công');
-            setCategories(categories.filter((cat) => cat.id !== itemToDelete.id));
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi xóa danh mục');
-        } finally {
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.id);
     };
 
     return (
@@ -172,6 +168,7 @@ export default function NewsCategoriesPage() {
                 title="Xóa danh mục"
                 description="Danh mục sẽ bị xóa. Các bài viết thuộc danh mục này sẽ không còn được phân loại."
                 itemName={itemToDelete?.name}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

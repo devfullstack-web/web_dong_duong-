@@ -43,21 +43,19 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function ProductsManagementPage() {
     const { hasPermission } = useAuth();
-    const [productsList, setProductsList] = useState<Product[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Product | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
 
     // Date Filter state
     const [date, setDate] = useState<DateRange | undefined>();
@@ -67,38 +65,54 @@ export default function ProductsManagementPage() {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    const fetchProducts = async (
-        page: number,
-        limit: number,
-        search: string,
-        dateRange?: DateRange,
-    ) => {
-        setIsLoading(true);
-        try {
+    // Fetch products using react-query
+    const { data: productsData, isLoading } = useQuery<{
+        data: Product[];
+        meta: { total: number };
+    }>({
+        queryKey: [
+            'admin-products',
+            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange: date },
+        ],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.PRODUCTS, {
                 params: {
-                    page,
-                    limit,
-                    search: search || undefined,
-                    startDate: dateRange?.from?.toISOString(),
-                    endDate: dateRange?.to?.toISOString(),
+                    page: currentPage,
+                    limit: pageSize,
+                    search: debouncedSearch || undefined,
+                    startDate: date?.from?.toISOString(),
+                    endDate: date?.to?.toISOString(),
                 },
             });
-            setProductsList(res.data.data || []);
-            if (res.data.meta) {
-                setTotalItems(res.data.meta.total || 0);
+            if (res.data.success !== false) {
+                return {
+                    data: res.data.data || [],
+                    meta: res.data.meta || { total: 0 },
+                };
             }
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh sách sản phẩm');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            throw new Error('Failed to fetch products');
+        },
+    });
 
-    useEffect(() => {
-        fetchProducts(currentPage, pageSize, debouncedSearch, date);
-    }, [currentPage, pageSize, debouncedSearch, date]);
+    const productsList = productsData?.data || [];
+    const totalItems = productsData?.meta?.total || 0;
+
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.PRODUCTS}/${id}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa sản phẩm thành công');
+            queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+            queryClient.invalidateQueries({ queryKey: ['products'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Lỗi khi xóa sản phẩm');
+        },
+    });
 
     const handleDeleteClick = (product: Product) => {
         setItemToDelete(product);
@@ -107,20 +121,7 @@ export default function ProductsManagementPage() {
 
     const handleDeleteConfirm = async () => {
         if (!itemToDelete) return;
-
-        setIsDeleting(true);
-        try {
-            await $api.delete(`${API_ROUTES.PRODUCTS}/${itemToDelete.id}`);
-            toast.success('Đã xóa sản phẩm thành công');
-            fetchProducts(currentPage, pageSize, debouncedSearch, date);
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi xóa sản phẩm');
-        } finally {
-            setIsDeleting(false);
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.id);
     };
 
     const getStatusBadge = (status: Product['status']) => {
@@ -143,22 +144,22 @@ export default function ProductsManagementPage() {
     };
 
     return (
-        <div className="space-y-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-6 md:space-y-10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
                         Quản lý sản phẩm
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-2 text-sm">
                         Danh mục van công nghiệp và thiết bị IoT của Sài Gòn Valve.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
                     {hasPermission(PERMISSIONS.CMS_UPDATE) && (
                         <Link href={PORTAL_ROUTES.cms.products.categories.list}>
                             <Button
                                 variant="outline"
-                                className="text-[10px] font-black uppercase tracking-widest px-6 py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none"
+                                className="text-[10px] font-black uppercase tracking-widest px-4 md:px-6 py-3 md:py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none"
                             >
                                 Danh mục
                             </Button>
@@ -166,13 +167,13 @@ export default function ProductsManagementPage() {
                     )}
                     <Button
                         variant="outline"
-                        className="text-[10px] font-black uppercase tracking-widest px-6 py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none"
+                        className="text-[10px] font-black uppercase tracking-widest px-4 md:px-6 py-3 md:py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none hidden sm:flex"
                     >
                         Xuất dữ liệu
                     </Button>
                     {hasPermission(PERMISSIONS.PRODUCTS_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.products.add}>
-                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-4 hover:cursor-pointer h-auto transition-all rounded-none">
+                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-8 py-3 md:py-4 hover:cursor-pointer h-auto transition-all rounded-none">
                                 <Plus className="mr-2 size-4" /> Thêm sản phẩm
                             </Button>
                         </Link>
@@ -180,9 +181,9 @@ export default function ProductsManagementPage() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
+            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-125">
                 {/* Table Filters */}
-                <div className="p-8 border-b border-slate-50 flex flex-col xl:flex-row gap-6 items-center justify-between bg-white">
+                <div className="p-4 md:p-8 border-b border-slate-50 flex flex-col xl:flex-row gap-4 md:gap-6 items-center justify-between bg-white">
                     <div className="relative w-full xl:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
@@ -194,7 +195,7 @@ export default function ProductsManagementPage() {
                     </div>
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
                         {/* Date Range Picker */}
-                        <div className="grid gap-2 w-full sm:w-[300px] ">
+                        <div className="grid gap-2 w-full sm:w-75">
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
@@ -253,30 +254,30 @@ export default function ProductsManagementPage() {
 
                 {/* Table Content */}
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-[400px]">
+                    <div className="flex items-center justify-center h-100">
                         <Loader2 size={40} className="animate-spin text-brand-primary opacity-20" />
                     </div>
                 ) : productsList.length > 0 ? (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left border-collapse min-w-[700px]">
                             <thead>
                                 <tr className="bg-slate-50/30">
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Sản phẩm
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
                                         SKU
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden lg:table-cell">
                                         Giá / Tồn kho
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
                                         Danh mục
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Trạng thái
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
                                         Thao tác
                                     </th>
                                 </tr>
@@ -287,9 +288,9 @@ export default function ProductsManagementPage() {
                                         key={product.id}
                                         className="hover:bg-slate-50/30 transition-colors group"
                                     >
-                                        <td className="px-8 py-6">
-                                            <div className="flex items-center gap-6">
-                                                <div className="relative h-16 w-24 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
+                                        <td className="px-4 md:px-8 py-4 md:py-6">
+                                            <div className="flex items-center gap-3 md:gap-6">
+                                                <div className="relative h-12 w-16 md:h-16 md:w-24 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
                                                     {product.image_url ? (
                                                         <Image
                                                             src={product.image_url}
@@ -303,7 +304,7 @@ export default function ProductsManagementPage() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className="max-w-[350px]">
+                                                <div className="max-w-87.5">
                                                     <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-0.5">
                                                         {product.name}
                                                     </div>
@@ -313,12 +314,12 @@ export default function ProductsManagementPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden sm:table-cell">
                                             <code className="text-[11px] font-black text-slate-600 bg-slate-50 px-2 py-1 border border-slate-100">
                                                 {product.sku}
                                             </code>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden lg:table-cell">
                                             <div className="flex flex-col gap-1">
                                                 <span className="text-[11px] font-black text-slate-900">
                                                     {new Intl.NumberFormat('vi-VN', {
@@ -331,15 +332,15 @@ export default function ProductsManagementPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden md:table-cell">
                                             <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight">
                                                 {product.category || 'Chưa phân loại'}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 md:px-8 py-4 md:py-6">
                                             {getStatusBadge(product.status)}
                                         </td>
-                                        <td className="px-8 py-6 text-right">
+                                        <td className="px-4 md:px-8 py-4 md:py-6 text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
@@ -405,7 +406,7 @@ export default function ProductsManagementPage() {
                         </table>
                     </div>
                 ) : (
-                    <div className="p-24 text-center h-[500px] flex items-center justify-center flex-col">
+                    <div className="p-24 text-center h-125 flex items-center justify-center flex-col">
                         <Package size={64} className="text-slate-100 mb-6" />
                         <p className="text-slate-400 font-medium uppercase text-[10px] tracking-[0.2em]">
                             Không tìm thấy sản phẩm nào phù hợp.
@@ -437,7 +438,7 @@ export default function ProductsManagementPage() {
                 description="Sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác."
                 itemName={itemToDelete?.name}
                 itemLabel="Sản phẩm"
-                loading={isDeleting}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

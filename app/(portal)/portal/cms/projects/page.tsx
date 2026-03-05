@@ -43,21 +43,19 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function ProjectsManagementPage() {
     const { hasPermission } = useAuth();
-    const [projectsList, setProjectsList] = useState<Project[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Project | null>(null);
-    const [isDeleting, setIsDeleting] = useState(false);
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
 
     // Date Filter state
     const [date, setDate] = useState<DateRange | undefined>();
@@ -67,38 +65,54 @@ export default function ProjectsManagementPage() {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    const fetchProjects = async (
-        page: number,
-        limit: number,
-        search: string,
-        dateRange?: DateRange,
-    ) => {
-        setIsLoading(true);
-        try {
+    // Fetch projects using react-query
+    const { data: projectsData, isLoading } = useQuery<{
+        data: Project[];
+        meta: { total: number };
+    }>({
+        queryKey: [
+            'admin-projects',
+            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange: date },
+        ],
+        queryFn: async () => {
             const res = await $api.get(API_ROUTES.PROJECTS, {
                 params: {
-                    page,
-                    limit,
-                    search: search || undefined,
-                    startDate: dateRange?.from?.toISOString(),
-                    endDate: dateRange?.to?.toISOString(),
+                    page: currentPage,
+                    limit: pageSize,
+                    search: debouncedSearch || undefined,
+                    startDate: date?.from?.toISOString(),
+                    endDate: date?.to?.toISOString(),
                 },
             });
-            setProjectsList(res.data.data || []);
-            if (res.data.meta) {
-                setTotalItems(res.data.meta.total || 0);
+            if (res.data.success !== false) {
+                return {
+                    data: res.data.data || [],
+                    meta: res.data.meta || { total: 0 },
+                };
             }
-        } catch (error) {
-            console.error(error);
-            toast.error('Không thể tải danh sách dự án');
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            throw new Error('Failed to fetch projects');
+        },
+    });
 
-    useEffect(() => {
-        fetchProjects(currentPage, pageSize, debouncedSearch, date);
-    }, [currentPage, pageSize, debouncedSearch, date]);
+    const projectsList = projectsData?.data || [];
+    const totalItems = projectsData?.meta?.total || 0;
+
+    // Delete mutation
+    const deleteMutation = useMutation({
+        mutationFn: async (id: string) => {
+            await $api.delete(`${API_ROUTES.PROJECTS}/${id}`);
+        },
+        onSuccess: () => {
+            toast.success('Đã xóa dự án thành công');
+            queryClient.invalidateQueries({ queryKey: ['admin-projects'] });
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
+            setDeleteDialogOpen(false);
+            setItemToDelete(null);
+        },
+        onError: () => {
+            toast.error('Lỗi khi xóa dự án');
+        },
+    });
 
     const handleDeleteClick = (project: Project) => {
         setItemToDelete(project);
@@ -107,20 +121,7 @@ export default function ProjectsManagementPage() {
 
     const handleDeleteConfirm = async () => {
         if (!itemToDelete) return;
-
-        setIsDeleting(true);
-        try {
-            await $api.delete(`${API_ROUTES.PROJECTS}/${itemToDelete.id}`);
-            toast.success('Đã xóa dự án thành công');
-            fetchProjects(currentPage, pageSize, debouncedSearch, date);
-        } catch (error) {
-            console.error(error);
-            toast.error('Lỗi khi xóa dự án');
-        } finally {
-            setIsDeleting(false);
-            setDeleteDialogOpen(false);
-            setItemToDelete(null);
-        }
+        deleteMutation.mutate(itemToDelete.id);
     };
 
     const getStatusBadge = (status: Project['status']) => {
@@ -152,22 +153,22 @@ export default function ProjectsManagementPage() {
     };
 
     return (
-        <div className="space-y-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-6 md:space-y-10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
                         Quản lý dự án
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-2 text-sm">
                         Danh sách các dự án và công trình trọng điểm đã thực hiện.
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
                     {hasPermission(PERMISSIONS.CMS_UPDATE) && (
                         <Link href={PORTAL_ROUTES.cms.projects.categories.list}>
                             <Button
                                 variant="outline"
-                                className="text-[10px] font-black uppercase tracking-widest px-6 py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none"
+                                className="text-[10px] font-black uppercase tracking-widest px-4 md:px-6 py-3 md:py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none"
                             >
                                 Danh mục
                             </Button>
@@ -175,7 +176,7 @@ export default function ProjectsManagementPage() {
                     )}
                     {hasPermission(PERMISSIONS.PROJECTS_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.projects.add}>
-                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-4 hover:cursor-pointer h-auto transition-all rounded-none">
+                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-8 py-3 md:py-4 hover:cursor-pointer h-auto transition-all rounded-none">
                                 <Plus className="mr-2 size-4" /> Thêm dự án mới
                             </Button>
                         </Link>
@@ -185,7 +186,7 @@ export default function ProjectsManagementPage() {
 
             <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
                 {/* Table Filters  */}
-                <div className="p-8 border-b border-slate-50 flex flex-col xl:flex-row gap-6 items-center justify-between bg-white">
+                <div className="p-4 md:p-8 border-b border-slate-50 flex flex-col xl:flex-row gap-4 md:gap-6 items-center justify-between bg-white">
                     <div className="relative w-full xl:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
@@ -268,22 +269,22 @@ export default function ProjectsManagementPage() {
                     </div>
                 ) : projectsList.length > 0 ? (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr className="bg-slate-50/30">
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Dự án
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
                                         Chủ đầu tư
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
                                         Thời gian
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Trạng thái
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
+                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
                                         Thao tác
                                     </th>
                                 </tr>
@@ -294,9 +295,9 @@ export default function ProjectsManagementPage() {
                                         key={project.id}
                                         className="hover:bg-slate-50/30 transition-colors group"
                                     >
-                                        <td className="px-8 py-6">
-                                            <div className="flex items-center gap-6">
-                                                <div className="relative h-16 w-24 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
+                                        <td className="px-4 md:px-8 py-4 md:py-6">
+                                            <div className="flex items-center gap-3 md:gap-6">
+                                                <div className="relative h-12 w-16 md:h-16 md:w-24 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
                                                     {project.image_url ? (
                                                         <Image
                                                             src={project.image_url}
@@ -310,7 +311,7 @@ export default function ProjectsManagementPage() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className="max-w-[400px]">
+                                                <div className="max-w-[200px] md:max-w-[400px]">
                                                     <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-1">
                                                         {project.name}
                                                     </div>
@@ -323,12 +324,12 @@ export default function ProjectsManagementPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden md:table-cell">
                                             <div className="text-[11px] font-black text-slate-600 uppercase tracking-tight">
                                                 {project.client_name || 'N/A'}
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden sm:table-cell">
                                             <div className="flex flex-col gap-1 text-[11px] font-black text-slate-600 uppercase tracking-tight">
                                                 <div className="flex items-center gap-2">
                                                     <CalendarIcon
@@ -344,10 +345,10 @@ export default function ProjectsManagementPage() {
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 md:px-8 py-4 md:py-6">
                                             {getStatusBadge(project.status)}
                                         </td>
-                                        <td className="px-8 py-6 text-right">
+                                        <td className="px-4 md:px-8 py-4 md:py-6 text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
@@ -446,7 +447,7 @@ export default function ProjectsManagementPage() {
                 description="Dự án sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác."
                 itemName={itemToDelete?.name}
                 itemLabel="Dự án"
-                loading={isDeleting}
+                loading={deleteMutation.isPending}
             />
         </div>
     );

@@ -57,7 +57,7 @@ export function AreaChartGradient({
                 )}
             </CardHeader>
             <CardContent className="pb-0">
-                <ChartContainer config={config} className="h-[250px] w-full">
+                <ChartContainer config={config} className="h-62.5 w-full">
                     <AreaChart
                         accessibilityLayer
                         data={data}
