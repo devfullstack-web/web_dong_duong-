@@ -2,6 +2,8 @@
 const nextConfig = {
     reactStrictMode: false,
 
+    serverExternalPackages: ['pg', 'node-cron', 'nodemailer', 'socket.io'],
+
     images: {
         qualities: [75, 100],
         remotePatterns: [

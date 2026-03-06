@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { decrypt } from '@/services/auth';
+import { decrypt } from '@/services/auth-edge';
 
 import { SITE_ROUTES, ADMIN_ROUTES, API_ROUTES } from '@/constants/routes';
 
