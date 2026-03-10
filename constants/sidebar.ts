@@ -1,7 +1,8 @@
 import { PORTAL_ROUTES } from './routes';
+import { MODULE_CODES, type ModuleCode } from './rbac';
 
 export interface SidebarItem {
-    code: string;
+    code: ModuleCode;
     name: string;
     icon: string;
     route: string;
@@ -12,105 +13,105 @@ export interface SidebarItem {
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
     {
-        code: 'DASHBOARD',
+        code: MODULE_CODES.DASHBOARD,
         name: 'Bảng điều khiển',
         icon: 'LayoutDashboard',
         route: PORTAL_ROUTES.dashboard,
         permission: null, // luôn hiện
     },
     {
-        code: 'PRODUCTS',
+        code: MODULE_CODES.PRODUCTS,
         name: 'Quản lý Sản phẩm',
         icon: 'Box',
         route: PORTAL_ROUTES.cms.products.list,
-        permission: 'PRODUCTS',
+        permission: MODULE_CODES.PRODUCTS,
     },
     {
-        code: 'BLOG',
+        code: MODULE_CODES.BLOG,
         name: 'Quản lý Tin tức',
         icon: 'FileText',
         route: PORTAL_ROUTES.cms.news.list,
-        permission: 'BLOG',
+        permission: MODULE_CODES.BLOG,
     },
     {
-        code: 'PROJECTS',
+        code: MODULE_CODES.PROJECTS,
         name: 'Quản lý Dự án',
         icon: 'Briefcase',
         route: PORTAL_ROUTES.cms.projects.list,
-        permission: 'PROJECTS',
+        permission: MODULE_CODES.PROJECTS,
     },
     {
-        code: 'RECRUITMENT',
+        code: MODULE_CODES.RECRUITMENT,
         name: 'Quản lý Tuyển dụng',
         icon: 'UserRoundSearch',
         route: PORTAL_ROUTES.cms.jobs.list,
-        permission: 'RECRUITMENT',
+        permission: MODULE_CODES.RECRUITMENT,
     },
     {
-        code: 'APPLICATIONS',
+        code: MODULE_CODES.APPLICATIONS,
         name: 'Danh sách Ứng viên',
         icon: 'ClipboardList',
         route: PORTAL_ROUTES.cms.applications.list,
-        permission: 'APPLICATIONS',
+        permission: MODULE_CODES.APPLICATIONS,
     },
     {
-        code: 'COMMENTS',
+        code: MODULE_CODES.COMMENTS,
         name: 'Quản lý Bình luận',
         icon: 'MessageSquare',
         route: PORTAL_ROUTES.cms.comments.list,
-        permission: 'COMMENTS',
+        permission: MODULE_CODES.COMMENTS,
     },
     {
-        code: 'CHAT',
+        code: MODULE_CODES.CHAT,
         name: 'Hỗ trợ trực tuyến',
         icon: 'MessageCircle',
         route: PORTAL_ROUTES.cms.chat,
-        permission: 'CHAT',
+        permission: MODULE_CODES.CHAT,
     },
     {
-        code: 'MEDIA',
+        code: MODULE_CODES.MEDIA,
         name: 'Thư viện Media',
         icon: 'Images',
         route: PORTAL_ROUTES.cms.media,
-        permission: 'MEDIA',
+        permission: MODULE_CODES.MEDIA,
     },
     {
-        code: 'CONTACTS',
+        code: MODULE_CODES.CONTACTS,
         name: 'Quản lý Liên hệ',
         icon: 'Mail',
         route: PORTAL_ROUTES.contacts,
-        permission: 'CONTACTS',
+        permission: MODULE_CODES.CONTACTS,
     },
     {
-        code: 'USERS',
+        code: MODULE_CODES.USERS,
         name: 'Quản lý Tài khoản',
         icon: 'ShieldCheck',
         route: PORTAL_ROUTES.users.list,
-        permission: 'USERS',
+        permission: MODULE_CODES.USERS,
     },
     {
-        code: 'ROLES',
+        code: MODULE_CODES.ROLES,
         name: 'Phân quyền & Vai trò',
         icon: 'Lock',
         route: PORTAL_ROUTES.users.roles.list,
-        permission: 'ROLES',
+        permission: MODULE_CODES.ROLES,
     },
     {
-        code: 'NOTIFICATIONS',
+        code: MODULE_CODES.NOTIFICATIONS,
         name: 'Thông báo hệ thống',
         icon: 'Bell',
         route: '/portal/notifications',
-        permission: 'NOTIFICATIONS',
+        permission: MODULE_CODES.NOTIFICATIONS,
     },
     {
-        code: 'LOGS',
+        code: MODULE_CODES.LOGS,
         name: 'Nhật ký hệ thống',
         icon: 'History',
         route: '/portal/audit-logs',
-        permission: 'LOGS',
+        permission: MODULE_CODES.LOGS,
     },
     {
-        code: 'SETTINGS',
+        code: MODULE_CODES.SETTINGS,
         name: 'Cài đặt hệ thống',
         icon: 'Settings',
         route: PORTAL_ROUTES.settings,

@@ -75,11 +75,6 @@ export const PORTAL_ROUTES = {
             add: '/portal/users/roles/add',
             edit: (id: string) => `/portal/users/roles/${id}/edit`,
         },
-        modules: {
-            list: '/portal/users/modules',
-            add: '/portal/users/modules/add',
-            edit: (id: string) => `/portal/users/modules/${id}/edit`,
-        },
     },
     contacts: '/portal/contacts',
     notifications: '/portal/notifications',

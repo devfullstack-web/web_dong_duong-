@@ -2,101 +2,26 @@ import 'dotenv/config';
 import { db } from './index';
 import { modules } from './schema';
 import { eq } from 'drizzle-orm';
-
-// Module data with icon, route, and order
-const MODULE_DATA = [
-    { code: 'DASHBOARD', name: 'Dashboard', icon: 'LayoutDashboard', route: '/portal', order: 0 },
-    {
-        code: 'BLOG',
-        name: 'Quản lý Tin tức',
-        icon: 'FileText',
-        route: '/portal/cms/news',
-        order: 1,
-    },
-    {
-        code: 'PROJECTS',
-        name: 'Quản lý Dự án',
-        icon: 'Briefcase',
-        route: '/portal/cms/projects',
-        order: 2,
-    },
-    {
-        code: 'PRODUCTS',
-        name: 'Quản lý Sản phẩm',
-        icon: 'Box',
-        route: '/portal/cms/products',
-        order: 3,
-    },
-    { code: 'MEDIA', name: 'Thư viện Media', icon: 'Images', route: '/portal/cms/media', order: 4 },
-    {
-        code: 'CONTACTS',
-        name: 'Quản lý Liên hệ',
-        icon: 'Mail',
-        route: '/portal/contacts',
-        order: 5,
-    },
-    {
-        code: 'COMMENTS',
-        name: 'Quản lý Bình luận',
-        icon: 'ClipboardList',
-        route: '/portal/cms/comments',
-        order: 6,
-    },
-    {
-        code: 'CHAT',
-        name: 'Hỗ trợ trực tuyến',
-        icon: 'MessageCircle',
-        route: '/portal/cms/chat',
-        order: 7,
-    },
-    {
-        code: 'RECRUITMENT',
-        name: 'Quản lý Tuyển dụng',
-        icon: 'UserRoundSearch',
-        route: '/portal/cms/jobs',
-        order: 8,
-    },
-    {
-        code: 'APPLICATIONS',
-        name: 'Danh sách Ứng viên',
-        icon: 'ClipboardList',
-        route: '/portal/cms/applications',
-        order: 9,
-    },
-    {
-        code: 'USERS',
-        name: 'Tài khoản Admin',
-        icon: 'ShieldCheck',
-        route: '/portal/users',
-        order: 10,
-    },
-    {
-        code: 'ROLES',
-        name: 'Phân quyền & Vai trò',
-        icon: 'Lock',
-        route: '/portal/users/roles',
-        order: 11,
-    },
-    {
-        code: 'MODULES',
-        name: 'Quản lý Module',
-        icon: 'Layers',
-        route: '/portal/users/modules',
-        order: 12,
-    },
-    {
-        code: 'SETTINGS',
-        name: 'Cài đặt hệ thống',
-        icon: 'Settings',
-        route: '/portal/settings',
-        order: 13,
-    },
-];
+import { MODULE_CODES } from '@/constants/rbac';
+import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 
 async function updateModules() {
-    console.log('🔄 Updating modules with icon, route, and order...');
+    console.log('🔄 Updating modules from MODULE_CODES...');
 
-    for (const moduleData of MODULE_DATA) {
+    const sidebarMap = new Map(SIDEBAR_ITEMS.map((s) => [s.code, s]));
+
+    const allModules = Object.values(MODULE_CODES).map((code, index) => {
+        const sidebar = sidebarMap.get(code);
+        return {
+            code,
+            name: sidebar?.name ?? code,
+            icon: sidebar?.icon ?? null,
+            route: sidebar?.route ?? null,
+            order: index,
+        };
+    });
+
+    for (const moduleData of allModules) {
         try {
             // Check if module exists
             const existing = await db
