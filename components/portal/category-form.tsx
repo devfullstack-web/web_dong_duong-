@@ -6,6 +6,7 @@ import { Save, ImagePlus, Globe, Search, Layers, Layout, CheckCircle2, XCircle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import $api from "@/utils/axios";
 
 
 export interface CategoryFormData {
@@ -28,16 +29,23 @@ export function CategoryForm({
   isEditing = false,
   backUrl,
 }: CategoryFormProps) {
-  const typeMap = {
-    news: "1",    // news
-    product: "2", // product
-    project: "3", // project
-  };
-
   const [formData, setFormData] = React.useState<CategoryFormData>({
     name: initialData?.name || "",
-    category_type_id: initialData?.category_type_id || typeMap[type],
+    category_type_id: initialData?.category_type_id || "",
   });
+
+  // Fetch UUID của category_type tương ứng từ API
+  React.useEffect(() => {
+    if (initialData?.category_type_id) return; // đang edit, đã có sẵn
+    $api.get(`/category-types?name=${type}`)
+      .then((res) => {
+        const found = res.data?.data?.[0];
+        if (found?.id) {
+          setFormData((prev) => ({ ...prev, category_type_id: found.id }));
+        }
+      })
+      .catch(() => {});
+  }, [type, initialData?.category_type_id]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

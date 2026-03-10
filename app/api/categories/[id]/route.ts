@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { categories, newsArticles, products, projects } from "@/db/schema";
-import { eq, or } from "drizzle-orm";
+import { categories, categoryTypes, newsArticles, products, projects } from "@/db/schema";
+import { and, eq, isNull, isNotNull } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
@@ -57,20 +57,53 @@ export const DELETE = withAuth(async (request: NextRequest, session, { params })
   try {
     const { id } = await params;
 
-    // Check if category is in use
-    const [newsUsage, productUsage, projectUsage] = await Promise.all([
-      db.select({ id: newsArticles.id }).from(newsArticles).where(eq(newsArticles.category_id, id)).limit(1),
-      db.select({ id: products.id }).from(products).where(eq(products.category_id, id)).limit(1),
-      db.select({ id: projects.id }).from(projects).where(eq(projects.category_id, id)).limit(1),
-    ]);
+    // Lấy category kèm type name để chỉ check đúng bảng liên quan
+    const [category] = await db
+      .select({ id: categories.id, typeName: categoryTypes.name })
+      .from(categories)
+      .leftJoin(categoryTypes, eq(categories.category_type_id, categoryTypes.id))
+      .where(eq(categories.id, id));
 
-    if (newsUsage.length > 0 || productUsage.length > 0 || projectUsage.length > 0) {
-      return apiError("Không thể xóa danh mục này vì đang có dữ liệu (Tin tức, Sản phẩm hoặc Dự án) liên kết với nó. Vui lòng xóa hoặc chuyển các dữ liệu đó sang danh mục khác trước.", 400);
+    if (!category) {
+      return apiError("Category not found", 404);
     }
 
-    const [deletedCategory] = await db.delete(categories)
-      .where(eq(categories.id, id))
-      .returning();
+    // Chỉ check bảng tương ứng với loại danh mục, bỏ qua records đã soft delete
+    let isInUse = false;
+    if (category.typeName === 'news') {
+      const [usage] = await db.select({ id: newsArticles.id }).from(newsArticles)
+        .where(and(eq(newsArticles.category_id, id), isNull(newsArticles.deleted_at))).limit(1);
+      isInUse = !!usage;
+    } else if (category.typeName === 'product') {
+      const [usage] = await db.select({ id: products.id }).from(products)
+        .where(and(eq(products.category_id, id), isNull(products.deleted_at))).limit(1);
+      isInUse = !!usage;
+    } else if (category.typeName === 'project') {
+      const [usage] = await db.select({ id: projects.id }).from(projects)
+        .where(and(eq(projects.category_id, id), isNull(projects.deleted_at))).limit(1);
+      isInUse = !!usage;
+    }
+
+    if (isInUse) {
+      return apiError("Không thể xóa danh mục này vì đang có dữ liệu liên kết với nó. Vui lòng xóa hoặc chuyển các dữ liệu đó sang danh mục khác trước.", 400);
+    }
+
+    // Dùng transaction: hard-delete các records đã soft-delete trước (để giải phóng FK),
+    // sau đó mới xóa category
+    const deletedCategory = await db.transaction(async (tx) => {
+      if (category.typeName === 'news') {
+        await tx.delete(newsArticles).where(and(eq(newsArticles.category_id, id), isNotNull(newsArticles.deleted_at)));
+      } else if (category.typeName === 'product') {
+        await tx.delete(products).where(and(eq(products.category_id, id), isNotNull(products.deleted_at)));
+      } else if (category.typeName === 'project') {
+        await tx.delete(projects).where(and(eq(projects.category_id, id), isNotNull(projects.deleted_at)));
+      }
+
+      const [deleted] = await tx.delete(categories)
+        .where(eq(categories.id, id))
+        .returning();
+      return deleted;
+    });
 
     if (!deletedCategory) {
       return apiError("Category not found", 404);

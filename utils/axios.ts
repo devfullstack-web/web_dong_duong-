@@ -2,8 +2,10 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { SITE_ROUTES, API_ROUTES } from '@/constants/routes';
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
+
 const $api = axios.create({
-    baseURL: '/api',
+    baseURL: BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -12,7 +14,7 @@ const $api = axios.create({
 // Public API instance - no auth headers, no refresh logic
 // Use this for public endpoints like chat widget
 export const $publicApi = axios.create({
-    baseURL: '/api',
+    baseURL: BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -47,7 +49,7 @@ $api.interceptors.response.use(
             }
 
             try {
-                const refreshRes = await axios.post('/api' + API_ROUTES.AUTH.REFRESH);
+                const refreshRes = await axios.post(BASE_URL + API_ROUTES.AUTH.REFRESH);
 
                 if (refreshRes.data.success) {
                     return $api(originalRequest);
