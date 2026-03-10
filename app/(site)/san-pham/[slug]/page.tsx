@@ -305,7 +305,7 @@ export default function ProductDetailPage() {
                                     {product.name}
                                 </h1>
                                 <p
-                                    className="text-xl text-muted-foreground font-medium leading-relaxed italic border-l-4 border-slate-100 pl-8"
+                                    className="text-sm text-muted-foreground  leading-relaxed italic border-l-4 border-slate-100 pl-6"
                                     dangerouslySetInnerHTML={{ __html: product.description }}
                                 />
                             </div>
