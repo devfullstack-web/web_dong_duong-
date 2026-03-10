@@ -109,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader className="border-b border-white/5 flex items-center justify-start px-4 bg-brand shrink-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
                 <Link
                     href={PORTAL_ROUTES.dashboard}
-                    className="flex items-center gap-3 group/logo relative w-full h-full justify-center px-4"
+                    className="flex items-center gap-3 group/logo relative w-full h-full justify-center "
                 >
                     <div className="relative flex items-center gap-3 group-data-[collapsible=icon]:hidden w-full px-1">
                         <div className="bg-white p-1 rounded-none flex items-center justify-center h-8 w-8 shrink-0">
@@ -120,6 +120,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 height={22}
                                 unoptimized
                                 className="object-contain"
+                                style={{ width: 'auto', height: 'auto' }}
                             />
                         </div>
                         <span className="text-[11px] font-black tracking-tighter leading-none text-white whitespace-nowrap uppercase">
@@ -134,6 +135,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             height={20}
                             unoptimized
                             className="object-contain"
+                            style={{ width: 'auto', height: 'auto' }}
                         />
                     </div>
                 </Link>

@@ -8,9 +8,9 @@ interface UseSocketOptions {
 }
 
 /**
- * Custom hook to manage Socket.io connection
- * @param options Connection options for socket.io-client
- * @returns Object containing the socket instance and connection status
+ * Custom hook to manage Socket.io connection.
+ * Only connects when custom server is running (production or `npm run start`).
+ * In dev mode (`next dev`), Socket.IO server is not available.
  */
 export function useSocket(options: UseSocketOptions = {}) {
     const [isConnected, setIsConnected] = useState(false);
@@ -20,10 +20,17 @@ export function useSocket(options: UseSocketOptions = {}) {
     const transportsStr = JSON.stringify(options.transports || ['websocket', 'polling']);
 
     useEffect(() => {
+        // Socket.IO chỉ khả dụng khi chạy qua custom server (production).
+        // Khi chạy `next dev`, không có Socket.IO server → skip.
+        if (process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_ENABLE_SOCKET) {
+            return;
+        }
+
         const socket = io({
             query: options.query,
             transports: options.transports || ['websocket', 'polling'],
-            reconnectionAttempts: options.reconnectionAttempts || 5,
+            reconnectionAttempts: options.reconnectionAttempts || 3,
+            timeout: 5000,
         });
 
         socketRef.current = socket;
@@ -39,10 +46,9 @@ export function useSocket(options: UseSocketOptions = {}) {
         });
 
         socket.on('connect_error', (error) => {
-            console.error('[Socket] Connection Error:', error);
+            console.error('[Socket] Connection Error:', error.message);
         });
 
-        // Cleanup on unmount
         return () => {
             if (socket) {
                 socket.disconnect();
