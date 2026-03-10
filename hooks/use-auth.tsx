@@ -1,9 +1,9 @@
 'use client';
 
 import { RBAC_ROLES } from '@/constants/rbac';
-import { useAuthStore, AuthUser, SidebarModule } from '@/stores/auth-store';
+import { useAuthStore, AuthUser } from '@/stores/auth-store';
 
-export type { AuthUser, SidebarModule };
+export type { AuthUser };
 
 export function useAuth() {
     const { user, isLoading, refreshUser, initialize } = useAuthStore();

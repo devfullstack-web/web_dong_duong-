@@ -1,34 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { icons, ChevronRight, User, LogOut, GripVertical, FileText } from 'lucide-react';
+import { icons, ChevronRight, User, LogOut, FileText } from 'lucide-react';
 import Image from 'next/image';
-import {
-    DndContext,
-    closestCenter,
-    KeyboardSensor,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    DragEndEvent,
-} from '@dnd-kit/core';
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    useSortable,
-    verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 import {
     Sidebar,
     SidebarContent,
     SidebarGroup,
     SidebarHeader,
-    SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem,
     SidebarRail,
     SidebarFooter,
 } from '@/components/ui/sidebar';
@@ -43,109 +24,28 @@ import {
 import { usePathname, useRouter } from 'next/navigation';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
-import { useAuth, SidebarModule } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { useAuthStore } from '@/stores/auth-store';
 
 import { cn } from '@/lib/utils';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
+import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 import Link from 'next/link';
 
 const DynamicIcon = React.memo(
-    ({ name, className }: { name: string | null; className?: string }) => {
-        if (!name) return <FileText className={className} />;
-
+    ({ name, className }: { name: string; className?: string }) => {
         const IconComponent = icons[name as keyof typeof icons];
-
-        if (!IconComponent) {
-            return <FileText className={className} />;
-        }
-
+        if (!IconComponent) return <FileText className={className} />;
         return <IconComponent className={className} />;
     },
 );
 DynamicIcon.displayName = 'DynamicIcon';
 
-interface SortableMenuItemProps {
-    module: SidebarModule;
-    isActive: boolean;
-}
-
-function SortableMenuItem({ module, isActive }: SortableMenuItemProps) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-        id: module.code,
-    });
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.5 : 1,
-        zIndex: isDragging ? 1 : 0,
-    };
-
-    return (
-        <li
-            ref={setNodeRef}
-            style={style}
-            className="group/menu-item relative w-full flex justify-center list-none"
-            data-slot="sidebar-menu-item"
-            data-sidebar="menu-item"
-        >
-            <SidebarMenuButton
-                asChild
-                tooltip={module.name}
-                className={cn(
-                    'text-[10px] font-black px-4 transition-none! uppercase tracking-widest rounded-none h-auto group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center relative',
-                    isActive
-                        ? 'bg-white text-brand hover:bg-white hover:text-brand'
-                        : 'text-white/70 hover:bg-white/5 hover:text-white',
-                )}
-            >
-                <div className="flex items-center gap-2 w-full">
-                    {/* Drag Handle - only visible on hover and not in icon mode */}
-                    <div
-                        {...attributes}
-                        {...listeners}
-                        className="flex items-center justify-center shrink-0 opacity-0 group-hover/menu-item:opacity-40 transition-opacity cursor-grab active:cursor-grabbing group-data-[collapsible=icon]:hidden"
-                    >
-                        <GripVertical className="size-3" />
-                    </div>
-
-                    <Link
-                        href={module.route as string}
-                        className="flex items-center gap-3 w-full group-data-[collapsible=icon]:justify-center"
-                    >
-                        <div className="flex items-center justify-center shrink-0 size-5">
-                            <DynamicIcon
-                                name={module.icon}
-                                className={cn('size-4', isActive ? 'text-brand' : 'text-[#fbbf24]')}
-                            />
-                        </div>
-                        <span className="truncate group-data-[collapsible=icon]:hidden">
-                            {module.name}
-                        </span>
-                    </Link>
-                </div>
-            </SidebarMenuButton>
-        </li>
-    );
-}
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, hasPermission, isSuperAdmin } = useAuth();
     const [isMounted, setIsMounted] = React.useState(false);
-
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 8,
-            },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        }),
-    );
 
     React.useEffect(() => {
         setIsMounted(true);
@@ -154,7 +54,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const handleLogout = async () => {
         try {
             await $api.post(API_ROUTES.AUTH.LOGOUT);
-            useAuthStore.getState().logout(); // Reset auth store state
+            useAuthStore.getState().logout();
             toast.success('Đã đăng xuất');
             router.push('/login');
             router.refresh();
@@ -164,51 +64,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
     };
 
-    const navItems = React.useMemo(() => {
-        if (!user?.modules) return [];
-
-        return user.modules
-            .filter((module: SidebarModule) => !!module.route)
-            .map((module: SidebarModule) => ({
-                title: module.name,
-                url: module.route as string,
-                iconName: module.icon,
-                code: module.code,
-            }));
-    }, [user?.modules]);
-
-    const filteredModules = React.useMemo(() => {
-        return (user?.modules || []).filter((module: SidebarModule) => !!module.route);
-    }, [user?.modules]);
-
-    const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
-
-        if (over && active.id !== over.id) {
-            const modules = user?.modules || [];
-            const oldIndex = modules.findIndex((m) => m.code === active.id);
-            const newIndex = modules.findIndex((m) => m.code === over.id);
-
-            if (oldIndex !== -1 && newIndex !== -1) {
-                const newOrder = arrayMove(modules, oldIndex, newIndex);
-                useAuthStore.getState().setModulesOrder(newOrder);
-                useAuthStore.getState().syncModulesOrder();
-            }
-        }
-    };
+    // Filter sidebar items theo permission — static config, không cần API
+    const visibleItems = React.useMemo(() => {
+        if (!user) return [];
+        return SIDEBAR_ITEMS.filter((item) => {
+            if (!item.permission) return true;
+            if (isSuperAdmin) return true;
+            return hasPermission(`${item.permission}:VIEW`);
+        });
+    }, [user, isSuperAdmin, hasPermission]);
 
     const isPathActive = (url: string) => {
         if (!url) return false;
         if (pathname === url) return true;
-
         if (pathname.startsWith(url + '/')) {
-            const hasBetterMatch = navItems.some(
+            return !visibleItems.some(
                 (item) =>
-                    item.url !== url &&
-                    item.url.length > url.length &&
-                    (pathname === item.url || pathname.startsWith(item.url + '/')),
+                    item.route !== url &&
+                    item.route.length > url.length &&
+                    (pathname === item.route || pathname.startsWith(item.route + '/')),
             );
-            return !hasBetterMatch;
         }
         return false;
     };
@@ -266,30 +141,52 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
             <SidebarContent className="scrollbar-hide bg-brand py-2 overflow-x-hidden">
                 <SidebarGroup className="p-0">
-                    <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={handleDragEnd}
+                    <ul
+                        className="flex w-full min-w-0 flex-col gap-1 group-data-[collapsible=icon]:items-center list-none p-0"
+                        data-slot="sidebar-menu"
+                        data-sidebar="menu"
                     >
-                        <SortableContext
-                            items={filteredModules.map((m) => m.code)}
-                            strategy={verticalListSortingStrategy}
-                        >
-                            <ul
-                                className="flex w-full min-w-0 flex-col gap-1 group-data-[collapsible=icon]:items-center list-none p-0"
-                                data-slot="sidebar-menu"
-                                data-sidebar="menu"
-                            >
-                                {filteredModules.map((module: SidebarModule) => (
-                                    <SortableMenuItem
-                                        key={module.code}
-                                        module={module}
-                                        isActive={isPathActive(module.route as string)}
-                                    />
-                                ))}
-                            </ul>
-                        </SortableContext>
-                    </DndContext>
+                        {visibleItems.map((item) => {
+                            const active = isPathActive(item.route);
+                            return (
+                                <li
+                                    key={item.code}
+                                    className="relative w-full flex justify-center list-none"
+                                    data-slot="sidebar-menu-item"
+                                    data-sidebar="menu-item"
+                                >
+                                    <SidebarMenuButton
+                                        asChild
+                                        tooltip={item.name}
+                                        className={cn(
+                                            'text-[10px] font-black px-4 transition-none! uppercase tracking-widest rounded-none h-auto group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center relative',
+                                            active
+                                                ? 'bg-white text-brand hover:bg-white hover:text-brand'
+                                                : 'text-white/70 hover:bg-white/5 hover:text-white',
+                                        )}
+                                    >
+                                        <Link
+                                            href={item.route}
+                                            className="flex items-center gap-3 w-full group-data-[collapsible=icon]:justify-center"
+                                        >
+                                            <div className="flex items-center justify-center shrink-0 size-5">
+                                                <DynamicIcon
+                                                    name={item.icon}
+                                                    className={cn(
+                                                        'size-4',
+                                                        active ? 'text-brand' : 'text-[#fbbf24]',
+                                                    )}
+                                                />
+                                            </div>
+                                            <span className="truncate group-data-[collapsible=icon]:hidden">
+                                                {item.name}
+                                            </span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </SidebarGroup>
             </SidebarContent>
 
