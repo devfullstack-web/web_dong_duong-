@@ -17,6 +17,7 @@ import {
     Package,
     Calendar as CalendarIcon,
     X,
+    ChevronDown,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -60,6 +61,24 @@ export default function ProductsManagementPage() {
     // Date Filter state
     const [date, setDate] = useState<DateRange | undefined>();
 
+    // Category filter state
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+
+    // Fetch product categories
+    const { data: categoriesData } = useQuery<{ data: { id: string; name: string }[] }>({
+        queryKey: ['product-categories'],
+        queryFn: async () => {
+            const res = await $api.get(API_ROUTES.CATEGORIES, { params: { type: 'product' } });
+            return { data: res.data.data || [] };
+        },
+    });
+    const categoryList = categoriesData?.data || [];
+
+    // Reset to page 1 when category changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [selectedCategoryId]);
+
     // Reset to page 1 when search changes
     useEffect(() => {
         setCurrentPage(1);
@@ -72,7 +91,7 @@ export default function ProductsManagementPage() {
     }>({
         queryKey: [
             'admin-products',
-            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange: date },
+            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange: date, categoryId: selectedCategoryId },
         ],
         queryFn: async () => {
             const res = await $api.get(API_ROUTES.PRODUCTS, {
@@ -82,6 +101,7 @@ export default function ProductsManagementPage() {
                     search: debouncedSearch || undefined,
                     startDate: date?.from?.toISOString(),
                     endDate: date?.to?.toISOString(),
+                    categoryId: selectedCategoryId || undefined,
                 },
             });
             if (res.data.success !== false) {
@@ -194,6 +214,47 @@ export default function ProductsManagementPage() {
                         />
                     </div>
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
+                        {/* Category Filter */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                        selectedCategoryId ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
+                                    )}
+                                >
+                                    <span className="truncate">
+                                        {selectedCategoryId
+                                            ? categoryList.find((c) => c.id === selectedCategoryId)?.name
+                                            : 'Lọc danh mục'}
+                                    </span>
+                                    <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-48 rounded-none border border-slate-100 p-1">
+                                <DropdownMenuItem
+                                    className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
+                                    onClick={() => setSelectedCategoryId('')}
+                                >
+                                    Tất cả danh mục
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-slate-50" />
+                                {categoryList.map((cat) => (
+                                    <DropdownMenuItem
+                                        key={cat.id}
+                                        className={cn(
+                                            'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
+                                            selectedCategoryId === cat.id && 'text-brand-primary bg-brand-primary/5',
+                                        )}
+                                        onClick={() => setSelectedCategoryId(cat.id)}
+                                    >
+                                        {cat.name}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         {/* Date Range Picker */}
                         <div className="grid gap-2 w-full sm:w-75">
                             <Popover>
