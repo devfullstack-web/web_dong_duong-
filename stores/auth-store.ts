@@ -94,6 +94,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 };
 
                 set({ user: synchronizedUser, isInitialized: true });
+
+                // Resync server-side session cookie so API middleware has fresh permissions
+                await $api.post(API_ROUTES.AUTH.REFRESH).catch(() => {
+                    // Non-fatal — session will self-refresh on next token expiry
+                });
             } else {
                 await get().logout();
             }

@@ -54,12 +54,12 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="w-full max-w-[1200px] grid grid-cols-1 lg:grid-cols-2 bg-white border border-slate-100 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden relative z-10"
+                className="w-full max-w-300 grid grid-cols-1 lg:grid-cols-2 bg-white border border-slate-100 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden relative z-10"
             >
                 {/* Visual Brand Section */}
                 <div className="hidden lg:flex flex-col justify-between p-16 bg-slate-900 text-white relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-                        <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-gradient-to-bl from-brand-primary via-transparent to-transparent opacity-50 rotate-12" />
+                        <div className="absolute top-0 right-0 w-[150%] h-[150%] bg-linear-to-bl from-brand-primary via-transparent to-transparent opacity-50 rotate-12" />
                     </div>
 
                     <div className="relative z-10">

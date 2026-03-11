@@ -6,7 +6,7 @@ import { useAuthStore, AuthUser } from '@/stores/auth-store';
 export type { AuthUser };
 
 export function useAuth() {
-    const { user, isLoading, refreshUser, initialize } = useAuthStore();
+    const { user, isLoading, refreshUser } = useAuthStore();
 
     const hasPermission = (permission: string) => {
         if (!user) return false;

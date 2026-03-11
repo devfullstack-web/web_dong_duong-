@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { memo, useState, useEffect, useMemo } from 'react';
 import { icons, ChevronRight, User, LogOut, FileText } from 'lucide-react';
 import Image from 'next/image';
 
@@ -32,22 +32,19 @@ import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 import Link from 'next/link';
 
-const DynamicIcon = React.memo(
-    ({ name, className }: { name: string; className?: string }) => {
-        const IconComponent = icons[name as keyof typeof icons];
-        if (!IconComponent) return <FileText className={className} />;
-        return <IconComponent className={className} />;
-    },
-);
-DynamicIcon.displayName = 'DynamicIcon';
+const DynamicIcon = memo(function DynamicIcon({ name, className }: { name: string; className?: string }) {
+    const IconComponent = icons[name as keyof typeof icons];
+    if (!IconComponent) return <FileText className={className} />;
+    return <IconComponent className={className} />;
+});
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
     const router = useRouter();
     const { user, hasPermission, isSuperAdmin } = useAuth();
-    const [isMounted, setIsMounted] = React.useState(false);
+    const [isMounted, setIsMounted] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsMounted(true);
     }, []);
 
@@ -65,7 +62,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     };
 
     // Filter sidebar items theo permission — static config, không cần API
-    const visibleItems = React.useMemo(() => {
+    const visibleItems = useMemo(() => {
         if (!user) return [];
         return SIDEBAR_ITEMS.filter((item) => {
             if (!item.permission) return true;
@@ -103,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     '--sidebar-accent-foreground': 'white',
                     '--sidebar-border': 'rgba(255, 255, 255, 0.05)',
                     '--sidebar-ring': '#fbbf24',
-                } as React.CSSProperties
+                } as import('react').CSSProperties
             }
         >
             <SidebarHeader className="border-b border-white/5 flex items-center justify-start px-4 bg-brand shrink-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
