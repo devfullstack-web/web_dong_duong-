@@ -12,6 +12,8 @@ import {
     Shield,
     Activity,
     Users,
+    Lock,
+    LockOpen,
 } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -25,10 +27,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
+import { DeleteConfirmationDialog, ConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { useAuth } from '@/hooks/use-auth';
 import { PERMISSIONS } from '@/constants/rbac';
@@ -42,6 +45,8 @@ export default function UsersManagementPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<User | null>(null);
+    const [lockDialogOpen, setLockDialogOpen] = useState(false);
+    const [itemToLock, setItemToLock] = useState<User | null>(null);
     const { user: currentUser, hasPermission } = useAuth();
     const queryClient = useQueryClient();
 
@@ -81,6 +86,32 @@ export default function UsersManagementPage() {
             toast.error('Lỗi khi xóa tài khoản');
         },
     });
+
+    // Lock/Unlock mutation
+    const lockMutation = useMutation({
+        mutationFn: async ({ id, isLocked }: { id: string; isLocked: boolean }) => {
+            await $api.patch(`${API_ROUTES.USERS}/${id}`, { isLocked });
+        },
+        onSuccess: (_data, variables) => {
+            toast.success(variables.isLocked ? 'Đã khóa tài khoản' : 'Đã mở khóa tài khoản');
+            queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+            setLockDialogOpen(false);
+            setItemToLock(null);
+        },
+        onError: () => {
+            toast.error('Lỗi khi thay đổi trạng thái tài khoản');
+        },
+    });
+
+    const handleLockClick = (user: User) => {
+        setItemToLock(user);
+        setLockDialogOpen(true);
+    };
+
+    const handleLockConfirm = () => {
+        if (!itemToLock) return;
+        lockMutation.mutate({ id: itemToLock.id, isLocked: !(itemToLock.isLocked ?? itemToLock.is_locked) });
+    };
 
     const handleDeleteClick = (user: User) => {
         setItemToDelete(user);
@@ -131,7 +162,7 @@ export default function UsersManagementPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest text-[#fbbf24]">
+                        <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest ">
                             Sài Gòn Valve CMS
                         </span>
                         <span className="text-[9px] font-bold text-indigo-500 uppercase tracking-widest flex items-center gap-1">
@@ -242,8 +273,13 @@ export default function UsersManagementPage() {
                                                             />
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight">
+                                                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
                                                                 {user.username}
+                                                                {(user.isLocked ?? user.is_locked) && (
+                                                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-500 text-[8px] font-black uppercase tracking-widest">
+                                                                        <Lock size={8} /> Đã khóa
+                                                                    </span>
+                                                                )}
                                                             </span>
                                                             <span className="text-[10px] font-bold text-slate-400">
                                                                 {user.email ||
@@ -339,23 +375,45 @@ export default function UsersManagementPage() {
                                                                 </DropdownMenuLabel>
                                                                 <DropdownMenuSeparator className="bg-slate-50" />
 
-                                                                {/* Hide delete option if viewing own account */}
-                                                                {hasPermission(
-                                                                    PERMISSIONS.USERS_DELETE,
-                                                                ) &&
-                                                                    currentUser?.id !== user.id && (
-                                                                        <DropdownMenuItem
-                                                                            className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 text-rose-500 hover:bg-rose-50 px-3 py-2"
-                                                                            onClick={() =>
-                                                                                handleDeleteClick(
-                                                                                    user,
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            <Trash2 size={14} />{' '}
-                                                                            Khóa tài khoản
-                                                                        </DropdownMenuItem>
-                                                                    )}
+                                                                {hasPermission(PERMISSIONS.USERS_UPDATE) && (
+                                                                    <DropdownMenuItem
+                                                                        className={cn(
+                                                                            'text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
+                                                                            (user.isLocked ?? user.is_locked)
+                                                                                ? 'text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50 hover:text-emerald-700 focus:text-emerald-700'
+                                                                                : 'text-amber-600 hover:bg-amber-50 focus:bg-amber-50 hover:text-amber-700 focus:text-amber-700',
+                                                                        )}
+                                                                        onClick={() => handleLockClick(user)}
+                                                                        disabled={currentUser?.id === user.id || lockMutation.isPending}
+                                                                    >
+                                                                        {(user.isLocked ?? user.is_locked) ? (
+                                                                            <><LockOpen size={14} className="shrink-0 text-emerald-500" /> Mở khóa tài khoản</>
+                                                                        ) : (
+                                                                            <><Lock size={14} className="shrink-0 text-amber-500" /> Khóa tài khoản</>
+                                                                        )}
+                                                                    </DropdownMenuItem>
+                                                                )}
+
+                                                                {hasPermission(PERMISSIONS.USERS_DELETE) && (
+                                                                    <DropdownMenuItem
+                                                                        className={cn(
+                                                                            'text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
+                                                                            currentUser?.id === user.id
+                                                                                ? 'text-slate-400'
+                                                                                : 'text-rose-500 hover:bg-rose-50 focus:bg-rose-50 hover:text-rose-600 focus:text-rose-600',
+                                                                        )}
+                                                                        onClick={() => handleDeleteClick(user)}
+                                                                        disabled={currentUser?.id === user.id}
+                                                                    >
+                                                                        {currentUser?.id === user.id ? (
+                                                                            <span className="text-[9px] font-bold normal-case tracking-normal">
+                                                                                Không thể xóa tài khoản của chính bạn
+                                                                            </span>
+                                                                        ) : (
+                                                                            <><Trash2 size={14} className="shrink-0 text-rose-500" /> Xóa tài khoản</>
+                                                                        )}
+                                                                    </DropdownMenuItem>
+                                                                )}
                                                             </DropdownMenuContent>
                                                         </DropdownMenu>
                                                     </div>
@@ -414,6 +472,21 @@ export default function UsersManagementPage() {
                 title="Xác nhận hạ cấp tài khoản?"
                 description="Bạn đang chuẩn bị vô hiệu hóa quyền truy cập của tài khoản này vào hệ thống CMS. Hành động này không thể hoàn tác lập tức."
                 itemName={itemToDelete?.username}
+            />
+
+            <ConfirmationDialog
+                open={lockDialogOpen}
+                onOpenChange={setLockDialogOpen}
+                onConfirm={handleLockConfirm}
+                variant="warning"
+                icon={itemToLock && (itemToLock.isLocked ?? itemToLock.is_locked) ? LockOpen : Lock}
+                title={(itemToLock?.isLocked ?? itemToLock?.is_locked) ? 'Xác nhận mở khóa tài khoản?' : 'Xác nhận khóa tài khoản?'}
+                description={(itemToLock?.isLocked ?? itemToLock?.is_locked)
+                    ? `Tài khoản "${itemToLock?.username}" sẽ được mở khóa và có thể đăng nhập trở lại vào hệ thống.`
+                    : `Tài khoản "${itemToLock?.username}" sẽ bị khóa và không thể đăng nhập vào hệ thống cho đến khi được mở khóa.`
+                }
+                confirmText={(itemToLock?.isLocked ?? itemToLock?.is_locked) ? 'Mở khóa' : 'Khóa tài khoản'}
+                loading={lockMutation.isPending}
             />
         </div>
     );
