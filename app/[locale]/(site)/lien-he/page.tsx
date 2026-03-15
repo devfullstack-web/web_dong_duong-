@@ -18,6 +18,8 @@ import {
     Info,
     Loader2,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import {
     Accordion,
     AccordionContent,
@@ -45,6 +47,8 @@ const FAQS = [
 ];
 
 export default function ContactPage() {
+    const t = useTranslations('Contact');
+    const tc = useTranslations('ContactForm');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -53,6 +57,21 @@ export default function ContactPage() {
         address: '',
         message: '',
     });
+
+    const FAQS_CONTENT = [
+        {
+            q: t('faqs.0.q'),
+            a: t('faqs.0.a', { phone: COMPANY_INFO.phone }),
+        },
+        {
+            q: t('faqs.1.q'),
+            a: t('faqs.1.a'),
+        },
+        {
+            q: t('faqs.2.q'),
+            a: t('faqs.2.a'),
+        },
+    ];
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -64,14 +83,14 @@ export default function ContactPage() {
             !formData.address ||
             !formData.message
         ) {
-            toast.error('Vui lòng điền đầy đủ tất cả các trường thông tin');
+            toast.error(tc('errors.required'));
             return;
         }
 
         setIsSubmitting(true);
         try {
             await $api.post(API_ROUTES.CONTACTS, formData);
-            toast.success('Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ lại sớm nhất.');
+            toast.success(tc('success'));
             setFormData({
                 name: '',
                 phone: '',
@@ -81,8 +100,7 @@ export default function ContactPage() {
             });
         } catch (error: any) {
             console.error(error);
-            const message =
-                error.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.';
+            const message = error.response?.data?.message || tc('errors.general');
             toast.error(message);
         } finally {
             setIsSubmitting(false);
@@ -114,11 +132,11 @@ export default function ContactPage() {
                     <div className="max-w-3xl space-y-6">
                         <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
                             <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                            TRUNG TÂM HỖ TRỢ CHIẾN LƯỢC
+                            {t('headerBadge')}
                         </div>
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
-                            KẾT NỐI VỚI <br />
-                            <span className="text-brand-accent">SÀI GÒN VALVE</span>
+                            {t('headerTitle')} <br />
+                            <span className="text-brand-accent">{t('headerTitleAccent')}</span>
                         </h1>
                     </div>
                 </div>
@@ -132,11 +150,10 @@ export default function ContactPage() {
                         <div className="bg-white p-12 sm:p-20 space-y-16">
                             <div className="space-y-6">
                                 <h2 className="text-3xl font-bold text-brand-secondary uppercase tracking-tight leading-tight">
-                                    THÔNG TIN <br /> ĐẠI DIỆN
+                                    {t('infoTitle')}
                                 </h2>
                                 <p className="text-lg text-muted-foreground font-medium max-w-sm">
-                                    Liên hệ trực tiếp với các bộ phận chuyên trách để được hỗ trợ
-                                    nhanh nhất.
+                                    {t('infoDesc')}
                                 </p>
                             </div>
 
@@ -144,27 +161,27 @@ export default function ContactPage() {
                                 {[
                                     {
                                         icon: Phone,
-                                        label: 'HOTLINE KINH DOANH',
+                                        label: t('labels.sales'),
                                         value: COMPANY_INFO.phone,
-                                        sub: 'Tư vấn báo giá',
+                                        sub: t('subs.sales'),
                                     },
                                     {
                                         icon: Headset,
-                                        label: 'HỖ TRỢ KỸ THUẬT',
+                                        label: t('labels.tech'),
                                         value: COMPANY_INFO.hotline,
-                                        sub: 'Zalo / Viber 24/7',
+                                        sub: t('subs.tech'),
                                     },
                                     {
                                         icon: Mail,
-                                        label: 'VĂN PHÒNG ĐIỆN TỬ',
+                                        label: t('labels.office'),
                                         value: COMPANY_INFO.email,
-                                        sub: 'Phản hồi chính thức',
+                                        sub: t('subs.office'),
                                     },
                                     {
                                         icon: MapPin,
-                                        label: 'TRỤ SỞ CHÍNH',
+                                        label: t('labels.headquarters'),
                                         value: COMPANY_INFO.address,
-                                        sub: 'Văn phòng chính',
+                                        sub: t('subs.headquarters'),
                                     },
                                 ].map((item, i) => (
                                     <div key={i} className="space-y-4">
@@ -188,8 +205,7 @@ export default function ContactPage() {
 
                             <div className="space-y-8 pt-10 border-t border-slate-50">
                                 <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-brand-secondary">
-                                    <Clock size={16} className="text-brand-accent" /> Giờ làm việc:
-                                    Thứ 2 - Thứ 7 (08:00 - 17:30)
+                                    <Clock size={16} className="text-brand-accent" /> {t('workingHours')}
                                 </div>
                                 <div className="flex gap-6">
                                     {[Facebook, Linkedin, Youtube].map((Icon, i) => (
@@ -209,7 +225,7 @@ export default function ContactPage() {
                         <div className="bg-slate-50 p-12 sm:p-20 space-y-12">
                             <div className="space-y-4">
                                 <h3 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
-                                    GỬI YÊU CẦU TRỰC TUYẾN
+                                    {t('formTitle')}
                                 </h3>
                                 <div className="h-1 w-20 bg-brand-primary"></div>
                             </div>
@@ -218,7 +234,7 @@ export default function ContactPage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                            Họ tên của bạn *
+                                            {tc('labels.name')}
                                         </label>
                                         <input
                                             type="text"
@@ -226,13 +242,13 @@ export default function ContactPage() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            placeholder="NGUYỄN VĂN A"
+                                            placeholder={tc('placeholders.name')}
                                             className="w-full bg-transparent border-b-2 border-slate-200 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-brand-primary transition-colors placeholder:text-slate-200"
                                         />
                                     </div>
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                            Số điện thoại *
+                                            {tc('labels.phone')}
                                         </label>
                                         <input
                                             type="tel"
@@ -240,7 +256,7 @@ export default function ContactPage() {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             required
-                                            placeholder="09XX XXX XXX"
+                                            placeholder={tc('placeholders.phone')}
                                             className="w-full bg-transparent border-b-2 border-slate-200 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-brand-primary transition-colors placeholder:text-slate-200"
                                         />
                                     </div>
@@ -249,7 +265,7 @@ export default function ContactPage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                            Email *
+                                            {tc('labels.email')}
                                         </label>
                                         <input
                                             type="email"
@@ -257,13 +273,13 @@ export default function ContactPage() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            placeholder="EXAMPLE@GMAIL.COM"
+                                            placeholder={tc('placeholders.email')}
                                             className="w-full bg-transparent border-b-2 border-slate-200 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-brand-primary transition-colors placeholder:text-slate-200"
                                         />
                                     </div>
                                     <div className="space-y-3">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                            Địa chỉ *
+                                            {tc('labels.address')}
                                         </label>
                                         <input
                                             type="text"
@@ -271,7 +287,7 @@ export default function ContactPage() {
                                             value={formData.address}
                                             onChange={handleChange}
                                             required
-                                            placeholder="SỐ NHÀ, TÊN ĐƯỜNG, ..."
+                                            placeholder={tc('placeholders.address')}
                                             className="w-full bg-transparent border-b-2 border-slate-200 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-brand-primary transition-colors placeholder:text-slate-200"
                                         />
                                     </div>
@@ -279,7 +295,7 @@ export default function ContactPage() {
 
                                 <div className="space-y-3">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                        Nội dung chi tiết *
+                                        {tc('labels.message')}
                                     </label>
                                     <textarea
                                         name="message"
@@ -287,7 +303,7 @@ export default function ContactPage() {
                                         onChange={handleChange}
                                         required
                                         rows={2}
-                                        placeholder="MÔ TẢ YÊU CẦU CỦA BẠN..."
+                                        placeholder={tc('placeholders.message')}
                                         className="w-full bg-transparent border-b-2 border-slate-200 py-4 text-sm font-bold text-slate-900 focus:outline-none focus:border-brand-primary transition-colors resize-none placeholder:text-slate-200"
                                     ></textarea>
                                 </div>
@@ -295,7 +311,7 @@ export default function ContactPage() {
                                 <div className="space-y-8">
                                     <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground italic uppercase">
                                         <ShieldCheck size={14} className="text-brand-primary" />
-                                        Cam kết bảo mật thông tin dự án tuyệt đối.
+                                        {t('security')}
                                     </div>
                                     <button
                                         type="submit"
@@ -304,12 +320,12 @@ export default function ContactPage() {
                                     >
                                         {isSubmitting ? (
                                             <>
-                                                ĐANG XỬ LÝ...{' '}
+                                                {t('submitting')}{' '}
                                                 <Loader2 size={18} className="animate-spin" />
                                             </>
                                         ) : (
                                             <>
-                                                XÁC NHẬN GỬI YÊU CẦU <Send size={18} />
+                                                {t('submit')} <Send size={18} />
                                             </>
                                         )}
                                     </button>
@@ -325,13 +341,13 @@ export default function ContactPage() {
                 <div className="container mx-auto px-4 lg:px-8 max-w-4xl">
                     <div className="text-center mb-16 space-y-4">
                         <h2 className="text-3xl font-bold uppercase tracking-tight text-brand-secondary">
-                            Câu hỏi thường gặp
+                            {t('faqTitle')}
                         </h2>
                         <div className="mx-auto h-1 w-20 bg-brand-primary"></div>
                     </div>
 
                     <Accordion type="single" collapsible className="w-full">
-                        {FAQS.map((faq, i) => (
+                        {FAQS_CONTENT.map((faq, i) => (
                             <AccordionItem key={i} value={`item-${i}`} className="border-slate-100">
                                 <AccordionTrigger className="text-sm font-bold uppercase tracking-tight text-slate-800 hover:text-brand-primary text-left">
                                     {faq.q}

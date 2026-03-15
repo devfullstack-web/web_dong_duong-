@@ -2,10 +2,11 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { MoveRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 
 const SLIDES = [
     {
@@ -39,16 +40,31 @@ const SLIDES = [
 ];
 
 export default function Hero() {
+    const t = useTranslations('Hero');
+    const tc = useTranslations('Common');
     const [current, setCurrent] = React.useState(0);
     const [direction, setDirection] = React.useState(0);
+
+    const SLIDES_CONTENT = [
+        {
+            image: '/uploads/images/2026/01/19/1768814857344-hfho0c.png',
+            fallback:
+                'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=2000',
+            title: t('slide1.title'),
+            highlight: t('slide1.highlight'),
+            titleSuffix: t('slide1.titleSuffix'),
+            desc: t('slide1.description'),
+            accent: t('slide1.accent'),
+        },
+    ];
 
     React.useEffect(() => {
         const timer = setInterval(() => {
             setDirection(1);
-            setCurrent((prev) => (prev + 1) % SLIDES.length);
+            setCurrent((prev) => (prev + 1) % SLIDES_CONTENT.length);
         }, 7000);
         return () => clearInterval(timer);
-    }, []);
+    }, [SLIDES_CONTENT.length]);
 
     return (
         <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden ">
@@ -85,18 +101,18 @@ export default function Hero() {
                                 className="space-y-6"
                             >
                                 <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-[1.1] uppercase">
-                                    {SLIDES[current].title} <br />
+                                    {SLIDES_CONTENT[current].title} <br />
                                     <span className="text-brand-accent">
-                                        {SLIDES[current].highlight}
+                                        {SLIDES_CONTENT[current].highlight}
                                     </span>{' '}
                                     <br />
                                     <span className="text-white/60">
-                                        {SLIDES[current].titleSuffix}
+                                        {SLIDES_CONTENT[current].titleSuffix}
                                     </span>
                                 </h1>
 
                                 <p className="max-w-lg text-sm sm:text-base text-white/70 font-medium leading-relaxed">
-                                    {SLIDES[current].desc}
+                                    {SLIDES_CONTENT[current].desc}
                                 </p>
 
                                 <div className="flex flex-col sm:flex-row gap-4 pt-2">
@@ -104,7 +120,7 @@ export default function Hero() {
                                         href="/san-pham"
                                         className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary"
                                     >
-                                        <span className="relative z-10">KHÁM PHÁ NGAY</span>
+                                        <span className="relative z-10">{tc('exploreNow')}</span>
                                         <MoveRight
                                             size={14}
                                             className="relative z-10 transition-transform group-hover:translate-x-1"
@@ -114,7 +130,7 @@ export default function Hero() {
                                         href="/gioi-thieu"
                                         className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm"
                                     >
-                                        TƯ VẤN GIẢI PHÁP
+                                        {t('actionAdvice')}
                                     </Link>
                                 </div>
                             </motion.div>
@@ -122,7 +138,7 @@ export default function Hero() {
 
                         {/* Slide Indicators */}
                         <div className="flex items-center gap-3 pt-8">
-                            {SLIDES.map((_, i) => (
+                            {SLIDES_CONTENT.map((_, i) => (
                                 <button
                                     key={i}
                                     onClick={() => {
@@ -151,13 +167,13 @@ export default function Hero() {
             >
                 <div className="flex items-center gap-3">
                     <span className="text-[9px] font-bold text-white/50 uppercase tracking-[0.3em]">
-                        0{current + 1} / 0{SLIDES.length}
+                        0{current + 1} / 0{SLIDES_CONTENT.length}
                     </span>
                     <div className="w-16 h-px bg-white/20">
                         <motion.div
                             className="h-full bg-brand-accent"
                             initial={{ width: 0 }}
-                            animate={{ width: `${((current + 1) / SLIDES.length) * 100}%` }}
+                            animate={{ width: `${((current + 1) / SLIDES_CONTENT.length) * 100}%` }}
                             transition={{ duration: 0.5 }}
                         />
                     </div>

@@ -23,10 +23,12 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { COMPANY_INFO } from '@/constants/site-info';
 import { PARTNERS } from '@/components/home/Partners';
 
 export default function AboutPage() {
+    const t = useTranslations('About');
     return (
         <div className="flex flex-col min-h-screen bg-white pt-24">
             {/* Hero Section */}
@@ -48,15 +50,15 @@ export default function AboutPage() {
                             className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md"
                         >
                             <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                            GIẢI PHÁP CÔNG NGHIỆP THÔNG MINH
+                            {t('hero.badge')}
                         </motion.div>
                         <motion.h1
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter uppercase drop-shadow-lg"
                         >
-                            SÀI GÒN VALVE <br />
-                            <span className="text-brand-accent">LẬP TINH CÔNG NGHỆ</span>
+                            {t('hero.title')} <br />
+                            <span className="text-brand-accent">{t('hero.titleAccent')}</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0 }}
@@ -64,8 +66,7 @@ export default function AboutPage() {
                             transition={{ delay: 0.3 }}
                             className="text-base sm:text-lg text-slate-200 font-medium max-w-2xl leading-relaxed italic border-l-4 border-brand-accent pl-8"
                         >
-                            "Giải pháp đáng tin cậy cho cấp thoát nước và xử lý nước thải từ SG-VAL.
-                            Kiến tạo hạ tầng ngành nước hiện đại và bền vững."
+                            {t('hero.desc')}
                         </motion.p>
                     </div>
                 </div>
@@ -78,26 +79,20 @@ export default function AboutPage() {
                         <div className="space-y-12">
                             <div className="space-y-4">
                                 <div className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
-                                    CHÚNG TÔI LÀ AI?
+                                    {t('intro.who')}
                                 </div>
                                 <h2 className="text-4xl font-bold text-brand-secondary uppercase tracking-tight">
-                                    VỀ CHÚNG TÔI
+                                    {t('intro.title')}
                                 </h2>
                                 <div className="h-1.5 w-24 bg-brand-primary"></div>
                             </div>
 
                             <div className="space-y-8 text-muted-foreground leading-relaxed font-medium">
                                 <p className="text-lg text-slate-700 font-bold">
-                                    Sài Gòn Valve tự hào là một trong những doanh nghiệp tiên phong
-                                    trong lĩnh vực cung cấp các giải pháp công nghiệp chất lượng cao
-                                    tại Việt Nam.
+                                    {t('intro.content1')}
                                 </p>
                                 <p>
-                                    Mong muốn mang đến các giải pháp thông minh giúp kiểm soát dòng
-                                    chảy bằng công nghệ hiện đại cho thị trường ngành nước. Bằng
-                                    kinh nghiệm và nhiệt huyết, SÀI GÒN VALVE luôn mang đến cho
-                                    khách hàng những giải pháp tối ưu nhất cho các công trình cấp
-                                    thoát nước và xử lý nước thải.
+                                    {t('intro.content2')}
                                 </p>
                             </div>
 
@@ -108,11 +103,10 @@ export default function AboutPage() {
                                 >
                                     <Rocket className="text-brand-primary" size={32} />
                                     <h4 className="text-lg font-black uppercase tracking-tight text-slate-900">
-                                        SỨ MỆNH
+                                        {t('intro.mission.title')}
                                     </h4>
                                     <p className="text-xs font-medium text-slate-600 leading-relaxed">
-                                        Kiểm soát dòng chảy bằng công nghệ hiện đại. Cung cấp giải
-                                        pháp tối ưu cho hạ tầng nước đô thị.
+                                        {t('intro.mission.desc')}
                                     </p>
                                 </motion.div>
                                 <motion.div
@@ -121,11 +115,10 @@ export default function AboutPage() {
                                 >
                                     <Eye className="text-brand-accent" size={32} />
                                     <h4 className="text-lg font-black uppercase tracking-tight text-white">
-                                        TẦM NHÌN
+                                        {t('intro.vision.title')}
                                     </h4>
                                     <p className="text-xs font-medium text-slate-300 leading-relaxed">
-                                        Trở thành công ty đi đầu trong việc cung cấp các giải pháp
-                                        kiểm soát dòng chảy trong nước và quốc tế.
+                                        {t('intro.vision.desc')}
                                     </p>
                                 </motion.div>
                             </div>
@@ -154,10 +147,10 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="text-center mb-20 space-y-6">
                         <div className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
-                            TRIẾT LÝ VẬN HÀNH
+                            {t('values.badge')}
                         </div>
                         <h2 className="text-4xl font-bold text-brand-secondary uppercase tracking-tight">
-                            GIÁ TRỊ CỐT LÕI
+                            {t('values.title')}
                         </h2>
                         <div className="mx-auto h-1 w-20 bg-brand-primary"></div>
                     </div>
@@ -166,18 +159,18 @@ export default function AboutPage() {
                         {[
                             {
                                 icon: ShieldCheck,
-                                title: 'KHÁCH HÀNG LÀ TRỌNG TÂM',
-                                desc: 'Luôn cam kết tạo ra những sản phẩm phù hợp với từng đối tượng khách hàng. Đặt bản thân vào vị trí khách hàng để phục vụ.',
+                                title: t('values.items.0.title'),
+                                desc: t('values.items.0.desc'),
                             },
                             {
                                 icon: Target,
-                                title: 'ĐỒNG HÀNH BỀN VỮNG',
-                                desc: 'Đồng hành hỗ trợ khách hàng trước, trong và sau quá trình lắp đặt, vận hành hệ thống một cách tận tâm nhất.',
+                                title: t('values.items.1.title'),
+                                desc: t('values.items.1.desc'),
                             },
                             {
                                 icon: Users,
-                                title: 'BẢO MẬT & TIN CẬY',
-                                desc: 'Tuân thủ nghiêm ngặt nguyên tắc hợp tác và bảo mật thông tin để khách hàng an tâm tuyệt đối khi hợp tác.',
+                                title: t('values.items.2.title'),
+                                desc: t('values.items.2.desc'),
                             },
                         ].map((val, i) => (
                             <motion.div
@@ -209,16 +202,15 @@ export default function AboutPage() {
                     <div className="flex flex-col lg:flex-row items-end justify-between gap-8 mb-20">
                         <div className="space-y-4 text-left">
                             <div className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
-                                THẾ MẠNH CẠNH TRANH
+                                {t('pillars.badge')}
                             </div>
                             <h2 className="text-4xl sm:text-5xl font-bold text-brand-secondary uppercase tracking-tight leading-none">
-                                Sản phẩm <br />
-                                <span className="text-brand-primary">Chủ lực</span>
+                                {t('pillars.title')} <br />
+                                <span className="text-brand-primary">{t('pillars.titleAccent')}</span>
                             </h2>
                         </div>
                         <p className="max-w-md text-muted-foreground font-medium text-sm">
-                            Chúng tôi cung cấp hệ thống sản phẩm đồng bộ từ van cơ học đến bộ điều
-                            khiển thông minh và giám sát số hóa.
+                            {t('pillars.desc')}
                         </p>
                     </div>
 
@@ -226,21 +218,18 @@ export default function AboutPage() {
                         <div className="bg-white p-16 space-y-8 hover:z-10 hover:shadow-2xl transition-all group">
                             <div className="space-y-4">
                                 <div className="text-4xl font-black text-slate-100 group-hover:text-brand-primary/10 transition-colors">
-                                    01
+                                    {t('pillars.items.0.tag')}
                                 </div>
                                 <h3 className="text-2xl font-black text-slate-900 uppercase">
-                                    VAN CÔNG NGHIỆP
+                                    {t('pillars.items.0.title')}
                                 </h3>
                             </div>
                             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                                <strong>Nhà phân phối độc quyền</strong> thương hiệu{' '}
-                                <strong>Van OKM - Nhật Bản</strong>. Cung cấp đa dạng van cổng, van
-                                bướm, van xả khí, van một chiều... thiết kế cho môi trường khắc
-                                nghiệt.
+                                {t('pillars.items.0.desc')}
                             </p>
                             <div className="pt-4 border-t border-slate-50">
                                 <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest">
-                                    THƯƠNG HIỆU: OKM JAPAN
+                                    {t('pillars.items.0.footer')}
                                 </div>
                             </div>
                         </div>
@@ -248,20 +237,18 @@ export default function AboutPage() {
                         <div className="bg-white p-16 space-y-8 hover:z-10 hover:shadow-2xl transition-all group">
                             <div className="space-y-4">
                                 <div className="text-4xl font-black text-slate-100 group-hover:text-brand-primary/10 transition-colors">
-                                    02
+                                    {t('pillars.items.1.tag')}
                                 </div>
                                 <h3 className="text-2xl font-black text-slate-900 uppercase">
-                                    ACTUATOR
+                                    {t('pillars.items.1.title')}
                                 </h3>
                             </div>
                             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                                Cung cấp độc quyền <strong>Actuator NOAH - Hàn Quốc</strong>. Tích
-                                hợp tủ điều khiển thông minh, cho phép giám sát và vận hành van từ
-                                xa thông qua ứng dụng di động Internet.
+                                {t('pillars.items.1.desc')}
                             </p>
                             <div className="pt-4 border-t border-slate-50">
                                 <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest">
-                                    THƯƠNG HIỆU: NOAH KOREA
+                                    {t('pillars.items.1.footer')}
                                 </div>
                             </div>
                         </div>
@@ -269,20 +256,18 @@ export default function AboutPage() {
                         <div className="bg-white p-16 space-y-8 hover:z-10 hover:shadow-2xl transition-all group">
                             <div className="space-y-4">
                                 <div className="text-4xl font-black text-slate-100 group-hover:text-brand-primary/10 transition-colors">
-                                    03
+                                    {t('pillars.items.2.tag')}
                                 </div>
                                 <h3 className="text-2xl font-black text-slate-900 uppercase">
-                                    GIẢI PHÁP IOT
+                                    {t('pillars.items.2.title')}
                                 </h3>
                             </div>
                             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                                Thiết bị Datalogger, quan trắc chất lượng nước và{' '}
-                                <strong>Van giảm áp đa hằng số</strong>. Giải pháp tự động điều
-                                chỉnh áp suất nước giúp tối ưu hóa tài nguyên nước.
+                                {t('pillars.items.2.desc')}
                             </p>
                             <div className="pt-4 border-t border-slate-50">
                                 <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest">
-                                    THIẾT BỊ SỐ HÓA
+                                    {t('pillars.items.2.footer')}
                                 </div>
                             </div>
                         </div>
@@ -301,34 +286,33 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4 lg:px-8 relative z-10">
                     <div className="max-w-4xl mb-20 space-y-6">
                         <div className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
-                            CÔNG NGHỆ ĐIỀU KHIỂN
+                            {t('scada.badge')}
                         </div>
                         <h2 className="text-4xl sm:text-6xl font-bold uppercase tracking-tighter leading-none">
-                            HỆ THỐNG <span className="text-brand-accent">SCADA</span>
+                            {t('scada.title')} <span className="text-brand-accent">{t('scada.titleAccent')}</span>
                         </h2>
                         <p className="text-slate-400 font-medium max-w-2xl leading-relaxed">
-                            Giải pháp quản lý, giám sát và điều khiển tập trung giúp tối ưu hóa hiệu
-                            suất vận hành mạng lưới cấp nước đô thị.
+                            {t('scada.desc')}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
                             {
-                                title: 'Mở ở áp suất cao',
-                                desc: 'Điều khiển van/bơm tăng áp tự động khi áp suất hệ thống đạt ngưỡng cài đặt để duy trì lưu lượng.',
+                                title: t('scada.items.0.title'),
+                                desc: t('scada.items.0.desc'),
                             },
                             {
-                                title: 'Giám sát 3G/4G',
-                                desc: 'Thu thập dữ liệu và truyền thông tin thời gian thực đến trung tâm điều khiển qua hạ tầng mạng di động.',
+                                title: t('scada.items.1.title'),
+                                desc: t('scada.items.1.desc'),
                             },
                             {
-                                title: 'Mở ở áp suất thấp',
-                                desc: 'Cấu hình tự động mở van/bơm khi áp suất nước giảm, đảm bảo cung cấp nước liên tục 24/7.',
+                                title: t('scada.items.2.title'),
+                                desc: t('scada.items.2.desc'),
                             },
                             {
-                                title: 'Cài đặt theo yêu cầu',
-                                desc: 'Linh hoạt xác định các điểm đo và lập trình SCADA theo nhu cầu thực tế của từng khách hàng.',
+                                title: t('scada.items.3.title'),
+                                desc: t('scada.items.3.desc'),
                             },
                         ].map((feature, i) => (
                             <div
@@ -355,25 +339,25 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl font-black uppercase tracking-tight text-brand-secondary">
-                            ỨNG DỤNG NGÀNH
+                            {t('applications.title')}
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                         {[
                             {
                                 icon: Waves,
-                                title: 'CÔNG TY CẤP THOÁT NƯỚC',
-                                desc: 'Tối ưu quản lý, giảm thất thoát và tăng hiệu quả xử lý nước thải.',
+                                title: t('applications.items.0.title'),
+                                desc: t('applications.items.0.desc'),
                             },
                             {
                                 icon: Factory,
-                                title: 'NHÀ MÁY CÔNG NGHIỆP',
-                                desc: 'Nâng cao năng suất vận hành thông qua tự động hóa và quản lý từ xa.',
+                                title: t('applications.items.1.title'),
+                                desc: t('applications.items.1.desc'),
                             },
                             {
                                 icon: Building2,
-                                title: 'DỰ ÁN XÂY DỰNG',
-                                desc: 'Giải pháp van và điều khiển cho các công trình quy mô lớn, hạ tầng đô thị.',
+                                title: t('applications.items.2.title'),
+                                desc: t('applications.items.2.desc'),
                             },
                         ].map((app, i) => (
                             <div
@@ -402,19 +386,18 @@ export default function AboutPage() {
                         <div className="space-y-12">
                             <div className="space-y-6">
                                 <h2 className="text-3xl font-bold text-brand-secondary uppercase tracking-tight">
-                                    Đối tác & Chứng nhận
+                                    {t('certs.title')}
                                 </h2>
                                 <p className="text-muted-foreground font-medium italic border-l-4 border-brand-primary pl-6">
-                                    "Sài Gòn Valve cam kết minh bạch về nguồn gốc và chất lượng
-                                    thiết bị với đầy đủ giấy tờ pháp lý."
+                                    {t('certs.quote')}
                                 </p>
                             </div>
                             <div className="space-y-6">
                                 {[
-                                    'Chứng nhận đại lý độc quyền OKM Valve (Nhật Bản)',
-                                    'Chứng nhận đại lý độc quyền Noah Actuator (Hàn Quốc)',
-                                    'Đối tác cung cấp hạ tầng nước thông minh hàng đầu',
-                                    'Hệ thống quản lý chất lượng đạt chuẩn quốc tế',
+                                    t('certs.items.0'),
+                                    t('certs.items.1'),
+                                    t('certs.items.2'),
+                                    t('certs.items.3'),
                                 ].map((item, i) => (
                                     <div
                                         key={i}
@@ -462,12 +445,10 @@ export default function AboutPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
                         <div className="text-white space-y-8">
                             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-tight leading-none text-brand-accent">
-                                HỢP TÁC CHIẾN LƯỢC
+                                {t('cta.title')}
                             </h2>
                             <p className="text-base text-slate-300 font-medium leading-relaxed">
-                                Hãy liên hệ với chúng tôi ngay hôm nay để khám phá thêm về các sản
-                                phẩm và giải pháp tiên tiến mà chúng tôi cung cấp cho doanh nghiệp
-                                của bạn.
+                                {t('cta.desc')}
                             </p>
 
                             <div className="flex flex-col gap-4">
@@ -477,7 +458,7 @@ export default function AboutPage() {
                                     </div>
                                     <div>
                                         <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                            Hotline Tư vấn
+                                            {t('cta.hotline')}
                                         </div>
                                         <a
                                             href={`tel:${COMPANY_INFO.phoneRaw}`}
@@ -493,7 +474,7 @@ export default function AboutPage() {
                                     </div>
                                     <div>
                                         <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                            Email Liên hệ
+                                            {t('cta.email')}
                                         </div>
                                         <a
                                             href={`mailto:${COMPANY_INFO.email}`}
@@ -511,7 +492,7 @@ export default function AboutPage() {
                                 href="/lien-he"
                                 className="inline-flex items-center gap-4 px-12 py-5 bg-brand-accent text-brand-primary font-black uppercase tracking-widest shadow-xl shadow-brand-accent/20 hover:bg-white transition-all transform hover:-translate-y-1 hover:scale-105"
                             >
-                                LIÊN HỆ NGAY <MoveRight size={20} />
+                                {t('cta.btnText')} <MoveRight size={20} />
                             </Link>
                         </div>
                     </div>

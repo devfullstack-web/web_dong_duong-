@@ -17,8 +17,10 @@ import { toast } from 'sonner';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { COMPANY_INFO } from '@/constants/site-info';
+import { useTranslations } from 'next-intl';
 
 export default function ContactForm() {
+    const t = useTranslations('ContactForm');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -39,14 +41,14 @@ export default function ContactForm() {
             !formData.address ||
             !formData.message
         ) {
-            toast.error('Vui lòng điền đầy đủ tất cả các trường thông tin');
+            toast.error(t('errors.required'));
             return;
         }
 
         setIsSubmitting(true);
         try {
             await $api.post(API_ROUTES.CONTACTS, formData);
-            toast.success('Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ lại sớm nhất.');
+            toast.success(t('success'));
             setFormData({
                 name: '',
                 phone: '',
@@ -56,8 +58,7 @@ export default function ContactForm() {
             });
         } catch (error: any) {
             console.error(error);
-            const message =
-                error.response?.data?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại sau.';
+            const message = error.response?.data?.message || t('errors.general');
             toast.error(message);
         } finally {
             setIsSubmitting(false);
@@ -81,12 +82,10 @@ export default function ContactForm() {
                     <div className="flex flex-col justify-center space-y-10">
                         <div className="space-y-6">
                             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tighter uppercase leading-none">
-                                LIÊN HỆ VỚI CHUYÊN GIA{' '}
-                                <span className="text-brand-accent">SÀI GÒN VALVE</span>
+                                {t('consultationTitle')}
                             </h2>
                             <p className="text-base text-slate-300 font-medium leading-relaxed max-w-lg">
-                                Đội ngũ kỹ thuật của Sài Gòn Valve luôn sẵn sàng hỗ trợ tư vấn và
-                                cung cấp giải pháp tối ưu cho mọi thách thức hạ tầng của bạn.
+                                {t('consultationDesc')}
                             </p>
                         </div>
 
@@ -94,27 +93,27 @@ export default function ContactForm() {
                             {[
                                 {
                                     icon: Phone,
-                                    label: 'HOTLINE',
+                                    label: t('hotlineLabel'),
                                     value: COMPANY_INFO.phone,
-                                    sub: 'Hỗ trợ 24/7',
+                                    sub: t('hotlineSub'),
                                 },
                                 {
                                     icon: Mail,
-                                    label: 'EMAIL',
+                                    label: t('emailLabel'),
                                     value: COMPANY_INFO.email,
-                                    sub: 'Phản hồi trong 2h',
+                                    sub: t('emailSub'),
                                 },
                                 {
                                     icon: MapPin,
-                                    label: 'ĐỊA CHỈ',
+                                    label: t('addressLabel'),
                                     value: COMPANY_INFO.address,
-                                    sub: 'Văn phòng chính',
+                                    sub: t('addressSub'),
                                 },
                                 {
                                     icon: MessageSquare,
-                                    label: 'ZALO / VIBER',
+                                    label: t('zaloLabel'),
                                     value: COMPANY_INFO.hotline,
-                                    sub: 'Hỗ trợ kỹ thuật',
+                                    sub: t('zaloSub'),
                                 },
                             ].map((item, i) => (
                                 <div
@@ -164,11 +163,10 @@ export default function ContactForm() {
                         <div className="space-y-8">
                             <div className="space-y-2">
                                 <h3 className="text-2xl sm:text-3xl font-bold text-brand-primary uppercase tracking-tight">
-                                    Gửi yêu cầu tư vấn
+                                    {t('title')}
                                 </h3>
                                 <p className="text-sm text-slate-500 font-medium">
-                                    Vui lòng điền đầy đủ các thông tin bên dưới để được hỗ trợ tốt
-                                    nhất.
+                                    {t('subtitle')}
                                 </p>
                             </div>
 
@@ -176,7 +174,7 @@ export default function ContactForm() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Họ tên *
+                                            {t('labels.name')}
                                         </label>
                                         <input
                                             type="text"
@@ -185,12 +183,12 @@ export default function ContactForm() {
                                             onChange={handleChange}
                                             required
                                             className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
-                                            placeholder="Nguyễn Văn A"
+                                            placeholder={t('placeholders.name')}
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Số điện thoại *
+                                            {t('labels.phone')}
                                         </label>
                                         <input
                                             type="tel"
@@ -199,7 +197,7 @@ export default function ContactForm() {
                                             onChange={handleChange}
                                             required
                                             className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
-                                            placeholder="09xx xxx xxx"
+                                            placeholder={t('placeholders.phone')}
                                         />
                                     </div>
                                 </div>
@@ -207,7 +205,7 @@ export default function ContactForm() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Email *
+                                            {t('labels.email')}
                                         </label>
                                         <input
                                             type="email"
@@ -216,12 +214,12 @@ export default function ContactForm() {
                                             onChange={handleChange}
                                             required
                                             className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
-                                            placeholder="example@gmail.com"
+                                            placeholder={t('placeholders.email')}
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Địa chỉ *
+                                            {t('labels.address')}
                                         </label>
                                         <input
                                             type="text"
@@ -230,14 +228,14 @@ export default function ContactForm() {
                                             onChange={handleChange}
                                             required
                                             className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
-                                            placeholder="Số nhà, Tên đường, Quận/Huyện, Tỉnh/TP"
+                                            placeholder={t('placeholders.address')}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        Yêu cầu *
+                                        {t('labels.message')}
                                     </label>
                                     <textarea
                                         name="message"
@@ -246,7 +244,7 @@ export default function ContactForm() {
                                         required
                                         rows={3}
                                         className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors resize-none bg-transparent"
-                                        placeholder="Vui lòng mô tả yêu cầu của bạn..."
+                                        placeholder={t('placeholders.message')}
                                     ></textarea>
                                 </div>
 
@@ -257,12 +255,12 @@ export default function ContactForm() {
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            ĐANG GỬI...{' '}
+                                            {t('submitting')}{' '}
                                             <Loader2 size={16} className="animate-spin" />
                                         </>
                                     ) : (
                                         <>
-                                            GỬI YÊU CẦU NGAY <Send size={16} />
+                                            {t('submit')} <Send size={16} />
                                         </>
                                     )}
                                 </button>

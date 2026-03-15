@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 
@@ -25,10 +26,30 @@ const BANNERS = [
 ];
 
 export default function SystemHighlight() {
+    const t = useTranslations('SystemHighlight');
+
+    const BANNERS_CONTENT = [
+        {
+            tag: t('banners.featured.tag'),
+            title: t('banners.featured.title'),
+            desc: t('banners.featured.desc'),
+            btnText: t('banners.featured.btnText'),
+            image: '/uploads/images/2026/01/19/1768814857344-hfho0c.png',
+            url: '/he-thong-quickvic',
+        },
+        {
+            tag: t('banners.video.tag'),
+            title: t('banners.video.title'),
+            desc: t('banners.video.desc'),
+            btnText: t('banners.video.btnText'),
+            image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=2000',
+            url: '/huong-dan-lap-dat',
+        },
+    ];
     return (
         <section className="bg-white py-12 space-y-8">
             <div className="container mx-auto px-4 lg:px-8 space-y-8">
-                {BANNERS.map((banner, i) => (
+                {BANNERS_CONTENT.map((banner, i) => (
                     <motion.div
                         key={i}
                         initial={{ opacity: 0, y: 30 }}

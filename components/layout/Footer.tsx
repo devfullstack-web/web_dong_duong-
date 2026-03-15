@@ -1,7 +1,8 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import {
     Facebook,
     Linkedin,
@@ -16,6 +17,7 @@ import { COMPANY_INFO } from '@/constants/site-info';
 import { PORTAL_ROUTES } from '@/constants/routes';
 
 export default function Footer() {
+    const t = useTranslations('Footer');
     return (
         <footer className="bg-brand-primary pt-10 pb-4 text-white relative overflow-hidden">
             {/* Background decoration */}
@@ -37,7 +39,7 @@ export default function Footer() {
                             />
                         </Link>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
-                            {COMPANY_INFO.slogan}
+                            {t('slogan')}
                         </p>
                         <div className="flex gap-3">
                             {[Facebook, Linkedin, Youtube].map((Icon, i) => (
@@ -55,20 +57,20 @@ export default function Footer() {
                     {/* Quick Links */}
                     <div className="space-y-4">
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
-                            Menu điều hướng
+                            {t('navigationMenu')}
                         </h4>
                         <ul className="space-y-2">
                             {[
-                                { label: 'Trang chủ', href: '/' },
-                                { label: 'Giới thiệu', href: '/gioi-thieu' },
-                                { label: 'Sản phẩm', href: '/san-pham' },
-                                { label: 'Dự án tiêu biểu', href: '/du-an' },
-                                { label: 'Tin tức & Sự kiện', href: '/tin-tuc' },
-                                { label: 'Liên hệ', href: '/lien-he' },
+                                { label: t('home'), href: '/' },
+                                { label: t('about'), href: '/gioi-thieu' },
+                                { label: t('products'), href: '/san-pham' },
+                                { label: t('projects'), href: '/du-an' },
+                                { label: t('news'), href: '/tin-tuc' },
+                                { label: t('contact'), href: '/lien-he' },
                             ].map((item) => (
                                 <li key={item.label}>
                                     <Link
-                                        href={item.href}
+                                        href={item.href as any}
                                         className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
                                     >
                                         <ArrowRight
@@ -85,7 +87,7 @@ export default function Footer() {
                     {/* Contact Info */}
                     <div className="space-y-4">
                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
-                            Thông tin liên hệ
+                            {t('contactInfo')}
                         </h4>
                         <ul className="space-y-3">
                             <li className="flex gap-3 group">
@@ -131,8 +133,7 @@ export default function Footer() {
                             {COMPANY_INFO.copyright}
                         </p>
                         <div className="flex items-center gap-1.5 justify-center md:justify-start text-[8px] font-bold text-slate-600 uppercase tracking-widest">
-                            <ShieldCheck size={10} className="text-brand-accent" /> Bảo mật thông
-                            tin dự án tuyệt đối
+                            <ShieldCheck size={10} className="text-brand-accent" /> {t('securityWarning')}
                         </div>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6">
@@ -140,20 +141,20 @@ export default function Footer() {
                             href="#"
                             className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
                         >
-                            Điều khoản
+                            {t('terms')}
                         </Link>
                         <Link
                             href="#"
                             className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
                         >
-                            Bảo mật
+                            {t('privacy')}
                         </Link>
                         <Link
-                            href={PORTAL_ROUTES.dashboard}
-                            className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
-                        >
-                            Quản trị
-                        </Link>
+                             href={PORTAL_ROUTES.dashboard as any}
+                             className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                         >
+                             {t('admin')}
+                         </Link>
                     </div>
                 </div>
             </div>

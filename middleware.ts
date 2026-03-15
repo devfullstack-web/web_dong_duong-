@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { decrypt } from '@/services/auth-edge';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/i18n/routing';
 
 import { SITE_ROUTES, ADMIN_ROUTES, API_ROUTES } from '@/constants/routes';
+
+const intlMiddleware = createMiddleware(routing);
 
 // Add paths that don't require authentication
 const publicPaths = [
@@ -12,19 +16,70 @@ const publicPaths = [
     '/api' + API_ROUTES.AUTH.LOGOUT,
 ];
 
-export default async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
+    const { pathname } = request.nextUrl;
+    
+    // Ignore internal next.js paths and assets
+    if (
+        pathname.startsWith('/_next') ||
+        pathname.startsWith('/api') ||
+        pathname.includes('favicon.ico') ||
+        pathname.includes('.')
+    ) {
+        // For API routes, we still need our custom proxy logic
+        if (pathname.startsWith('/api')) {
+             return proxy(request);
+        }
+        return NextResponse.next();
+    }
+
+    // Handle i18n
+    const response = intlMiddleware(request);
+
+    // Auth proxy logic for pages
+    // We only call proxy if it's a page and not handled by intl redirection
+    // Note: next-intl middleware might return a redirect response
+    if (response.status === 307 || response.status === 308) {
+        return response;
+    }
+
+    const authResponse = await proxy(request);
+    
+    // If proxy logic says it's ok (returns next()), we return the intl response
+    if (authResponse.headers.get('x-middleware-next')) {
+         return response;
+    }
+
+    return authResponse;
+}
+
+async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const method = request.method;
 
+    // Define locale-prefixed matches
+    const isPath = (target: string) => 
+        pathname === target || 
+        pathname.startsWith(target + '/') ||
+        routing.locales.some(locale => pathname === `/${locale}${target}` || pathname.startsWith(`/${locale}${target}/`));
+
     // 1. Allow public paths explicitly
-    if (publicPaths.some((path) => pathname === path || pathname.startsWith(path))) {
+    // Since routes might be prefixed with /[locale], we need to check both
+    const isPublic = publicPaths.some(path => isPath(path));
+
+    if (isPublic) {
         // If it's the login page and user is already logged in, redirect to portal
-        if (pathname === SITE_ROUTES.LOGIN) {
+        if (isPath(SITE_ROUTES.LOGIN)) {
             const session = request.cookies.get('session')?.value;
             if (session) {
                 try {
                     await decrypt(session);
-                    return NextResponse.redirect(new URL(ADMIN_ROUTES.DASHBOARD, request.url));
+                    // Determine current locale to redirect correctly
+                    const locale = pathname.split('/')[1];
+                    const targetUrl = routing.locales.includes(locale as any) 
+                        ? `/${locale}${ADMIN_ROUTES.DASHBOARD}`
+                        : ADMIN_ROUTES.DASHBOARD;
+                    return NextResponse.redirect(new URL(targetUrl, request.url));
                 } catch (e) {
                     // Invalid session, continue to login
                 }
@@ -66,7 +121,12 @@ export default async function proxy(request: NextRequest) {
                     { status: 401 },
                 );
             }
-            return NextResponse.redirect(new URL(SITE_ROUTES.LOGIN, request.url));
+            // Add locale to redirect url if needed
+            const locale = pathname.split('/')[1];
+            const loginUrl = routing.locales.includes(locale as any)
+                ? `/${locale}${SITE_ROUTES.LOGIN}`
+                : SITE_ROUTES.LOGIN;
+            return NextResponse.redirect(new URL(loginUrl, request.url));
         }
 
         try {
@@ -86,7 +146,12 @@ export default async function proxy(request: NextRequest) {
                     { status: 401 },
                 );
             }
-            return NextResponse.redirect(new URL(SITE_ROUTES.LOGIN, request.url));
+            // Add locale to redirect url if needed
+            const locale = pathname.split('/')[1];
+            const loginUrl = routing.locales.includes(locale as any)
+                ? `/${locale}${SITE_ROUTES.LOGIN}`
+                : SITE_ROUTES.LOGIN;
+            return NextResponse.redirect(new URL(loginUrl, request.url));
         }
     }
 

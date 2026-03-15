@@ -1,0 +1,374 @@
+{
+  "Header": {
+    "home": "TRANG CHỦ",
+    "about": "GIỚI THIỆU",
+    "solutions": "GIẢI PHÁP",
+    "products": "SẢN PHẨM",
+    "projects": "DỰ ÁN",
+    "news": "TIN TỨC",
+    "recruitment": "TUYỂN DỤNG",
+    "contact": "LIÊN HỆ",
+    "search": "Tìm kiếm",
+    "language": "Ngôn ngữ",
+    "logoAlt": "Sài Gòn Valve Logo",
+    "vi": "TIẾNG VIỆT",
+    "en": "ENGLISH",
+    "phone": "(028) 3535 8739",
+    "email": "info@saigonvalve.vn"
+  },
+  "Footer": {
+    "slogan": "SÀI GÒN VALVE | Professional Industrial Solutions",
+    "navigationMenu": "Menu điều hướng",
+    "contactInfo": "Thông tin liên hệ",
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "products": "Sản phẩm",
+    "projects": "Dự án tiêu biểu",
+    "news": "Tin tức & Sự kiện",
+    "contact": "Liên hệ",
+    "securityWarning": "Bảo mật thông tin dự án tuyệt đối",
+    "terms": "Điều khoản",
+    "privacy": "Bảo mật",
+    "admin": "Quản trị"
+  },
+  "Solutions": {
+    "title": "GIẢI PHÁP",
+    "breadcrumbHome": "Trang chủ",
+    "breadcrumbSolutions": "Giải pháp",
+    "waterManagement": "Quản lý cấp nước thông minh",
+    "waterManagementDesc": "Giải pháp giám sát và điều khiển mạng lưới cấp nước thông minh, tối ưu hóa vận hành và giảm thất thoát.",
+    "agriculture": "Nông nghiệp chính xác",
+    "agricultureDesc": "Ứng dụng công nghệ IoT vào quản lý tưới tiêu và giám sát cây trồng, nâng cao năng suất nông nghiệp.",
+    "aquaculture": "Quan trắc và nuôi trồng thủy sản",
+    "hydrology": "Quản lý thủy lợi thông minh",
+    "building": "Quản lý tòa nhà & hạ tầng đô thị"
+  },
+  "Common": {
+    "exploreNow": "KHÁM PHÁ NGAY",
+    "viewDetails": "XEM CHI TIẾT",
+    "viewAll": "XEM TẤT CẢ",
+    "loading": "Đang tải...",
+    "noData": "Không có dữ liệu hiển thị.",
+    "orderNow": "ĐẶT HÀNG NGAY"
+  },
+  "Hero": {
+    "slide1": {
+      "title": "GIÁM SÁT",
+      "highlight": "QUY TRÌNH THÔNG MINH",
+      "titleSuffix": "CÔNG NGHỆ IOT",
+      "description": "Sài Gòn Valve mang đến giải pháp giám sát lưu lượng và áp suất nước theo thời gian thực, giúp tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
+      "accent": "Công nghệ Quản lý Nước 4.0"
+    },
+    "actionAdvice": "TƯ VẤN GIẢI PHÁP"
+  },
+  "FeaturedProjects": {
+    "title": "Dự án",
+    "titleAccent": "Tiêu biểu",
+    "description": "Những công trình trọng điểm khẳng định uy tín và năng lực kỹ thuật của Sài Gòn Valve.",
+    "viewAllProjects": "XEM TẤT CẢ DỰ ÁN",
+    "mobileViewAll": "Tất cả dự án",
+    "loading": "Đang tải dự án...",
+    "noProjects": "Chưa có dự án nào được hiển thị."
+  },
+  "News": {
+    "title": "TRUYỀN THÔNG & TIN TỨC",
+    "description": "CẬP NHẬT NHỮNG THÔNG TIN MỚI NHẤT VỀ CÔNG NGHỆ VÀ DỰ ÁN",
+    "loading": "Đang tải tin tức...",
+    "noNews": "Không tìm thấy bài viết nào.",
+    "hero": {
+      "badge": "Truyền thông & Tin tức",
+      "title": "TRUNG TÂM",
+      "titleAccent": "TIN TỨC",
+      "desc": "Cập nhật những tin tức mới nhất về công nghệ, dự án và xu hướng trong ngành nước và hạ tầng công nghiệp."
+    },
+    "grid": {
+      "defaultCategory": "TIN TỨC",
+      "viewDetail": "XEM CHI TIẾT"
+    },
+    "date": {
+      "month": "THÁNG"
+    }
+  },
+  "ProductSpotlight": {
+    "title": "SẢN PHẨM NỔI BẬT",
+    "productDetail": "CHI TIẾT SẢN PHẨM"
+  },
+  "SystemHighlight": {
+    "banners": {
+      "featured": {
+        "tag": "HỆ THỐNG NỔI BẬT",
+        "title": "HỆ THỐNG QUICKVIC™",
+        "desc": "Hệ thống khớp nối đầu tiên và duy nhất được thiết kế cho súng bắn bulong hiệu suất cao.",
+        "btnText": "Khám phá ngay"
+      },
+      "video": {
+        "tag": "VIDEO HƯỚNG DẪN",
+        "title": "HƯỚNG DẪN LẮP ĐẶT",
+        "desc": "Tìm hiểu cách lắp đặt sản phẩm và vận hành thiết bị Victaulic thông qua các video hướng dẫn chi tiết.",
+        "btnText": "Xem danh sách"
+      }
+    }
+  },
+  "Partners": {
+    "title": "ĐỐI TÁC CHIẾN LƯỢC",
+    "description": "SỰ TIN TƯỞNG TỪ CÁC THƯƠNG HIỆU HÀNG ĐẦU TOÀN CẦU"
+  },
+  "ContactForm": {
+    "title": "GỬI YÊU CẦU TƯ VẤN",
+    "subtitle": "CHÚNG TÔI SẼ PHẢN HỒI TRONG VÒNG 24H",
+    "labels": {
+      "name": "HỌ TÊN *",
+      "phone": "SỐ ĐIỆN THOẠI *",
+      "email": "EMAIL *",
+      "address": "ĐỊA CHỈ *",
+      "message": "NỘI DUNG YÊU CẦU *"
+    },
+    "placeholders": {
+      "name": "NGUYỄN VĂN A",
+      "phone": "09XX XXX XXX",
+      "email": "EXAMPLE@GMAIL.COM",
+      "address": "SỐ NHÀ, TÊN ĐƯỜNG...",
+      "message": "MÔ TẢ CHI TIẾT YÊU CẦU CỦA BẠN..."
+    },
+    "security": "CAM KẾT BẢO MẬT THÔNG TIN",
+    "submit": "XÁC NHẬN GỬI",
+    "submitting": "ĐANG GỬI...",
+    "errors": {
+      "required": "Vui lòng điền đầy đủ các thông tin bắt buộc",
+      "general": "Đã có lỗi xảy ra. Vui lòng thử lại sau."
+    },
+    "success": "Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ lại sớm.",
+    "hotlineLabel": "HOTLINE",
+    "hotlineSub": "Hỗ trợ 24/7",
+    "emailLabel": "EMAIL",
+    "emailSub": "Phản hồi trong 2h",
+    "addressLabel": "ĐỊA CHỈ",
+    "addressSub": "Văn phòng chính",
+    "zaloLabel": "ZALO / VIBER",
+    "zaloSub": "Hỗ trợ kỹ thuật",
+    "consultationTitle": "LIÊN HỆ VỚI CHUYÊN GIA SÀI GÒN VALVE",
+    "consultationDesc": "Đội ngũ kỹ thuật của Sài Gòn Valve luôn sẵn sàng hỗ trợ tư vấn và cung cấp giải pháp tối ưu cho mọi thách thức hạ tầng của bạn."
+  },
+  "Contact": {
+    "headerBadge": "TRUNG TÂM HỖ TRỢ CHIẾN LƯỢC",
+    "headerTitle": "KẾT NỐI VỚI",
+    "headerTitleAccent": "SÀI GÒN VALVE",
+    "infoTitle": "THÔNG TIN ĐẠI DIỆN",
+    "infoDesc": "Liên hệ trực tiếp với các bộ phận chuyên trách để được hỗ trợ nhanh nhất.",
+    "labels": {
+      "sales": "HOTLINE KINH DOANH",
+      "tech": "HỖ TRỢ KỸ THUẬT",
+      "office": "VĂN PHÒNG ĐIỆN TỬ",
+      "headquarters": "TRỤ SỞ CHÍNH"
+    },
+    "subs": {
+      "sales": "Tư vấn báo giá",
+      "tech": "Zalo / Viber 24/7",
+      "office": "Phản hồi chính thức",
+      "headquarters": "Văn phòng chính"
+    },
+    "workingHours": "Giờ làm việc: Thứ 2 - Thứ 7 (08:00 - 17:30)",
+    "formTitle": "GỬI YÊU CẦU TRỰC TUYẾN",
+    "security": "Cam kết bảo mật thông tin dự án tuyệt đối.",
+    "submit": "XÁC NHẬN GỬI YÊU CẦU",
+    "submitting": "ĐANG XỬ LÝ...",
+    "faqTitle": "Câu hỏi thường gặp",
+    "faqs": [
+      {
+        "q": "LÀM THẾ NÀO ĐỂ NHẬN BÁO GIÁ CHO DỰ ÁN?",
+        "a": "Quý khách có thể gửi yêu cầu trực tiếp qua form liên hệ bên dưới, hoặc gọi hotline {phone}. Đội ngũ kỹ thuật sẽ phản hồi và gửi báo giá chi tiết trong vòng 2-4 giờ làm việc."
+      },
+      {
+        "q": "SÀI GÒN VALVE CÓ CUNG CẤP DỊCH VỤ LẮP ĐẶT TẬN NƠI KHÔNG?",
+        "a": "Có, chúng tôi sở hữu đội ngũ kỹ sư và kỹ thuật viên chuyên nghiệp, sẵn sàng hỗ trợ lắp đặt, cấu hình thiết bị và chuyển giao công nghệ tận công trình trên toàn quốc."
+      },
+      {
+        "q": "CHÍNH SÁCH BẢO HÀNH THIẾT BỊ NHƯ THẾ NÀO?",
+        "a": "Tất cả thiết bị chính hãng OKM, Noah, Niigata do SGV phân phối đều được bảo hành tiêu chuẩn 12-24 tháng tùy dòng sản phẩm. Chúng tôi cam kết bảo trì và hỗ trợ kỹ thuật trọn đời."
+      }
+    ]
+  },
+  "About": {
+    "hero": {
+      "badge": "GIẢI PHÁP CÔNG NGHIỆP THÔNG MINH",
+      "title": "SÀI GÒN VALVE",
+      "titleAccent": "LẬP TINH CÔNG NGHỆ",
+      "desc": "\"Giải pháp đáng tin cậy cho cấp thoát nước và xử lý nước thải từ SG-VAL. Kiến tạo hạ tầng ngành nước hiện đại và bền vững.\""
+    },
+    "intro": {
+      "who": "CHÚNG TÔI LÀ AI?",
+      "title": "VỀ CHÚNG TÔI",
+      "content1": "Sài Gòn Valve tự hào là một trong những doanh nghiệp tiên phong trong lĩnh vực cung cấp các giải pháp công nghiệp chất lượng cao tại Việt Nam.",
+      "content2": "Mong muốn mang đến các giải pháp thông minh giúp kiểm soát dòng chảy bằng công nghệ hiện đại cho thị trường ngành nước. Bằng kinh nghiệm và nhiệt huyết, SÀI GÒN VALVE luôn mang đến cho khách hàng những giải pháp tối ưu nhất cho các công trình cấp thoát nước và xử lý nước thải.",
+      "mission": {
+        "title": "SỨ MỆNH",
+        "desc": "Kiểm soát dòng chảy bằng công nghệ hiện đại. Cung cấp giải pháp tối ưu cho hạ tầng nước đô thị."
+      },
+      "vision": {
+        "title": "TẦM NHÌN",
+        "desc": "Trở thành công ty đi đầu trong việc cung cấp các giải pháp kiểm soát dòng chảy trong nước và quốc tế."
+      }
+    },
+    "values": {
+      "badge": "TRIẾT LÝ VẬN HÀNH",
+      "title": "GIÁ TRỊ CỐT LÕI",
+      "items": [
+        {
+          "title": "KHÁCH HÀNG LÀ TRỌNG TÂM",
+          "desc": "Luôn cam kết tạo ra những sản phẩm phù hợp với từng đối tượng khách hàng. Đặt bản thân vào vị trí khách hàng để phục vụ."
+        },
+        {
+          "title": "ĐỒNG HÀNH BỀN VỮNG",
+          "desc": "Đồng hành hỗ trợ khách hàng trước, trong và sau quá trình lắp đặt, vận hành hệ thống một cách tận tâm nhất."
+        },
+        {
+          "title": "BẢO MẬT & TIN CẬY",
+          "desc": "Tuân thủ nghiêm ngặt nguyên tắc hợp tác và bảo mật thông tin để khách hàng an tâm tuyệt đối khi hợp tác."
+        }
+      ]
+    },
+    "pillars": {
+      "badge": "THẾ MẠNH CẠNH TRANH",
+      "title": "Sản phẩm",
+      "titleAccent": "Chủ lực",
+      "desc": "Chúng tôi cung cấp hệ thống sản phẩm đồng bộ từ van cơ học đến bộ điều khiển thông minh và giám sát số hóa.",
+      "items": [
+        {
+          "tag": "01",
+          "title": "VAN CÔNG NGHIỆP",
+          "desc": "Nhà phân phối độc quyền thương hiệu Van OKM - Nhật Bản. Cung cấp đa dạng van cổng, van bướm, van xả khí, van một chiều... thiết kế cho môi trường khắc nghiệt.",
+          "footer": "THƯƠNG HIỆU: OKM JAPAN"
+        },
+        {
+          "tag": "02",
+          "title": "ACTUATOR",
+          "desc": "Cung cấp độc quyền Actuator NOAH - Hàn Quốc. Tích hợp tủ điều khiển thông minh, cho phép giám sát và vận hành van từ xa thông qua ứng dụng di động Internet.",
+          "footer": "THƯƠNG HIỆU: NOAH KOREA"
+        },
+        {
+          "tag": "03",
+          "title": "GIẢI PHÁP IOT",
+          "desc": "Thiết bị Datalogger, quan trắc chất lượng nước và Van giảm áp đa hằng số. Giải pháp tự động điều chỉnh áp suất nước giúp tối ưu hóa tài nguyên nước.",
+          "footer": "THIẾT BỊ SỐ HÓA"
+        }
+      ]
+    },
+    "scada": {
+      "badge": "CÔNG NGHỆ ĐIỀU KHIỂN",
+      "title": "HỆ THỐNG",
+      "titleAccent": "SCADA",
+      "desc": "Giải pháp quản lý, giám sát và điều khiển tập trung giúp tối ưu hóa hiệu suất vận hành mạng lưới cấp nước đô thị.",
+      "items": [
+        {
+          "title": "Mở ở áp suất cao",
+          "desc": "Điều khiển van/bơm tăng áp tự động khi áp suất hệ thống đạt ngưỡng cài đặt để duy trì lưu lượng."
+        },
+        {
+          "title": "Giám sát 3G/4G",
+          "desc": "Thu thập dữ liệu và truyền thông tin thời gian thực đến trung tâm điều khiển qua hạ tầng mạng di động."
+        },
+        {
+          "title": "Mở ở áp suất thấp",
+          "desc": "Cấu hình tự động mở van/bơm khi áp suất nước giảm, đảm bảo cung cấp nước liên tục 24/7."
+        },
+        {
+          "title": "Cài đặt theo yêu cầu",
+          "desc": "Linh hoạt xác định các điểm đo và lập trình SCADA theo nhu cầu thực tế của từng khách hàng."
+        }
+      ]
+    },
+    "applications": {
+      "title": "ỨNG DỤNG NGÀNH",
+      "items": [
+        {
+          "title": "CÔNG TY CẤP THOÁT NƯỚC",
+          "desc": "Tối ưu quản lý, giảm thất thoát và tăng hiệu quả xử lý nước thải."
+        },
+        {
+          "title": "NHÀ MÁY CÔNG NGHIỆP",
+          "desc": "Nâng cao năng suất vận hành thông qua tự động hóa và quản lý từ xa."
+        },
+        {
+          "title": "DỰ ÁN XÂY DỰNG",
+          "desc": "Giải pháp van và điều khiển cho các công trình quy mô lớn, hạ tầng đô thị."
+        }
+      ]
+    },
+    "certs": {
+      "title": "Đối tác & Chứng nhận",
+      "quote": "\"Sài Gòn Valve cam kết minh bạch về nguồn gốc và chất lượng thiết bị với đầy đủ giấy tờ pháp lý.\"",
+      "items": [
+        "Chứng nhận đại lý độc quyền OKM Valve (Nhật Bản)",
+        "Chứng nhận đại lý độc quyền Noah Actuator (Hàn Quốc)",
+        "Đối tác cung cấp hạ tầng nước thông minh hàng đầu",
+        "Hệ thống quản lý chất lượng đạt chuẩn quốc tế"
+      ]
+    },
+    "cta": {
+      "title": "HỢP TÁC CHIẾN LƯỢC",
+      "desc": "Hãy liên hệ với chúng tôi ngay hôm nay để khám phá thêm về các sản phẩm và giải pháp tiên tiến mà chúng tôi cung cấp cho doanh nghiệp của bạn.",
+      "hotline": "Hotline Tư vấn",
+      "email": "Email Liên hệ",
+      "btnText": "LIÊN HỆ NGAY"
+    }
+    },
+    "Projects": {
+        "hero": {
+            "badge": "DỰ ÁN TIÊU BIỂU",
+            "title": "KHẲNG ĐỊNH",
+            "titleAccent": "NĂNG LỰC DỰ ÁN",
+            "desc": "Hơn {total}+ dự án đã được triển khai thành công trên toàn quốc trong lĩnh vực cấp thoát nước và tự động hóa."
+        },
+        "grid": {
+            "defaultCategory": "XÂY DỰNG",
+            "defaultLocation": "Việt Nam",
+            "viewDetail": "XEM CHI TIẾT"
+        }
+    },
+    "Products": {
+        "hero": {
+            "badge": "Sản phẩm & Giải pháp",
+            "title": "THIẾT BỊ",
+            "titleAccent": "CHUYÊN DỤNG",
+            "desc": "Van công nghiệp, thiết bị đo lường và giải pháp IoT tiêu chuẩn Nhật Bản & Hàn Quốc cho ngành nước và hạ tầng kỹ thuật.",
+            "searchPlaceholder": "Tìm kiếm sản phẩm..."
+        },
+        "sidebar": {
+            "categoryTitle": "DANH MỤC",
+            "all": "Tất cả"
+        },
+        "grid": {
+            "resultCount": "Hiển thị {start} - {end} trong tổng số {total} kết quả",
+            "defaultSummary": "Thiết bị chuyên dụng cho ngành nước và công nghiệp.",
+            "viewDetail": "CHI TIẾT SẢN PHẨM"
+        },
+        "empty": "Không tìm thấy sản phẩm nào."
+    },
+
+    "Careers": {
+        "hero": {
+            "badge": "CƠ HỘI NGHỀ NGHIỆP",
+            "title": "GIA NHẬP",
+            "titleAccent": "ĐỘI NGŨ SGV",
+            "desc": "Khám phá các cơ hội nghề nghiệp tại Sài Gòn Valve - Nơi bạn có thể phát triển sự nghiệp cùng đội ngũ chuyên gia hàng đầu về công nghệ ngành nước."
+        },
+        "list": {
+            "title": "Vị trí đang tuyển",
+            "count": "{total} vị trí đang mở",
+            "defaultDepartment": "Tổng hợp",
+            "defaultLocation": "Việt Nam",
+            "deadlinePrefix": "Hạn nộp:",
+            "viewDetail": "Xem chi tiết"
+        },
+        "employmentTypes": {
+            "full_time": "Toàn thời gian",
+            "part_time": "Bán thời gian",
+            "contract": "Hợp đồng",
+            "internship": "Thực tập"
+        },
+        "empty": {
+            "title": "Hiện chưa có vị trí phù hợp",
+            "desc": "Vui lòng kiểm tra lại sau hoặc gửi CV ứng tuyển tự do qua email cho chúng tôi."
+        }
+    }
+}

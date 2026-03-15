@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { MapPin, ExternalLink, MoveRight } from 'lucide-react';
 import { SITE_ROUTES, API_ROUTES } from '@/constants/routes';
@@ -32,6 +34,7 @@ interface Project {
 const ITEMS_PER_PAGE = 8;
 
 export default function ProjectsPage() {
+    const t = useTranslations('Projects');
     const [currentPage, setCurrentPage] = useState(1);
 
     // Fetch projects using react-query
@@ -94,15 +97,14 @@ export default function ProjectsPage() {
                     <div className="max-w-3xl space-y-6">
                         <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
                             <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                            DỰ ÁN TIÊU BIỂU
+                            {t('hero.badge')}
                         </div>
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
-                            KHẲNG ĐỊNH <br />
-                            <span className="text-brand-accent">NĂNG LỰC DỰ ÁN</span>
+                            {t('hero.title')} <br />
+                            <span className="text-brand-accent">{t('hero.titleAccent')}</span>
                         </h1>
                         <p className="text-xl text-slate-400 font-medium max-w-xl">
-                            Hơn {total > 0 ? total : 50}+ dự án đã triển khai thành công trên toàn
-                            quốc trong lĩnh vực cấp thoát nước và tự động hóa.
+                            {t('hero.desc', { total: total > 0 ? total : 50 })}
                         </p>
                     </div>
                 </div>
@@ -138,7 +140,7 @@ export default function ProjectsPage() {
                                 <div className="p-6 grow flex flex-col justify-between space-y-4">
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-brand-primary">
-                                            <span>{project.category || 'CÔNG TRÌNH'}</span>
+                                            <span>{project.category || t('grid.defaultCategory')}</span>
                                             <span className="text-muted-foreground">
                                                 {project.start_date
                                                     ? new Date(
@@ -152,16 +154,16 @@ export default function ProjectsPage() {
                                         </h3>
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
                                             <MapPin size={12} className="text-brand-primary" />
-                                            {project.client_name || 'Việt Nam'}
+                                            {project.client_name || t('grid.defaultLocation')}
                                         </div>
                                     </div>
 
-                                    <Link
+                                    <LocalizedLink
                                         href={`/du-an/${project.slug}`}
                                         className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary transition-colors pt-2 border-t border-slate-50"
                                     >
-                                        XEM CHI TIẾT <ExternalLink size={12} />
-                                    </Link>
+                                        {t('grid.viewDetail')} <ExternalLink size={12} />
+                                    </LocalizedLink>
                                 </div>
                             </motion.div>
                         ))}

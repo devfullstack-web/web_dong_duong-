@@ -13,8 +13,11 @@ import { motion } from 'motion/react';
 import Autoplay from 'embla-carousel-autoplay';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 
 export default function ProductSpotlight() {
+    const t = useTranslations('ProductSpotlight');
     const [products, setProducts] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState(true);
 
@@ -57,7 +60,7 @@ export default function ProductSpotlight() {
                     viewport={{ once: true }}
                     className="text-3xl font-black text-brand-secondary uppercase tracking-wider mb-16"
                 >
-                    SẢN PHẨM NỔI BẬT
+                    {t('title')}
                 </motion.h2>
 
                 <Carousel
@@ -77,7 +80,7 @@ export default function ProductSpotlight() {
                     <CarouselContent>
                         {products.map((product) => (
                             <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3">
-                                <a
+                                <Link
                                     href={`/san-pham/${product.slug}`}
                                     className="p-4 flex flex-col items-center text-center space-y-6 group"
                                 >
@@ -101,10 +104,10 @@ export default function ProductSpotlight() {
                                             {product.name}
                                         </h3>
                                         <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-brand-primary uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-                                            XEM CHI TIẾT
+                                            {t('productDetail')}
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                             </CarouselItem>
                         ))}
                     </CarouselContent>

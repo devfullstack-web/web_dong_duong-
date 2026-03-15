@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SITE_ROUTES } from '@/constants/routes';
@@ -53,7 +54,52 @@ const SOLUTIONS = [
 ];
 
 export default function Solutions() {
+    const t = useTranslations('Solutions');
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+    const SOLUTIONS_CONTENT = [
+        {
+            id: 'water',
+            brand: 'SEVAL WATER',
+            title: t('waterManagement'),
+            subtitle: 'Smart Water Management Systems',
+            image: '/uploads/images/2026/02/02/1770024627773-di5jqj.png',
+            href: SITE_ROUTES.SOLUTIONS.WATER_MANAGEMENT,
+        },
+        {
+            id: 'farm',
+            brand: 'SEVAL FARM',
+            title: t('agriculture'),
+            subtitle: 'Precision Agriculture IoT',
+            image: '/uploads/images/2026/02/02/1770024634433-tfvl2o.png',
+
+            href: SITE_ROUTES.SOLUTIONS.AGRICULTURE,
+        },
+        {
+            id: 'aqua',
+            brand: 'SEVAL AQUA',
+            title: t('aquaculture'),
+            subtitle: 'Aquaculture Monitoring',
+            image: '/uploads/images/2026/02/02/1770024641404-d0g5xi.png',
+            href: SITE_ROUTES.SOLUTIONS.AQUACULTURE,
+        },
+        {
+            id: 'hydro',
+            brand: 'SEVAL HYDRO',
+            title: t('hydrology'),
+            subtitle: 'Smart Irrigation & Hydrology',
+            image: '/uploads/images/2026/02/02/1770024676466-u4e2w9.png',
+            href: '#',
+        },
+        {
+            id: 'building',
+            brand: 'SEVAL BUILDING',
+            title: t('building'),
+            subtitle: 'Smart Building & Infrastructure',
+            image: '/uploads/images/2026/02/02/1770024682380-kkc3q0.png',
+            href: '#',
+        },
+    ];
 
     return (
         <section className="bg-brand overflow-hidden">
@@ -65,7 +111,7 @@ export default function Solutions() {
                     viewport={{ once: true }}
                     className="text-4xl sm:text-5xl font-black text-white tracking-[0.2em] mb-4"
                 >
-                    GIẢI PHÁP
+                    {t('title')}
                 </motion.h2>
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -74,15 +120,15 @@ export default function Solutions() {
                     transition={{ delay: 0.2 }}
                     className="flex items-center justify-center gap-2 text-[10px] font-bold text-white/50 uppercase tracking-widest"
                 >
-                    <span>Trang chủ</span>
+                    <span>{t('breadcrumbHome')}</span>
                     <span>/</span>
-                    <span className="text-white">Giải pháp</span>
+                    <span className="text-white">{t('breadcrumbSolutions')}</span>
                 </motion.div>
             </div>
 
             {/* Interactive Strips */}
             <div className="flex flex-col lg:flex-row h-[700px] w-full border-t border-white/10 items-stretch">
-                {SOLUTIONS.map((item, idx) => (
+                {SOLUTIONS_CONTENT.map((item, idx) => (
                     <div
                         key={item.id}
                         onMouseEnter={() => setHoveredIndex(idx)}

@@ -1,13 +1,15 @@
 import * as React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion } from 'motion/react';
 import { MoveRight, MapPin, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { Project } from '@/types';
 
 export default function FeaturedProjects() {
+    const t = useTranslations('FeaturedProjects');
     const [projects, setProjects] = React.useState<Project[]>([]);
     const [loading, setLoading] = React.useState(true);
 
@@ -34,7 +36,7 @@ export default function FeaturedProjects() {
                     <div className="h-[450px] flex flex-col items-center justify-center space-y-4">
                         <Loader2 size={40} className="animate-spin text-brand-primary opacity-20" />
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                            Đang tải dự án...
+                            {t('loading')}
                         </p>
                     </div>
                 </div>
@@ -51,12 +53,11 @@ export default function FeaturedProjects() {
                 <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-20 px-4 border-l-4 border-brand-primary pl-8">
                     <div className="space-y-4 text-left">
                         <h2 className="text-4xl sm:text-5xl font-bold text-brand-secondary tracking-tight uppercase leading-none">
-                            Dự án <br />
-                            <span className="text-brand-primary">Tiêu biểu</span>
+                            {t('title')} <br />
+                            <span className="text-brand-primary">{t('titleAccent')}</span>
                         </h2>
                         <p className="max-w-xl text-muted-foreground font-medium">
-                            Những công trình trọng điểm khẳng định uy tín và năng lực kỹ thuật của
-                            Sài Gòn Valve.
+                            {t('description')}
                         </p>
                     </div>
 
@@ -64,7 +65,7 @@ export default function FeaturedProjects() {
                         href="/du-an"
                         className="hidden md:flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-primary group transition-all"
                     >
-                        XEM TẤT CẢ DỰ ÁN{' '}
+                        {t('viewAllProjects')}{' '}
                         <MoveRight
                             size={20}
                             className="transition-transform group-hover:translate-x-2"
@@ -119,7 +120,7 @@ export default function FeaturedProjects() {
                 {/* Mobile View All */}
                 <div className="mt-16 text-center md:hidden">
                     <Link href="/du-an" className="inline-flex items-center gap-4 btn-corporate">
-                        Tất cả dự án
+                        {t('mobileViewAll')}
                         <MoveRight size={20} />
                     </Link>
                 </div>

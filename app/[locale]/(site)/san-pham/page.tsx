@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { Search, LayoutGrid, List, ArrowRight, Shield, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -38,6 +40,7 @@ interface Category {
 const ITEMS_PER_PAGE = 6;
 
 export default function ProductArchive() {
+    const t = useTranslations('Products');
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
@@ -138,22 +141,21 @@ export default function ProductArchive() {
                         <div className="space-y-6 max-w-2xl">
                             <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
                                 <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                                Sản phẩm & Giải pháp
+                                {t('hero.badge')}
                             </div>
                             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none drop-shadow-lg">
-                                THIẾT BỊ <br />
-                                <span className="text-brand-accent">CHUYÊN DỤNG</span>
+                                {t('hero.title')} <br />
+                                <span className="text-brand-accent">{t('hero.titleAccent')}</span>
                             </h1>
                             <p className="text-slate-200 font-medium text-base sm:text-lg max-w-xl">
-                                Van công nghiệp, thiết bị đo lường và giải pháp IoT tiêu chuẩn Nhật
-                                Bản & Hàn Quốc cho ngành nước và hạ tầng kỹ thuật.
+                                {t('hero.desc')}
                             </p>
                         </div>
 
                         <div className="relative w-full max-w-md">
                             <input
                                 type="text"
-                                placeholder="Tìm kiếm sản phẩm..."
+                                placeholder={t('hero.searchPlaceholder')}
                                 value={searchQuery}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 className="w-full bg-white/10 backdrop-blur-md px-6 py-5 pl-14 text-sm font-bold border border-white/20 focus:outline-none focus:border-brand-accent text-white placeholder:text-white/40 transition-all"
@@ -176,7 +178,7 @@ export default function ProductArchive() {
                             <div className="sticky top-32 space-y-12">
                                 <div className="space-y-6">
                                     <h4 className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4">
-                                        CHUYÊN MỤC
+                                        {t('sidebar.categoryTitle')}
                                     </h4>
                                     <div className="flex flex-wrap gap-2 lg:flex-col">
                                         {/* "Tất cả" button */}
@@ -189,7 +191,7 @@ export default function ProductArchive() {
                                                     : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary',
                                             )}
                                         >
-                                            Tất cả
+                                            {t('sidebar.all')}
                                         </button>
                                         {categories.map((cat) => (
                                             <button
@@ -214,9 +216,11 @@ export default function ProductArchive() {
                         <div className="flex-1 space-y-10">
                             <div className="flex items-center justify-between border-b border-slate-100 pb-8">
                                 <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest italic">
-                                    Hiển thị {products.length > 0 ? startIndex + 1 : 0} -{' '}
-                                    {Math.min(startIndex + ITEMS_PER_PAGE, total)} trong {total} kết
-                                    quả
+                                    {t('grid.resultCount', {
+                                        start: products.length > 0 ? startIndex + 1 : 0,
+                                        end: Math.min(startIndex + ITEMS_PER_PAGE, total),
+                                        total: total,
+                                    })}
                                 </div>
                                 <div className="flex items-center gap-6">
                                     <div className="flex border border-slate-100 ">
@@ -282,15 +286,15 @@ export default function ProductArchive() {
                                                 </h3>
                                                 <p className="text-[11px] text-muted-foreground font-medium line-clamp-2">
                                                     {product.tech_summary ||
-                                                        'Thiết bị chuyên dụng ngành nước và công nghiệp.'}
+                                                        t('grid.defaultSummary')}
                                                 </p>
-                                                <Link
+                                                <LocalizedLink
                                                     href={`/san-pham/${product.slug}`}
                                                     className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-4 border-t border-slate-50 w-full"
                                                 >
-                                                    CHI TIẾT SẢN PHẨM{' '}
+                                                    {t('grid.viewDetail')}{' '}
                                                     <ArrowRight size={12} className="ml-auto" />
-                                                </Link>
+                                                </LocalizedLink>
                                             </div>
                                         </motion.div>
                                     ))}
@@ -309,7 +313,7 @@ export default function ProductArchive() {
                                             transition={{ delay: i * 0.05 }}
                                             className="group bg-white border border-slate-100 hover:shadow-xl transition-all duration-500"
                                         >
-                                            <Link
+                                            <LocalizedLink
                                                 href={`/san-pham/${product.slug}`}
                                                 className="flex flex-col sm:flex-row gap-6 p-6"
                                             >
@@ -334,13 +338,13 @@ export default function ProductArchive() {
                                                     </h3>
                                                     <p className="text-xs text-muted-foreground font-medium line-clamp-2">
                                                         {product.tech_summary ||
-                                                            'Thiết bị chuyên dụng ngành nước và công nghiệp.'}
+                                                            t('grid.defaultSummary')}
                                                     </p>
                                                     <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2">
-                                                        CHI TIẾT SẢN PHẨM <ArrowRight size={12} />
+                                                        {t('grid.viewDetail')} <ArrowRight size={12} />
                                                     </div>
                                                 </div>
-                                            </Link>
+                                            </LocalizedLink>
                                         </motion.div>
                                     ))}
                                 </div>
@@ -410,7 +414,7 @@ export default function ProductArchive() {
                                 <div className="py-20 text-center space-y-4">
                                     <Info className="mx-auto text-slate-200" size={64} />
                                     <p className="text-muted-foreground font-bold uppercase tracking-widest">
-                                        Không tìm thấy sản phẩm nào.
+                                        {t('empty')}
                                     </p>
                                 </div>
                             )}

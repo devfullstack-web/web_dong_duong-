@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, Search, Globe, Phone, Mail } from "lucide-react";
+import { Link, usePathname, useRouter } from "@/i18n/routing";
+import { Menu, X, Search, Globe, Phone, Mail, Check } from "lucide-react";
+import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,12 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import { SITE_ROUTES } from "@/constants/routes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface NavLink {
   label: string;
@@ -25,38 +31,37 @@ interface NavLink {
   featured?: { title: string; desc: string; href: string }[];
 }
 
-const NAV_LINKS: NavLink[] = [
-  { label: "TRANG CHỦ", href: SITE_ROUTES.HOME },
-  { label: "GIỚI THIỆU", href: SITE_ROUTES.ABOUT },
-  { 
-    label: "GIẢI PHÁP", 
-    href: "#",
-    featured: [
-      { 
-        title: "Quản lý nước thông minh", 
-        desc: "Giải pháp giám sát và điều khiển mạng lưới cấp nước tự động, tối ưu hóa hiệu suất và giảm thất thoát.",
-        href: SITE_ROUTES.SOLUTIONS.WATER_MANAGEMENT 
-      },
-      { 
-        title: "Nông nghiệp chính xác", 
-        desc: "Ứng dụng IoT trong quản lý tưới tiêu và dinh dưỡng, giúp tăng năng suất và bảo vệ tài nguyên.",
-        href: SITE_ROUTES.SOLUTIONS.AGRICULTURE 
-      },
-      // { 
-      //   title: "Quan trắc nuôi trồng thủy sản", 
-      //   desc: "Hệ thống cảnh báo sớm và kiểm soát chất lượng môi trường nước 24/7 cho trang trại.",
-      //   href: SITE_ROUTES.SOLUTIONS.AQUACULTURE 
-      // },
-    ]
-  },
-  { label: "SẢN PHẨM", href: SITE_ROUTES.PRODUCTS },
-  { label: "DỰ ÁN", href: SITE_ROUTES.PROJECTS },
-  { label: "TIN TỨC", href: SITE_ROUTES.NEWS },
-  { label: "TUYỂN DỤNG", href: SITE_ROUTES.RECRUITMENT },
-  { label: "LIÊN HỆ", href: SITE_ROUTES.CONTACT },
-];
-
 export default function Header() {
+  const t = useTranslations('Header');
+  const ts = useTranslations('Solutions');
+  const locale = useLocale();
+  const router = useRouter();
+  
+  const NAV_LINKS: NavLink[] = [
+    { label: t("home"), href: SITE_ROUTES.HOME },
+    { label: t("about"), href: SITE_ROUTES.ABOUT },
+    { 
+      label: t("solutions"), 
+      href: "#",
+      featured: [
+        { 
+          title: ts("waterManagement"), 
+          desc: ts("waterManagementDesc"),
+          href: SITE_ROUTES.SOLUTIONS.WATER_MANAGEMENT 
+        },
+        { 
+          title: ts("agriculture"), 
+          desc: ts("agricultureDesc"),
+          href: SITE_ROUTES.SOLUTIONS.AGRICULTURE 
+        },
+      ]
+    },
+    { label: t("products"), href: SITE_ROUTES.PRODUCTS },
+    { label: t("projects"), href: SITE_ROUTES.PROJECTS },
+    { label: t("news"), href: SITE_ROUTES.NEWS },
+    { label: t("recruitment"), href: SITE_ROUTES.RECRUITMENT },
+    { label: t("contact"), href: SITE_ROUTES.CONTACT },
+  ];
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -85,7 +90,7 @@ export default function Header() {
           <Link href={SITE_ROUTES.HOME} className="relative h-14 w-40 xl:w-56 shrink-0 group">
             <img
               src="/images/logo/logo.png"
-              alt="Sài Gòn Valve Logo"
+              alt={t('logoAlt')}
               className="object-contain group-hover:scale-105 transition-transform h-12 xl:h-16 w-auto"
             />
           </Link>
@@ -150,10 +155,28 @@ export default function Header() {
                <button className="text-foreground hover:text-brand-primary transition-colors transform hover:scale-110">
                  <Search size={18} />
                </button>
-               <div className="flex items-center ml-2 border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm">
-                  <Globe size={14} className="mr-2 text-brand-primary" />
-                  <span className="text-[10px] font-black tracking-widest">VN</span>
-               </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="flex items-center ml-2 border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none">
+                    <Globe size={14} className="mr-2 text-brand-primary" />
+                    <span className="text-[10px] font-black tracking-widest uppercase">{locale}</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-white dark:bg-slate-900 border-slate-100 dark:border-white/10">
+                    <DropdownMenuItem 
+                      onClick={() => router.replace(pathname, { locale: 'vi' })}
+                      className="text-[10px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
+                    >
+                      {t('vi')}
+                      {locale === 'vi' && <Check size={12} className="ml-2 text-brand-primary" />}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => router.replace(pathname, { locale: 'en' })}
+                      className="text-[10px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
+                    >
+                      {t('en')}
+                      {locale === 'en' && <Check size={12} className="ml-2 text-brand-primary" />}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
             </div>
           </div>
 
@@ -210,13 +233,13 @@ export default function Header() {
                     <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm">
                        <Phone size={20} />
                     </div>
-                    <span className="font-black text-sm tracking-widest">(028) 3535 8739</span>
+                    <span className="font-black text-sm tracking-widest">{t('phone')}</span>
                  </div>
                  <div className="flex items-center gap-6 text-muted-foreground group">
                     <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm">
                        <Mail size={20} />
                     </div>
-                    <span className="font-black text-sm tracking-widest uppercase">info@saigonvalve.vn</span>
+                    <span className="font-black text-sm tracking-widest uppercase">{t('email')}</span>
                  </div>
               </div>
             </div>

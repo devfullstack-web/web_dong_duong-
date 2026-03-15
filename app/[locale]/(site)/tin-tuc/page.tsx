@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { User, ChevronRight } from 'lucide-react';
 import {
@@ -33,16 +35,18 @@ interface NewsArticle {
 }
 
 // Helper to format date in Vietnamese
-function formatDate(dateString: string | null): string {
+function formatDate(dateString: string | null, monthText: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
-    return `${day} THÁNG ${month}, ${year}`;
+    return `${day} ${monthText} ${month}, ${year}`;
 }
 
 export default function NewsPage() {
+    const t = useTranslations('News');
+    const monthText = t('date.month');
     const [currentPage, setCurrentPage] = useState(1);
 
     // Fetch news using react-query
@@ -106,15 +110,14 @@ export default function NewsPage() {
                     <div className="max-w-3xl space-y-6">
                         <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
                             <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                            Truyền thông & Tin tức
+                            {t('hero.badge')}
                         </div>
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
-                            TRUNG TÂM <br />
-                            <span className="text-brand-accent">TIÊU ĐIỂM</span>
+                            {t('hero.title')} <br />
+                            <span className="text-brand-accent">{t('hero.titleAccent')}</span>
                         </h1>
                         <p className="text-lg text-slate-200 font-medium max-w-xl">
-                            Cập nhật những tin tức mới nhất về công nghệ, dự án và xu hướng trong
-                            ngành nước và hạ tầng công nghiệp.
+                            {t('hero.desc')}
                         </p>
                     </div>
                 </div>
@@ -149,15 +152,15 @@ export default function NewsPage() {
                                         <div className="p-6 grow flex flex-col justify-between space-y-4">
                                             <div className="space-y-3">
                                                 <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-brand-primary">
-                                                    <span>{article.category || 'TIN TỨC'}</span>
+                                                    <span>{article.category || t('grid.defaultCategory')}</span>
                                                     <span className="text-muted-foreground">
-                                                        {formatDate(article.published_at)}
+                                                        {formatDate(article.published_at, monthText)}
                                                     </span>
                                                 </div>
                                                 <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
-                                                    <Link href={`/tin-tuc/${article.slug}`}>
+                                                    <LocalizedLink href={`/tin-tuc/${article.slug}`}>
                                                         {article.title}
-                                                    </Link>
+                                                    </LocalizedLink>
                                                 </h3>
                                                 <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
                                                     <User
@@ -168,12 +171,12 @@ export default function NewsPage() {
                                                 </div>
                                             </div>
 
-                                            <Link
+                                            <LocalizedLink
                                                 href={`/tin-tuc/${article.slug}`}
                                                 className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary transition-colors pt-2 border-t border-slate-50"
                                             >
-                                                XEM CHI TIẾT <ChevronRight size={14} />
-                                            </Link>
+                                                {t('grid.viewDetail')} <ChevronRight size={14} />
+                                            </LocalizedLink>
                                         </div>
                                     </motion.div>
                                 ))}

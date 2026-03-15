@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { CalendarDays, MoveRight, Newspaper, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
@@ -26,6 +27,8 @@ function formatDate(dateString: string | null): string {
 }
 
 export default function News() {
+    const t = useTranslations('News');
+    const tc = useTranslations('Common');
     const [news, setNews] = React.useState<NewsItem[]>([]);
     const [loading, setLoading] = React.useState(true);
 
@@ -51,12 +54,11 @@ export default function News() {
                 {/* Header */}
                 <div className="mb-20 text-center space-y-4">
                     <h2 className="text-4xl font-bold text-brand-secondary tracking-tight uppercase">
-                        Tin tức
+                        {t('title')}
                     </h2>
                     <div className="mx-auto h-1 w-20 bg-brand-primary"></div>
                     <p className="mx-auto max-w-2xl text-muted-foreground font-medium">
-                        Cập nhật những thông tin mới nhất về dự án, công nghệ và các hoạt động của
-                        Sài Gòn Valve.
+                        {t('description')}
                     </p>
                 </div>
 
@@ -64,11 +66,12 @@ export default function News() {
                 {loading ? (
                     <div className="flex items-center justify-center h-[300px]">
                         <Loader2 size={40} className="animate-spin text-brand-primary opacity-30" />
+                        <span className="sr-only">{t('loading')}</span>
                     </div>
                 ) : news.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[300px] text-slate-400">
                         <Newspaper size={48} className="mb-4 opacity-30" />
-                        <p className="text-sm font-medium">Chưa có bài viết nào</p>
+                        <p className="text-sm font-medium">{t('noNews')}</p>
                     </div>
                 ) : (
                     /* News Grid - Delta style overlay */
@@ -121,7 +124,7 @@ export default function News() {
 
                 <div className="mt-16 text-center">
                     <Link href="/tin-tuc" className="inline-flex items-center gap-2 btn-corporate">
-                        TẤT CẢ TIN TỨC
+                        {tc('viewAll')}
                         <MoveRight size={18} />
                     </Link>
                 </div>
