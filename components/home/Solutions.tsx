@@ -121,7 +121,7 @@ export default function Solutions() {
                                         {/* Premium Logo Container */}
                                         <div className="relative h-14 w-36 sm:h-16 sm:w-44 lg:h-20 lg:w-52 p-3 sm:p-4 bg-white rounded-sm shadow-[0_0_30px_rgba(255,255,255,0.1)] mb-3 flex items-center justify-center">
                                             <Image
-                                                src="https://saigonvalve.vn/uploads/files/2024/08/05/NH-_PH-N_PH-I_-C_QUY-N__25_-removebg-preview.png"
+                                                src="/images/logo/logo.png"
                                                 alt="Sài Gòn Valve Logo"
                                                 fill
                                                 unoptimized
