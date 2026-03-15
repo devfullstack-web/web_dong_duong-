@@ -127,7 +127,7 @@ export default function AboutPage() {
                         <div className="relative">
                             <div className="relative aspect-square shadow-2xl overflow-hidden group">
                                 <Image
-                                    src="https://saigonvalve.vn/uploads/files/2024/09/13/Standee-h-i-ngh-2407-40-x-140-cm-.png"
+                                    src="/uploads/images/2026/03/14/1773475510639-tmuwuw.png"
                                     alt="Sài Gòn Valve Profile"
                                     fill
                                     unoptimized
