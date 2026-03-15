@@ -82,11 +82,11 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           
           {/* Logo */}
-          <Link href={SITE_ROUTES.HOME} className="relative h-14 w-56 shrink-0 group">
+          <Link href={SITE_ROUTES.HOME} className="relative h-14 w-40 xl:w-56 shrink-0 group">
             <img
               src="/images/logo/logo.png"
               alt="Sài Gòn Valve Logo"
-              className="object-contain group-hover:scale-105 transition-transform h-16 w-auto"
+              className="object-contain group-hover:scale-105 transition-transform h-12 xl:h-16 w-auto"
             />
           </Link>
 
@@ -100,7 +100,7 @@ export default function Header() {
                       <>
                         <NavigationMenuTrigger 
                           className={cn(
-                            "h-10 px-4 text-[10px] font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors",
+                            "h-10 px-2 xl:px-4 text-[10px] font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors",
                             pathname === link.href && "text-brand-primary"
                           )}
                         >
@@ -132,7 +132,7 @@ export default function Header() {
                         <Link 
                           href={link.href}
                           className={cn(
-                            "group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none",
+                            "group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none",
                             pathname === link.href ? "text-brand-primary" : "text-foreground"
                           )}
                         >
@@ -146,7 +146,7 @@ export default function Header() {
             </NavigationMenu>
 
             {/* Actions */}
-            <div className="flex items-center gap-6 ml-8 pl-8 border-l border-slate-100 dark:border-white/10">
+            <div className="flex items-center gap-4 xl:gap-6 ml-4 xl:ml-8 pl-4 xl:pl-8 border-l border-slate-100 dark:border-white/10">
                <button className="text-foreground hover:text-brand-primary transition-colors transform hover:scale-110">
                  <Search size={18} />
                </button>
