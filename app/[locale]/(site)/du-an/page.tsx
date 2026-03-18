@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import { MapPin, ExternalLink, MoveRight } from 'lucide-react';
+import { MapPin, ExternalLink, MoveRight, FolderOpen } from 'lucide-react';
 import { SITE_ROUTES, API_ROUTES } from '@/constants/routes';
 import $api from '@/utils/axios';
 import { cn } from '@/lib/utils';
@@ -113,6 +113,18 @@ export default function ProjectsPage() {
             {/* Grid Section */}
             <section className="py-12 bg-slate-50">
                 <div className="container mx-auto px-4 lg:px-8">
+                    {projects.length === 0 ? (
+                        <div className="text-center py-20 border-2 border-dashed border-slate-200 bg-white rounded-xl">
+                            <FolderOpen size={64} className="mx-auto mb-6 text-slate-300" />
+                            <h3 className="text-xl font-black text-slate-900 uppercase">
+                                {t('empty.title')}
+                            </h3>
+                            <p className="text-muted-foreground font-medium">
+                                {t('empty.desc')}
+                            </p>
+                        </div>
+                    ) : (
+                    <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {projects.map((project, i) => (
                             <motion.div
@@ -226,6 +238,8 @@ export default function ProjectsPage() {
                                 </PaginationContent>
                             </Pagination>
                         </div>
+                    )}
+                    </>
                     )}
                 </div>
             </section>

@@ -59,7 +59,12 @@
       "description": "Saigon Valve provides real-time monitoring solutions for flow and pressure, optimizing operations and preventing resource loss.",
       "accent": "Water Management 4.0"
     },
-    "actionAdvice": "SOLUTION CONSULTING"
+    "actionAdvice": "SOLUTION CONSULTING",
+    "iotSolutions": "IoT Solutions & SCADA",
+    "platformTitle": "Smart Infrastructure Platform",
+    "platformSubTitle": "Real-time monitoring and control of water supply networks with IoT technology — optimizing operations and preventing resource loss.",
+    "learnMore": "Explore Solutions",
+    "liveDemo": "Live Demo"
   },
   "FeaturedProjects": {
     "title": "Featured",
@@ -87,6 +92,10 @@
     },
     "date": {
       "month": "MONTH"
+    },
+    "empty": {
+      "title": "NO NEWS AVAILABLE",
+      "desc": "There are no articles available at the moment. Please check back later."
     }
   },
   "ProductSpotlight": {
@@ -323,6 +332,10 @@
       "defaultCategory": "CONSTRUCTION",
       "defaultLocation": "Vietnam",
       "viewDetail": "VIEW DETAIL"
+    },
+    "empty": {
+      "title": "NO PROJECTS AVAILABLE",
+      "desc": "There are no projects available at the moment. Please check back later."
     }
   },
   "Products": {

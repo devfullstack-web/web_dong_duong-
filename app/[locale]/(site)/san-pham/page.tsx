@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
@@ -16,10 +15,22 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+} from '@/components/ui/carousel';
+import Autoplay from 'embla-carousel-autoplay';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useQuery } from '@tanstack/react-query';
+
+const BANNER_IMAGES = [
+    '/uploads/images/2026/03/14/banner-1-sp.jpg',
+    "/uploads/images/2026/03/14/Gemini_Generated_Image_gubbwcgubbwcgubb.png",
+    "/uploads/images/2026/03/14/Gemini_Generated_Image_94afdy94afdy94af.png"
+];
 
 interface Product {
     id: string;
@@ -41,6 +52,9 @@ const ITEMS_PER_PAGE = 6;
 
 export default function ProductArchive() {
     const t = useTranslations('Products');
+    const plugin = useRef(
+        Autoplay({ delay: 5000, stopOnInteraction: false })
+    );
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
@@ -124,47 +138,33 @@ export default function ProductArchive() {
     return (
         <div className="flex flex-col min-h-screen bg-white pt-24">
             {/* Page Header */}
-            <section className="relative py-20 bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-70">
-                    <Image
-                        src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
-                        alt="Projects Background"
-                        fill
-                        unoptimized
-                        className="object-cover brightness-110"
-                        priority
-                    />
+            <section className="relative w-full h-[410px]  bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
+                <div className="absolute inset-0 z-0 opacity-70 **:data-[slot=carousel]:h-full **:data-[slot=carousel-content]:h-full">
+                    <Carousel
+                        opts={{ loop: true }}
+                        plugins={[plugin.current]}
+                        className="w-full h-full"
+                    >
+                        <CarouselContent className="h-full ml-0">
+                            {BANNER_IMAGES.map((src, index) => (
+                                <CarouselItem key={index} className="pl-0 h-full relative">
+                                    <Image
+                                        src={src}
+                                        alt={`Banner ${index + 1}`}
+                                        fill
+                                        unoptimized
+                                        className="object-fit py-3 brightness-110"
+                                        priority={index === 0}
+                                    />
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                    </Carousel>
                 </div>
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
-                        <div className="space-y-6 max-w-2xl">
-                            <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
-                                <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                                {t('hero.badge')}
-                            </div>
-                            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none drop-shadow-lg">
-                                {t('hero.title')} <br />
-                                <span className="text-brand-accent">{t('hero.titleAccent')}</span>
-                            </h1>
-                            <p className="text-slate-200 font-medium text-base sm:text-lg max-w-xl">
-                                {t('hero.desc')}
-                            </p>
-                        </div>
-
-                        <div className="relative w-full max-w-md">
-                            <input
-                                type="text"
-                                placeholder={t('hero.searchPlaceholder')}
-                                value={searchQuery}
-                                onChange={(e) => handleSearchChange(e.target.value)}
-                                className="w-full bg-white/10 backdrop-blur-md px-6 py-5 pl-14 text-sm font-bold border border-white/20 focus:outline-none focus:border-brand-accent text-white placeholder:text-white/40 transition-all"
-                            />
-                            <Search
-                                className="absolute left-6 top-1/2 -translate-y-1/2 text-white/40"
-                                size={20}
-                            />
-                        </div>
+                      
                     </div>
                 </div>
             </section>

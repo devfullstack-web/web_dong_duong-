@@ -59,7 +59,12 @@
       "description": "Sài Gòn Valve mang đến giải pháp giám sát lưu lượng và áp suất nước theo thời gian thực, giúp tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
       "accent": "Công nghệ Quản lý Nước 4.0"
     },
-    "actionAdvice": "TƯ VẤN GIẢI PHÁP"
+    "actionAdvice": "TƯ VẤN GIẢI PHÁP",
+    "iotSolutions": "Giải pháp IoT & SCADA",
+    "platformTitle": "Nền tảng Hạ tầng Thông minh",
+    "platformSubTitle": "Giám sát và điều khiển mạng lưới cấp nước theo thời gian thực với công nghệ IoT — tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
+    "learnMore": "Khám phá Giải pháp",
+    "liveDemo": "Xem Demo"
   },
   "FeaturedProjects": {
     "title": "Dự án",
@@ -87,6 +92,10 @@
     },
     "date": {
       "month": "THÁNG"
+    },
+    "empty": {
+      "title": "CHƯA CÓ TIN TỨC",
+      "desc": "Hiện tại chưa có bài viết nào. Vui lòng quay lại sau."
     }
   },
   "ProductSpotlight": {
@@ -323,6 +332,10 @@
             "defaultCategory": "XÂY DỰNG",
             "defaultLocation": "Việt Nam",
             "viewDetail": "XEM CHI TIẾT"
+        },
+        "empty": {
+            "title": "CHƯA CÓ DỰ ÁN",
+            "desc": "Hiện tại chưa có dự án nào. Vui lòng quay lại sau."
         }
     },
     "Products": {

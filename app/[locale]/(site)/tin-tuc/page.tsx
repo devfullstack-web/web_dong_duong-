@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import { User, ChevronRight } from 'lucide-react';
+import { User, ChevronRight, Newspaper } from 'lucide-react';
 import {
     Pagination,
     PaginationContent,
@@ -128,6 +128,17 @@ export default function NewsPage() {
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row gap-20">
                         <div className="w-full space-y-16">
+                            {news.length === 0 ? (
+                                <div className="text-center py-20 border-2 border-dashed border-slate-200 bg-white rounded-xl">
+                                    <Newspaper size={64} className="mx-auto mb-6 text-slate-300" />
+                                    <h3 className="text-xl font-black text-slate-900 uppercase">
+                                        {t('empty.title')}
+                                    </h3>
+                                    <p className="text-muted-foreground font-medium">
+                                        {t('empty.desc')}
+                                    </p>
+                                </div>
+                            ) : (
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                                 {news.map((article, i) => (
                                     <motion.div
@@ -181,6 +192,7 @@ export default function NewsPage() {
                                     </motion.div>
                                 ))}
                             </div>
+                            )}
 
                             {/* Pagination */}
                             {totalPages > 1 && (
