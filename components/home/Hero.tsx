@@ -8,36 +8,7 @@ import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 
-const SLIDES = [
-    {
-        image: '/uploads/images/2026/01/19/1768814857344-hfho0c.png',
-        fallback:
-            'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=2000',
-        title: 'GIÁM SÁT',
-        highlight: 'QUY TRÌNH THÔNG MINH',
-        titleSuffix: 'CÔNG NGHỆ IOT',
-        desc: 'Sài Gòn Valve mang đến giải pháp giám sát lưu lượng và áp suất nước theo thời gian thực, giúp tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.',
-        accent: 'Công nghệ Quản lý Nước 4.0',
-    },
-    // {
-    //   image: "/images/hero/hero-iot-2.png",
-    //   fallback: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=2000",
-    //   title: "KẾT NỐI",
-    //   highlight: "HẠ TẦNG KỸ THUẬT SỐ",
-    //   titleSuffix: "TOÀN DIỆN",
-    //   desc: "Xây dựng mạng lưới hạ tầng nước thông minh với hệ thống Datalogger và cảm biến tiên tiến, kết nối dữ liệu trực tiếp lên nền tảng Cloud.",
-    //   accent: "Giải pháp Số hóa Hạ tầng"
-    // },
-    // {
-    //   image: "/images/hero/hero-iot-3.png",
-    //   fallback: "https://images.unsplash.com/photo-1516937941184-75140537280d?auto=format&fit=crop&q=80&w=2000",
-    //   title: "VAN THÔNG MINH",
-    //   highlight: "ĐIỀU KHIỂN CHÍNH XÁC",
-    //   titleSuffix: "HIỆU SUẤT CAO",
-    //   desc: "Phân phối độc quyền các loại van điều khiển điện và khí nén tích hợp IoT, đảm bảo độ chính xác tuyệt đối trong mọi quy trình công nghiệp.",
-    //   accent: "Thiết bị Điều khiển Hiện đại"
-    // }
-];
+
 
 export default function Hero() {
     const t = useTranslations('Hero');
@@ -47,14 +18,42 @@ export default function Hero() {
 
     const SLIDES_CONTENT = [
         {
-            image: '/uploads/images/2026/01/19/1768814857344-hfho0c.png',
-            fallback:
-                'https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=2000',
+            type: 'video',
+            src: '/videos/hero-background.mp4',
             title: t('slide1.title'),
             highlight: t('slide1.highlight'),
             titleSuffix: t('slide1.titleSuffix'),
             desc: t('slide1.description'),
             accent: t('slide1.accent'),
+        },
+        {
+            type: 'image',
+            src: '/uploads/images/2026/03/14/diagram-scada.png',
+            title: t('slide2.title'),
+            highlight: t('slide2.highlight'),
+            titleSuffix: t('slide2.titleSuffix'),
+            desc: t('slide2.description'),
+            accent: t('slide2.accent'),
+        },
+
+        {
+            type: 'image',
+            src: '/uploads/images/2026/03/14/scada2.png',
+            title: t('slide3.title'),
+            highlight: t('slide3.highlight'),
+            titleSuffix: t('slide3.titleSuffix'),
+            desc: t('slide3.description'),
+            accent: t('slide3.accent'),
+        },
+
+        {
+            type: 'image',
+            src: '/uploads/images/2026/03/14/scada4.png',
+            title: t('slide3.title'),
+            highlight: t('slide3.highlight'),
+            titleSuffix: t('slide3.titleSuffix'),
+            desc: t('slide3.description'),
+            accent: t('slide3.accent'),
         },
     ];
 
@@ -68,15 +67,8 @@ export default function Hero() {
 
     return (
         <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden ">
-            {/* Video Background */}
+            {/* Persistent Video Background Layer */}
             <div className="absolute inset-0 z-0">
-                {/* Poster Image - hiển thị khi video chưa load */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    src="/images/hero-poster.jpg"
-                    alt="Video poster"
-                    className="absolute inset-0 w-full h-full object-cover object-center opacity-0"
-                />
                 <video
                     autoPlay
                     loop
@@ -86,11 +78,47 @@ export default function Hero() {
                     className="absolute inset-0 w-full h-full object-cover object-center"
                     src="/videos/hero-background.mp4"
                 />
+                {/* Master Overlay - base darkening for all slides */}
+                {/* <div className="absolute inset-0 bg-black/40" /> */}
+            </div>
+
+            {/* Slide-Specific Overlays (e.g., Water IoT Dashboard) */}
+            <div className="absolute inset-0 z-10">
+                <AnimatePresence initial={false}>
+                    {SLIDES_CONTENT[current].type === 'image' && (
+                        <motion.div
+                            key={`image-overlay-${current}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 1, ease: "easeInOut" }}
+                            className="absolute inset-0 overflow-hidden"
+                        >
+                            <div className="absolute inset-0">
+                                {/* Professional Technical Background */}
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,#1e293b_0%,transparent_70%)] opacity-20" />
+                                <div className="absolute inset-0 bg-size-[60px_60px] bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)]" />
+                                
+                                <div className="absolute inset-0 flex items-end lg:items-center justify-center lg:justify-end pb-8 lg:pb-0 lg:py-32 px-4 sm:px-8 lg:px-24">
+                                    <div className="relative w-full lg:w-[45%] h-[40%] sm:h-[45%] lg:h-full flex items-center justify-center lg:justify-end">
+                                        <Image
+                                            src={SLIDES_CONTENT[current].src}
+                                            alt={SLIDES_CONTENT[current].title}
+                                            fill
+                                            priority
+                                            className="object-contain object-bottom lg:object-right"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             <div className="container relative z-10 mx-auto h-full px-4 lg:px-8">
-                <div className="flex h-full flex-col justify-center pt-16">
-                    <div className="max-w-4xl space-y-8">
+                <div className="flex h-full flex-col items-center lg:items-start justify-start lg:justify-center pt-32 sm:pt-40 lg:pt-16">
+                    <div className="max-w-4xl w-full space-y-8">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={current}
@@ -100,7 +128,7 @@ export default function Hero() {
                                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                                 className="space-y-6"
                             >
-                                <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-[1.1] uppercase">
+                                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] uppercase text-center lg:text-left">
                                     {SLIDES_CONTENT[current].title} <br />
                                     <span className="text-brand-accent">
                                         {SLIDES_CONTENT[current].highlight}
@@ -111,14 +139,14 @@ export default function Hero() {
                                     </span>
                                 </h1>
 
-                                <p className="max-w-lg text-sm sm:text-base text-white/70 font-medium leading-relaxed">
+                                <p className="max-w-lg mx-auto lg:mx-0 text-sm sm:text-base text-white/70 font-medium leading-relaxed text-center lg:text-left">
                                     {SLIDES_CONTENT[current].desc}
                                 </p>
 
-                                <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                                <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-4">
                                     <Link
                                         href="/san-pham"
-                                        className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary"
+                                        className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary w-full sm:w-auto"
                                     >
                                         <span className="relative z-10">{tc('exploreNow')}</span>
                                         <MoveRight
@@ -128,7 +156,7 @@ export default function Hero() {
                                     </Link>
                                     <Link
                                         href="/gioi-thieu"
-                                        className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm"
+                                        className="inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm w-full sm:w-auto"
                                     >
                                         {t('actionAdvice')}
                                     </Link>
@@ -137,7 +165,7 @@ export default function Hero() {
                         </AnimatePresence>
 
                         {/* Slide Indicators */}
-                        <div className="flex items-center gap-3 pt-8">
+                        <div className="flex items-center justify-center lg:justify-start gap-3 pt-8">
                             {SLIDES_CONTENT.map((_, i) => (
                                 <button
                                     key={i}
