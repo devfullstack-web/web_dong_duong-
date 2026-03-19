@@ -201,24 +201,51 @@ export default function Header() {
             exit={{ opacity: 0, scaleY: 0 }}
             className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-white/10 overflow-y-auto origin-top"
           >
-            <div className="container mx-auto px-6 py-12 space-y-10">
+            <div className="container mx-auto px-6 py-8 space-y-6">
+              {/* Language Switcher for Mobile */}
+              <div className="flex items-center gap-4 py-4 border-b border-slate-100 dark:border-white/10">
+                <span className="text-[10px] font-black tracking-widest uppercase text-muted-foreground mr-2">Language:</span>
+                <button 
+                  onClick={() => router.replace(pathname, { locale: 'vi' })}
+                  className={cn(
+                    "px-3 py-1.5 text-[10px] font-black tracking-widest uppercase rounded-sm border transition-all",
+                    locale === 'vi' 
+                      ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20" 
+                      : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground"
+                  )}
+                >
+                   {t('vi')}
+                </button>
+                <button 
+                  onClick={() => router.replace(pathname, { locale: 'en' })}
+                  className={cn(
+                    "px-3 py-1.5 text-[10px] font-black tracking-widest uppercase rounded-sm border transition-all",
+                    locale === 'en' 
+                      ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20" 
+                      : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground"
+                  )}
+                >
+                   {t('en')}
+                </button>
+              </div>
+
               {NAV_LINKS.map((link) => (
-                <div key={link.label} className="space-y-6">
+                <div key={link.label} className="space-y-4">
                   <Link 
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block text-2xl font-black uppercase tracking-tighter hover:text-brand-primary transition-colors"
+                    className="block text-lg font-black uppercase tracking-tight hover:text-brand-primary transition-colors"
                   >
                     {link.label}
                   </Link>
                   {("submenu" in link || "featured" in link) && (
-                    <div className="pl-6 grid grid-cols-1 gap-6 border-l-2 border-brand-primary/20">
+                    <div className="pl-4 grid grid-cols-1 gap-4 border-l-2 border-brand-primary/20">
                       {(link.submenu || link.featured)?.map((item: any) => (
                         <Link
                           key={item.title}
                           href={item.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
+                          className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
                         >
                           {item.title}
                         </Link>
@@ -228,7 +255,7 @@ export default function Header() {
                 </div>
               ))}
               
-              <div className="pt-12 border-t border-slate-100 dark:border-white/10 space-y-8">
+              <div className="pt-8 border-t border-slate-100 dark:border-white/10 space-y-6">
                  <div className="flex items-center gap-6 text-muted-foreground group">
                     <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm">
                        <Phone size={20} />
