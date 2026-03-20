@@ -27,7 +27,7 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { useQuery } from '@tanstack/react-query';
 
 const BANNER_IMAGES = [
-    '/uploads/images/2026/03/14/banner-1-sp.jpg',
+    '/uploads/images/2026/03/14/banner1.png',
     "/uploads/images/2026/03/14/Gemini_Generated_Image_gubbwcgubbwcgubb.png",
     "/uploads/images/2026/03/14/Gemini_Generated_Image_94afdy94afdy94af.png"
 ];
@@ -138,8 +138,8 @@ export default function ProductArchive() {
     return (
         <div className="flex flex-col min-h-screen bg-white pt-24">
             {/* Page Header */}
-            <section className="relative w-full h-[410px]  bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-70 **:data-[slot=carousel]:h-full **:data-[slot=carousel-content]:h-full">
+            <section className="relative w-full aspect-19/4 md:aspect-24/5 lg:aspect-23/5 bg-white overflow-hidden">
+                <div className="absolute inset-0 z-0 **:data-[slot=carousel]:h-full **:data-[slot=carousel-content]:h-full">
                     <Carousel
                         opts={{ loop: true }}
                         plugins={[plugin.current]}
@@ -148,14 +148,16 @@ export default function ProductArchive() {
                         <CarouselContent className="h-full ml-0">
                             {BANNER_IMAGES.map((src, index) => (
                                 <CarouselItem key={index} className="pl-0 h-full relative">
-                                    <Image
-                                        src={src}
-                                        alt={`Banner ${index + 1}`}
-                                        fill
-                                        unoptimized
-                                        className="object-fit py-3 brightness-110"
-                                        priority={index === 0}
-                                    />
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={src}
+                                            alt={`Banner ${index + 1}`}
+                                            fill
+                                            unoptimized
+                                            className="object-contain"
+                                            priority={index === 0}
+                                        />
+                                    </div>
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
@@ -170,25 +172,25 @@ export default function ProductArchive() {
             </section>
 
             {/* Main Content */}
-            <section className="py-16">
+            <section className="py-8 md:py-16">
                 <div className="container mx-auto px-4 lg:px-8">
-                    <div className="flex flex-col lg:flex-row gap-16">
+                    <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">
                         {/* Sidebar Filters */}
                         <aside className="lg:w-64 shrink-0">
-                            <div className="sticky top-32 space-y-12">
-                                <div className="space-y-6">
-                                    <h4 className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4">
+                            <div className="lg:sticky lg:top-32 space-y-6 lg:space-y-12">
+                                <div className="space-y-4 lg:space-y-6">
+                                    <h4 className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-3 lg:pb-4">
                                         {t('sidebar.categoryTitle')}
                                     </h4>
-                                    <div className="flex flex-wrap gap-2 lg:flex-col">
+                                    <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-2">
                                         {/* "Tất cả" button */}
                                         <button
                                             onClick={() => handleCategoryChange(null)}
                                             className={cn(
-                                                'px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer',
+                                                'px-3 py-2 lg:px-4 lg:py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
                                                 selectedCategoryId === null
-                                                    ? 'bg-brand-primary text-white '
-                                                    : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary',
+                                                    ? 'bg-brand-primary text-white border-brand-primary'
+                                                    : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
                                             )}
                                         >
                                             {t('sidebar.all')}
@@ -198,10 +200,10 @@ export default function ProductArchive() {
                                                 key={cat.id}
                                                 onClick={() => handleCategoryChange(cat.id)}
                                                 className={cn(
-                                                    'px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer',
+                                                    'px-3 py-2 lg:px-4 lg:py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
                                                     selectedCategoryId === cat.id
-                                                        ? 'bg-brand-primary text-white '
-                                                        : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary',
+                                                        ? 'bg-brand-primary text-white border-brand-primary'
+                                                        : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
                                                 )}
                                             >
                                                 {cat.name}
@@ -317,7 +319,7 @@ export default function ProductArchive() {
                                                 href={`/san-pham/${product.slug}`}
                                                 className="flex flex-col sm:flex-row gap-6 p-6"
                                             >
-                                                <div className="relative w-full sm:w-48 h-48 sm:h-32 shrink-0 overflow-hidden bg-slate-50">
+                                                <div className="relative w-full sm:w-48 aspect-square sm:aspect-auto sm:h-48 shrink-0 overflow-hidden bg-slate-50">
                                                     <Image
                                                         src={
                                                             product.image_url ||
