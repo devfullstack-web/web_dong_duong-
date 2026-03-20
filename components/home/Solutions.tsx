@@ -9,49 +9,7 @@ import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SITE_ROUTES } from '@/constants/routes';
 
-const SOLUTIONS = [
-    {
-        id: 'water',
-        brand: 'SEVAL WATER',
-        title: 'QUẢN LÝ CẤP NƯỚC THÔNG MINH',
-        subtitle: 'Smart Water Management Systems',
-        image: '/uploads/images/2026/02/02/1770024627773-di5jqj.png',
-        href: SITE_ROUTES.SOLUTIONS.WATER_MANAGEMENT,
-    },
-    {
-        id: 'farm',
-        brand: 'SEVAL FARM',
-        title: 'NÔNG NGHIỆP CHÍNH XÁC',
-        subtitle: 'Precision Agriculture IoT',
-        image: '/uploads/images/2026/02/02/1770024634433-tfvl2o.png',
 
-        href: SITE_ROUTES.SOLUTIONS.AGRICULTURE,
-    },
-    {
-        id: 'aqua',
-        brand: 'SEVAL AQUA',
-        title: 'QUAN TRẮC VÀ NUÔI TRỒNG THỦY SẢN',
-        subtitle: 'Aquaculture Monitoring',
-        image: '/uploads/images/2026/02/02/1770024641404-d0g5xi.png',
-        href: SITE_ROUTES.SOLUTIONS.AQUACULTURE,
-    },
-    {
-        id: 'hydro',
-        brand: 'SEVAL HYDRO',
-        title: 'QUẢN LÝ THỦY LỢI THÔNG MINH',
-        subtitle: 'Smart Irrigation & Hydrology',
-        image: '/uploads/images/2026/02/02/1770024676466-u4e2w9.png',
-        href: '#',
-    },
-    {
-        id: 'building',
-        brand: 'SEVAL BUILDING',
-        title: 'QUẢN LÝ TÒA NHÀ & HẠ TẦNG ĐÔ THỊ',
-        subtitle: 'Smart Building & Infrastructure',
-        image: '/uploads/images/2026/02/02/1770024682380-kkc3q0.png',
-        href: '#',
-    },
-];
 
 export default function Solutions() {
     const t = useTranslations('Solutions');
@@ -60,7 +18,7 @@ export default function Solutions() {
     const SOLUTIONS_CONTENT = [
         {
             id: 'water',
-            brand: 'SEVAL WATER',
+            brand: 'SAIGONVALVE WATER',
             title: t('waterManagement'),
             subtitle: 'Smart Water Management Systems',
             image: '/uploads/images/2026/02/02/1770024627773-di5jqj.png',
@@ -68,7 +26,7 @@ export default function Solutions() {
         },
         {
             id: 'farm',
-            brand: 'SEVAL FARM',
+            brand: 'SAIGONVALVE FARM',
             title: t('agriculture'),
             subtitle: 'Precision Agriculture IoT',
             image: '/uploads/images/2026/02/02/1770024634433-tfvl2o.png',
@@ -77,7 +35,7 @@ export default function Solutions() {
         },
         {
             id: 'aqua',
-            brand: 'SEVAL AQUA',
+            brand: 'SAIGONVALVE AQUA',
             title: t('aquaculture'),
             subtitle: 'Aquaculture Monitoring',
             image: '/uploads/images/2026/02/02/1770024641404-d0g5xi.png',
@@ -85,7 +43,7 @@ export default function Solutions() {
         },
         {
             id: 'hydro',
-            brand: 'SEVAL HYDRO',
+            brand: 'SAIGONVALVE HYDRO',
             title: t('hydrology'),
             subtitle: 'Smart Irrigation & Hydrology',
             image: '/uploads/images/2026/02/02/1770024676466-u4e2w9.png',
@@ -93,7 +51,7 @@ export default function Solutions() {
         },
         {
             id: 'building',
-            brand: 'SEVAL BUILDING',
+            brand: 'SAIGONVALVE BUILDING',
             title: t('building'),
             subtitle: 'Smart Building & Infrastructure',
             image: '/uploads/images/2026/02/02/1770024682380-kkc3q0.png',
