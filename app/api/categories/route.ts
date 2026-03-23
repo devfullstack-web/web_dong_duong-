@@ -5,6 +5,7 @@ import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
 import { PERMISSIONS } from "@/constants/rbac";
+import type { LocalizedText } from "@/types/i18n";
 
 // GET /api/categories - List all categories
 export async function GET(request: Request) {
@@ -15,6 +16,7 @@ export async function GET(request: Request) {
     let query = db.select({
       id: categories.id,
       name: categories.name,
+      name_localized: categories.name_localized,
       category_type_id: categories.category_type_id,
       type: categoryTypes.name,
     })
@@ -39,14 +41,23 @@ export async function GET(request: Request) {
 export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
-    const { name, category_type_id } = body;
+    const { name, name_localized, category_type_id } = body as {
+      name?: string;
+      name_localized?: LocalizedText;
+      category_type_id: string;
+    };
 
-    if (!name || !category_type_id) {
-      return apiError("Missing required fields", 400);
+    // Support both legacy (name) and new (name_localized) format
+    const nameVi = name_localized?.vi || name;
+    if (!nameVi || !category_type_id) {
+      return apiError("Missing required fields (name or name_localized.vi)", 400);
     }
 
+    const localizedName: LocalizedText = name_localized || { vi: name || '', en: '' };
+
     const [newCategory] = await db.insert(categories).values({
-      name,
+      name: nameVi, // Keep legacy field populated for backward compatibility
+      name_localized: localizedName,
       category_type_id,
     }).returning();
 

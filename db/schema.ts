@@ -12,6 +12,7 @@ import {
     boolean,
     jsonb,
 } from 'drizzle-orm/pg-core';
+import type { LocalizedText, LocalizedArray } from '@/types/i18n';
 
 export const statusEnum = pgEnum('status', ['draft', 'published']);
 export const productStatusEnum = pgEnum('product_status', ['active', 'inactive']);
@@ -32,6 +33,7 @@ export const categoryTypes = pgTable('category_types', {
 export const categories = pgTable('categories', {
     id: uuid('id').primaryKey().defaultRandom(),
     name: varchar('name', { length: 255 }).notNull(),
+    name_localized: jsonb('name_localized').$type<LocalizedText>(),
     category_type_id: uuid('category_type_id')
         .references(() => categoryTypes.id, { onDelete: 'restrict' })
         .notNull(),
@@ -65,8 +67,10 @@ export const newsArticles = pgTable('news_articles', {
 export const products = pgTable('products', {
     id: uuid('id').primaryKey().defaultRandom(),
     name: varchar('name', { length: 255 }).notNull(),
+    name_localized: jsonb('name_localized').$type<LocalizedText>(),
     slug: varchar('slug', { length: 255 }).notNull().unique(),
     description: text('description').notNull(),
+    description_localized: jsonb('description_localized').$type<LocalizedText>(),
     price: decimal('price', { precision: 12, scale: 2 }).notNull().default('0.00'),
     sku: varchar('sku', { length: 100 }).notNull().unique(),
     stock: integer('stock').notNull().default(0),
@@ -80,8 +84,10 @@ export const products = pgTable('products', {
     is_featured: boolean('is_featured').default(false).notNull(),
     tech_specs: jsonb('tech_specs'), // JSON format for flexible specifications
     features: jsonb('features'), // Array of highlighting features
+    features_localized: jsonb('features_localized').$type<LocalizedArray>(),
     gallery: jsonb('gallery'), // Array of image URLs
     tech_summary: text('tech_summary'),
+    tech_summary_localized: jsonb('tech_summary_localized').$type<LocalizedText>(),
     catalog_url: varchar('catalog_url', { length: 255 }),
     warranty: varchar('warranty', { length: 100 }),
     origin: varchar('origin', { length: 255 }),

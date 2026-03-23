@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 
 export default function AddProductCategoryPage() {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [, setIsSubmitting] = React.useState(false);
 
     const handleFormSubmit = async (data: CategoryFormData) => {
         setIsSubmitting(true);
@@ -54,7 +54,7 @@ export default function AddProductCategoryPage() {
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto">
+            <div className=" mx-auto">
                 <CategoryForm
                     type="product"
                     onSubmit={handleFormSubmit}

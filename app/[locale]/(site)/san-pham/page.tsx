@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import { Search, LayoutGrid, List, ArrowRight, Shield, Info } from 'lucide-react';
+import {  LayoutGrid, List, ArrowRight, Shield, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
     Pagination,
@@ -25,6 +25,8 @@ import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useQuery } from '@tanstack/react-query';
+import { getLocalizedValue } from '@/types/i18n';
+import type { LocalizedText, Locale } from '@/types/i18n';
 
 const BANNER_IMAGES = [
     '/images/banners/banner1.png',
@@ -46,12 +48,14 @@ interface Product {
 interface Category {
     id: string;
     name: string;
+    name_localized?: LocalizedText | null;
 }
 
 const ITEMS_PER_PAGE = 6;
 
 export default function ProductArchive() {
     const t = useTranslations('Products');
+    const locale = useLocale() as Locale;
     const plugin = useRef(
         Autoplay({ delay: 5000, stopOnInteraction: false })
     );
@@ -126,9 +130,6 @@ export default function ProductArchive() {
         setSelectedCategoryId(categoryId);
     };
 
-    const handleSearchChange = (query: string) => {
-        setSearchQuery(query);
-    };
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -206,7 +207,7 @@ export default function ProductArchive() {
                                                         : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
                                                 )}
                                             >
-                                                {cat.name}
+                                                {getLocalizedValue(cat.name_localized, locale) || cat.name}
                                             </button>
                                         ))}
                                     </div>

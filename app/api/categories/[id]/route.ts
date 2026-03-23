@@ -5,6 +5,7 @@ import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
 import { PERMISSIONS } from "@/constants/rbac";
+import type { LocalizedText } from "@/types/i18n";
 
 // GET /api/categories/[id] - Get a single category
 export async function GET(
@@ -13,7 +14,12 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const [category] = await db.select().from(categories).where(eq(categories.id, id));
+    const [category] = await db.select({
+      id: categories.id,
+      name: categories.name,
+      name_localized: categories.name_localized,
+      category_type_id: categories.category_type_id,
+    }).from(categories).where(eq(categories.id, id));
 
     if (!category) {
       return apiError("Category not found", 404);
@@ -31,13 +37,32 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, category_type_id } = body;
+    const { name, name_localized, category_type_id } = body as {
+      name?: string;
+      name_localized?: LocalizedText;
+      category_type_id?: string;
+    };
+
+    // Build update object
+    const updateData: {
+      name?: string;
+      name_localized?: LocalizedText;
+      category_type_id?: string;
+    } = {};
+
+    if (name_localized) {
+      updateData.name_localized = name_localized;
+      updateData.name = name_localized.vi; // Keep legacy field in sync
+    } else if (name) {
+      updateData.name = name;
+    }
+
+    if (category_type_id) {
+      updateData.category_type_id = category_type_id;
+    }
 
     const [updatedCategory] = await db.update(categories)
-      .set({ 
-        name: name ?? undefined, 
-        category_type_id: category_type_id ?? undefined 
-      })
+      .set(updateData)
       .where(eq(categories.id, id))
       .returning();
 
