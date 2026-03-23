@@ -8,7 +8,14 @@ import { generateSlug } from '@/utils/slug';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RichTextEditor } from '@/components/portal/rich-text-editor';
+import { LocalizedInput, LocalizedTextarea } from '@/components/portal/LocalizedInput';
+import { LocalizedRichTextEditor } from '@/components/portal/LocalizedRichTextEditor';
+import {
+    LocalizedFeaturesList,
+    LocalizedTechSpecsList,
+    type LocalizedFeatures,
+    type LocalizedTechSpecs,
+} from '@/components/portal/LocalizedLists';
 import {
     Select,
     SelectContent,
@@ -22,10 +29,13 @@ import { StatusFormSection } from '@/components/portal/status-form-section';
 import { ImageUploader } from '@/components/portal/ImageUploader';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { createEmptyLocalizedText, toLocalizedText, getLocalizedValue } from '@/types/i18n';
+import type { LocalizedText } from '@/types/i18n';
 
 interface Category {
     id: string;
     name: string;
+    name_localized?: LocalizedText | null;
 }
 
 export default function EditProductPage() {
@@ -38,10 +48,10 @@ export default function EditProductPage() {
     const [categories, setCategories] = useState<Category[]>([]);
 
     const [formData, setFormData] = useState({
-        name: '',
+        name_localized: createEmptyLocalizedText(),
         slug: '',
         sku: '',
-        description: '',
+        description_localized: createEmptyLocalizedText(),
         price: '0',
         stock: '0',
         category_id: '',
@@ -53,9 +63,12 @@ export default function EditProductPage() {
         availability: 'Sẵn hàng',
         delivery_info: 'Toàn quốc',
         catalog_url: '',
-        tech_summary: '',
-        features: [''] as string[],
-        tech_specs: [{ key: '', value: '' }] as { key: string; value: string }[],
+        tech_summary_localized: createEmptyLocalizedText(),
+        features_localized: { vi: [''], en: [''] } as LocalizedFeatures,
+        tech_specs_localized: {
+            vi: [{ key: '', value: '' }],
+            en: [{ key: '', value: '' }],
+        } as LocalizedTechSpecs,
         gallery: [] as string[],
     });
 
@@ -74,10 +87,10 @@ export default function EditProductPage() {
                 const product = productRes.data.data;
                 if (product) {
                     setFormData({
-                        name: product.name || '',
+                        name_localized: product.name_localized || toLocalizedText(product.name),
                         slug: product.slug || '',
                         sku: product.sku || '',
-                        description: product.description || '',
+                        description_localized: product.description_localized || toLocalizedText(product.description),
                         price: product.price || '0',
                         stock: product.stock?.toString() || '0',
                         category_id: product.category_id || '',
@@ -89,17 +102,27 @@ export default function EditProductPage() {
                         availability: product.availability || 'Sẵn hàng',
                         delivery_info: product.delivery_info || 'Toàn quốc',
                         catalog_url: product.catalog_url || '',
-                        tech_summary: product.tech_summary || '',
-                        features:
-                            Array.isArray(product.features) && product.features.length > 0
-                                ? product.features
-                                : [''],
-                        tech_specs: product.tech_specs
-                            ? Object.entries(product.tech_specs).map(([key, value]) => ({
-                                  key,
-                                  value: String(value),
-                              }))
-                            : [{ key: '', value: '' }],
+                        tech_summary_localized: product.tech_summary_localized || toLocalizedText(product.tech_summary),
+                        features_localized: product.features_localized
+                            ? product.features_localized
+                            : {
+                                  vi:
+                                      Array.isArray(product.features) && product.features.length > 0
+                                          ? product.features
+                                          : [''],
+                                  en: [''],
+                              },
+                        tech_specs_localized: product.tech_specs_localized
+                            ? product.tech_specs_localized
+                            : {
+                                  vi: product.tech_specs
+                                      ? Object.entries(product.tech_specs).map(([key, value]) => ({
+                                            key,
+                                            value: String(value),
+                                        }))
+                                      : [{ key: '', value: '' }],
+                                  en: [{ key: '', value: '' }],
+                              },
                         gallery: Array.isArray(product.gallery) ? product.gallery : [],
                     });
                 }
@@ -116,30 +139,74 @@ export default function EditProductPage() {
         }
     }, [productId]);
 
-    const handleNameChange = (name: string) => {
-        const slug = generateSlug(name);
+    const handleNameChange = (name_localized: LocalizedText) => {
+        const slug = generateSlug(name_localized.vi);
 
         setFormData((prev) => ({
             ...prev,
-            name,
-            slug: prev.slug === '' || prev.slug === generateSlug(prev.name) ? slug : prev.slug,
+            name_localized,
+            slug: prev.slug === '' || prev.slug === generateSlug(prev.name_localized.vi) ? slug : prev.slug,
         }));
     };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+
+        if (!formData.name_localized.vi) {
+            toast.error('Vui lòng nhập tên sản phẩm tiếng Việt');
+            return;
+        }
+
         setIsSubmitting(true);
         try {
-            // Transform tech_specs from array to object for API
+            // Transform tech_specs from array to object for API (legacy - use Vietnamese)
             const specsObject: Record<string, string> = {};
-            formData.tech_specs.forEach((spec) => {
+            formData.tech_specs_localized.vi.forEach((spec) => {
                 if (spec.key && spec.value) specsObject[spec.key] = spec.value;
             });
 
+            // Filter empty features
+            const featuresLocalized = {
+                vi: formData.features_localized.vi.filter((f) => f.trim() !== ''),
+                en: formData.features_localized.en.filter((f) => f.trim() !== ''),
+            };
+
+            // Filter empty tech specs
+            const techSpecsLocalized = {
+                vi: formData.tech_specs_localized.vi.filter(
+                    (s) => s.key.trim() !== '' || s.value.trim() !== '',
+                ),
+                en: formData.tech_specs_localized.en.filter(
+                    (s) => s.key.trim() !== '' || s.value.trim() !== '',
+                ),
+            };
+
             const submissionData = {
-                ...formData,
+                // Legacy fields (populated from Vietnamese)
+                name: formData.name_localized.vi,
+                description: formData.description_localized.vi,
+                tech_summary: formData.tech_summary_localized.vi || null,
+                // Localized fields
+                name_localized: formData.name_localized,
+                description_localized: formData.description_localized,
+                tech_summary_localized: formData.tech_summary_localized,
+                // Other fields
+                slug: formData.slug,
+                sku: formData.sku,
+                price: formData.price,
+                stock: formData.stock,
+                category_id: formData.category_id,
+                status: formData.status,
+                is_featured: formData.is_featured,
+                origin: formData.origin,
+                warranty: formData.warranty,
+                availability: formData.availability,
+                delivery_info: formData.delivery_info,
+                catalog_url: formData.catalog_url,
                 tech_specs: specsObject,
-                features: formData.features.filter((f) => f.trim() !== ''),
+                tech_specs_localized: techSpecsLocalized,
+                features: featuresLocalized.vi, // Legacy - use Vietnamese
+                features_localized: featuresLocalized,
                 image_url: formData.image,
                 gallery: formData.gallery,
             };
@@ -148,10 +215,10 @@ export default function EditProductPage() {
 
             toast.success('Cập nhật sản phẩm thành công');
             router.push(PORTAL_ROUTES.cms.products.list);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            const message =
-                error.response?.data?.error || error.message || 'Lỗi khi cập nhật sản phẩm';
+            const err = error as { response?: { data?: { error?: string } }; message?: string };
+            const message = err.response?.data?.error || err.message || 'Lỗi khi cập nhật sản phẩm';
             toast.error(message);
         } finally {
             setIsSubmitting(false);
@@ -169,7 +236,7 @@ export default function EditProductPage() {
         );
     }
 
-    if (!formData.name && !isLoading) {
+    if (!formData.name_localized.vi && !isLoading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
                 <p className="text-slate-500 font-medium">Không tìm thấy sản phẩm.</p>
@@ -231,21 +298,17 @@ export default function EditProductPage() {
                 <div className="lg:col-span-2 space-y-8">
                     <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="name"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Tên sản phẩm *
-                                </Label>
-                                <Input
-                                    id="name"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                    value={formData.name}
-                                    onChange={(e) => handleNameChange(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            <LocalizedInput
+                                id="name"
+                                label="Tên sản phẩm"
+                                value={formData.name_localized}
+                                onChange={handleNameChange}
+                                required
+                                placeholder={{
+                                    vi: 'Nhập tên sản phẩm...',
+                                    en: 'Enter product name...',
+                                }}
+                            />
                             <div className="space-y-3">
                                 <Label
                                     htmlFor="sku"
@@ -327,39 +390,29 @@ export default function EditProductPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <Label
-                                htmlFor="description"
-                                className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                            >
-                                Mô tả sản phẩm
-                            </Label>
-                            <RichTextEditor
-                                content={formData.description}
-                                onChange={(content: string) =>
-                                    setFormData({ ...formData, description: content })
-                                }
-                                placeholder="Mô tả chi tiết về sản phẩm..."
-                            />
-                        </div>
+                        <LocalizedRichTextEditor
+                            id="description"
+                            label="Mô tả sản phẩm"
+                            value={formData.description_localized}
+                            onChange={(value) =>
+                                setFormData({ ...formData, description_localized: value })
+                            }
+                            placeholder="Mô tả chi tiết về sản phẩm..."
+                        />
 
-                        <div className="space-y-3">
-                            <Label
-                                htmlFor="tech_summary"
-                                className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                            >
-                                Tóm tắt kỹ thuật (Dành cho trang chi tiết)
-                            </Label>
-                            <textarea
-                                id="tech_summary"
-                                placeholder="Ví dụ: Cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi..."
-                                className="w-full min-h-[80px] p-4 bg-slate-50 border-none text-sm font-medium rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 outline-none transition-all"
-                                value={formData.tech_summary}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, tech_summary: e.target.value })
-                                }
-                            />
-                        </div>
+                        <LocalizedTextarea
+                            id="tech_summary"
+                            label="Tóm tắt kỹ thuật (Dành cho trang chi tiết)"
+                            value={formData.tech_summary_localized}
+                            onChange={(value) =>
+                                setFormData({ ...formData, tech_summary_localized: value })
+                            }
+                            placeholder={{
+                                vi: 'Ví dụ: Cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi...',
+                                en: 'E.g.: Full CO/CQ certification and on-site technical support...',
+                            }}
+                            rows={3}
+                        />
                     </div>
 
                     {/* Features Section */}
@@ -367,51 +420,13 @@ export default function EditProductPage() {
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Đặc điểm nổi bật
                         </h3>
-                        <div className="space-y-4">
-                            {formData.features.map((feature, index) => (
-                                <div key={index} className="flex gap-2">
-                                    <Input
-                                        placeholder="VD: Tiêu chuẩn Nhật Bản..."
-                                        className="h-12 bg-slate-50 border-none text-sm font-medium rounded-none focus:ring-1 focus:ring-brand-primary/20"
-                                        value={feature}
-                                        onChange={(e) => {
-                                            const newFeatures = [...formData.features];
-                                            newFeatures[index] = e.target.value;
-                                            setFormData({ ...formData, features: newFeatures });
-                                        }}
-                                    />
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        className="h-12 w-12 rounded-none text-slate-400 hover:text-red-500"
-                                        onClick={() => {
-                                            const newFeatures = formData.features.filter(
-                                                (_, i) => i !== index,
-                                            );
-                                            setFormData({
-                                                ...formData,
-                                                features: newFeatures.length ? newFeatures : [''],
-                                            });
-                                        }}
-                                    >
-                                        ×
-                                    </Button>
-                                </div>
-                            ))}
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="w-full h-12 border-dashed border-slate-200 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary hover:border-brand-primary rounded-none"
-                                onClick={() =>
-                                    setFormData({
-                                        ...formData,
-                                        features: [...formData.features, ''],
-                                    })
-                                }
-                            >
-                                + Thêm đặc điểm
-                            </Button>
-                        </div>
+                        <LocalizedFeaturesList
+                            label="Danh sách đặc điểm"
+                            value={formData.features_localized}
+                            onChange={(value) =>
+                                setFormData({ ...formData, features_localized: value })
+                            }
+                        />
                     </div>
 
                     {/* Tech Specs Section */}
@@ -419,74 +434,13 @@ export default function EditProductPage() {
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Thông số kỹ thuật (Bảng)
                         </h3>
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-4">
-                                    Tên thông số
-                                </div>
-                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-4">
-                                    Giá trị
-                                </div>
-                            </div>
-                            {formData.tech_specs.map((spec, index) => (
-                                <div key={index} className="flex gap-2">
-                                    <Input
-                                        placeholder="VD: Kích thước"
-                                        className="h-12 bg-slate-50 border-none text-sm font-bold rounded-none focus:ring-1 focus:ring-brand-primary/20"
-                                        value={spec.key}
-                                        onChange={(e) => {
-                                            const newSpecs = [...formData.tech_specs];
-                                            newSpecs[index].key = e.target.value;
-                                            setFormData({ ...formData, tech_specs: newSpecs });
-                                        }}
-                                    />
-                                    <Input
-                                        placeholder="VD: DN50 - DN1200"
-                                        className="h-12 bg-slate-100 border-none text-sm font-medium rounded-none focus:ring-1 focus:ring-brand-primary/20"
-                                        value={spec.value}
-                                        onChange={(e) => {
-                                            const newSpecs = [...formData.tech_specs];
-                                            newSpecs[index].value = e.target.value;
-                                            setFormData({ ...formData, tech_specs: newSpecs });
-                                        }}
-                                    />
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        className="h-12 w-12 rounded-none text-slate-400 hover:text-red-500"
-                                        onClick={() => {
-                                            const newSpecs = formData.tech_specs.filter(
-                                                (_, i) => i !== index,
-                                            );
-                                            setFormData({
-                                                ...formData,
-                                                tech_specs: newSpecs.length
-                                                    ? newSpecs
-                                                    : [{ key: '', value: '' }],
-                                            });
-                                        }}
-                                    >
-                                        ×
-                                    </Button>
-                                </div>
-                            ))}
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="w-full h-12 border-dashed border-slate-200 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary hover:border-brand-primary rounded-none"
-                                onClick={() =>
-                                    setFormData({
-                                        ...formData,
-                                        tech_specs: [
-                                            ...formData.tech_specs,
-                                            { key: '', value: '' },
-                                        ],
-                                    })
-                                }
-                            >
-                                + Thêm thông số
-                            </Button>
-                        </div>
+                        <LocalizedTechSpecsList
+                            label="Danh sách thông số kỹ thuật"
+                            value={formData.tech_specs_localized}
+                            onChange={(value) =>
+                                setFormData({ ...formData, tech_specs_localized: value })
+                            }
+                        />
                     </div>
                 </div>
 
@@ -527,7 +481,7 @@ export default function EditProductPage() {
                                             value={cat.id}
                                             className="text-sm font-bold rounded-none"
                                         >
-                                            {cat.name}
+                                            {getLocalizedValue(cat.name_localized, 'vi') || cat.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

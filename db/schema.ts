@@ -83,6 +83,7 @@ export const products = pgTable('products', {
     // New Enhanced Fields
     is_featured: boolean('is_featured').default(false).notNull(),
     tech_specs: jsonb('tech_specs'), // JSON format for flexible specifications
+    tech_specs_localized: jsonb('tech_specs_localized'),
     features: jsonb('features'), // Array of highlighting features
     features_localized: jsonb('features_localized').$type<LocalizedArray>(),
     gallery: jsonb('gallery'), // Array of image URLs

@@ -37,10 +37,13 @@ const BANNER_IMAGES = [
 interface Product {
     id: string;
     name: string;
+    name_localized?: LocalizedText | null;
     slug: string;
     category: string;
+    category_localized?: LocalizedText | null;
     image_url: string | null;
     tech_summary: string | null;
+    tech_summary_localized?: LocalizedText | null;
     price: string;
     status: string;
 }
@@ -274,7 +277,7 @@ export default function ProductArchive() {
                                                         product.image_url ||
                                                         'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
                                                     }
-                                                    alt={product.name}
+                                                    alt={getLocalizedValue(product.name_localized, locale) || product.name}
                                                     fill
                                                     unoptimized
                                                     className="object-contain p-4 group-hover:scale-110 transition-transform duration-1000"
@@ -282,13 +285,13 @@ export default function ProductArchive() {
                                             </div>
                                             <div className="space-y-4">
                                                 <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
-                                                    <Shield size={10} /> {product.category}
+                                                    <Shield size={10} /> {getLocalizedValue(product.category_localized, locale) || product.category}
                                                 </div>
                                                 <h3 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-10">
-                                                    {product.name}
+                                                    {getLocalizedValue(product.name_localized, locale) || product.name}
                                                 </h3>
                                                 <p className="text-[11px] text-muted-foreground font-medium line-clamp-2">
-                                                    {product.tech_summary ||
+                                                    {getLocalizedValue(product.tech_summary_localized, locale) || product.tech_summary ||
                                                         t('grid.defaultSummary')}
                                                 </p>
                                                 <LocalizedLink
@@ -326,7 +329,7 @@ export default function ProductArchive() {
                                                             product.image_url ||
                                                             'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
                                                         }
-                                                        alt={product.name}
+                                                        alt={getLocalizedValue(product.name_localized, locale) || product.name}
                                                         fill
                                                         unoptimized
                                                         className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
@@ -334,13 +337,13 @@ export default function ProductArchive() {
                                                 </div>
                                                 <div className="flex-1 space-y-3">
                                                     <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
-                                                        <Shield size={10} /> {product.category}
+                                                        <Shield size={10} /> {getLocalizedValue(product.category_localized, locale) || product.category}
                                                     </div>
                                                     <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase">
-                                                        {product.name}
+                                                        {getLocalizedValue(product.name_localized, locale) || product.name}
                                                     </h3>
                                                     <p className="text-xs text-muted-foreground font-medium line-clamp-2">
-                                                        {product.tech_summary ||
+                                                        {getLocalizedValue(product.tech_summary_localized, locale) || product.tech_summary ||
                                                             t('grid.defaultSummary')}
                                                     </p>
                                                     <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2">
