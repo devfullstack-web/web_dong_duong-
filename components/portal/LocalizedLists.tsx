@@ -128,13 +128,17 @@ export function LocalizedTechSpecsList({
     value,
     onChange,
 }: LocalizedTechSpecsListProps) {
+    const specsForLocale = (locale: Locale) =>
+        Array.isArray(value[locale]) ? value[locale] : [];
+
     const updateSpec = (
         locale: Locale,
         index: number,
         field: 'key' | 'value',
         newValue: string
     ) => {
-        const updated = [...(value[locale] || [{ key: '', value: '' }])];
+        const current = specsForLocale(locale);
+        const updated = [...(current.length ? current : [{ key: '', value: '' }])];
         updated[index] = { ...updated[index], [field]: newValue };
         onChange({ ...value, [locale]: updated });
     };
@@ -142,12 +146,12 @@ export function LocalizedTechSpecsList({
     const addSpec = (locale: Locale) => {
         onChange({
             ...value,
-            [locale]: [...(value[locale] || []), { key: '', value: '' }],
+            [locale]: [...specsForLocale(locale), { key: '', value: '' }],
         });
     };
 
     const removeSpec = (locale: Locale, index: number) => {
-        const filtered = (value[locale] || []).filter((_, i) => i !== index);
+        const filtered = specsForLocale(locale).filter((_, i) => i !== index);
         onChange({
             ...value,
             [locale]: filtered.length ? filtered : [{ key: '', value: '' }],
@@ -168,7 +172,7 @@ export function LocalizedTechSpecsList({
                             className="text-[10px] font-bold uppercase tracking-widest rounded-none data-[state=active]:bg-white data-[state=active]:shadow-sm"
                         >
                             {LOCALE_LABELS[locale]}
-                            {value[locale]?.some((s) => s.key.trim() || s.value.trim()) && (
+                            {specsForLocale(locale).some((s) => s.key.trim() || s.value.trim()) && (
                                 <span className="ml-1 text-green-500">●</span>
                             )}
                         </TabsTrigger>
@@ -184,7 +188,10 @@ export function LocalizedTechSpecsList({
                                 {locale === 'vi' ? 'Giá trị' : 'Value'}
                             </div>
                         </div>
-                        {(value[locale] || [{ key: '', value: '' }]).map((spec, index) => (
+                        {(specsForLocale(locale).length
+                            ? specsForLocale(locale)
+                            : [{ key: '', value: '' }]
+                        ).map((spec, index) => (
                             <div key={index} className="flex gap-2">
                                 <Input
                                     placeholder={
@@ -227,8 +234,8 @@ export function LocalizedTechSpecsList({
                             + {locale === 'vi' ? 'Thêm thông số' : 'Add spec'}
                         </Button>
                         {locale === 'en' &&
-                            !value.en?.some((s) => s.key.trim()) &&
-                            value.vi?.some((s) => s.key.trim()) && (
+                            !specsForLocale('en').some((s) => s.key.trim()) &&
+                            specsForLocale('vi').some((s) => s.key.trim()) && (
                                 <p className="text-[9px] text-amber-500 italic">
                                     Sẽ sử dụng bản tiếng Việt nếu để trống
                                 </p>
