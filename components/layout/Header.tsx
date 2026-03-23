@@ -160,10 +160,7 @@ export default function Header() {
             </NavigationMenu>
 
             {/* Actions */}
-            <div className="flex items-center gap-4 xl:gap-6 ml-4 xl:ml-8 pl-4 xl:pl-8 border-l border-slate-100 dark:border-white/10">
-               <button className="text-foreground hover:text-brand-primary transition-colors transform hover:scale-110">
-                 <Search size={18} />
-               </button>
+            <div className="flex items-center gap-4 xl:gap-6  xl:ml-8 pl-4 xl:pl-8 border-l border-slate-100 dark:border-white/10">
                 <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center ml-2 border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none">
                     <Globe size={14} className="mr-2 text-brand-primary" />
