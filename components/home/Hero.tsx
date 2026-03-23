@@ -14,7 +14,7 @@ export default function Hero() {
     const t = useTranslations('Hero');
     const tc = useTranslations('Common');
     const [current, setCurrent] = React.useState(0);
-    const [direction, setDirection] = React.useState(0);
+    const [, setDirection] = React.useState(0);
 
     const SLIDES_CONTENT = [
         {
@@ -128,7 +128,7 @@ export default function Hero() {
                                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                                 className="space-y-6"
                             >
-                                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1] uppercase text-center lg:text-left">
+                                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white tracking-tight leading-[1.1] uppercase text-center lg:text-left">
                                     {SLIDES_CONTENT[current].title} <br />
                                     <span className="text-brand-accent">
                                         {SLIDES_CONTENT[current].highlight}

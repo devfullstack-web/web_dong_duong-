@@ -102,7 +102,7 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           
           {/* Logo */}
-          <Link href={SITE_ROUTES.HOME} className="relative h-14 w-40 xl:w-56 shrink-0 group">
+          <Link href={SITE_ROUTES.HOME} className="relative h-14 w-40 xl:w-48 shrink-0 group">
             <img
               src="/images/logo/logo.png"
               alt={t('logoAlt')}
@@ -160,7 +160,7 @@ export default function Header() {
             </NavigationMenu>
 
             {/* Actions */}
-            <div className="flex items-center gap-4 xl:gap-6  xl:ml-8 pl-4 xl:pl-8 border-l border-slate-100 dark:border-white/10">
+            <div className="flex items-center gap-4 xl:gap-6   pl-4 xl:pl-8  dark:border-white/10">
                 <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center ml-2 border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none">
                     <Globe size={16} className="mr-2 text-brand-primary" />
