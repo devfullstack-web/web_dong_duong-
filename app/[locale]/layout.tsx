@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "../globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import ApiProvider from "@/components/providers/api-provider";
@@ -9,11 +8,6 @@ import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { COMPANY_INFO } from '@/constants/site-info';
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
 
 // TODO: Thay giá trị placeholder phù hợp với thực tế:
 // - OG Image: upload ảnh 1200x630 tại /public/images/og-default.png
@@ -93,7 +87,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body suppressHydrationWarning className={`${inter.variable} antialiased font-sans bg-background text-foreground`}>
+      <body suppressHydrationWarning className="antialiased font-sans bg-background text-foreground">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

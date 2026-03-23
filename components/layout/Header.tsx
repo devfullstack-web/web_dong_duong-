@@ -14,6 +14,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
 import { SITE_ROUTES } from "@/constants/routes";
@@ -27,7 +28,7 @@ import {
 interface NavLink {
   label: string;
   href: string;
-  submenu?: { title: string; href: string }[];
+  submenu?: { title: string; href: string; external?: boolean }[];
   featured?: { title: string; desc: string; href: string }[];
 }
 
@@ -56,7 +57,21 @@ export default function Header() {
         },
       ]
     },
-    { label: t("products"), href: SITE_ROUTES.PRODUCTS },
+    { 
+      label: t("products"), 
+      href: SITE_ROUTES.PRODUCTS,
+      submenu: [
+        {
+          title: t("products"),
+          href: SITE_ROUTES.PRODUCTS,
+        },
+        {
+          title: "Phần mềm IoT điều khiển",
+          href: "https://iot.saigonvalve.vn/login",
+          external: true,
+        },
+      ],
+    },
     { label: t("projects"), href: SITE_ROUTES.PROJECTS },
     { label: t("news"), href: SITE_ROUTES.NEWS },
     { label: t("recruitment"), href: SITE_ROUTES.RECRUITMENT },
@@ -97,37 +112,31 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-2">
-            <NavigationMenu>
+            <NavigationMenu viewport={false}>
               <NavigationMenuList className="gap-2">
                 {mounted && NAV_LINKS.map((link) => (
-                  <NavigationMenuItem key={link.label}>
+                  <NavigationMenuItem key={link.label} className="relative">
                     {"submenu" in link || "featured" in link ? (
                       <>
                         <NavigationMenuTrigger 
                           className={cn(
-                            "h-10 px-2 xl:px-4 text-[10px] font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors",
+                            "h-10 px-2 xl:px-4 text-[11px] font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors",
                             pathname === link.href && "text-brand-primary"
                           )}
                         >
                           {link.label}
                         </NavigationMenuTrigger>
-                        <NavigationMenuContent className="bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-slate-100 dark:ring-white/10">
-                          <ul className={cn(
-                            "grid gap-4 p-8",
-                            link.featured ? "w-[700px] grid-cols-2" : "w-[280px] grid-cols-1"
-                          )}>
+                        <NavigationMenuContent className="p-0 border border-slate-100 dark:border-white/10 shadow-lg w-auto!">
+                          <ul className="grid w-[280px] gap-1 p-2 grid-cols-1 bg-white dark:bg-background rounded-md">
                             {(link.submenu || link.featured)?.map((item: any) => (
-                              <li key={item.title}>
-                                <NavigationMenuLink asChild>
-                                  <Link
-                                    href={item.href}
-                                    className="group block select-none space-y-2 rounded-sm p-4 leading-none no-underline outline-none transition-all hover:bg-slate-50 dark:hover:bg-white/5"
-                                  >
-                                    <div className="text-xs font-black uppercase tracking-tight group-hover:text-brand-primary transition-colors">{item.title as string}</div>
-                                    {"desc" in item && <p className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground font-medium italic">{item.desc as string}</p>}
-                                  </Link>
-                                </NavigationMenuLink>
-                              </li>
+                              <ListItem
+                                key={item.title}
+                                title={item.title}
+                                href={item.href}
+                                external={item.external}
+                              >
+                                {item.desc}
+                              </ListItem>
                             ))}
                           </ul>
                         </NavigationMenuContent>
@@ -137,7 +146,7 @@ export default function Header() {
                         <Link 
                           href={link.href}
                           className={cn(
-                            "group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none",
+                            "group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-2 text-[11px] font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none",
                             pathname === link.href ? "text-brand-primary" : "text-foreground"
                           )}
                         >
@@ -158,19 +167,19 @@ export default function Header() {
                 <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center ml-2 border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none">
                     <Globe size={14} className="mr-2 text-brand-primary" />
-                    <span className="text-[10px] font-black tracking-widest uppercase">{locale}</span>
+                    <span className="text-[11px] font-black tracking-widest uppercase">{locale}</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-white dark:bg-slate-900 border-slate-100 dark:border-white/10">
                     <DropdownMenuItem 
                       onClick={() => router.replace(pathname, { locale: 'vi' })}
-                      className="text-[10px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
+                      className="text-[11px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
                     >
                       {t('vi')}
                       {locale === 'vi' && <Check size={12} className="ml-2 text-brand-primary" />}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => router.replace(pathname, { locale: 'en' })}
-                      className="text-[10px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
+                      className="text-[11px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
                     >
                       {t('en')}
                       {locale === 'en' && <Check size={12} className="ml-2 text-brand-primary" />}
@@ -208,7 +217,7 @@ export default function Header() {
                 <button 
                   onClick={() => router.replace(pathname, { locale: 'vi' })}
                   className={cn(
-                    "px-3 py-1.5 text-[10px] font-black tracking-widest uppercase rounded-sm border transition-all",
+                    "px-3 py-1.5 text-[11px] font-black tracking-widest uppercase rounded-sm border transition-all",
                     locale === 'vi' 
                       ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20" 
                       : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground"
@@ -219,7 +228,7 @@ export default function Header() {
                 <button 
                   onClick={() => router.replace(pathname, { locale: 'en' })}
                   className={cn(
-                    "px-3 py-1.5 text-[10px] font-black tracking-widest uppercase rounded-sm border transition-all",
+                    "px-3 py-1.5 text-[11px] font-black tracking-widest uppercase rounded-sm border transition-all",
                     locale === 'en' 
                       ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20" 
                       : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground"
@@ -245,7 +254,7 @@ export default function Header() {
                           key={item.title}
                           href={item.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
+                          className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
                         >
                           {item.title}
                         </Link>
@@ -276,3 +285,54 @@ export default function Header() {
     </header>
   );
 }
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a"> & { title: string; external?: boolean; href: string }
+>(({ className, title, children, external, href, ...props }, ref) => {
+  const content = (
+    <div className="flex flex-col gap-1">
+      <div className="text-[11px] font-black uppercase tracking-tight group-hover:text-brand-primary transition-colors">
+        {title}
+      </div>
+      {children && (
+        <p className="line-clamp-2 text-[10px] font-medium leading-relaxed text-muted-foreground/80 italic">
+          {children}
+        </p>
+      )}
+    </div>
+  );
+
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        {external ? (
+          <a
+            ref={ref}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100/50 dark:hover:bg-slate-800/50 focus:bg-slate-100/50 dark:focus:bg-slate-800/50 group",
+              className
+            )}
+            {...props}
+          >
+            {content}
+          </a>
+        ) : (
+          <Link
+            href={href}
+            className={cn(
+              "block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100/50 dark:hover:bg-slate-800/50 focus:bg-slate-100/50 dark:focus:bg-slate-800/50 group",
+              className
+            )}
+          >
+            {content}
+          </Link>
+        )}
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = "ListItem";
