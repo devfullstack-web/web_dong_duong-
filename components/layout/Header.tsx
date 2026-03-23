@@ -120,7 +120,7 @@ export default function Header() {
                       <>
                         <NavigationMenuTrigger 
                           className={cn(
-                            "h-10 px-2 xl:px-4 text-[11px] font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors",
+                            "h-10 px-2 xl:px-4 text-[13px] font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors",
                             pathname === link.href && "text-brand-primary"
                           )}
                         >
@@ -146,7 +146,7 @@ export default function Header() {
                         <Link 
                           href={link.href}
                           className={cn(
-                            "group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-2 text-[11px] font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none",
+                            "group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-2 text-[13px] font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none",
                             pathname === link.href ? "text-brand-primary" : "text-foreground"
                           )}
                         >
@@ -163,20 +163,20 @@ export default function Header() {
             <div className="flex items-center gap-4 xl:gap-6  xl:ml-8 pl-4 xl:pl-8 border-l border-slate-100 dark:border-white/10">
                 <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center ml-2 border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none">
-                    <Globe size={14} className="mr-2 text-brand-primary" />
-                    <span className="text-[11px] font-black tracking-widest uppercase">{locale}</span>
+                    <Globe size={16} className="mr-2 text-brand-primary" />
+                    <span className="text-[13px] font-black tracking-widest uppercase">{locale}</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-white dark:bg-slate-900 border-slate-100 dark:border-white/10">
                     <DropdownMenuItem 
                       onClick={() => router.replace(pathname, { locale: 'vi' })}
-                      className="text-[11px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
+                      className="text-xs font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
                     >
                       {t('vi')}
                       {locale === 'vi' && <Check size={12} className="ml-2 text-brand-primary" />}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => router.replace(pathname, { locale: 'en' })}
-                      className="text-[11px] font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
+                      className="text-xs font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
                     >
                       {t('en')}
                       {locale === 'en' && <Check size={12} className="ml-2 text-brand-primary" />}
@@ -210,11 +210,11 @@ export default function Header() {
             <div className="container mx-auto px-6 py-8 space-y-6">
               {/* Language Switcher for Mobile */}
               <div className="flex items-center gap-4 py-4 border-b border-slate-100 dark:border-white/10">
-                <span className="text-[10px] font-black tracking-widest uppercase text-muted-foreground mr-2">Language:</span>
+                <span className="text-[11px] font-black tracking-widest uppercase text-muted-foreground mr-2">Language:</span>
                 <button 
                   onClick={() => router.replace(pathname, { locale: 'vi' })}
                   className={cn(
-                    "px-3 py-1.5 text-[11px] font-black tracking-widest uppercase rounded-sm border transition-all",
+                    "px-3 py-1.5 text-xs font-black tracking-widest uppercase rounded-sm border transition-all",
                     locale === 'vi' 
                       ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20" 
                       : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground"
@@ -225,7 +225,7 @@ export default function Header() {
                 <button 
                   onClick={() => router.replace(pathname, { locale: 'en' })}
                   className={cn(
-                    "px-3 py-1.5 text-[11px] font-black tracking-widest uppercase rounded-sm border transition-all",
+                    "px-3 py-1.5 text-xs font-black tracking-widest uppercase rounded-sm border transition-all",
                     locale === 'en' 
                       ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20" 
                       : "bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground"
@@ -251,7 +251,7 @@ export default function Header() {
                           key={item.title}
                           href={item.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
+                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
                         >
                           {item.title}
                         </Link>
@@ -289,11 +289,11 @@ const ListItem = React.forwardRef<
 >(({ className, title, children, external, href, ...props }, ref) => {
   const content = (
     <div className="flex flex-col gap-1">
-      <div className="text-[11px] font-black uppercase tracking-tight group-hover:text-brand-primary transition-colors">
+      <div className="text-xs font-black uppercase tracking-tight group-hover:text-brand-primary transition-colors">
         {title}
       </div>
       {children && (
-        <p className="line-clamp-2 text-[10px] font-medium leading-relaxed text-muted-foreground/80 italic">
+        <p className="line-clamp-2 text-[11px] font-medium leading-relaxed text-muted-foreground/80 italic">
           {children}
         </p>
       )}

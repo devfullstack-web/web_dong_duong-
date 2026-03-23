@@ -204,7 +204,7 @@ export default function ProductArchive() {
                                                 key={cat.id}
                                                 onClick={() => handleCategoryChange(cat.id)}
                                                 className={cn(
-                                                    'px-3 py-2 lg:px-4 lg:py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
+                                                    'px-3 py-2 lg:px-4 lg:py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
                                                     selectedCategoryId === cat.id
                                                         ? 'bg-brand-primary text-white border-brand-primary'
                                                         : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',

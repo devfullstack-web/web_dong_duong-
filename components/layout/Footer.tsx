@@ -38,7 +38,7 @@ export default function Footer() {
                                 priority
                             />
                         </Link>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
                             {t('slogan')}
                         </p>
                         <div className="flex gap-3">
@@ -56,7 +56,7 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div className="space-y-4">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
                             {t('navigationMenu')}
                         </h4>
                         <ul className="space-y-2">
@@ -71,7 +71,7 @@ export default function Footer() {
                                 <li key={item.label}>
                                     <Link
                                         href={item.href as any}
-                                        className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
+                                        className="text-[11px] font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
                                     >
                                         <ArrowRight
                                             size={10}
@@ -86,7 +86,7 @@ export default function Footer() {
 
                     {/* Contact Info */}
                     <div className="space-y-4">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
                             {t('contactInfo')}
                         </h4>
                         <ul className="space-y-3">
@@ -95,7 +95,7 @@ export default function Footer() {
                                     className="text-white shrink-0 group-hover:text-brand-accent transition-colors"
                                     size={16}
                                 />
-                                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-relaxed">
+                                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider leading-relaxed">
                                     {COMPANY_INFO.address}
                                 </span>
                             </li>
@@ -106,7 +106,7 @@ export default function Footer() {
                                 />
                                 <a
                                     href={`tel:${COMPANY_INFO.phoneRaw}`}
-                                    className="text-[10px] text-slate-400 font-black tracking-widest hover:text-white transition-colors"
+                                    className="text-[11px] text-slate-400 font-black tracking-widest hover:text-white transition-colors"
                                 >
                                     {COMPANY_INFO.phone}
                                 </a>
@@ -118,7 +118,7 @@ export default function Footer() {
                                 />
                                 <a
                                     href={`mailto:${COMPANY_INFO.email}`}
-                                    className="text-[10px] text-slate-400 font-black tracking-widest uppercase hover:text-white transition-colors"
+                                    className="text-[11px] text-slate-400 font-black tracking-widest uppercase hover:text-white transition-colors"
                                 >
                                     {COMPANY_INFO.email}
                                 </a>
@@ -129,29 +129,29 @@ export default function Footer() {
 
                 <div className="pt-4 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                     <div className="space-y-1">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.15em]">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em]">
                             {COMPANY_INFO.copyright}
                         </p>
-                        <div className="flex items-center gap-1.5 justify-center md:justify-start text-[8px] font-bold text-slate-600 uppercase tracking-widest">
-                            <ShieldCheck size={10} className="text-brand-accent" /> {t('securityWarning')}
+                        <div className="flex items-center gap-1.5 justify-center md:justify-start text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+                            <ShieldCheck size={12} className="text-brand-accent" /> {t('securityWarning')}
                         </div>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6">
                         <Link
                             href="#"
-                            className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                            className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
                         >
                             {t('terms')}
                         </Link>
                         <Link
                             href="#"
-                            className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                            className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
                         >
                             {t('privacy')}
                         </Link>
                         <Link
                              href={PORTAL_ROUTES.dashboard as any}
-                             className="text-[8px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                             className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
                          >
                              {t('admin')}
                          </Link>
