@@ -202,7 +202,7 @@ export default function Hero() {
                                             <div className="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/10 transition-colors duration-500 z-0"></div>
                                             <div className="relative w-full h-full p-2 z-10 flex items-center justify-center">
                                                 <Image
-                                                    src={product.image_url || 'https://via.placeholder.com/150?text=SGV'}
+                                                    src={product.image_url}
                                                     alt={product.name}
                                                     fill
                                                     unoptimized
