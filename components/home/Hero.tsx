@@ -178,8 +178,52 @@ export default function Hero() {
                             </motion.div>
                         </AnimatePresence>
 
+                        {/* Featured Products Mini Showcase */}
+                        {featuredProducts.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.5 }}
+                                className="flex flex-col items-center lg:items-start gap-4"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <h3 className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
+                                        {tc('featuredProducts', { defaultValue: 'Sản phẩm nổi bật' })}
+                                    </h3>
+                                    <div className="w-12 sm:w-16 h-px bg-brand-accent/50"></div>
+                                </div>
+                                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
+                                    {featuredProducts.map((product) => (
+                                        <Link
+                                            key={product.id}
+                                            href={`/san-pham/${product.slug}`}
+                                            className="group relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 xl:w-28 xl:h-28  overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 hover:border-brand-accent hover:shadow-[0_0_20px_rgba(251,191,36,0.2)] transition-all duration-500"
+                                        >
+                                            <div className="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/10 transition-colors duration-500 z-0"></div>
+                                            <div className="relative w-full h-full p-2 z-10 flex items-center justify-center">
+                                                <Image
+                                                    src={product.image_url || 'https://via.placeholder.com/150?text=SGV'}
+                                                    alt={product.name}
+                                                    fill
+                                                    unoptimized
+                                                    className="object-contain p-2 sm:p-2.5 drop-shadow-xl group-hover:scale-[1.15] transition-transform duration-500"
+                                                />
+                                            </div>
+                                            
+                                            {/* Tooltip on hover */}
+                                            <div className="absolute inset-x-0 bottom-0 p-1 sm:p-1.5 bg-linear-to-t from-black/80 via-black/50 to-transparent text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20 flex">
+                                                <span className="text-[8px] sm:text-[9px] font-semibold tracking-wide truncate w-full text-center drop-shadow-md">
+                                                    {product.name}
+                                                </span>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+
                         {/* Slide Indicators */}
-                        <div className="flex items-center justify-center lg:justify-start gap-3 pt-8">
+                        <div className="flex items-center justify-center lg:justify-start gap-3 pt-2">
                             {SLIDES_CONTENT.map((_, i) => (
                                 <button
                                     key={i}
@@ -200,49 +244,6 @@ export default function Hero() {
                 </div>
             </div>
 
-            {/* Featured Products Mini Showcase */}
-            {featuredProducts.length > 0 && (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2 }}
-                    className="absolute bottom-8 right-4 lg:bottom-12 lg:right-12 z-20 hidden lg:flex flex-col items-end gap-5"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-16 h-px bg-brand-accent/50"></div>
-                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/80">
-                            {tc('featuredProducts', { defaultValue: 'Sản phẩm nổi bật' })}
-                        </h3>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        {featuredProducts.map((product) => (
-                            <Link
-                                key={product.id}
-                                href={`/san-pham/${product.slug}`}
-                                className="group relative w-24 h-24 xl:w-32 xl:h-32 rounded-lg overflow-hidden bg-white/10 backdrop-blur-xl border border-white/20 hover:border-brand-accent hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-500"
-                            >
-                                <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors duration-500 z-0"></div>
-                                <div className="relative w-full h-full p-2 z-10 flex items-center justify-center">
-                                    <Image
-                                        src={product.image_url || 'https://via.placeholder.com/150?text=SGV'}
-                                        alt={product.name}
-                                        fill
-                                        unoptimized
-                                        className="object-contain p-3 drop-shadow-2xl group-hover:scale-[1.15] transition-transform duration-700"
-                                    />
-                                </div>
-                                
-                                {/* Tooltip on hover */}
-                                <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-brand-primary via-brand-primary to-brand-primary/90 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20 flex px-2 backdrop-blur-md">
-                                    <span className="text-[9px] font-black uppercase tracking-widest truncate w-full text-center">
-                                        {product.name}
-                                    </span>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </motion.div>
-            )}
 
             {/* Modern Technical Scroll Indicator */}
             <motion.div
