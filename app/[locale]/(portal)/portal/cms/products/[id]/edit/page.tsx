@@ -103,26 +103,29 @@ export default function EditProductPage() {
                         delivery_info: product.delivery_info || 'Toàn quốc',
                         catalog_url: product.catalog_url || '',
                         tech_summary_localized: product.tech_summary_localized || toLocalizedText(product.tech_summary),
-                        features_localized: product.features_localized
-                            ? product.features_localized
-                            : {
-                                  vi:
-                                      Array.isArray(product.features) && product.features.length > 0
-                                          ? product.features
-                                          : [''],
-                                  en: [''],
-                              },
-                        tech_specs_localized: product.tech_specs_localized
-                            ? product.tech_specs_localized
-                            : {
-                                  vi: product.tech_specs
-                                      ? Object.entries(product.tech_specs).map(([key, value]) => ({
-                                            key,
-                                            value: String(value),
-                                        }))
-                                      : [{ key: '', value: '' }],
-                                  en: [{ key: '', value: '' }],
-                              },
+                        features_localized: {
+                            vi: Array.isArray(product.features_localized?.vi)
+                                ? product.features_localized.vi
+                                : Array.isArray(product.features) && product.features.length > 0
+                                  ? product.features
+                                  : [''],
+                            en: Array.isArray(product.features_localized?.en)
+                                ? product.features_localized.en
+                                : [''],
+                        },
+                        tech_specs_localized: {
+                            vi: Array.isArray(product.tech_specs_localized?.vi)
+                                ? product.tech_specs_localized.vi
+                                : product.tech_specs
+                                  ? Object.entries(product.tech_specs).map(([key, value]) => ({
+                                        key,
+                                        value: String(value),
+                                    }))
+                                  : [{ key: '', value: '' }],
+                            en: Array.isArray(product.tech_specs_localized?.en)
+                                ? product.tech_specs_localized.en
+                                : [{ key: '', value: '' }],
+                        },
                         gallery: Array.isArray(product.gallery) ? product.gallery : [],
                     });
                 }
@@ -161,24 +164,30 @@ export default function EditProductPage() {
         try {
             // Transform tech_specs from array to object for API (legacy - use Vietnamese)
             const specsObject: Record<string, string> = {};
-            formData.tech_specs_localized.vi.forEach((spec) => {
-                if (spec.key && spec.value) specsObject[spec.key] = spec.value;
-            });
+            if (Array.isArray(formData.tech_specs_localized?.vi)) {
+                formData.tech_specs_localized.vi.forEach((spec) => {
+                    if (spec?.key && spec?.value) specsObject[spec.key] = spec.value;
+                });
+            }
 
             // Filter empty features
             const featuresLocalized = {
-                vi: formData.features_localized.vi.filter((f) => f.trim() !== ''),
-                en: formData.features_localized.en.filter((f) => f.trim() !== ''),
+                vi: Array.isArray(formData.features_localized?.vi)
+                    ? formData.features_localized.vi.filter((f) => typeof f === 'string' && f.trim() !== '')
+                    : [],
+                en: Array.isArray(formData.features_localized?.en)
+                    ? formData.features_localized.en.filter((f) => typeof f === 'string' && f.trim() !== '')
+                    : [],
             };
 
             // Filter empty tech specs
             const techSpecsLocalized = {
-                vi: formData.tech_specs_localized.vi.filter(
-                    (s) => s.key.trim() !== '' || s.value.trim() !== '',
-                ),
-                en: formData.tech_specs_localized.en.filter(
-                    (s) => s.key.trim() !== '' || s.value.trim() !== '',
-                ),
+                vi: Array.isArray(formData.tech_specs_localized?.vi)
+                    ? formData.tech_specs_localized.vi.filter((s) => s?.key?.trim() !== '' || s?.value?.trim() !== '')
+                    : [],
+                en: Array.isArray(formData.tech_specs_localized?.en)
+                    ? formData.tech_specs_localized.en.filter((s) => s?.key?.trim() !== '' || s?.value?.trim() !== '')
+                    : [],
             };
 
             const submissionData = {
