@@ -27,9 +27,9 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { useQuery } from '@tanstack/react-query';
 
 const BANNER_IMAGES = [
-    '/uploads/images/2026/03/14/banner1.png',
-    "/uploads/images/2026/03/14/Gemini_Generated_Image_gubbwcgubbwcgubb.png",
-    "/uploads/images/2026/03/14/Gemini_Generated_Image_94afdy94afdy94af.png"
+    '/images/banners/banner1.png',
+    "/images/banners/banner2.png",
+    "/images/banners/banner3.png"
 ];
 
 interface Product {
