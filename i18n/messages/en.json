@@ -49,7 +49,8 @@
     "viewAll": "VIEW ALL",
     "loading": "Loading...",
     "noData": "No data to display.",
-    "orderNow": "ORDER NOW"
+    "orderNow": "ORDER NOW",
+    "featuredProducts": "Featured Products"
   },
   "Hero": {
     "slide1": {

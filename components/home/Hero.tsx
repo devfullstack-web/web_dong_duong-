@@ -7,14 +7,28 @@ import { MoveRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-
-
-
+import $api from '@/utils/axios';
+import { API_ROUTES } from '@/constants/routes';
 export default function Hero() {
     const t = useTranslations('Hero');
     const tc = useTranslations('Common');
     const [current, setCurrent] = React.useState(0);
     const [, setDirection] = React.useState(0);
+    const [featuredProducts, setFeaturedProducts] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        const fetchFeaturedProducts = async () => {
+            try {
+                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true`);
+                if (response.data.success) {
+                    setFeaturedProducts(response.data.data.slice(0, 3));
+                }
+            } catch (error) {
+                console.error('Error fetching featured products for hero:', error);
+            }
+        };
+        fetchFeaturedProducts();
+    }, []);
 
     const SLIDES_CONTENT = [
         {
@@ -186,20 +200,64 @@ export default function Hero() {
                 </div>
             </div>
 
+            {/* Featured Products Mini Showcase */}
+            {featuredProducts.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2 }}
+                    className="absolute bottom-8 right-4 lg:bottom-12 lg:right-12 z-20 hidden lg:flex flex-col items-end gap-5"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="w-16 h-px bg-brand-accent/50"></div>
+                        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/80">
+                            {tc('featuredProducts', { defaultValue: 'Sản phẩm nổi bật' })}
+                        </h3>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        {featuredProducts.map((product) => (
+                            <Link
+                                key={product.id}
+                                href={`/san-pham/${product.slug}`}
+                                className="group relative w-24 h-24 xl:w-32 xl:h-32 rounded-lg overflow-hidden bg-white/10 backdrop-blur-xl border border-white/20 hover:border-brand-accent hover:shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-500"
+                            >
+                                <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-transparent transition-colors duration-500 z-0"></div>
+                                <div className="relative w-full h-full p-2 z-10 flex items-center justify-center">
+                                    <Image
+                                        src={product.image_url || 'https://via.placeholder.com/150?text=SGV'}
+                                        alt={product.name}
+                                        fill
+                                        unoptimized
+                                        className="object-contain p-3 drop-shadow-2xl group-hover:scale-[1.15] transition-transform duration-700"
+                                    />
+                                </div>
+                                
+                                {/* Tooltip on hover */}
+                                <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-brand-primary via-brand-primary to-brand-primary/90 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20 flex px-2 backdrop-blur-md">
+                                    <span className="text-[9px] font-black uppercase tracking-widest truncate w-full text-center">
+                                        {product.name}
+                                    </span>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </motion.div>
+            )}
+
             {/* Modern Technical Scroll Indicator */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
-                className="absolute bottom-8 right-8 z-20 flex flex-col items-end gap-4"
+                className="absolute bottom-12 left-4 lg:left-12 z-20 flex flex-col items-start gap-4 hidden md:flex"
             >
-                <div className="flex items-center gap-3">
-                    <span className="text-[9px] font-bold text-white/50 uppercase tracking-[0.3em]">
+                <div className="flex items-center gap-4">
+                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.3em]">
                         0{current + 1} / 0{SLIDES_CONTENT.length}
                     </span>
-                    <div className="w-16 h-px bg-white/20">
+                    <div className="w-24 h-px bg-white/20">
                         <motion.div
-                            className="h-full bg-brand-accent"
+                            className="h-full bg-brand-accent shadow-[0_0_8px_rgba(251,191,36,0.5)]"
                             initial={{ width: 0 }}
                             animate={{ width: `${((current + 1) / SLIDES_CONTENT.length) * 100}%` }}
                             transition={{ duration: 0.5 }}
