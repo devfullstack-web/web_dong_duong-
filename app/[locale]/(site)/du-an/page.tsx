@@ -90,7 +90,7 @@ export default function ProjectsPage() {
                         className="object-cover brightness-110"
                         priority
                     />
-                    <div className="absolute inset-0 bg-linear-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
+                    {/* <div className="absolute inset-0 bg-linear-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div> */}
                 </div>
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
