@@ -13,6 +13,7 @@
     "logoAlt": "Sài Gòn Valve Logo",
     "vi": "TIẾNG VIỆT",
     "en": "ENGLISH",
+    "iotControlSoftware": "Phần mềm IoT điều khiển",
     "phone": "(028) 3535 8739",
     "email": "info@saigonvalve.vn"
   },
@@ -216,7 +217,7 @@
     "hero": {
       "badge": "GIẢI PHÁP CÔNG NGHIỆP THÔNG MINH",
       "title": "SÀI GÒN VALVE",
-      "titleAccent": "LẬP TINH CÔNG NGHỆ",
+      "titleAccent": "GIẢI PHÁP IoT & SCADA",
       "desc": "\"Giải pháp đáng tin cậy cho cấp thoát nước và xử lý nước thải từ SG-VAL. Kiến tạo hạ tầng ngành nước hiện đại và bền vững.\""
     },
     "intro": {

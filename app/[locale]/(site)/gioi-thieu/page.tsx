@@ -41,7 +41,7 @@ export default function AboutPage() {
                     className="object-cover opacity-40 brightness-110"
                     priority
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/60 via-brand-secondary/40 to-brand-primary/90"></div>
+                {/* <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/60 via-brand-secondary/40 to-brand-primary/90"></div> */}
                 <div className="container relative z-10 mx-auto px-4 lg:px-8 h-full flex flex-col justify-center">
                     <div className="max-w-4xl space-y-8">
                         <motion.div
@@ -58,7 +58,7 @@ export default function AboutPage() {
                             className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter uppercase drop-shadow-lg"
                         >
                             {t('hero.title')} <br />
-                            <span className="text-brand-accent">{t('hero.titleAccent')}</span>
+                            <span className="text-brand-accent mt-1 inline-block">{t('hero.titleAccent')}</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0 }}

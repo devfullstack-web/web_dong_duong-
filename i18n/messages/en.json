@@ -13,6 +13,7 @@
     "logoAlt": "Saigon Valve Logo",
     "vi": "VIETNAMESE",
     "en": "ENGLISH",
+    "iotControlSoftware": "IoT Control Software",
     "phone": "(028) 3535 8739",
     "email": "info@saigonvalve.vn"
   },
@@ -216,7 +217,7 @@
     "hero": {
       "badge": "SMART INDUSTRIAL SOLUTIONS",
       "title": "SAIGON VALVE",
-      "titleAccent": "TECHNOLOGY EXCELLENCE",
+      "titleAccent": "SOLUTION IoT & SCADA",
       "desc": "\"Reliable solutions for water supply, drainage, and wastewater treatment from SG-VAL. Building modern and sustainable water infrastructure.\""
     },
     "intro": {

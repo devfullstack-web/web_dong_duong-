@@ -66,7 +66,7 @@ export default function Header() {
           href: SITE_ROUTES.PRODUCTS,
         },
         {
-          title: "Phần mềm IoT điều khiển",
+          title: t("iotControlSoftware"),
           href: "https://iot.saigonvalve.vn/login",
           external: true,
         },
