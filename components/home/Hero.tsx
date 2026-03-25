@@ -184,7 +184,7 @@ export default function Hero() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.5 }}
-                                className="flex flex-col items-center lg:items-start gap-4"
+                                className="flex flex-col items-center lg:items-start gap-4 max-sm:hidden"
                             >
                                 <div className="flex items-center gap-3">
                                     <h3 className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
