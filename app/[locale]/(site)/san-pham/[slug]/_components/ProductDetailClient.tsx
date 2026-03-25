@@ -2,12 +2,11 @@
 
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
+import { Link } from '@/i18n/routing';
 import {
     ShieldCheck,
-    Settings,
     ChevronRight,
-    ArrowLeft,
     Download,
     CheckCircle2,
     Globe2,
@@ -27,6 +26,8 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
+import { getLocalizedValue, getLocalizedArray } from '@/types/i18n';
+import type { LocalizedText, LocalizedArray, Locale } from '@/types/i18n';
 
 interface ProductDetailClientProps {
     product: any;
@@ -34,6 +35,8 @@ interface ProductDetailClientProps {
 }
 
 export default function ProductDetailClient({ product, slug }: ProductDetailClientProps) {
+    const t = useTranslations('ProductDetail');
+    const locale = useLocale() as Locale;
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -148,15 +151,15 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                         <Link href={SITE_ROUTES.HOME} className="hover:text-brand-primary">
-                            Trang chủ
+                            {t('breadcrumb.home')}
                         </Link>
                         <ChevronRight size={14} />
                         <Link href={SITE_ROUTES.PRODUCTS} className="hover:text-brand-primary">
-                            Sản phẩm
+                            {t('breadcrumb.products')}
                         </Link>
                         <ChevronRight size={14} />
                         <span className="text-brand-primary uppercase tracking-tighter">
-                            {product.name}
+                            {getLocalizedValue(product.name_localized, locale) || product.name}
                         </span>
                     </div>
                 </div>
@@ -176,14 +179,14 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                         product.image_url ||
                                         'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
                                     }
-                                    alt={product.name}
+                                    alt={getLocalizedValue(product.name_localized, locale) || product.name}
                                     fill
                                     unoptimized
                                     className="object-contain p-20 transition-transform duration-1000 group-hover:scale-110"
                                 />
                                 <div className="absolute top-8 left-8">
                                     <span className="bg-brand-primary px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
-                                        CHÍNH HÃNG
+                                        {t('badge')}
                                     </span>
                                 </div>
 
@@ -260,14 +263,14 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         <div className="space-y-12">
                             <div className="space-y-6">
                                 <div className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary">
-                                    {product.category_name || product.category}
+                                    {getLocalizedValue(product.category_name_localized, locale) || product.category_name || product.category}
                                 </div>
-                                <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
-                                    {product.name}
+                                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
+                                    {getLocalizedValue(product.name_localized, locale) || product.name}
                                 </h1>
                                 <p
                                     className="text-sm text-muted-foreground  leading-relaxed italic border-l-4 border-slate-100 pl-6"
-                                    dangerouslySetInnerHTML={{ __html: product.description }}
+                                    dangerouslySetInnerHTML={{ __html: getLocalizedValue(product.description_localized, locale) || product.description }}
                                 />
                             </div>
 
@@ -276,10 +279,10 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                     <Warehouse className="text-brand-primary shrink-0" size={24} />
                                     <div>
                                         <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                                            Tình trạng
+                                            {t('status.label')}
                                         </div>
                                         <div className="text-sm font-bold text-slate-900 uppercase">
-                                            {product.availability || 'Liên hệ'}
+                                            {product.availability || t('status.default')}
                                         </div>
                                     </div>
                                 </div>
@@ -287,43 +290,47 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                     <Truck className="text-brand-primary shrink-0" size={24} />
                                     <div>
                                         <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                                            Giao hàng
+                                            {t('delivery.label')}
                                         </div>
                                         <div className="text-sm font-bold text-slate-900 uppercase">
-                                            {product.delivery_info || 'Toàn quốc'}
+                                            {product.delivery_info || t('delivery.default')}
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {Array.isArray(product.features) && product.features.length > 0 && (
-                                <div className="space-y-6">
-                                    <h4 className="text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4">
-                                        ĐẶC ĐIỂM NỔI BẬT
-                                    </h4>
-                                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {product.features.map((item: string, i: number) => (
-                                            <li
-                                                key={i}
-                                                className="flex items-center gap-3 text-sm font-bold text-slate-700"
-                                            >
-                                                <CheckCircle2
-                                                    size={16}
-                                                    className="text-brand-primary shrink-0"
-                                                />
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                            {(() => {
+                                const localizedFeatures = getLocalizedArray(product.features_localized, locale);
+                                const features = localizedFeatures.length > 0 ? localizedFeatures : (Array.isArray(product.features) ? product.features : []);
+                                return features.length > 0 && (
+                                    <div className="space-y-6">
+                                        <h4 className="text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4">
+                                            {t('features')}
+                                        </h4>
+                                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {features.map((item: string, i: number) => (
+                                                <li
+                                                    key={i}
+                                                    className="flex items-center gap-3 text-sm font-bold text-slate-700"
+                                                >
+                                                    <CheckCircle2
+                                                        size={16}
+                                                        className="text-brand-primary shrink-0"
+                                                    />
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                );
+                            })()}
 
                             <div className="flex flex-col sm:flex-row gap-6 pt-6">
                                 <Link
                                     href={SITE_ROUTES.CONTACT}
                                     className="flex-1 inline-flex items-center justify-center gap-4 bg-brand-primary py-5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl hover:bg-brand-secondary transition-all"
                                 >
-                                    NHẬN BÁO GIÁ CHI TIẾT
+                                    {t('getQuote')}
                                 </Link>
                                 {product.catalog_url && (
                                     <a
@@ -331,7 +338,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                         target="_blank"
                                         className="flex-1 inline-flex items-center justify-center gap-4 bg-white border-2 border-slate-100 py-5 text-[10px] font-black uppercase tracking-widest text-slate-900 hover:border-brand-primary transition-all"
                                     >
-                                        TẢI CATALOGUE (PDF) <Download size={16} />
+                                        {t('downloadCatalog')} <Download size={16} />
                                     </a>
                                 )}
                             </div>
@@ -347,7 +354,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         <div className="lg:col-span-2 space-y-12">
                             <div className="space-y-6">
                                 <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
-                                    THÔNG SỐ KỸ THUẬT
+                                    {t('techSpecs')}
                                 </h2>
                                 <div className="h-1 w-20 bg-brand-primary"></div>
                             </div>
@@ -361,29 +368,29 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                     className="absolute -bottom-10 -right-10 text-white"
                                 />
                                 <h4 className="text-xl font-bold uppercase leading-tight italic text-brand-accent">
-                                    Hỗ trợ dự án
+                                    {t('projectSupport.title')}
                                 </h4>
                                 <p className="text-xs font-medium text-slate-200 leading-relaxed">
-                                    {product.tech_summary ||
-                                        'Sài Gòn Valve cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi cho các dự án trọng điểm.'}
+                                    {getLocalizedValue(product.tech_summary_localized, locale) || product.tech_summary ||
+                                        t('projectSupport.defaultDesc')}
                                 </p>
                                 <div className="space-y-6 pt-6 pt-b">
                                     <div className="flex items-center gap-4">
                                         <ShieldCheck className="text-white" size={24} />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">
-                                            Bảo hành {product.warranty || '12 tháng'}
+                                            {t('projectSupport.warranty', { months: product.warranty || t('projectSupport.warrantyDefault') })}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <FileText className="text-white" size={24} />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">
-                                            Đầy đủ CO/CQ chính hãng
+                                            {t('projectSupport.certificate')}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <Globe2 className="text-white" size={24} />
                                         <span className="text-[10px] font-bold uppercase tracking-widest">
-                                            Xuất xứ: {product.origin || 'Chính hãng'}
+                                            {t('projectSupport.origin', { origin: product.origin || t('projectSupport.originDefault') })}
                                         </span>
                                     </div>
                                 </div>
@@ -404,24 +411,23 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
             <section className="py-24 bg-white">
                 <div className="container mx-auto px-4 lg:px-8 text-center space-y-10">
                     <h2 className="text-4xl font-black uppercase tracking-tighter text-slate-900">
-                        BẠN CẦN TƯ VẤN THÊM?
+                        {t('cta.title')}
                     </h2>
                     <p className="max-w-xl mx-auto text-muted-foreground font-medium italic">
-                        "Để lại thông tin hoặc gọi hotline để được tư vấn giải pháp tối ưu cho hệ
-                        thống của bạn."
+                        {t('cta.desc')}
                     </p>
                     <div className="flex justify-center flex-col sm:flex-row gap-6">
                         <Link
                             href={SITE_ROUTES.CONTACT}
                             className="px-12 py-5 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-brand-secondary transition-all"
                         >
-                            GỬI YÊU CẦU NGAY
+                            {t('cta.submit')}
                         </Link>
                         <a
                             href="tel:02835358739"
                             className="px-12 py-5 bg-slate-100 text-slate-900 text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
                         >
-                            GỌI HOTLINE
+                            {t('cta.hotline')}
                         </a>
                     </div>
                 </div>

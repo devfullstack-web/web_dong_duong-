@@ -373,6 +373,40 @@
     },
     "empty": "No products found."
   },
+  "ProductDetail": {
+    "breadcrumb": {
+      "home": "Home",
+      "products": "Products"
+    },
+    "badge": "GENUINE",
+    "status": {
+      "label": "Availability",
+      "default": "Contact us"
+    },
+    "delivery": {
+      "label": "Delivery",
+      "default": "Nationwide"
+    },
+    "features": "KEY FEATURES",
+    "getQuote": "GET DETAILED QUOTE",
+    "downloadCatalog": "DOWNLOAD CATALOGUE (PDF)",
+    "techSpecs": "TECHNICAL SPECIFICATIONS",
+    "projectSupport": {
+      "title": "Project Support",
+      "defaultDesc": "Saigon Valve provides complete CO/CQ certificates and on-site technical support for major projects.",
+      "warranty": "Warranty {months}",
+      "warrantyDefault": "12 months",
+      "certificate": "Full genuine CO/CQ certificates",
+      "origin": "Origin: {origin}",
+      "originDefault": "Genuine"
+    },
+    "cta": {
+      "title": "NEED MORE CONSULTATION?",
+      "desc": "\"Leave your information or call our hotline for optimal system solutions.\"",
+      "submit": "SEND REQUEST NOW",
+      "hotline": "CALL HOTLINE"
+    }
+  },
   "Careers": {
     "hero": {
       "badge": "CAREER OPPORTUNITIES",

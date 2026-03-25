@@ -374,6 +374,40 @@
         "empty": "Không tìm thấy sản phẩm nào."
     },
 
+    "ProductDetail": {
+        "breadcrumb": {
+            "home": "Trang chủ",
+            "products": "Sản phẩm"
+        },
+        "badge": "CHÍNH HÃNG",
+        "status": {
+            "label": "Tình trạng",
+            "default": "Liên hệ"
+        },
+        "delivery": {
+            "label": "Giao hàng",
+            "default": "Toàn quốc"
+        },
+        "features": "ĐẶC ĐIỂM NỔI BẬT",
+        "getQuote": "NHẬN BÁO GIÁ CHI TIẾT",
+        "downloadCatalog": "TẢI CATALOGUE (PDF)",
+        "techSpecs": "THÔNG SỐ KỸ THUẬT",
+        "projectSupport": {
+            "title": "Hỗ trợ dự án",
+            "defaultDesc": "Sài Gòn Valve cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi cho các dự án trọng điểm.",
+            "warranty": "Bảo hành {months}",
+            "warrantyDefault": "12 tháng",
+            "certificate": "Đầy đủ CO/CQ chính hãng",
+            "origin": "Xuất xứ: {origin}",
+            "originDefault": "Chính hãng"
+        },
+        "cta": {
+            "title": "BẠN CẦN TƯ VẤN THÊM?",
+            "desc": "\"Để lại thông tin hoặc gọi hotline để được tư vấn giải pháp tối ưu cho hệ thống của bạn.\"",
+            "submit": "GỬI YÊU CẦU NGAY",
+            "hotline": "GỌI HOTLINE"
+        }
+    },
     "Careers": {
         "hero": {
             "badge": "CƠ HỘI NGHỀ NGHIỆP",

@@ -8,7 +8,7 @@ import { COMPANY_INFO } from '@/constants/site-info';
 import ProductDetailClient from './_components/ProductDetailClient';
 
 type PageProps = {
-    params: Promise<{ slug: string }>;
+    params: Promise<{ slug: string; locale: string }>;
 };
 
 async function getProduct(slug: string) {
@@ -16,8 +16,10 @@ async function getProduct(slug: string) {
         .select({
             id: products.id,
             name: products.name,
+            name_localized: products.name_localized,
             slug: products.slug,
             description: products.description,
+            description_localized: products.description_localized,
             price: products.price,
             sku: products.sku,
             stock: products.stock,
@@ -26,15 +28,19 @@ async function getProduct(slug: string) {
             image_url: products.image_url,
             is_featured: products.is_featured,
             tech_specs: products.tech_specs,
+            tech_specs_localized: products.tech_specs_localized,
             features: products.features,
+            features_localized: products.features_localized,
             gallery: products.gallery,
             tech_summary: products.tech_summary,
+            tech_summary_localized: products.tech_summary_localized,
             catalog_url: products.catalog_url,
             warranty: products.warranty,
             origin: products.origin,
             availability: products.availability,
             delivery_info: products.delivery_info,
             category_name: categories.name,
+            category_name_localized: categories.name_localized,
         })
         .from(products)
         .leftJoin(categories, eq(products.category_id, categories.id))
