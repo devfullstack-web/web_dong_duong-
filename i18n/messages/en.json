@@ -121,16 +121,16 @@
   "SystemHighlight": {
     "banners": {
       "featured": {
-        "tag": "FEATURED SYSTEM",
-        "title": "QUICKVIC™ SYSTEM",
-        "desc": "The first and only coupling system designed for high-performance impact tools.",
+        "tag": "WATER INDUSTRY EQUIPMENT",
+        "title": "OKM INDUSTRIAL VALVES",
+        "desc": "Exclusive distributor of OKM Valve — Japan. Supplying a wide range of gate valves, butterfly valves, air release valves and check valves engineered for harsh environments and large-scale water infrastructure projects.",
         "btnText": "Explore now"
       },
       "video": {
-        "tag": "VIDEO TUTORIAL",
-        "title": "INSTALLATION GUIDE",
-        "desc": "Learn how to install products and operate Victaulic equipment through detailed instructional videos.",
-        "btnText": "View list"
+        "tag": "SMART SOLUTIONS",
+        "title": "IOT & SCADA MONITORING SYSTEM",
+        "desc": "Real-time monitoring and control of water distribution networks. Powered by IoT & SCADA technology with continuous data collection to optimize operations and prevent resource loss.",
+        "btnText": "View solutions"
       }
     }
   },

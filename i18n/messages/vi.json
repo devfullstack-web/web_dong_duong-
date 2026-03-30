@@ -121,16 +121,16 @@
   "SystemHighlight": {
     "banners": {
       "featured": {
-        "tag": "HỆ THỐNG NỔI BẬT",
-        "title": "HỆ THỐNG QUICKVIC™",
-        "desc": "Hệ thống khớp nối đầu tiên và duy nhất được thiết kế cho súng bắn bulong hiệu suất cao.",
+        "tag": "THIẾT BỊ NGÀNH NƯỚC",
+        "title": "VAN CÔNG NGHIỆP OKM",
+        "desc": "Nhà phân phối độc quyền thương hiệu Van OKM - Nhật Bản. Cung cấp đa dạng van cổng, van bướm, van xả khí, van một chiều thiết kế cho môi trường khắc nghiệt và các công trình hạ tầng cấp nước quy mô lớn.",
         "btnText": "Khám phá ngay"
       },
       "video": {
-        "tag": "VIDEO HƯỚNG DẪN",
-        "title": "HƯỚNG DẪN LẮP ĐẶT",
-        "desc": "Tìm hiểu cách lắp đặt sản phẩm và vận hành thiết bị Victaulic thông qua các video hướng dẫn chi tiết.",
-        "btnText": "Xem danh sách"
+        "tag": "GIẢI PHÁP THÔNG MINH",
+        "title": "HỆ THỐNG QUAN TRẮC IOT & SCADA",
+        "desc": "Giải pháp giám sát và điều khiển mạng lưới cấp nước theo thời gian thực. Tích hợp công nghệ IoT & SCADA, thu thập dữ liệu liên tục, giúp tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
+        "btnText": "Xem giải pháp"
       }
     }
   },
