@@ -101,7 +101,7 @@ export default function EditNewsCategoryPage() {
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto">
+            <div className="w-full">
                 <CategoryForm
                     type="news"
                     isEditing={true}
