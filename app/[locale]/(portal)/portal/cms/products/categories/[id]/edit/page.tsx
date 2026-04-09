@@ -9,15 +9,16 @@ import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { CategoryForm, CategoryFormData } from '@/components/portal/category-form';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function EditProductCategoryPage() {
     const params = useParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const categoryId = params.id as string;
 
     const [category, setCategory] = useState<CategoryFormData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -38,18 +39,24 @@ export default function EditProductCategoryPage() {
         }
     }, [categoryId]);
 
-    const handleFormSubmit = async (data: CategoryFormData) => {
-        setIsSubmitting(true);
-        try {
+    const updateMutation = useMutation({
+        mutationFn: async (data: CategoryFormData) => {
             await $api.patch(`${API_ROUTES.CATEGORIES}/${categoryId}`, data);
+        },
+        onSuccess: () => {
             toast.success('Cập nhật danh mục thành công');
+            queryClient.invalidateQueries({ queryKey: ['categories', 'product'] });
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.products.categories.list);
-        } catch (err: any) {
+        },
+        onError: (err: any) => {
             console.error('Failed to update category', err);
             toast.error(err.response?.data?.error || 'Lỗi khi cập nhật danh mục');
-        } finally {
-            setIsSubmitting(false);
-        }
+        },
+    });
+
+    const handleFormSubmit = async (data: CategoryFormData) => {
+        updateMutation.mutate(data);
     };
 
     if (isLoading) {
@@ -99,13 +106,14 @@ export default function EditProductCategoryPage() {
                 </div>
             </div>
 
-            <div className="max-w-6xl mx-auto">
+            <div className="w-full">
                 <CategoryForm
                     type="product"
                     isEditing={true}
                     initialData={category}
                     onSubmit={handleFormSubmit}
                     backUrl={PORTAL_ROUTES.cms.products.categories.list}
+                    editingId={categoryId}
                 />
             </div>
         </div>

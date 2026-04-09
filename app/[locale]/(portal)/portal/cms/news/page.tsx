@@ -104,6 +104,7 @@ export default function NewsManagementPage() {
         onSuccess: () => {
             toast.success('Đã xóa bài viết thành công');
             queryClient.invalidateQueries({ queryKey: ['admin-news'] });
+            queryClient.invalidateQueries({ queryKey: ['news'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },

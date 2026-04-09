@@ -25,10 +25,12 @@ import {
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { StatusFormSection } from '@/components/portal/status-form-section';
 import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function EditJobPage() {
     const params = useParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const jobId = params.id as string;
 
     const [isLoading, setIsLoading] = useState(true);
@@ -107,6 +109,8 @@ export default function EditJobPage() {
                 deadline: formData.deadline ? formData.deadline.toISOString() : null,
             };
             await $api.patch(`${API_ROUTES.JOBS}/${jobId}`, submissionData);
+            queryClient.invalidateQueries({ queryKey: ['jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['admin-jobs'] });
             toast.success('Cập nhật tin tuyển dụng thành công');
             router.push(PORTAL_ROUTES.cms.jobs.list);
         } catch (error: any) {

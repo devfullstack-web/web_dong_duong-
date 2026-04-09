@@ -46,6 +46,7 @@ import { toast } from 'sonner';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Category {
     id: string;
@@ -54,6 +55,7 @@ interface Category {
 
 export default function AddNewsPage() {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
 
@@ -126,6 +128,8 @@ export default function AddNewsPage() {
             };
             await $api.post(API_ROUTES.NEWS, submissionData);
 
+            queryClient.invalidateQueries({ queryKey: ['admin-news'] });
+            queryClient.invalidateQueries({ queryKey: ['news'] });
             toast.success('Đã tạo bài viết thành công!');
             router.push(PORTAL_ROUTES.cms.news.list);
         } catch (error: any) {

@@ -19,6 +19,9 @@ export async function GET(
       name: categories.name,
       name_localized: categories.name_localized,
       category_type_id: categories.category_type_id,
+      parent_id: categories.parent_id,
+      display_order: categories.display_order,
+      is_visible: categories.is_visible,
     }).from(categories).where(eq(categories.id, id));
 
     if (!category) {
@@ -37,18 +40,17 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
   try {
     const { id } = await params;
     const body = await request.json();
-    const { name, name_localized, category_type_id } = body as {
+    const { name, name_localized, category_type_id, parent_id, display_order, is_visible } = body as {
       name?: string;
       name_localized?: LocalizedText;
       category_type_id?: string;
+      parent_id?: string | null;
+      display_order?: number;
+      is_visible?: boolean;
     };
 
     // Build update object
-    const updateData: {
-      name?: string;
-      name_localized?: LocalizedText;
-      category_type_id?: string;
-    } = {};
+    const updateData: Record<string, any> = {};
 
     if (name_localized) {
       updateData.name_localized = name_localized;
@@ -59,6 +61,30 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
 
     if (category_type_id) {
       updateData.category_type_id = category_type_id;
+    }
+
+    // Handle parent_id - allow setting to null (root) or a valid parent
+    if (parent_id !== undefined) {
+      if (parent_id && parent_id === id) {
+        return apiError("A category cannot be its own parent", 400);
+      }
+      if (parent_id) {
+        const [parentCat] = await db.select({ id: categories.id })
+          .from(categories)
+          .where(eq(categories.id, parent_id));
+        if (!parentCat) {
+          return apiError("Parent category not found", 400);
+        }
+      }
+      updateData.parent_id = parent_id || null;
+    }
+
+    if (display_order !== undefined) {
+      updateData.display_order = display_order;
+    }
+
+    if (is_visible !== undefined) {
+      updateData.is_visible = is_visible;
     }
 
     const [updatedCategory] = await db.update(categories)
@@ -113,9 +139,15 @@ export const DELETE = withAuth(async (request: NextRequest, session, { params })
       return apiError("Không thể xóa danh mục này vì đang có dữ liệu liên kết với nó. Vui lòng xóa hoặc chuyển các dữ liệu đó sang danh mục khác trước.", 400);
     }
 
-    // Dùng transaction: hard-delete các records đã soft-delete trước (để giải phóng FK),
-    // sau đó mới xóa category
+    // Dùng transaction: reassign children, hard-delete soft-deleted records, then delete category
     const deletedCategory = await db.transaction(async (tx) => {
+      // Reassign children to parent's parent (or root)
+      const [cat] = await tx.select({ parent_id: categories.parent_id })
+        .from(categories).where(eq(categories.id, id));
+      await tx.update(categories)
+        .set({ parent_id: cat?.parent_id || null })
+        .where(eq(categories.parent_id, id));
+
       if (category.typeName === 'news') {
         await tx.delete(newsArticles).where(and(eq(newsArticles.category_id, id), isNotNull(newsArticles.deleted_at)));
       } else if (category.typeName === 'product') {

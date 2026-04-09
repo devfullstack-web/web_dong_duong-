@@ -11,14 +11,15 @@ import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function EditProjectCategoryPage() {
     const params = useParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const categoryId = params.id as string;
 
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [category, setCategory] = useState<any>(null);
 
     useEffect(() => {
@@ -37,21 +38,24 @@ export default function EditProjectCategoryPage() {
         fetchCategory();
     }, [categoryId, router]);
 
-    const handleFormSubmit = async (data: CategoryFormData) => {
-        setIsSubmitting(true);
-        try {
-            await $api.patch(`${API_ROUTES.CATEGORIES}/${categoryId}`, {
-                ...data,
-                type: 'project',
-            });
+    const updateMutation = useMutation({
+        mutationFn: async (data: CategoryFormData) => {
+            await $api.patch(`${API_ROUTES.CATEGORIES}/${categoryId}`, { ...data, type: 'project' });
+        },
+        onSuccess: () => {
             toast.success('Cập nhật danh mục thành công');
+            queryClient.invalidateQueries({ queryKey: ['categories', 'project'] });
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.projects.categories.list);
-        } catch (error) {
+        },
+        onError: (error: any) => {
             console.error(error);
             toast.error('Lỗi khi cập nhật danh mục');
-        } finally {
-            setIsSubmitting(false);
-        }
+        },
+    });
+
+    const handleFormSubmit = async (data: CategoryFormData) => {
+        updateMutation.mutate(data);
     };
 
     if (isLoading) {
@@ -104,6 +108,7 @@ export default function EditProjectCategoryPage() {
                     initialData={category}
                     onSubmit={handleFormSubmit}
                     backUrl={PORTAL_ROUTES.cms.projects.categories.list}
+                    editingId={categoryId}
                 />
             </div>
         </div>

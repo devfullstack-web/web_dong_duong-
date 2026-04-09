@@ -31,16 +31,30 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { createEmptyLocalizedText, toLocalizedText, getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText } from '@/types/i18n';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Category {
     id: string;
     name: string;
     name_localized?: LocalizedText | null;
+    children?: Category[];
+}
+
+function flattenCategories(cats: Category[], level = 0): (Category & { _level: number })[] {
+    const result: (Category & { _level: number })[] = [];
+    for (const cat of cats) {
+        result.push({ ...cat, _level: level });
+        if (cat.children?.length) {
+            result.push(...flattenCategories(cat.children, level + 1));
+        }
+    }
+    return result;
 }
 
 export default function EditProductPage() {
     const params = useParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const productId = params.id as string;
 
     const [isLoading, setIsLoading] = useState(true);
@@ -222,6 +236,8 @@ export default function EditProductPage() {
 
             await $api.patch(`${API_ROUTES.PRODUCTS}/${productId}`, submissionData);
 
+            queryClient.invalidateQueries({ queryKey: ['admin-products'] });
+            queryClient.invalidateQueries({ queryKey: ['products'] });
             toast.success('Cập nhật sản phẩm thành công');
             router.push(PORTAL_ROUTES.cms.products.list);
         } catch (error: unknown) {
@@ -484,13 +500,13 @@ export default function EditProductPage() {
                                     <SelectValue placeholder="Chọn danh mục" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-none border-slate-100">
-                                    {categories.map((cat) => (
+                                    {flattenCategories(categories).map((cat) => (
                                         <SelectItem
                                             key={cat.id}
                                             value={cat.id}
                                             className="text-sm font-bold rounded-none"
                                         >
-                                            {getLocalizedValue(cat.name_localized, 'vi') || cat.name}
+                                            {cat._level > 0 ? '—'.repeat(cat._level) + ' ' : ''}{getLocalizedValue(cat.name_localized, 'vi') || cat.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

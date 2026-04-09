@@ -28,6 +28,7 @@ import { generateSlug } from '@/utils/slug';
 import { Calendar as CalendarIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { DateRange } from 'react-day-picker';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Category {
     id: string;
@@ -36,6 +37,7 @@ interface Category {
 
 export default function AddProjectPage() {
     const router = useRouter();
+    const queryClient = useQueryClient();
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [categories, setCategories] = React.useState<Category[]>([]);
 
@@ -94,6 +96,8 @@ export default function AddProjectPage() {
 
             await $api.post(API_ROUTES.PROJECTS, submissionData);
 
+            queryClient.invalidateQueries({ queryKey: ['admin-projects'] });
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
             toast.success('Đã tạo dự án thành công');
             router.push(PORTAL_ROUTES.cms.projects.list);
         } catch (error: any) {

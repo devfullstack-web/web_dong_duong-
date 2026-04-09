@@ -37,6 +37,9 @@ export const categories = pgTable('categories', {
     category_type_id: uuid('category_type_id')
         .references(() => categoryTypes.id, { onDelete: 'restrict' })
         .notNull(),
+    parent_id: uuid('parent_id'),
+    display_order: integer('display_order').default(0).notNull(),
+    is_visible: boolean('is_visible').default(true).notNull(),
 });
 
 export const authors = pgTable('authors', {

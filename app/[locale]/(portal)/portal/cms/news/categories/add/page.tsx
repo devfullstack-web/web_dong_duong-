@@ -9,26 +9,30 @@ import { CategoryForm, CategoryFormData } from '@/components/portal/category-for
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function AddNewsCategoryPage() {
     const router = useRouter();
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const queryClient = useQueryClient();
 
-    const handleFormSubmit = async (data: CategoryFormData) => {
-        setIsSubmitting(true);
-        try {
-            await $api.post(API_ROUTES.CATEGORIES, {
-                ...data,
-                type: 'news',
-            });
+    const createMutation = useMutation({
+        mutationFn: async (data: CategoryFormData) => {
+            await $api.post(API_ROUTES.CATEGORIES, { ...data, type: 'news' });
+        },
+        onSuccess: () => {
             toast.success('Thêm danh mục tin tức thành công');
+            queryClient.invalidateQueries({ queryKey: ['categories', 'news'] });
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.news.categories.list);
-        } catch (error) {
+        },
+        onError: (error: any) => {
             console.error(error);
             toast.error('Lỗi khi thêm danh mục');
-        } finally {
-            setIsSubmitting(false);
-        }
+        },
+    });
+
+    const handleFormSubmit = async (data: CategoryFormData) => {
+        createMutation.mutate(data);
     };
 
     return (

@@ -52,6 +52,9 @@ interface Category {
     id: string;
     name: string;
     name_localized?: LocalizedText | null;
+    parent_id?: string | null;
+    is_visible?: boolean;
+    children?: Category[];
 }
 
 const ITEMS_PER_PAGE = 6;
@@ -186,7 +189,7 @@ export default function ProductArchive() {
                                     <h4 className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-3 lg:pb-4">
                                         {t('sidebar.categoryTitle')}
                                     </h4>
-                                    <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-2">
+                                    <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
                                         {/* "Tất cả" button */}
                                         <button
                                             onClick={() => handleCategoryChange(null)}
@@ -199,19 +202,34 @@ export default function ProductArchive() {
                                         >
                                             {t('sidebar.all')}
                                         </button>
-                                        {categories.map((cat) => (
-                                            <button
-                                                key={cat.id}
-                                                onClick={() => handleCategoryChange(cat.id)}
-                                                className={cn(
-                                                    'px-3 py-2 lg:px-4 lg:py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
-                                                    selectedCategoryId === cat.id
-                                                        ? 'bg-brand-primary text-white border-brand-primary'
-                                                        : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
-                                                )}
-                                            >
-                                                {getLocalizedValue(cat.name_localized, locale) || cat.name}
-                                            </button>
+                                        {categories.filter(cat => cat.is_visible !== false).map((cat) => (
+                                            <div key={cat.id}>
+                                                <button
+                                                    onClick={() => handleCategoryChange(cat.id)}
+                                                    className={cn(
+                                                        'w-full px-3 py-2 lg:px-4 lg:py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
+                                                        selectedCategoryId === cat.id
+                                                            ? 'bg-brand-primary text-white border-brand-primary'
+                                                            : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
+                                                    )}
+                                                >
+                                                    {getLocalizedValue(cat.name_localized, locale) || cat.name}
+                                                </button>
+                                                {cat.children?.filter(c => c.is_visible !== false).map((child) => (
+                                                    <button
+                                                        key={child.id}
+                                                        onClick={() => handleCategoryChange(child.id)}
+                                                        className={cn(
+                                                            'w-full px-3 py-1.5 lg:px-4 lg:pl-8 lg:py-2 text-left text-[10px] font-bold tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
+                                                            selectedCategoryId === child.id
+                                                                ? 'bg-brand-primary text-white border-brand-primary'
+                                                                : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
+                                                        )}
+                                                    >
+                                                        — {getLocalizedValue(child.name_localized, locale) || child.name}
+                                                    </button>
+                                                ))}
+                                            </div>
                                         ))}
                                     </div>
                                 </div>

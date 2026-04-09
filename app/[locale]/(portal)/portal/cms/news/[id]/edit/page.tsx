@@ -48,6 +48,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface NewsArticle {
     id: string;
@@ -66,6 +67,7 @@ interface NewsArticle {
 export default function EditNewsPage() {
     const params = useParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const newsId = params.id as string;
 
     const [loading, setLoading] = useState(true);
@@ -164,6 +166,8 @@ export default function EditNewsPage() {
             };
             const response = await $api.patch(`${API_ROUTES.NEWS}/${newsId}`, submissionData);
             if (response.data.success) {
+                queryClient.invalidateQueries({ queryKey: ['admin-news'] });
+                queryClient.invalidateQueries({ queryKey: ['news'] });
                 toast.success('Cập nhật bài viết thành công!');
                 router.push(PORTAL_ROUTES.cms.news.list);
             }

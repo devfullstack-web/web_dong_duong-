@@ -28,6 +28,7 @@ import { Calendar as CalendarIcon, X } from 'lucide-react';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { DateRange } from 'react-day-picker';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Project {
     id: string;
@@ -46,6 +47,7 @@ interface Project {
 export default function EditProjectPage() {
     const params = useParams();
     const router = useRouter();
+    const queryClient = useQueryClient();
     const projectId = params.id as string;
 
     const [loading, setLoading] = React.useState(true);
@@ -118,6 +120,8 @@ export default function EditProjectPage() {
                 submissionData,
             );
             if (response.data.success) {
+                queryClient.invalidateQueries({ queryKey: ['admin-projects'] });
+                queryClient.invalidateQueries({ queryKey: ['projects'] });
                 toast.success('Cập nhật dự án thành công!');
                 router.push(PORTAL_ROUTES.cms.projects.list);
             }

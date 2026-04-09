@@ -3,19 +3,89 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import $api from '@/utils/axios';
-import { Plus, Edit2, Trash2, FolderOpen, ArrowLeft, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, FolderOpen, Folder, ArrowLeft, Loader2, ChevronRight, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { LocalizedText } from '@/types/i18n';
+import { getLocalizedValue } from '@/types/i18n';
 
 interface Category {
     id: string;
     name: string;
+    name_localized?: LocalizedText | null;
     type: string;
+    parent_id: string | null;
+    display_order: number;
+    is_visible: boolean;
     count?: number;
+    children?: Category[];
+}
+
+function CategoryTreeItem({
+    cat,
+    level,
+    onDelete,
+}: {
+    cat: Category;
+    level: number;
+    onDelete: (cat: Category) => void;
+}) {
+    const [expanded, setExpanded] = useState(true);
+    const hasChildren = cat.children && cat.children.length > 0;
+    const displayName = getLocalizedValue(cat.name_localized, 'vi') || cat.name;
+
+    return (
+        <>
+            <div
+                className="flex items-center justify-between p-4 hover:bg-slate-50/30 transition-colors group border-b border-slate-50"
+                style={{ paddingLeft: `${24 + level * 32}px` }}
+            >
+                <div className="flex items-center gap-3">
+                    {hasChildren ? (
+                        <button onClick={() => setExpanded(!expanded)} className="h-6 w-6 flex items-center justify-center text-slate-400 hover:text-slate-600">
+                            {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                        </button>
+                    ) : (
+                        <span className="h-6 w-6" />
+                    )}
+                    <div className="h-8 w-8 flex items-center justify-center bg-brand-primary/5 text-brand-primary">
+                        {hasChildren ? <Folder size={16} /> : <FolderOpen size={16} />}
+                    </div>
+                    <div>
+                        <div className="text-sm font-black text-slate-900 uppercase tracking-tight">{displayName}</div>
+                        <span className="text-[10px] text-slate-400 font-medium">Thứ tự: {cat.display_order}</span>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Badge variant="secondary" className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none ${cat.is_visible ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                        {cat.is_visible ? <><Eye size={10} className="mr-1" /> Hiển thị</> : <><EyeOff size={10} className="mr-1" /> Ẩn</>}
+                    </Badge>
+                    {cat.count !== undefined && (
+                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-none">
+                            {cat.count} dự án
+                        </Badge>
+                    )}
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Link href={PORTAL_ROUTES.cms.projects.categories.edit(cat.id)}>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-none hover:bg-slate-100">
+                                <Edit2 size={14} className="text-slate-400" />
+                            </Button>
+                        </Link>
+                        <Button variant="ghost" size="sm" onClick={() => onDelete(cat)} className="h-8 w-8 p-0 rounded-none hover:bg-rose-50">
+                            <Trash2 size={14} className="text-rose-500" />
+                        </Button>
+                    </div>
+                </div>
+            </div>
+            {hasChildren && expanded && cat.children!.map((child) => (
+                <CategoryTreeItem key={child.id} cat={child} level={level + 1} onDelete={onDelete} />
+            ))}
+        </>
+    );
 }
 
 export default function ProjectCategoriesPage() {
@@ -63,20 +133,13 @@ export default function ProjectCategoriesPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
                     <Link href={PORTAL_ROUTES.cms.projects.list}>
-                        <Button
-                            variant="outline"
-                            className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50"
-                        >
+                        <Button variant="outline" className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50">
                             <ArrowLeft size={20} />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
-                            Danh mục dự án
-                        </h1>
-                        <p className="text-slate-500 font-medium italic mt-2 text-sm">
-                            Quản lý danh mục phân loại dự án và công trình.
-                        </p>
+                        <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">Danh mục dự án</h1>
+                        <p className="text-slate-500 font-medium italic mt-2 text-sm">Quản lý danh mục phân loại dự án và công trình.</p>
                     </div>
                 </div>
                 <Link href={PORTAL_ROUTES.cms.projects.categories.add}>
@@ -93,68 +156,13 @@ export default function ProjectCategoriesPage() {
                     </div>
                 ) : (
                     <>
-                        <div className="divide-y divide-slate-50">
-                            {categories.map((cat) => (
-                                <div
-                                    key={cat.id}
-                                    className="flex items-center justify-between p-6 hover:bg-slate-50/30 transition-colors group"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 flex items-center justify-center bg-brand-primary/5 text-brand-primary">
-                                            <FolderOpen size={18} />
-                                        </div>
-                                        <div>
-                                            <div className="text-sm font-black text-slate-900 uppercase tracking-tight">
-                                                {cat.name}
-                                            </div>
-                                            <div className="text-[10px] text-slate-400 font-medium italic uppercase tracking-wider">
-                                                {cat.type}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        {cat.count !== undefined && (
-                                            <Badge
-                                                variant="secondary"
-                                                className="bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-none"
-                                            >
-                                                {cat.count} dự án
-                                            </Badge>
-                                        )}
-                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Link
-                                                href={PORTAL_ROUTES.cms.projects.categories.edit(
-                                                    cat.id,
-                                                )}
-                                            >
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-10 w-10 p-0 rounded-none hover:bg-slate-100"
-                                                >
-                                                    <Edit2 size={16} className="text-slate-400" />
-                                                </Button>
-                                            </Link>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleDeleteClick(cat)}
-                                                className="h-10 w-10 p-0 rounded-none hover:bg-rose-50"
-                                            >
-                                                <Trash2 size={16} className="text-rose-500" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
+                        {categories.map((cat) => (
+                            <CategoryTreeItem key={cat.id} cat={cat} level={0} onDelete={handleDeleteClick} />
+                        ))}
                         {categories.length === 0 && (
                             <div className="p-12 text-center h-[400px] flex items-center justify-center flex-col">
                                 <FolderOpen size={48} className="text-slate-100 mb-4" />
-                                <p className="text-slate-400 font-medium tracking-tight">
-                                    Chưa có danh mục dự án nào được tạo.
-                                </p>
+                                <p className="text-slate-400 font-medium tracking-tight">Chưa có danh mục dự án nào được tạo.</p>
                             </div>
                         )}
                     </>
