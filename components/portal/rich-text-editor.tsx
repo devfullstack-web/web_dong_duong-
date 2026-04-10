@@ -345,7 +345,12 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
     editorProps: {
       attributes: {
         class: cn(
-          "prose prose-sm sm:prose-base lg:prose-lg max-w-none min-h-[500px] p-8 focus:outline-none focus:ring-0 [&_table]:border-collapse [&_table]:w-full [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:p-2 [&_th]:bg-slate-50",
+          "prose prose-sm max-w-none min-h-[500px] p-6 focus:outline-none focus:ring-0 text-sm leading-snug",
+          "[&_p]:mb-1.5 [&_p]:leading-snug",
+          "[&_h1]:mb-2 [&_h1]:mt-3 [&_h2]:mb-2 [&_h2]:mt-3 [&_h3]:mb-1.5 [&_h3]:mt-2",
+          "[&_ul]:my-1.5 [&_ol]:my-1.5 [&_li]:my-0.5",
+          "[&_blockquote]:my-2 [&_pre]:my-2",
+          "[&_table]:border-collapse [&_table]:w-full [&_td]:border [&_td]:p-2 [&_th]:border [&_th]:p-2 [&_th]:bg-slate-50",
           className
         ),
       },

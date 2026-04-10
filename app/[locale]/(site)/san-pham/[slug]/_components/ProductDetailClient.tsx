@@ -43,7 +43,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
     const allImages = useMemo(() => {
         if (!product) return [];
         const main =
-            product.image_url || 'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png';
+            product.image_url;
         const gallery = Array.isArray(product.gallery) ? product.gallery : [];
         return [main, ...gallery];
     }, [product]);
@@ -237,8 +237,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                                     <Image
                                                         src={
                                                             product.image_url ||
-                                                            'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
-                                                        }
+                                                            'https://via.placeholder.com/300?text=SGV'}
                                                         alt="Thumb"
                                                         width={100}
                                                         height={100}
@@ -347,23 +346,23 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
             {(getLocalizedValue(product.description_localized, locale) || product.description) && (
                 <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
                     <div className="container mx-auto px-4 lg:px-8">
-                        <div className="max-w-4xl mx-auto space-y-8">
-                            <div className="space-y-4">
+                        <div className=" space-y-4">
+                            <div className="space-b-4">
                                 <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">
                                     {t('breadcrumb.products') || 'Mô tả chi tiết'}
                                 </h2>
                                 <div className="h-1 w-20 bg-brand-primary"></div>
                             </div>
                             <div
-                                className="prose prose-sm sm:prose-base max-w-none text-slate-700 leading-relaxed
-                                    prose-headings:text-slate-900 prose-headings:font-bold prose-headings:uppercase prose-headings:tracking-tight
-                                    prose-p:text-slate-600 prose-p:leading-relaxed
+                                className="prose prose-sm sm:prose-base max-w-none text-slate-700
+                                    prose-headings:text-slate-900 prose-headings:font-bold prose-headings:uppercase prose-headings:tracking-tight prose-headings:mb-2
+                                    prose-p:text-slate-600 prose-p:mb-2 prose-p:leading-normal
                                     prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
                                     prose-img:rounded-none prose-img:shadow-sm prose-img:border prose-img:border-slate-200
                                     prose-table:border-collapse prose-table:w-full
                                     prose-th:bg-slate-50 prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:text-xs prose-th:font-black prose-th:uppercase prose-th:tracking-widest prose-th:text-muted-foreground prose-th:border prose-th:border-slate-200
                                     prose-td:px-4 prose-td:py-3 prose-td:text-sm prose-td:border prose-td:border-slate-200
-                                    prose-ul:space-y-2 prose-ol:space-y-2
+                                    prose-ul:space-y-1 prose-ol:space-y-1
                                     prose-li:text-slate-600
                                     [&_img]:max-w-full [&_img]:h-auto
                                     [&_iframe]:max-w-full [&_iframe]:aspect-video
@@ -391,41 +390,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                             {renderSpecs()}
                         </div>
 
-                        <div className="space-y-12">
-                            <div className="bg-brand-primary p-12 text-white space-y-8 relative overflow-hidden">
-                                <Globe2
-                                    size={120}
-                                    className="absolute -bottom-10 -right-10 text-white"
-                                />
-                                <h4 className="text-xl font-bold uppercase leading-tight italic text-brand-accent">
-                                    {t('projectSupport.title')}
-                                </h4>
-                                <p className="text-xs font-medium text-slate-200 leading-relaxed">
-                                    {getLocalizedValue(product.tech_summary_localized, locale) || product.tech_summary ||
-                                        t('projectSupport.defaultDesc')}
-                                </p>
-                                <div className="space-y-6 pt-6 pt-b">
-                                    <div className="flex items-center gap-4">
-                                        <ShieldCheck className="text-white" size={24} />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest">
-                                            {t('projectSupport.warranty', { months: product.warranty || t('projectSupport.warrantyDefault') })}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <FileText className="text-white" size={24} />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest">
-                                            {t('projectSupport.certificate')}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <Globe2 className="text-white" size={24} />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest">
-                                            {t('projectSupport.origin', { origin: product.origin || t('projectSupport.originDefault') })}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                     </div>
                 </div>
             </section>
