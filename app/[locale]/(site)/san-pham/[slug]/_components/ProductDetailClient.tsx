@@ -268,10 +268,6 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                 <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
                                     {getLocalizedValue(product.name_localized, locale) || product.name}
                                 </h1>
-                                <p
-                                    className="text-sm text-muted-foreground  leading-relaxed italic border-l-4 border-slate-100 pl-6"
-                                    dangerouslySetInnerHTML={{ __html: getLocalizedValue(product.description_localized, locale) || product.description }}
-                                />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-10 border-y border-slate-100">
@@ -346,6 +342,40 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                     </div>
                 </div>
             </section>
+
+            {/* Product Description */}
+            {(getLocalizedValue(product.description_localized, locale) || product.description) && (
+                <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
+                    <div className="container mx-auto px-4 lg:px-8">
+                        <div className="max-w-4xl mx-auto space-y-8">
+                            <div className="space-y-4">
+                                <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">
+                                    {t('breadcrumb.products') || 'Mô tả chi tiết'}
+                                </h2>
+                                <div className="h-1 w-20 bg-brand-primary"></div>
+                            </div>
+                            <div
+                                className="prose prose-sm sm:prose-base max-w-none text-slate-700 leading-relaxed
+                                    prose-headings:text-slate-900 prose-headings:font-bold prose-headings:uppercase prose-headings:tracking-tight
+                                    prose-p:text-slate-600 prose-p:leading-relaxed
+                                    prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
+                                    prose-img:rounded-none prose-img:shadow-sm prose-img:border prose-img:border-slate-200
+                                    prose-table:border-collapse prose-table:w-full
+                                    prose-th:bg-slate-50 prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:text-xs prose-th:font-black prose-th:uppercase prose-th:tracking-widest prose-th:text-muted-foreground prose-th:border prose-th:border-slate-200
+                                    prose-td:px-4 prose-td:py-3 prose-td:text-sm prose-td:border prose-td:border-slate-200
+                                    prose-ul:space-y-2 prose-ol:space-y-2
+                                    prose-li:text-slate-600
+                                    [&_img]:max-w-full [&_img]:h-auto
+                                    [&_iframe]:max-w-full [&_iframe]:aspect-video
+                                    overflow-hidden wrap-break-word"
+                                dangerouslySetInnerHTML={{
+                                    __html: getLocalizedValue(product.description_localized, locale) || product.description,
+                                }}
+                            />
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* Detailed Specs */}
             <section className="py-24 bg-slate-50">

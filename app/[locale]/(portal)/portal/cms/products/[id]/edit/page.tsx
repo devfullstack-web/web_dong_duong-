@@ -215,7 +215,6 @@ export default function EditProductPage() {
                 tech_summary_localized: formData.tech_summary_localized,
                 // Other fields
                 slug: formData.slug,
-                sku: formData.sku,
                 price: formData.price,
                 stock: formData.stock,
                 category_id: formData.category_id,
@@ -339,17 +338,16 @@ export default function EditProductPage() {
                                     htmlFor="sku"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
                                 >
-                                    <Package size={12} className="inline mr-1" /> Mã SKU *
+                                    <Package size={12} className="inline mr-1" /> Mã SKU
                                 </Label>
                                 <Input
                                     id="sku"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
+                                    className="h-14 bg-slate-100 border-none text-sm font-bold rounded-none text-slate-400 cursor-not-allowed"
                                     value={formData.sku}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, sku: e.target.value })
-                                    }
-                                    required
+                                    readOnly
+                                    disabled
                                 />
+                                <p className="text-[9px] text-slate-400 italic">Mã SKU được hệ thống tự sinh, không thể chỉnh sửa.</p>
                             </div>
                         </div>
 

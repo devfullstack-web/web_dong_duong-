@@ -24,7 +24,7 @@ export default function ProductSpotlight() {
     React.useEffect(() => {
         const fetchFeaturedProducts = async () => {
             try {
-                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true`);
+                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true&status=active`);
                 if (response.data.success) {
                     setProducts(response.data.data);
                 }

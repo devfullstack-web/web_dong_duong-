@@ -4,7 +4,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import $api from '@/utils/axios';
-import { Save, ArrowLeft, Loader2, Package } from 'lucide-react';
+import { Save, ArrowLeft, Loader2 } from 'lucide-react';
 import { generateSlug } from '@/utils/slug';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -155,7 +155,6 @@ export default function AddProductPage() {
                 // Other fields
                 slug: formData.slug,
                 price: formData.price,
-                sku: formData.sku,
                 stock: formData.stock,
                 category_id: formData.category_id,
                 status: formData.status,
@@ -249,23 +248,6 @@ export default function AddProductPage() {
                                     en: 'Enter product name...',
                                 }}
                             />
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="sku"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    <Package size={12} className="inline mr-1" /> Mã SKU
-                                </Label>
-                                <Input
-                                    id="sku"
-                                    placeholder="VD: SGV-BV-001"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                    value={formData.sku}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, sku: e.target.value })
-                                    }
-                                />
-                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -58,6 +58,11 @@ export const GET = withHybridAuth(
             if (!includeDeleted) {
                 conditions.push(isNull(products.deleted_at));
             }
+
+            // For public (unauthorized) users, only show products with visible categories
+            if (!isAuthorized) {
+                conditions.push(eq(categories.is_visible, true));
+            }
             if (categoryId) {
                 conditions.push(eq(products.category_id, categoryId));
             }
@@ -82,11 +87,13 @@ export const GET = withHybridAuth(
             }
 
             // Count total items
-            const countQuery = db.select({ count: sql<number>`count(*)` }).from(products);
-            if (conditions.length > 0) {
-                countQuery.where(and(...conditions));
-            }
-            const [{ count: total }] = await countQuery;
+            const baseCountQuery = db
+                .select({ count: sql<number>`count(*)` })
+                .from(products)
+                .innerJoin(categories, eq(products.category_id, categories.id));
+            const [{ count: total }] = await (conditions.length > 0
+                ? baseCountQuery.where(and(...conditions))
+                : baseCountQuery);
 
             // Build main query with pagination
             let query = db
@@ -198,6 +205,15 @@ export const POST = withAuth(
 
             const dataOrError = parseResult.data;
 
+            // Auto-generate SKU if not provided
+            if (!dataOrError.sku) {
+                const timestamp = Date.now().toString(36).toUpperCase();
+                const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+                dataOrError.sku = `SGV-${timestamp}-${random}`;
+            }
+
+            const sku = dataOrError.sku as string;
+
             // Check for duplicate SKU
             const existingSku = await db
                 .select()
@@ -234,6 +250,7 @@ export const POST = withAuth(
             // Merge localized fields with validated data
             const insertData = {
                 ...dataOrError,
+                sku,
                 ...localizedFields,
             };
 
