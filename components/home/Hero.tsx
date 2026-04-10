@@ -19,7 +19,7 @@ export default function Hero() {
     React.useEffect(() => {
         const fetchFeaturedProducts = async () => {
             try {
-                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true`);
+                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true&status=active`);
                 if (response.data.success) {
                     setFeaturedProducts(response.data.data.slice(0, 3));
                 }
@@ -153,9 +153,9 @@ export default function Hero() {
                                     </span>
                                 </h1>
 
-                                <p className="max-w-lg mx-auto lg:mx-0 text-sm sm:text-base text-white/70 font-medium leading-relaxed text-center lg:text-left">
+                                {/* <p className="max-w-lg mx-auto lg:mx-0 text-sm sm:text-base text-white/70 font-medium leading-relaxed text-center lg:text-left">
                                     {SLIDES_CONTENT[current].desc}
-                                </p>
+                                </p> */}
 
                                 <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-4">
                                     <Link
