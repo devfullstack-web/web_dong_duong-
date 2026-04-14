@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import {  LayoutGrid, List, ArrowRight, Shield, Info } from 'lucide-react';
+import { LayoutGrid, List, ArrowRight, Shield, Info, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
     Pagination,
@@ -70,6 +70,7 @@ export default function ProductArchive() {
     const debouncedSearch = useDebounce(searchQuery, 500);
     const [currentPage, setCurrentPage] = useState(1);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+    const [expandedCategoryIds, setExpandedCategoryIds] = useState<string[]>([]);
 
     // Reset to page 1 when search or category changes
     useEffect(() => {
@@ -136,6 +137,39 @@ export default function ProductArchive() {
         setSelectedCategoryId(categoryId);
     };
 
+    const toggleCategoryExpansion = (categoryId: string) => {
+        setExpandedCategoryIds((prevExpanded) =>
+            prevExpanded.includes(categoryId)
+                ? prevExpanded.filter((id) => id !== categoryId)
+                : [...prevExpanded, categoryId],
+        );
+    };
+
+    const handleAllCategoriesClick = () => {
+        handleCategoryChange(null);
+        setExpandedCategoryIds([]);
+    };
+
+    const handleParentCategoryClick = (category: Category) => {
+        const visibleChildren =
+            category.children?.filter((child) => child.is_visible !== false) || [];
+
+        handleCategoryChange(category.id);
+
+        if (visibleChildren.length > 0) {
+            toggleCategoryExpansion(category.id);
+        }
+    };
+
+    const handleChildCategoryClick = (parentId: string, childId: string) => {
+        handleCategoryChange(childId);
+        setExpandedCategoryIds((prevExpanded) =>
+            prevExpanded.includes(parentId)
+                ? prevExpanded
+                : [...prevExpanded, parentId],
+        );
+    };
+
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -192,7 +226,7 @@ export default function ProductArchive() {
                                     <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
                                         {/* "Tất cả" button */}
                                         <button
-                                            onClick={() => handleCategoryChange(null)}
+                                            onClick={handleAllCategoriesClick}
                                             className={cn(
                                                 'px-3 py-2 lg:px-4 lg:py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
                                                 selectedCategoryId === null
@@ -202,35 +236,77 @@ export default function ProductArchive() {
                                         >
                                             {t('sidebar.all')}
                                         </button>
-                                        {categories.filter(cat => cat.is_visible !== false).map((cat) => (
-                                            <div key={cat.id}>
-                                                <button
-                                                    onClick={() => handleCategoryChange(cat.id)}
-                                                    className={cn(
-                                                        'w-full px-3 py-2 lg:px-4 lg:py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
-                                                        selectedCategoryId === cat.id
-                                                            ? 'bg-brand-primary text-white border-brand-primary'
-                                                            : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
-                                                    )}
-                                                >
-                                                    {getLocalizedValue(cat.name_localized, locale) || cat.name}
-                                                </button>
-                                                {cat.children?.filter(c => c.is_visible !== false).map((child) => (
-                                                    <button
-                                                        key={child.id}
-                                                        onClick={() => handleCategoryChange(child.id)}
-                                                        className={cn(
-                                                            'w-full px-3 py-1.5 lg:px-4 lg:pl-8 lg:py-2 text-left text-[10px] font-bold tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
-                                                            selectedCategoryId === child.id
-                                                                ? 'bg-brand-primary text-white border-brand-primary'
-                                                                : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
-                                                        )}
-                                                    >
-                                                        — {getLocalizedValue(child.name_localized, locale) || child.name}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        ))}
+                                        {categories
+                                            .filter((cat) => cat.is_visible !== false)
+                                            .map((cat) => {
+                                                const visibleChildren =
+                                                    cat.children?.filter(
+                                                        (child) => child.is_visible !== false,
+                                                    ) || [];
+                                                const hasChildren = visibleChildren.length > 0;
+                                                const isExpanded = expandedCategoryIds.includes(
+                                                    cat.id,
+                                                );
+
+                                                return (
+                                                    <div key={cat.id} className="space-y-1">
+                                                        <button
+                                                            onClick={() =>
+                                                                handleParentCategoryClick(cat)
+                                                            }
+                                                            className={cn(
+                                                                'w-full px-3 py-2 lg:px-4 lg:py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border flex items-center justify-between gap-2',
+                                                                selectedCategoryId === cat.id
+                                                                    ? 'bg-brand-primary text-white border-brand-primary'
+                                                                    : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
+                                                            )}
+                                                        >
+                                                            <span>
+                                                                {getLocalizedValue(
+                                                                    cat.name_localized,
+                                                                    locale,
+                                                                ) || cat.name}
+                                                            </span>
+                                                            {hasChildren && (
+                                                                <ChevronDown
+                                                                    size={14}
+                                                                    className={cn(
+                                                                        'shrink-0 transition-transform duration-200',
+                                                                        isExpanded &&
+                                                                            'rotate-180',
+                                                                    )}
+                                                                />
+                                                            )}
+                                                        </button>
+                                                        {hasChildren &&
+                                                            isExpanded &&
+                                                            visibleChildren.map((child) => (
+                                                                <button
+                                                                    key={child.id}
+                                                                    onClick={() =>
+                                                                        handleChildCategoryClick(
+                                                                            cat.id,
+                                                                            child.id,
+                                                                        )
+                                                                    }
+                                                                    className={cn(
+                                                                        'w-full px-3 py-1.5 lg:px-4 lg:pl-8 lg:py-2 text-left text-[10px] font-bold tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
+                                                                        selectedCategoryId ===
+                                                                            child.id
+                                                                            ? 'bg-brand-primary text-white border-brand-primary'
+                                                                            : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
+                                                                    )}
+                                                                >
+                                                                    —{' '}
+                                                                    {getLocalizedValue(
+                                                                        child.name_localized,
+                                                                        locale,
+                                                                    ) || child.name}
+                                                                </button>
+                                                            ))}
+                                                    </div>
+                                                );
+                                            })}
                                     </div>
                                 </div>
                             </div>
