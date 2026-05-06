@@ -5,6 +5,31 @@ export const RBAC_ROLES = {
     VIEWER: 'VIEWER',
 } as const;
 
+/**
+ * Single Source of Truth — tất cả module codes trong hệ thống.
+ * Khi thêm module mới: thêm vào đây + seed lại DB + cập nhật SIDEBAR_ITEMS.
+ */
+export const MODULE_CODES = {
+    DASHBOARD: 'DASHBOARD',
+    PRODUCTS: 'PRODUCTS',
+    BLOG: 'BLOG',
+    PROJECTS: 'PROJECTS',
+    RECRUITMENT: 'RECRUITMENT',
+    APPLICATIONS: 'APPLICATIONS',
+    COMMENTS: 'COMMENTS',
+    CHAT: 'CHAT',
+    MEDIA: 'MEDIA',
+    CONTACTS: 'CONTACTS',
+    USERS: 'USERS',
+    ROLES: 'ROLES',
+    MODULES: 'MODULES',
+    NOTIFICATIONS: 'NOTIFICATIONS',
+    LOGS: 'LOGS',
+    SETTINGS: 'SETTINGS',
+} as const;
+
+export type ModuleCode = (typeof MODULE_CODES)[keyof typeof MODULE_CODES];
+
 // Permission action types
 export const PERMISSION_ACTIONS = {
     VIEW: 'VIEW',
@@ -32,8 +57,13 @@ export const PERMISSIONS: Record<string, string> = new Proxy({} as any, {
     },
 });
 
-// Modules that cannot be deleted - we keep some core ones as static list if needed
-export const PROTECTED_MODULES: string[] = ['DASHBOARD', 'USERS', 'ROLES', 'MODULES'];
+// Modules that cannot be deleted
+export const PROTECTED_MODULES: string[] = [
+    MODULE_CODES.DASHBOARD,
+    MODULE_CODES.USERS,
+    MODULE_CODES.ROLES,
+    MODULE_CODES.MODULES,
+];
 
 export function buildPermission(module: string, action: string): string {
     return `${module}:${action}`;

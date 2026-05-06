@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { users, roles, user_roles, permissions, modules } from '@/db/schema';
-import { eq, inArray, isNull } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { getSession } from '@/services/auth';
 
@@ -88,26 +88,6 @@ export async function GET() {
                 .where(inArray(permissions.role_id, roleIds));
         }
 
-        // 4. If superadmin, fetch ALL modules
-        let allModules: any[] = [];
-        if (isSystemSuper) {
-            allModules = await db
-                .select({
-                    id: modules.id,
-                    createdAt: modules.created_at,
-                    updatedAt: modules.updated_at,
-                    deletedAt: modules.deleted_at,
-                    code: modules.code,
-                    name: modules.name,
-                    icon: modules.icon,
-                    route: modules.route,
-                    order: modules.order,
-                })
-                .from(modules)
-                .where(isNull(modules.deleted_at))
-                .orderBy(modules.order);
-        }
-
         // Compose the response
         const rolesWithPermissions = userRoles.map((role) => ({
             ...role,
@@ -121,9 +101,8 @@ export async function GET() {
 
         return apiResponse({
             ...user,
-            is_super: isSystemSuper, // Ensure this is the only super flag
+            is_super: isSystemSuper,
             roles: rolesWithPermissions,
-            allModules: isSystemSuper ? allModules : undefined, // Add all modules for superadmin
         });
     } catch (error) {
         console.error('Profile Error:', error);

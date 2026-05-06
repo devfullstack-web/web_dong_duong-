@@ -1,0 +1,113 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { db } from '@/db';
+import { newsArticles, authors, categories } from '@/db/schema';
+import { eq, and, isNull, ne, desc } from 'drizzle-orm';
+import { COMPANY_INFO } from '@/constants/site-info';
+import NewsDetailClient from './_components/NewsDetailClient';
+
+type PageProps = {
+    params: Promise<{ slug: string }>;
+};
+
+async function getArticle(slug: string) {
+    const [article] = await db
+        .select({
+            id: newsArticles.id,
+            title: newsArticles.title,
+            slug: newsArticles.slug,
+            summary: newsArticles.summary,
+            content: newsArticles.content,
+            category_id: newsArticles.category_id,
+            status: newsArticles.status,
+            image_url: newsArticles.image_url,
+            gallery: newsArticles.gallery,
+            published_at: newsArticles.published_at,
+            created_at: newsArticles.created_at,
+            author_name: authors.name,
+            category_name: categories.name,
+        })
+        .from(newsArticles)
+        .leftJoin(authors, eq(newsArticles.author_id, authors.id))
+        .leftJoin(categories, eq(newsArticles.category_id, categories.id))
+        .where(and(eq(newsArticles.slug, slug), isNull(newsArticles.deleted_at)));
+
+    return article || null;
+}
+
+async function getRelatedArticles(slug: string) {
+    return db
+        .select({
+            id: newsArticles.id,
+            title: newsArticles.title,
+            slug: newsArticles.slug,
+            summary: newsArticles.summary,
+            image_url: newsArticles.image_url,
+            published_at: newsArticles.published_at,
+            category_name: categories.name,
+        })
+        .from(newsArticles)
+        .leftJoin(categories, eq(newsArticles.category_id, categories.id))
+        .where(and(ne(newsArticles.slug, slug), isNull(newsArticles.deleted_at)))
+        .orderBy(desc(newsArticles.published_at))
+        .limit(5);
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const article = await getArticle(slug);
+
+    if (!article) {
+        return { title: 'Không tìm thấy bài viết' };
+    }
+
+    return {
+        title: article.title,
+        description: article.summary,
+        openGraph: {
+            title: `${article.title} | ${COMPANY_INFO.name}`,
+            description: article.summary,
+            type: 'article',
+            publishedTime: article.published_at?.toISOString(),
+            authors: article.author_name ? [article.author_name] : undefined,
+            images: article.image_url ? [{ url: article.image_url }] : undefined,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: article.title,
+            description: article.summary,
+            images: article.image_url ? [article.image_url] : undefined,
+        },
+    };
+}
+
+export default async function NewsDetailPage({ params }: PageProps) {
+    const { slug } = await params;
+    const [article, relatedArticles] = await Promise.all([
+        getArticle(slug),
+        getRelatedArticles(slug),
+    ]);
+
+    if (!article) {
+        notFound();
+    }
+
+    // Compute readTime server-side
+    const wordCount = (article.content || '').replace(/<[^>]*>/g, '').split(/\s+/).length;
+    const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} phút`;
+
+    const articleWithMeta = {
+        ...article,
+        author: article.author_name || 'Sài Gòn Valve',
+        category: article.category_name || 'Tin tức',
+        readTime,
+    };
+
+    return (
+        <NewsDetailClient
+            article={articleWithMeta}
+            relatedArticles={relatedArticles}
+            recentArticles={relatedArticles}
+        />
+    );
+}

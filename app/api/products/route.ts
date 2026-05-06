@@ -14,6 +14,7 @@ import {
 } from '@/middlewares/middleware';
 import { ZodError } from 'zod';
 import { PERMISSIONS } from '@/constants/rbac';
+import type { LocalizedText, LocalizedArray } from '@/types/i18n';
 
 // GET /api/products - List products with pagination (Public/Protected Hybrid)
 export const GET = withHybridAuth(
@@ -57,6 +58,11 @@ export const GET = withHybridAuth(
             if (!includeDeleted) {
                 conditions.push(isNull(products.deleted_at));
             }
+
+            // For public (unauthorized) users, only show products with visible categories
+            if (!isAuthorized) {
+                conditions.push(eq(categories.is_visible, true));
+            }
             if (categoryId) {
                 conditions.push(eq(products.category_id, categoryId));
             }
@@ -81,17 +87,20 @@ export const GET = withHybridAuth(
             }
 
             // Count total items
-            const countQuery = db.select({ count: sql<number>`count(*)` }).from(products);
-            if (conditions.length > 0) {
-                countQuery.where(and(...conditions));
-            }
-            const [{ count: total }] = await countQuery;
+            const baseCountQuery = db
+                .select({ count: sql<number>`count(*)` })
+                .from(products)
+                .innerJoin(categories, eq(products.category_id, categories.id));
+            const [{ count: total }] = await (conditions.length > 0
+                ? baseCountQuery.where(and(...conditions))
+                : baseCountQuery);
 
             // Build main query with pagination
             let query = db
                 .select({
                     id: products.id,
                     name: products.name,
+                    name_localized: products.name_localized,
                     slug: products.slug,
                     price: products.price,
                     sku: products.sku,
@@ -101,14 +110,18 @@ export const GET = withHybridAuth(
                     is_featured: products.is_featured,
                     tech_specs: products.tech_specs,
                     features: products.features,
+                    features_localized: products.features_localized,
                     gallery: products.gallery,
                     tech_summary: products.tech_summary,
+                    tech_summary_localized: products.tech_summary_localized,
+                    description_localized: products.description_localized,
                     catalog_url: products.catalog_url,
                     warranty: products.warranty,
                     origin: products.origin,
                     availability: products.availability,
                     delivery_info: products.delivery_info,
                     category: categories.name,
+                    category_localized: categories.name_localized,
                 })
                 .from(products)
                 .innerJoin(categories, eq(products.category_id, categories.id))
@@ -138,11 +151,68 @@ export const GET = withHybridAuth(
 export const POST = withAuth(
     async (request) => {
         try {
-            // Validate request body
-            const dataOrError = await validateBody(request, createProductSchema);
-            if (dataOrError instanceof Response) {
-                return dataOrError;
+            // Get raw body first to extract localized fields
+            const rawBody = await request.json();
+
+            // Extract localized fields before validation
+            const localizedFields: {
+                name_localized?: LocalizedText;
+                description_localized?: LocalizedText;
+                tech_summary_localized?: LocalizedText;
+                features_localized?: LocalizedArray;
+                tech_specs_localized?: any;
+            } = {};
+
+            if (rawBody.name_localized) {
+                localizedFields.name_localized = rawBody.name_localized;
+                // Use Vietnamese as fallback for legacy field
+                if (!rawBody.name && rawBody.name_localized.vi) {
+                    rawBody.name = rawBody.name_localized.vi;
+                }
             }
+
+            if (rawBody.description_localized) {
+                localizedFields.description_localized = rawBody.description_localized;
+                if (!rawBody.description && rawBody.description_localized.vi) {
+                    rawBody.description = rawBody.description_localized.vi;
+                }
+            }
+
+            if (rawBody.tech_summary_localized) {
+                localizedFields.tech_summary_localized = rawBody.tech_summary_localized;
+                if (!rawBody.tech_summary && rawBody.tech_summary_localized.vi) {
+                    rawBody.tech_summary = rawBody.tech_summary_localized.vi;
+                }
+            }
+
+            if (rawBody.features_localized) {
+                localizedFields.features_localized = rawBody.features_localized;
+                if (!rawBody.features && rawBody.features_localized.vi) {
+                    rawBody.features = rawBody.features_localized.vi;
+                }
+            }
+
+            if (rawBody.tech_specs_localized) {
+                localizedFields.tech_specs_localized = rawBody.tech_specs_localized;
+                // Legacy tech_specs should already be set from the frontend
+            }
+
+            // Validate with schema (using legacy fields)
+            const parseResult = createProductSchema.safeParse(rawBody);
+            if (!parseResult.success) {
+                return apiError('Validation failed', 400, { errors: parseResult.error.issues });
+            }
+
+            const dataOrError = parseResult.data;
+
+            // Auto-generate SKU if not provided
+            if (!dataOrError.sku) {
+                const timestamp = Date.now().toString(36).toUpperCase();
+                const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+                dataOrError.sku = `SGV-${timestamp}-${random}`;
+            }
+
+            const sku = dataOrError.sku as string;
 
             // Check for duplicate SKU
             const existingSku = await db
@@ -177,7 +247,14 @@ export const POST = withAuth(
                 return apiError('Category not found', 404);
             }
 
-            const [newProduct] = await db.insert(products).values(dataOrError).returning();
+            // Merge localized fields with validated data
+            const insertData = {
+                ...dataOrError,
+                sku,
+                ...localizedFields,
+            };
+
+            const [newProduct] = await db.insert(products).values(insertData).returning();
 
             return apiResponse(newProduct, { status: 201 });
         } catch (error) {

@@ -39,26 +39,16 @@ app.prepare().then(() => {
 
         if (sessionId) {
             socket.join(sessionId);
-            console.log(`Socket ${socket.id} joined room ${sessionId}`);
         }
 
         const isAdmin = socket.handshake.query.isAdmin === 'true';
-        console.log(`[Socket] New connection: ${socket.id}, isAdmin: ${isAdmin}`);
 
         if (isAdmin) {
             socket.join('admins');
-            console.log(`[Socket] Socket ${socket.id} successfully joined 'admins' room`);
         }
 
-        socket.on(
-            'typing',
-            (data: { sessionId: string; senderType: 'guest' | 'admin'; isTyping: boolean }) => {
-                chatStreamManager.broadcastTyping(data.sessionId, data.senderType, data.isTyping);
-            },
-        );
-
         socket.on('disconnect', () => {
-            console.log(`Socket ${socket.id} disconnected`);
+            // cleanup handled by socket.io
         });
     });
 

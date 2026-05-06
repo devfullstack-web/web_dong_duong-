@@ -1,14 +1,28 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/db';
 import { chatMessages, chatSessions } from '@/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { eq, asc, sql } from 'drizzle-orm';
 import { withHybridAuth, hasPermission } from '@/middlewares/middleware';
 import { chatStreamManager } from '@/services/chat-stream';
+import { telegramService } from '@/services/telegram-service';
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
 
+// Telegram notify cooldown: 5 minutes between notifications per session
+const TELEGRAM_COOLDOWN_MS = 5 * 60 * 1000;
+
+const WELCOME_MESSAGE = `Xin chào! Cảm ơn bạn đã liên hệ với Sài Gòn Valve.
+
+Để chúng tôi có thể hỗ trợ bạn tốt nhất, vui lòng cung cấp thông tin sau:
+
+• Họ và tên
+• Số điện thoại
+• Email
+• Nhu cầu cần hỗ trợ
+
+Đội ngũ tư vấn sẽ phản hồi bạn trong thời gian sớm nhất. Xin cảm ơn!`;
+
 export const GET = withHybridAuth(async (req: NextRequest, session) => {
-    // Check permissions only if from portal
     const referer = req.headers.get('referer') || '';
     const isPortalRequest = referer.includes('/portal');
 
@@ -44,12 +58,16 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
             return apiError('sessionId and content are required', 400);
         }
 
-        // If message is from widget it's always guest, otherwise check session
-        let senderType = 'guest';
-        let senderId = null;
+        // Sanitize content
+        const sanitizedContent = content.trim().slice(0, 5000);
+        if (!sanitizedContent) {
+            return apiError('Content cannot be empty', 400);
+        }
+
+        let senderType: 'guest' | 'admin' = 'guest';
+        let senderId: string | null = null;
 
         if (!isFromWidget && session?.user) {
-            // Check permissions only if from portal
             const referer = req.headers.get('referer') || '';
             const isPortalRequest = referer.includes('/portal');
 
@@ -71,28 +89,111 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
             .insert(chatMessages)
             .values({
                 session_id: sessionId,
-                content,
+                content: sanitizedContent,
                 sender_type: senderType,
                 sender_id: senderId,
-                reply_to_id: replyToId,
+                reply_to_id: replyToId || null,
             })
             .returning();
 
-        // Update session last_message_at
+        // Build session update data
+        const preview = sanitizedContent.length > 100
+            ? sanitizedContent.slice(0, 100) + '...'
+            : sanitizedContent;
+
+        const sessionUpdateData: Record<string, any> = {
+            last_message_at: new Date(),
+            last_message_preview: preview,
+            updated_at: new Date(),
+        };
+
+        if (senderType === 'guest') {
+            // Increment unread count for admin
+            sessionUpdateData.unread_count = sql`${chatSessions.unread_count} + 1`;
+        }
+
         await db
             .update(chatSessions)
-            .set({ last_message_at: new Date(), updated_at: new Date() })
+            .set(sessionUpdateData)
             .where(eq(chatSessions.id, sessionId));
 
-        // Broad-cast message via SSE
+        // Broadcast message via socket
         chatStreamManager.broadcastMessage(newMessage);
 
-        // If it's a new guest message, notify admins about session update (for ordering)
+        // Auto-reply with welcome message after the first guest message in session
+        if (senderType === 'guest') {
+            const guestMsgCount = await db
+                .select({ count: sql<number>`count(*)` })
+                .from(chatMessages)
+                .where(
+                    sql`${chatMessages.session_id} = ${sessionId} AND ${chatMessages.sender_type} = 'guest'`,
+                );
+
+            if (Number(guestMsgCount[0]?.count) === 1) {
+                // First guest message → send auto welcome reply
+                const [welcomeMsg] = await db
+                    .insert(chatMessages)
+                    .values({
+                        session_id: sessionId,
+                        content: WELCOME_MESSAGE,
+                        sender_type: 'system',
+                        sender_id: null,
+                    })
+                    .returning();
+
+                chatStreamManager.broadcastMessage(welcomeMsg);
+            }
+        }
+
+        // Update session in admin panel
         if (senderType === 'guest') {
             const sessionData = await db.query.chatSessions.findFirst({
                 where: eq(chatSessions.id, sessionId),
             });
-            chatStreamManager.broadcastSessionUpdate(sessionData);
+
+            if (sessionData) {
+                chatStreamManager.broadcastSessionUpdate(sessionData);
+
+                // Telegram notification logic (CRM-like):
+                // 1. First guest message ever → always notify
+                // 2. Admin replied since last notify → notify again (new conversation turn)
+                // 3. Cooldown expired (5 min) → notify (guest still active)
+                const lastNotified = sessionData.telegram_notified_at
+                    ? new Date(sessionData.telegram_notified_at).getTime()
+                    : 0;
+                const cooldownExpired = (Date.now() - lastNotified) > TELEGRAM_COOLDOWN_MS;
+                const neverNotified = !sessionData.telegram_notified_at;
+
+                // Check if admin replied since last telegram notification
+                let adminRepliedSinceLastNotify = false;
+                if (sessionData.telegram_notified_at) {
+                    const adminReply = await db
+                        .select({ count: sql<number>`count(*)` })
+                        .from(chatMessages)
+                        .where(
+                            sql`${chatMessages.session_id} = ${sessionId}
+                                AND ${chatMessages.sender_type} = 'admin'
+                                AND ${chatMessages.created_at} > ${sessionData.telegram_notified_at}`,
+                        );
+                    adminRepliedSinceLastNotify = Number(adminReply[0]?.count) > 0;
+                }
+
+                if (neverNotified || cooldownExpired || adminRepliedSinceLastNotify) {
+                    telegramService.notifyNewChat({
+                        guestName: sessionData.guest_name,
+                        guestPhone: sessionData.guest_phone,
+                        guestEmail: sessionData.guest_email,
+                        firstMessage: sanitizedContent,
+                        sessionId,
+                        isFollowUp: !neverNotified,
+                    });
+
+                    await db
+                        .update(chatSessions)
+                        .set({ telegram_notified_at: new Date() })
+                        .where(eq(chatSessions.id, sessionId));
+                }
+            }
         }
 
         return apiResponse(newMessage);

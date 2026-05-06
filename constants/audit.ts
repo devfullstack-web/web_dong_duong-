@@ -1,4 +1,5 @@
 
+import { MODULE_CODES } from './rbac';
 
 export const AUDIT_ACTIONS = {
     CREATE: 'CREATE',
@@ -12,19 +13,8 @@ export const AUDIT_ACTIONS = {
 
 export const AUDIT_MODULES = {
     AUTH: 'AUTH',
-    USERS: 'USERS',
-    ROLES: 'ROLES',
-    MODULES: 'MODULES',
+    ...MODULE_CODES,
+    // Alias: API news dùng module code BLOG, nhưng audit vẫn ghi nhận là NEWS
     NEWS: 'NEWS',
-    PRODUCTS: 'PRODUCTS',
-    PROJECTS: 'PROJECTS',
-    CONTACTS: 'CONTACTS',
-    RECRUITMENT: 'RECRUITMENT',
-    APPLICATIONS: 'APPLICATIONS',
-    COMMENTS: 'COMMENTS',
-    MEDIA: 'MEDIA',
-    SETTINGS: 'SETTINGS',
     AUDIT_LOGS: 'AUDIT_LOGS',
-    NOTIFICATIONS: 'NOTIFICATIONS',
-    CHAT: 'CHAT',
 } as const;

@@ -138,9 +138,16 @@ export const POST = withAuth(
             const publicUrl = `/uploads/${category}/${year}/${month}/${day}/${filename}`;
 
             return apiResponse({ url: publicUrl, filename }, { status: 201 });
-        } catch (error) {
+        } catch (error: any) {
+            console.error('--- UPLOAD DEBUG START ---');
             console.error('Error uploading file:', error);
-            return apiError('Failed to upload file', 500);
+            console.error('Error message:', error.message);
+            console.error('Error code:', error.code);
+            console.error('Current working directory:', process.cwd());
+            // @ts-ignore - uploadsDir might be defined depending on where it fails
+            console.error('Target directory:', typeof uploadsDir !== 'undefined' ? uploadsDir : 'N/A');
+            console.error('--- UPLOAD DEBUG END ---');
+            return apiError('Failed to upload file. Check server logs for details.', 500);
         }
     },
     { requiredPermissions: [PERMISSIONS.MEDIA_CREATE] },

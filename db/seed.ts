@@ -16,125 +16,25 @@ import {
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { AUTH, SEED_DEFAULTS, COMPANY } from '@/constants/app';
+import { SIDEBAR_ITEMS } from '@/constants/sidebar';
+import { MODULE_CODES } from '@/constants/rbac';
 
 async function main() {
     console.log('Seeding database...');
 
-    // 1. Seed Modules - Must match PERMISSION_MODULES in constants/rbac.ts
-    const appModules = [
-        {
-            code: 'DASHBOARD',
-            name: 'Bảng điều khiển',
-            icon: 'LayoutDashboard',
-            route: '/portal',
-            order: 0,
-        },
-        {
-            code: 'PRODUCTS',
-            name: 'Quản lý Sản phẩm',
-            icon: 'Box',
-            route: '/portal/cms/products',
-            order: 1,
-        },
-        {
-            code: 'BLOG',
-            name: 'Quản lý Tin tức',
-            icon: 'FileText',
-            route: '/portal/cms/news',
-            order: 2,
-        },
-        {
-            code: 'PROJECTS',
-            name: 'Quản lý Dự án',
-            icon: 'Briefcase',
-            route: '/portal/cms/projects',
-            order: 3,
-        },
-        {
-            code: 'RECRUITMENT',
-            name: 'Quản lý Tuyển dụng',
-            icon: 'UserRoundSearch',
-            route: '/portal/cms/jobs',
-            order: 4,
-        },
-        {
-            code: 'APPLICATIONS',
-            name: 'Danh sách Ứng viên',
-            icon: 'ClipboardList',
-            route: '/portal/cms/applications',
-            order: 5,
-        },
-        {
-            code: 'COMMENTS',
-            name: 'Quản lý Bình luận',
-            icon: 'MessageSquare',
-            route: '/portal/cms/comments',
-            order: 6,
-        },
-        {
-            code: 'CHAT',
-            name: 'Hỗ trợ trực tuyến',
-            icon: 'MessageCircle',
-            route: '/portal/cms/chat',
-            order: 7,
-        },
-        {
-            code: 'MEDIA',
-            name: 'Thư viện Media',
-            icon: 'Images',
-            route: '/portal/cms/media',
-            order: 8,
-        },
-        {
-            code: 'CONTACTS',
-            name: 'Quản lý Liên hệ',
-            icon: 'Mail',
-            route: '/portal/contacts',
-            order: 9,
-        },
-        {
-            code: 'USERS',
-            name: 'Quản lý Tài khoản',
-            icon: 'ShieldCheck',
-            route: '/portal/users',
-            order: 10,
-        },
-        {
-            code: 'ROLES',
-            name: 'Phân quyền & Vai trò',
-            icon: 'Lock',
-            route: '/portal/users/roles',
-            order: 11,
-        },
-        {
-            code: 'MODULES',
-            name: 'Quản lý Module',
-            icon: 'Layers',
-            route: '/portal/users/modules',
-            order: 12,
-        },
-        {
-            code: 'NOTIFICATIONS',
-            name: 'Thông báo hệ thống',
-            icon: 'Bell',
-            route: '/portal/notifications',
-            order: 13,
-        },
-        {
-            code: 'LOGS',
-            name: 'Nhật ký hệ thống',
-            icon: 'History',
-            route: '/portal/audit-logs',
-            order: 14,
-        },
-        {
-            code: 'SETTINGS',
-            name: 'Cài đặt hệ thống',
-            icon: 'Settings',
-            route: '/portal/settings',
-            order: 15,
-        },
-    ];
+    // 1. Seed Modules — derived from MODULE_CODES + SIDEBAR_ITEMS (single source of truth)
+    const sidebarMap = new Map(SIDEBAR_ITEMS.map((s) => [s.code, s]));
+
+    const appModules = Object.values(MODULE_CODES).map((code, index) => {
+        const sidebar = sidebarMap.get(code);
+        return {
+            code,
+            name: sidebar?.name ?? code,
+            icon: sidebar?.icon ?? null,
+            route: sidebar?.route ?? null,
+            order: index,
+        };
+    });
 
     for (const moduleData of appModules) {
         const existing = await db.select().from(modules).where(eq(modules.code, moduleData.code));
