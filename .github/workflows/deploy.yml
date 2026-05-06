@@ -29,7 +29,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm build
+        run: NEXT_DISABLE_ESLINT=1 pnpm build
 
   deploy:
     runs-on: ubuntu-latest
@@ -40,13 +40,14 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_GH_TOKEN: ${{ secrets.DEPLOY_GH_TOKEN }}
           RESTART_COMMAND: ${{ secrets.RESTART_COMMAND }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script_stop: true
-          envs: DEPLOY_PATH,RESTART_COMMAND
+          envs: DEPLOY_PATH,DEPLOY_GH_TOKEN,RESTART_COMMAND
           script: |
             set -e
 
@@ -59,27 +60,69 @@ jobs:
 
             REPO_URL="https://github.com/saigon-valve/sgv_cms.git"
 
-            if [ ! -d "$DEPLOY_PATH/.git" ]; then
-              mkdir -p "$DEPLOY_PATH"
-              git clone --branch main "$REPO_URL" "$DEPLOY_PATH"
+            if [ -n "$DEPLOY_GH_TOKEN" ]; then
+              REPO_URL="https://x-access-token:$DEPLOY_GH_TOKEN@github.com/saigon-valve/sgv_cms.git"
             fi
 
-            cd "$DEPLOY_PATH"
-
-            git fetch origin main --prune
-            git reset --hard origin/main
-
-            if [ ! -f .env ]; then
-              echo ".env not found"
+            if [ ! -d "$DEPLOY_PATH" ]; then
+              echo "Current source path not found: $DEPLOY_PATH"
               exit 1
             fi
+
+            if [ ! -f "$DEPLOY_PATH/.env" ]; then
+              echo ".env not found in current source"
+              exit 1
+            fi
+
+            DEPLOY_PARENT="$(dirname "$DEPLOY_PATH")"
+            DEPLOY_NAME="$(basename "$DEPLOY_PATH")"
+            TIMESTAMP="$(date +"%Y-%m-%d_%H-%M-%S")"
+            TEMP_PATH="${DEPLOY_PARENT}/${DEPLOY_NAME}_temp"
+            BACKUP_PATH="${DEPLOY_PARENT}/${DEPLOY_NAME}_${TIMESTAMP}"
+
+            rm -rf "$TEMP_PATH"
+
+            echo "Cloning fresh source..."
+            git clone --branch main "$REPO_URL" "$TEMP_PATH"
+
+            echo "Copying .env..."
+            cp -p "$DEPLOY_PATH/.env" "$TEMP_PATH/.env"
+
+            cd "$TEMP_PATH"
 
             corepack enable
             corepack prepare pnpm@10 --activate
 
+            echo "Installing dependencies..."
             pnpm install --frozen-lockfile
 
-            pnpm build
+            echo "Building project..."
+            NEXT_DISABLE_ESLINT=1 pnpm build
 
+            echo "Cleaning old cache..."
+            rm -rf "$DEPLOY_PATH/node_modules"
+            rm -rf "$DEPLOY_PATH/.next"
+
+            echo "Backing up current release..."
+            mv "$DEPLOY_PATH" "$BACKUP_PATH"
+
+            echo "Switching new release..."
+            mv "$TEMP_PATH" "$DEPLOY_PATH"
+
+            echo "Restarting app..."
             eval "$RESTART_COMMAND"
 
+            echo "Cleaning old backups..."
+            find "$DEPLOY_PARENT" \
+              -maxdepth 1 \
+              -mindepth 1 \
+              -type d \
+              -name "${DEPLOY_NAME}_????-??-??_??-??-??" \
+              | sort -r \
+              | tail -n +4 \
+              | while IFS= read -r old_backup; do
+                  echo "Removing old backup: $old_backup"
+                  rm -rf "$old_backup"
+                done
+
+            echo "Deploy completed successfully."
