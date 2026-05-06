@@ -18,10 +18,17 @@ const publicPaths = [
 
 export default async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    const locale = routing.locales.find(
+        (item) => pathname === `/${item}` || pathname.startsWith(`/${item}/`),
+    );
+    const normalizedPath = locale
+        ? pathname.slice(locale.length + 1) || '/'
+        : pathname;
     
     // Ignore internal next.js paths and assets
     if (
         pathname.startsWith('/_next') ||
+        pathname.startsWith('/socket.io') ||
         pathname.startsWith('/api') ||
         pathname.includes('favicon.ico') ||
         pathname.includes('.')
@@ -33,35 +40,25 @@ export default async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // Handle i18n
-    const response = intlMiddleware(request);
-
-    // Auth proxy logic for pages
-    // We only call proxy if it's a page and not handled by intl redirection
-    // Note: next-intl middleware might return a redirect response
-    if (response.status === 307 || response.status === 308) {
-        return response;
+    // Only run next-intl middleware when the URL is missing a locale prefix.
+    // Running it on already-localized routes like /en can cause unnecessary
+    // self-proxying in production custom-server mode.
+    if (!locale) {
+        return intlMiddleware(request);
     }
 
-    const authResponse = await proxy(request);
-    
-    // If proxy logic says it's ok (returns next()), we return the intl response
-    if (authResponse.headers.get('x-middleware-next')) {
-         return response;
-    }
-
-    return authResponse;
+    return proxy(request, normalizedPath, locale);
 }
 
-async function proxy(request: NextRequest) {
+async function proxy(request: NextRequest, normalizedPath?: string, currentLocale?: string) {
     const { pathname } = request.nextUrl;
     const method = request.method;
+    const effectivePath = normalizedPath || pathname;
 
     // Define locale-prefixed matches
     const isPath = (target: string) => 
-        pathname === target || 
-        pathname.startsWith(target + '/') ||
-        routing.locales.some(locale => pathname === `/${locale}${target}` || pathname.startsWith(`/${locale}${target}/`));
+        effectivePath === target ||
+        effectivePath.startsWith(target + '/');
 
     // 1. Allow public paths explicitly
     // Since routes might be prefixed with /[locale], we need to check both
@@ -75,9 +72,8 @@ async function proxy(request: NextRequest) {
                 try {
                     await decrypt(session);
                     // Determine current locale to redirect correctly
-                    const locale = pathname.split('/')[1];
-                    const targetUrl = routing.locales.includes(locale as any) 
-                        ? `/${locale}${ADMIN_ROUTES.DASHBOARD}`
+                    const targetUrl = currentLocale
+                        ? `/${currentLocale}${ADMIN_ROUTES.DASHBOARD}`
                         : ADMIN_ROUTES.DASHBOARD;
                     return NextResponse.redirect(new URL(targetUrl, request.url));
                 } catch (e) {
@@ -104,7 +100,7 @@ async function proxy(request: NextRequest) {
     }
 
     // 4. Protect /portal and other API methods (POST/PATCH/DELETE)
-    const isPortalPath = pathname.startsWith(ADMIN_ROUTES.ROOT);
+    const isPortalPath = effectivePath.startsWith(ADMIN_ROUTES.ROOT);
     const isProtectedApi =
         pathname.startsWith('/api/') && ['POST', 'PATCH', 'DELETE', 'PUT'].includes(method);
 
@@ -122,9 +118,8 @@ async function proxy(request: NextRequest) {
                 );
             }
             // Add locale to redirect url if needed
-            const locale = pathname.split('/')[1];
-            const loginUrl = routing.locales.includes(locale as any)
-                ? `/${locale}${SITE_ROUTES.LOGIN}`
+            const loginUrl = currentLocale
+                ? `/${currentLocale}${SITE_ROUTES.LOGIN}`
                 : SITE_ROUTES.LOGIN;
             return NextResponse.redirect(new URL(loginUrl, request.url));
         }
@@ -147,9 +142,8 @@ async function proxy(request: NextRequest) {
                 );
             }
             // Add locale to redirect url if needed
-            const locale = pathname.split('/')[1];
-            const loginUrl = routing.locales.includes(locale as any)
-                ? `/${locale}${SITE_ROUTES.LOGIN}`
+            const loginUrl = currentLocale
+                ? `/${currentLocale}${SITE_ROUTES.LOGIN}`
                 : SITE_ROUTES.LOGIN;
             return NextResponse.redirect(new URL(loginUrl, request.url));
         }
