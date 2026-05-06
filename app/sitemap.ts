@@ -3,6 +3,8 @@ import { db } from '@/db';
 import { products, newsArticles, projects, jobPostings } from '@/db/schema';
 import { isNull } from 'drizzle-orm';
 
+export const dynamic = 'force-dynamic';
+
 // TODO: Đổi domain nếu khác production
 const SITE_URL = 'https://saigonvalve.vn';
 
@@ -42,21 +44,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         }
     }
 
-    // Dynamic pages from DB
-    const [allProducts, allNews, allProjects, allJobs] = await Promise.all([
-        db.select({ slug: products.slug, updated_at: products.updated_at })
-            .from(products)
-            .where(isNull(products.deleted_at)),
-        db.select({ slug: newsArticles.slug, updated_at: newsArticles.updated_at })
-            .from(newsArticles)
-            .where(isNull(newsArticles.deleted_at)),
-        db.select({ slug: projects.slug, updated_at: projects.updated_at })
-            .from(projects)
-            .where(isNull(projects.deleted_at)),
-        db.select({ slug: jobPostings.slug, updated_at: jobPostings.updated_at })
-            .from(jobPostings)
-            .where(isNull(jobPostings.deleted_at)),
-    ]);
+    let allProducts: Array<{ slug: string; updated_at: Date | null }> = [];
+    let allNews: Array<{ slug: string; updated_at: Date | null }> = [];
+    let allProjects: Array<{ slug: string; updated_at: Date | null }> = [];
+    let allJobs: Array<{ slug: string; updated_at: Date | null }> = [];
+
+    try {
+        [allProducts, allNews, allProjects, allJobs] = await Promise.all([
+            db.select({ slug: products.slug, updated_at: products.updated_at })
+                .from(products)
+                .where(isNull(products.deleted_at)),
+            db.select({ slug: newsArticles.slug, updated_at: newsArticles.updated_at })
+                .from(newsArticles)
+                .where(isNull(newsArticles.deleted_at)),
+            db.select({ slug: projects.slug, updated_at: projects.updated_at })
+                .from(projects)
+                .where(isNull(projects.deleted_at)),
+            db.select({ slug: jobPostings.slug, updated_at: jobPostings.updated_at })
+                .from(jobPostings)
+                .where(isNull(jobPostings.deleted_at)),
+        ]);
+    } catch (error) {
+        console.warn('[sitemap] Database unavailable, returning static sitemap only');
+    }
 
     // Products
     for (const item of allProducts) {
