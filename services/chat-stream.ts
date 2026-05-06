@@ -11,19 +11,15 @@ class ChatStreamManager {
 
     setIo(io: Server) {
         this.io = io;
-        console.log('Socket.io instance attached to ChatStreamManager');
+        console.log('[ChatStream] Socket.io instance attached');
     }
 
     broadcastMessage(message: any) {
-        if (!this.io) {
-            console.error('Socket.io not initialized in ChatStreamManager');
-            return;
-        }
-        console.log(`Broadcasting message: ${message.id} to session ${message.session_id}`);
+        if (!this.io) return;
+        // Send to the session room (customer widget receives this)
         this.io.to(message.session_id).emit('message', message);
-        if (message.sender_type === 'guest') {
-            this.io.to('admins').emit('message', message);
-        }
+        // Always send to admins room so admin dashboard updates in realtime
+        this.io.to('admins').emit('message', message);
     }
 
     broadcastMessageUpdate(message: any) {
@@ -42,14 +38,6 @@ class ChatStreamManager {
         if (!this.io) return;
         this.io.to(sessionId).emit('session_removed', { sessionId });
         this.io.to('admins').emit('session_removed', { sessionId });
-    }
-
-    broadcastTyping(sessionId: string, senderType: 'guest' | 'admin', isTyping: boolean) {
-        if (!this.io) return;
-        this.io.to(sessionId).emit('typing', { sessionId, senderType, isTyping });
-        if (senderType === 'guest') {
-            this.io.to('admins').emit('typing', { sessionId, senderType, isTyping });
-        }
     }
 }
 

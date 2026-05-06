@@ -20,12 +20,6 @@ export function useSocket(options: UseSocketOptions = {}) {
     const transportsStr = JSON.stringify(options.transports || ['websocket', 'polling']);
 
     useEffect(() => {
-        // Socket.IO chỉ khả dụng khi chạy qua custom server (production).
-        // Khi chạy `next dev`, không có Socket.IO server → skip.
-        if (process.env.NODE_ENV === 'development' && !process.env.NEXT_PUBLIC_ENABLE_SOCKET) {
-            return;
-        }
-
         const socket = io({
             query: options.query,
             transports: options.transports || ['websocket', 'polling'],

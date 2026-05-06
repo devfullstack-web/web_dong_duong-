@@ -10,8 +10,8 @@ import { apiResponse, apiError } from '@/utils/api-response';
 export const PATCH = withHybridAuth(async (req: NextRequest, session, context) => {
     try {
         const { id } = await (context as any).params;
+        const body = await req.json();
 
-        // Check for either CHAT_VIEW or CHAT_MANAGEMENT_VIEW if from portal
         const referer = req.headers.get('referer') || '';
         const isPortalRequest = referer.includes('/portal');
 
@@ -24,11 +24,21 @@ export const PATCH = withHybridAuth(async (req: NextRequest, session, context) =
             }
         }
 
-        const { adminLastSeen, guestLastSeen } = await req.json();
+        const updateData: Record<string, any> = { updated_at: new Date() };
 
-        const updateData: any = { updated_at: new Date() };
-        if (adminLastSeen) updateData.admin_last_seen_at = new Date();
-        if (guestLastSeen) updateData.guest_last_seen_at = new Date();
+        if (body.adminLastSeen) {
+            updateData.admin_last_seen_at = new Date();
+            updateData.unread_count = 0;
+        }
+        if (body.guestLastSeen) {
+            updateData.guest_last_seen_at = new Date();
+        }
+        if (body.status && ['active', 'resolved', 'spam'].includes(body.status)) {
+            updateData.status = body.status;
+        }
+        if (body.guest_name !== undefined) updateData.guest_name = body.guest_name;
+        if (body.guest_email !== undefined) updateData.guest_email = body.guest_email;
+        if (body.guest_phone !== undefined) updateData.guest_phone = body.guest_phone;
 
         const [updatedSession] = await db
             .update(chatSessions)
@@ -40,7 +50,6 @@ export const PATCH = withHybridAuth(async (req: NextRequest, session, context) =
             return apiError('Session not found', 404);
         }
 
-        // Broadcast session update if needed (e.g., seen status)
         chatStreamManager.broadcastSessionUpdate(updatedSession);
 
         return apiResponse(updatedSession);
@@ -54,7 +63,6 @@ export const DELETE = withAuth(async (_req: NextRequest, session, context) => {
     try {
         const { id } = await (context as any).params;
 
-        // Check for either CHAT_DELETE or CHAT_MANAGEMENT_DELETE
         const canDeleteChat =
             hasPermission(session.user, PERMISSIONS.CHAT_DELETE) ||
             hasPermission(session.user, PERMISSIONS.CHAT_MANAGEMENT_DELETE);
@@ -63,10 +71,8 @@ export const DELETE = withAuth(async (_req: NextRequest, session, context) => {
             return apiError('Forbidden - Required chat delete permission', 403);
         }
 
-        // Hard delete the session (messages are deleted via cascade reference)
         await db.delete(chatSessions).where(eq(chatSessions.id, id));
 
-        // Notify admins about session removal
         chatStreamManager.broadcastSessionRemoval(id);
 
         return apiResponse({ success: true });

@@ -125,3 +125,36 @@ export interface Role {
     updatedAt?: string;
     deletedAt?: string | null;
 }
+
+// ─── Chat ────────────────────────────────────────────────────────────
+
+export type ChatSessionStatus = 'active' | 'resolved' | 'spam';
+
+export interface ChatSession {
+    id: string;
+    guest_id: string;
+    guest_name: string | null;
+    guest_email: string | null;
+    guest_phone: string | null;
+    status: ChatSessionStatus;
+    last_message_at: string;
+    last_message_preview: string | null;
+    unread_count: number;
+    admin_last_seen_at: string | null;
+    guest_last_seen_at: string | null;
+    telegram_notified_at: string | null;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface ChatMessage {
+    id: string;
+    session_id: string;
+    content: string;
+    sender_type: 'guest' | 'admin' | 'system';
+    sender_id: string | null;
+    reply_to_id: string | null;
+    is_deleted: boolean;
+    created_at: string;
+}
