@@ -1,0 +1,436 @@
+{
+  "Header": {
+    "home": "HOME",
+    "about": "ABOUT",
+    "solutions": "SOLUTIONS",
+    "products": "PRODUCTS",
+    "projects": "PROJECTS",
+    "news": "NEWS",
+    "recruitment": "CAREERS",
+    "contact": "CONTACT",
+    "search": "Search",
+    "language": "Language",
+    "logoAlt": "Saigon Valve Logo",
+    "vi": "VIETNAMESE",
+    "en": "ENGLISH",
+    "iotControlSoftware": "IoT Control Software",
+    "phone": "(028) 3535 8739",
+    "email": "info@saigonvalve.vn"
+  },
+  "Footer": {
+    "slogan": "SÀI GÒN VALVE | Professional Industrial Solutions",
+    "navigationMenu": "Navigation Menu",
+    "contactInfo": "Contact Info",
+    "home": "Home",
+    "about": "About Us",
+    "products": "Products",
+    "projects": "Featured Projects",
+    "news": "News & Events",
+    "contact": "Contact",
+    "securityWarning": "Absolute confidentiality of project information",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "admin": "Admin"
+  },
+  "Solutions": {
+    "title": "SOLUTIONS",
+    "breadcrumbHome": "Home",
+    "breadcrumbSolutions": "Solutions",
+    "waterManagement": "Smart Water Management",
+    "waterManagementDesc": "Smart water supply network monitoring and control solutions, optimizing operations and reducing losses.",
+    "agriculture": "Precision Agriculture",
+    "agricultureDesc": "Applying IoT technology to irrigation management and crop monitoring, enhancing agricultural productivity.",
+    "aquaculture": "Aquaculture Monitoring",
+    "hydrology": "Smart Irrigation & Hydrology",
+    "building": "Smart Building & Infrastructure"
+  },
+  "Common": {
+    "exploreNow": "EXPLORE NOW",
+    "viewDetails": "VIEW DETAILS",
+    "viewAll": "VIEW ALL",
+    "loading": "Loading...",
+    "noData": "No data to display.",
+    "orderNow": "ORDER NOW",
+    "featuredProducts": "Featured Products"
+  },
+  "Hero": {
+    "slide1": {
+      "title": "MONITORING",
+      "highlight": "SMART PROCESS",
+      "titleSuffix": "IOT TECHNOLOGY",
+      "description": "Saigon Valve provides real-time monitoring solutions for flow and pressure, optimizing operations and preventing resource loss.",
+      "accent": "Water Management 4.0"
+    },
+    "slide2": {
+      "title": "SMART",
+      "highlight": "INFRASTRUCTURE",
+      "titleSuffix": "SCADA SOLUTIONS",
+      "description": "Real-time monitoring and control of water supply networks with IoT technology — optimizing operations and preventing resource loss.",
+      "accent": "IoT Solutions & SCADA"
+    },
+    "slide3": {
+      "title": "DIGITAL SYSTEM",
+      "highlight": "WATER IOT DASHBOARD",
+      "titleSuffix": "24/7 MONITORING",
+      "description": "Smart water infrastructure management platform, collecting data from sensors and visualizing in real-time.",
+      "accent": "Smart Solution"
+    },
+    "actionAdvice": "SOLUTION CONSULTING",
+    "iotSolutions": "IoT Solutions & SCADA",
+    "platformTitle": "Smart Infrastructure Platform",
+    "platformSubTitle": "Real-time monitoring and control of water supply networks with IoT technology — optimizing operations and preventing resource loss.",
+    "learnMore": "Explore Solutions",
+    "liveDemo": "Live Demo"
+  },
+  "FeaturedProjects": {
+    "title": "Featured",
+    "titleAccent": "Projects",
+    "description": "Key works confirming the reputation and technical capability of Saigon Valve.",
+    "viewAllProjects": "VIEW ALL PROJECTS",
+    "mobileViewAll": "All projects",
+    "loading": "Loading projects...",
+    "noProjects": "No projects to display."
+  },
+  "News": {
+    "title": "MEDIA & NEWS",
+    "description": "LATEST UPDATES ON TECHNOLOGY AND PROJECTS",
+    "loading": "Loading news...",
+    "noNews": "No articles found.",
+    "hero": {
+      "badge": "Media & News",
+      "title": "NEWS",
+      "titleAccent": "CENTER",
+      "desc": "Updating the latest news about technology, projects, and trends in the water industry and industrial infrastructure."
+    },
+    "grid": {
+      "defaultCategory": "NEWS",
+      "viewDetail": "VIEW DETAIL"
+    },
+    "date": {
+      "month": "MONTH"
+    },
+    "empty": {
+      "title": "NO NEWS AVAILABLE",
+      "desc": "There are no articles available at the moment. Please check back later."
+    }
+  },
+  "ProductSpotlight": {
+    "title": "PRODUCT SPOTLIGHT",
+    "productDetail": "PRODUCT DETAIL"
+  },
+  "SystemHighlight": {
+    "banners": {
+      "featured": {
+        "tag": "WATER INDUSTRY EQUIPMENT",
+        "title": "OKM INDUSTRIAL VALVES",
+        "desc": "Exclusive distributor of OKM Valve — Japan. Supplying a wide range of gate valves, butterfly valves, air release valves and check valves engineered for harsh environments and large-scale water infrastructure projects.",
+        "btnText": "Explore now"
+      },
+      "video": {
+        "tag": "SMART SOLUTIONS",
+        "title": "IOT & SCADA MONITORING SYSTEM",
+        "desc": "Real-time monitoring and control of water distribution networks. Powered by IoT & SCADA technology with continuous data collection to optimize operations and prevent resource loss.",
+        "btnText": "View solutions"
+      }
+    }
+  },
+  "Partners": {
+    "title": "STRATEGIC PARTNERS",
+    "description": "TRUST FROM LEADING GLOBAL BRANDS"
+  },
+  "ContactForm": {
+    "title": "REQUEST A CONSULTATION",
+    "subtitle": "WE WILL RESPOND WITHIN 24H",
+    "labels": {
+      "name": "FULL NAME *",
+      "phone": "PHONE NUMBER *",
+      "email": "EMAIL *",
+      "address": "ADDRESS *",
+      "message": "REQUIREMENT DETAILS *"
+    },
+    "placeholders": {
+      "name": "NGUYEN VAN A",
+      "phone": "09XX XXX XXX",
+      "email": "EXAMPLE@GMAIL.COM",
+      "address": "HOUSE NUMBER, STREET NAME...",
+      "message": "DETAILED DESCRIPTION OF YOUR REQUEST..."
+    },
+    "security": "ABSOLUTE CONFIDENTIALITY",
+    "submit": "CONFIRM SEND",
+    "submitting": "SENDING...",
+    "errors": {
+      "required": "Please fill in all required fields",
+      "general": "An error occurred. Please try again later."
+    },
+    "success": "Request sent successfully! We will contact you soon.",
+    "hotlineLabel": "HOTLINE",
+    "hotlineSub": "24/7 Support",
+    "emailLabel": "EMAIL",
+    "emailSub": "Response within 2h",
+    "addressLabel": "ADDRESS",
+    "addressSub": "Main Office",
+    "zaloLabel": "ZALO / VIBER",
+    "zaloSub": "Technical Support",
+    "consultationTitle": "Contact with Saigon Valve Expert",
+    "consultationDesc": "Saigon Valve's technical team is always ready to support consulting and provide optimal solutions for all your infrastructure challenges."
+  },
+  "Contact": {
+    "headerBadge": "STRATEGIC SUPPORT CENTER",
+    "headerTitle": "CONNECTED WITH",
+    "headerTitleAccent": "SAIGON VALVE",
+    "infoTitle": "REPRESENTATIVE INFORMATION",
+    "infoDesc": "Contact our departments directly for the fastest support.",
+    "labels": {
+      "sales": "SALES HOTLINE",
+      "tech": "TECHNICAL SUPPORT",
+      "office": "ELECTRONIC OFFICE",
+      "headquarters": "HEADQUARTERS"
+    },
+    "subs": {
+      "sales": "Quotation advice",
+      "tech": "Zalo / Viber 24/7",
+      "office": "Official response",
+      "headquarters": "Main office"
+    },
+    "workingHours": "Working hours: Monday - Saturday (08:00 - 17:30)",
+    "formTitle": "SEND REQUEST ONLINE",
+    "security": "Absolute confidentiality of project information.",
+    "submit": "CONFIRM SEND REQUEST",
+    "submitting": "PROCESSING...",
+    "faqTitle": "Frequently Asked Questions",
+    "faqs": [
+      {
+        "q": "HOW TO GET A QUOTE FOR A PROJECT?",
+        "a": "You can send a request directly via the contact form below, or call hotline {phone}. The technical team will respond and send a detailed quote within 2-4 working hours."
+      },
+      {
+        "q": "DOES SAIGON VALVE PROVIDE ONSITE INSTALLATION SERVICES?",
+        "a": "Yes, we own a team of professional engineers and technicians, ready to support installation, equipment configuration, and technology transfer at the site nationwide."
+      },
+      {
+        "q": "WHAT IS THE EQUIPMENT WARRANTY POLICY?",
+        "a": "All genuine equipment from OKM, Noah, Niigata distributed by SGV are covered by a standard 12-24 month warranty depending on the product line. We are committed to lifetime maintenance and technical support."
+      }
+    ]
+  },
+  "About": {
+    "hero": {
+      "badge": "SMART INDUSTRIAL SOLUTIONS",
+      "title": "SAIGON VALVE",
+      "titleAccent": "SOLUTION IoT & SCADA",
+      "desc": "\"Reliable solutions for water supply, drainage, and wastewater treatment from SG-VAL. Building modern and sustainable water infrastructure.\""
+    },
+    "intro": {
+      "who": "WHO WE ARE?",
+      "title": "ABOUT US",
+      "content1": "Saigon Valve is proud to be one of the pioneering enterprises in providing high-quality industrial solutions in Vietnam.",
+      "content2": "We aspire to deliver smart solutions that control flow with modern technology for the water industry. With experience and enthusiasm, SAIGON VALVE always brings customers the most optimal solutions for water supply, drainage, and wastewater treatment projects.",
+      "mission": {
+        "title": "MISSION",
+        "desc": "Controlling flow with modern technology. Providing optimal solutions for urban water infrastructure."
+      },
+      "vision": {
+        "title": "VISION",
+        "desc": "To become a leading company in providing flow control solutions domestically and internationally."
+      }
+    },
+    "values": {
+      "badge": "OPERATING PHILOSOPHY",
+      "title": "CORE VALUES",
+      "items": [
+        {
+          "title": "CUSTOMER FOCUS",
+          "desc": "Always committed to creating products suitable for each customer. Putting ourselves in the customer's shoes to serve."
+        },
+        {
+          "title": "SUSTAINABLE PARTNERSHIP",
+          "desc": "Accompanying and supporting customers before, during, and after the installation and operation of the system with the utmost dedication."
+        },
+        {
+          "title": "SECURITY & TRUST",
+          "desc": "Strictly adhering to cooperation and information security principles so that customers can have absolute peace of mind."
+        }
+      ]
+    },
+    "pillars": {
+      "badge": "COMPETITIVE STRENGTHS",
+      "title": "Core",
+      "titleAccent": "Products",
+      "desc": "We provide a synchronous product system from mechanical valves to smart controllers and digital monitoring.",
+      "items": [
+        {
+          "tag": "01",
+          "title": "INDUSTRIAL VALVES",
+          "desc": "Exclusive distributor of OKM Valve - Japan. Providing a variety of gate valves, butterfly valves, air release valves, check valves... designed for harsh environments.",
+          "footer": "BRAND: OKM JAPAN"
+        },
+        {
+          "tag": "02",
+          "title": "ACTUATOR",
+          "desc": "Exclusive provider of NOAH Actuators - Korea. Integrated with smart control panels, allowing remote monitoring and operation of valves via Internet mobile applications.",
+          "footer": "BRAND: NOAH KOREA"
+        },
+        {
+          "tag": "03",
+          "title": "IOT SOLUTIONS",
+          "desc": "Datalogger equipment, water quality monitoring, and multi-constant pressure reducing valves. Automated water pressure adjustment solutions to optimize water resources.",
+          "footer": "DIGITAL DEVICES"
+        }
+      ]
+    },
+    "scada": {
+      "badge": "CONTROL TECHNOLOGY",
+      "title": "SCADA",
+      "titleAccent": "SYSTEM",
+      "desc": "Centralized management, monitoring, and control solutions help optimize the operational efficiency of urban water supply networks.",
+      "items": [
+        {
+          "title": "Open at High Pressure",
+          "desc": "Automatically control valves/boost pumps when system pressure reaches the set threshold to maintain flow."
+        },
+        {
+          "title": "3G/4G Monitoring",
+          "desc": "Collecting data and transmitting real-time information to the control center via mobile network infrastructure."
+        },
+        {
+          "title": "Open at Low Pressure",
+          "desc": "Configure automatic valve/pump opening when water pressure drops, ensuring continuous 24/7 water supply."
+        },
+        {
+          "title": "Custom Settings",
+          "desc": "Flexibly define measuring points and program SCADA based on the actual needs of each customer."
+        }
+      ]
+    },
+    "applications": {
+      "title": "INDUSTRY APPLICATIONS",
+      "items": [
+        {
+          "title": "WATER UTILITIES",
+          "desc": "Optimizing management, reducing losses, and increasing wastewater treatment efficiency."
+        },
+        {
+          "title": "INDUSTRIAL PLANTS",
+          "desc": "Improving operational productivity through automation and remote management."
+        },
+        {
+          "title": "CONSTRUCTION PROJECTS",
+          "desc": "Valve and control solutions for large-scale projects and urban infrastructure."
+        }
+      ]
+    },
+    "certs": {
+      "title": "Partners & Certifications",
+      "quote": "\"Saigon Valve is committed to transparency regarding the origin and quality of equipment with full legal documentation.\"",
+      "items": [
+        "Exclusive agent certificate for OKM Valve (Japan)",
+        "Exclusive agent certificate for Noah Actuator (Korea)",
+        "Leading partner in providing smart water infrastructure",
+        "Quality management system meeting international standards"
+      ]
+    },
+    "cta": {
+      "title": "STRATEGIC PARTNERSHIP",
+      "desc": "Contact us today to discover more about the advanced products and solutions we provide for your business.",
+      "hotline": "Consultation Hotline",
+      "email": "Contact Email",
+      "btnText": "CONTACT NOW"
+    }
+  },
+  "Projects": {
+    "hero": {
+      "badge": "FEATURED PROJECTS",
+      "title": "CONFIRMING",
+      "titleAccent": "PROJECT CAPABILITY",
+      "desc": "More than {total}+ projects successfully deployed nationwide in the field of water supply, drainage, and automation."
+    },
+    "grid": {
+      "defaultCategory": "CONSTRUCTION",
+      "defaultLocation": "Vietnam",
+      "viewDetail": "VIEW DETAIL"
+    },
+    "empty": {
+      "title": "NO PROJECTS AVAILABLE",
+      "desc": "There are no projects available at the moment. Please check back later."
+    }
+  },
+  "Products": {
+    "hero": {
+      "badge": "Products & Solutions",
+      "title": "SPECIALIZED",
+      "titleAccent": "EQUIPMENT",
+      "desc": "Industrial valves, measurement devices, and IoT solutions with Japanese & Korean standards for the water industry and technical infrastructure.",
+      "searchPlaceholder": "Search products..."
+    },
+    "sidebar": {
+      "categoryTitle": "CATEGORIES",
+      "all": "All"
+    },
+    "grid": {
+      "resultCount": "Showing {start} - {end} of {total} results",
+      "defaultSummary": "Specialized equipment for the water and industrial sectors.",
+      "viewDetail": "PRODUCT DETAIL"
+    },
+    "empty": "No products found."
+  },
+  "ProductDetail": {
+    "breadcrumb": {
+      "home": "Home",
+      "products": "Products"
+    },
+    "badge": "GENUINE",
+    "status": {
+      "label": "Availability",
+      "default": "Contact us"
+    },
+    "delivery": {
+      "label": "Delivery",
+      "default": "Nationwide"
+    },
+    "features": "KEY FEATURES",
+    "getQuote": "GET DETAILED QUOTE",
+    "downloadCatalog": "DOWNLOAD CATALOGUE (PDF)",
+    "techSpecs": "TECHNICAL SPECIFICATIONS",
+    "projectSupport": {
+      "title": "Project Support",
+      "defaultDesc": "Saigon Valve provides complete CO/CQ certificates and on-site technical support for major projects.",
+      "warranty": "Warranty {months}",
+      "warrantyDefault": "12 months",
+      "certificate": "Full genuine CO/CQ certificates",
+      "origin": "Origin: {origin}",
+      "originDefault": "Genuine"
+    },
+    "cta": {
+      "title": "NEED MORE CONSULTATION?",
+      "desc": "\"Leave your information or call our hotline for optimal system solutions.\"",
+      "submit": "SEND REQUEST NOW",
+      "hotline": "CALL HOTLINE"
+    }
+  },
+  "Careers": {
+    "hero": {
+      "badge": "CAREER OPPORTUNITIES",
+      "title": "JOIN",
+      "titleAccent": "SGV TEAM",
+      "desc": "Discover career opportunities at Saigon Valve - Where you can develop your career with a leading team of experts in water industry technology."
+    },
+    "list": {
+      "title": "Current Openings",
+      "count": "{total} open positions",
+      "defaultDepartment": "General",
+      "defaultLocation": "Vietnam",
+      "deadlinePrefix": "Deadline:",
+      "viewDetail": "View Detail"
+    },
+    "employmentTypes": {
+      "full_time": "Full-time",
+      "part_time": "Part-time",
+      "contract": "Contract",
+      "internship": "Internship"
+    },
+    "empty": {
+      "title": "No positions available right now",
+      "desc": "Please check back later or send your self-application CV via email."
+    }
+  }
+}

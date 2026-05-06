@@ -24,6 +24,7 @@ export const GET = withAuth(
                     email: users.email,
                     phone: users.phone,
                     isActive: users.is_active,
+                    isLocked: users.is_locked,
                     is_super: users.is_super,
                     createdAt: users.created_at,
                     roles: sql<any[]>`

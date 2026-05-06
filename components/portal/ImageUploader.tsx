@@ -486,6 +486,7 @@ export function ImageUploader({
                                                 src={previewUrl}
                                                 alt="Preview"
                                                 fill
+                                                unoptimized
                                                 className="object-contain"
                                             />
                                         )}

@@ -24,7 +24,7 @@ export const COMPANY_INFO = {
 
     // Mạng xã hội
     social: {
-        facebook: 'https://facebook.com/saigonvalve',
+        facebook: 'https://www.facebook.com/saigon.valve.2024',
         linkedin: 'https://linkedin.com/company/saigonvalve',
         youtube: 'https://youtube.com/@saigonvalve',
         zalo: 'https://zalo.me/saigonvalve',

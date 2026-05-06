@@ -27,9 +27,9 @@ export const productSchema = z.object({
   ]).transform(val => typeof val === 'string' ? val : val.toString()),
   
   sku: z.string()
-    .min(1, "SKU là bắt buộc")
     .max(100, "SKU không được quá 100 ký tự")
-    .trim(),
+    .trim()
+    .optional(),
   
   stock: z.coerce.number()
     .int("Số lượng phải là số nguyên")

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 export const PARTNERS = [
@@ -9,6 +10,7 @@ export const PARTNERS = [
 ];
 
 export default function Partners() {
+    const t = useTranslations('Partners');
     return (
         <section className="bg-gradient-to-b from-slate-50 to-white py-20 sm:py-28">
             <div className="container mx-auto px-4 lg:px-8">
@@ -21,10 +23,10 @@ export default function Partners() {
                     className="text-center mb-12"
                 >
                     <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
-                        Đối Tác Của Chúng Tôi
+                        {t('title')}
                     </h2>
                     <p className="text-slate-500 max-w-2xl mx-auto">
-                        Đa dạng với các loại van và thiết bị điều khiển chất lượng cao
+                        {t('description')}
                     </p>
                 </motion.div>
 
@@ -48,6 +50,7 @@ export default function Partners() {
                                         src={partner.logo}
                                         alt={partner.name}
                                         fill
+                                        unoptimized
                                         quality={100}
                                         className="object-contain p-2 hover:cursor-pointer"
                                         sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"

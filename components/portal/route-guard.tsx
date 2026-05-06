@@ -48,7 +48,6 @@ export function RouteGuard({ children }: RouteGuardProps) {
             { path: PORTAL_ROUTES.contacts, permission: PERMISSIONS.CONTACTS_VIEW },
             { path: PORTAL_ROUTES.users.list, permission: PERMISSIONS.USERS_VIEW },
             { path: PORTAL_ROUTES.users.roles.list, permission: PERMISSIONS.ROLES_VIEW },
-            { path: PORTAL_ROUTES.users.modules.list, permission: PERMISSIONS.ROLES_VIEW },
             { path: PORTAL_ROUTES.settings, permission: PERMISSIONS.ROLES_VIEW },
         ];
 

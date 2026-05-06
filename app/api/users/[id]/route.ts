@@ -108,7 +108,7 @@ export const PATCH = withAuth(
                 }
             }
 
-            const { isSuper } = body;
+            const { isSuper, isLocked } = body;
             // Protection for is_super flag
             if (isSuper !== undefined && isSuper !== targetUser.isSuper) {
                 if (!isActorSuper) {
@@ -117,6 +117,18 @@ export const PATCH = withAuth(
                 // Prevent self-demotion
                 if (!isSuper && userId === session.user.id) {
                     return apiError('Bạn không thể tự tước quyền SuperAdmin của chính mình', 400);
+                }
+            }
+
+            // Protection for is_locked flag
+            if (isLocked !== undefined) {
+                // Cannot lock your own account
+                if (userId === session.user.id) {
+                    return apiError('Bạn không thể khóa tài khoản của chính mình', 400);
+                }
+                // Only SuperAdmin can lock/unlock another SuperAdmin
+                if (targetIsSuperAdmin && !isActorSuper) {
+                    return apiError('Chỉ SuperAdmin mới có quyền khóa/mở khóa tài khoản SuperAdmin', 403);
                 }
             }
 
@@ -138,6 +150,7 @@ export const PATCH = withAuth(
                 if (email !== undefined) updateData.email = email;
                 if (phone !== undefined) updateData.phone = phone;
                 if (isSuper !== undefined) updateData.is_super = isSuper;
+                if (isLocked !== undefined) updateData.is_locked = isLocked;
                 if (password) {
                     updateData.password = await bcrypt.hash(password, AUTH.BCRYPT_SALT_ROUNDS);
                 }
@@ -154,6 +167,7 @@ export const PATCH = withAuth(
                         email: users.email,
                         phone: users.phone,
                         isSuper: users.is_super,
+                        isLocked: users.is_locked,
                     });
 
                 if (!user) throw new Error('User not found');
@@ -179,7 +193,10 @@ export const PATCH = withAuth(
                 action: AUDIT_ACTIONS.UPDATE,
                 module: AUDIT_MODULES.USERS,
                 targetId: userId,
-                description: `Cập nhật thông tin người dùng: ${updatedUser.username}`,
+                description: isLocked !== undefined
+                    ? `${isLocked ? 'Khóa' : 'Mở khóa'} tài khoản người dùng: ${updatedUser.username}`
+                    : `Cập nhật thông tin người dùng: ${updatedUser.username}`,
+
                 changes: {
                     old: oldUser,
                     new: updatedUser,

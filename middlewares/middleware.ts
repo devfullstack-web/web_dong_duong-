@@ -173,6 +173,11 @@ export function withAuth(
 
         const session = sessionOrError as UserSession;
 
+        // Superadmin bypass - full quyền, không cần check permission
+        if (isSuperAdmin(session.user)) {
+            return handler(request, session, context);
+        }
+
         if (options?.requiredPermissions && options.requiredPermissions.length > 0) {
             const hasAll = options.requiredPermissions.every((p) => hasPermission(session.user, p));
             if (!hasAll && !isAdmin(session.user)) {
@@ -222,6 +227,11 @@ export function withHybridAuth(
         const isPortalRequest = referer.includes('/portal');
 
         if (session) {
+            // Superadmin bypass - full quyền, không cần check permission
+            if (isSuperAdmin(session.user)) {
+                return handler(request, session, context);
+            }
+
             if (options?.requiredPermissions && options.requiredPermissions.length > 0) {
                 const hasAll = options.requiredPermissions.every((p) =>
                     hasPermission(session.user, p),

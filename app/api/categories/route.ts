@@ -1,12 +1,13 @@
 import { db } from "@/db";
 import { categories, categoryTypes } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
 import { PERMISSIONS } from "@/constants/rbac";
+import type { LocalizedText } from "@/types/i18n";
 
-// GET /api/categories - List all categories
+// GET /api/categories - List all categories (flat with hierarchy info)
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -15,39 +16,104 @@ export async function GET(request: Request) {
     let query = db.select({
       id: categories.id,
       name: categories.name,
+      name_localized: categories.name_localized,
       category_type_id: categories.category_type_id,
       type: categoryTypes.name,
+      parent_id: categories.parent_id,
+      display_order: categories.display_order,
+      is_visible: categories.is_visible,
     })
     .from(categories)
-    .innerJoin(categoryTypes, eq(categories.category_type_id, categoryTypes.id));
+    .innerJoin(categoryTypes, eq(categories.category_type_id, categoryTypes.id))
+    .orderBy(asc(categories.display_order));
 
     if (type) {
-      // Filter by type name
       const results = await query.where(eq(categoryTypes.name, type));
-      return apiResponse(results);
+      // Build tree structure
+      const tree = buildCategoryTree(results);
+      return apiResponse(tree);
     }
 
     const results = await query;
-    return apiResponse(results);
+    const tree = buildCategoryTree(results);
+    return apiResponse(tree);
   } catch (error) {
     console.error("Error fetching categories:", error);
     return apiError("Internal Server Error", 500);
   }
 }
 
+interface FlatCategory {
+  id: string;
+  name: string;
+  name_localized: LocalizedText | null;
+  category_type_id: string;
+  type: string;
+  parent_id: string | null;
+  display_order: number;
+  is_visible: boolean;
+}
+
+function buildCategoryTree(flatList: FlatCategory[]) {
+  const map = new Map<string, FlatCategory & { children: any[] }>();
+  const roots: (FlatCategory & { children: any[] })[] = [];
+
+  // Create map with children array
+  for (const item of flatList) {
+    map.set(item.id, { ...item, children: [] });
+  }
+
+  // Build tree
+  for (const item of flatList) {
+    const node = map.get(item.id)!;
+    if (item.parent_id && map.has(item.parent_id)) {
+      map.get(item.parent_id)!.children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+
+  return roots;
+}
+
 // POST /api/categories - Create a new category
 export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json();
-    const { name, category_type_id } = body;
+    const { name, name_localized, category_type_id, parent_id, display_order, is_visible } = body as {
+      name?: string;
+      name_localized?: LocalizedText;
+      category_type_id: string;
+      parent_id?: string | null;
+      display_order?: number;
+      is_visible?: boolean;
+    };
 
-    if (!name || !category_type_id) {
-      return apiError("Missing required fields", 400);
+    // Support both legacy (name) and new (name_localized) format
+    const nameVi = name_localized?.vi || name;
+    if (!nameVi || !category_type_id) {
+      return apiError("Missing required fields (name or name_localized.vi)", 400);
     }
 
+    // Validate parent_id if provided
+    if (parent_id) {
+      const [parentCat] = await db.select({ id: categories.id })
+        .from(categories)
+        .where(eq(categories.id, parent_id));
+      if (!parentCat) {
+        return apiError("Parent category not found", 400);
+      }
+    }
+
+    const localizedName: LocalizedText = name_localized || { vi: name || '', en: '' };
+
     const [newCategory] = await db.insert(categories).values({
-      name,
+      name: nameVi,
+      name_localized: localizedName,
       category_type_id,
+      parent_id: parent_id || null,
+      display_order: display_order ?? 0,
+      is_visible: is_visible ?? true,
     }).returning();
 
     return apiResponse(newCategory, { status: 201 });
