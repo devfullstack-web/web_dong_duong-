@@ -7,10 +7,6 @@ import {
     Mail,
     MapPin,
     Send,
-    MessageSquare,
-    Facebook,
-    Linkedin,
-    Youtube,
     Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -32,15 +28,7 @@ export default function ContactForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Basic validation
-        if (
-            !formData.name ||
-            !formData.phone ||
-            !formData.email ||
-            !formData.address ||
-            !formData.message
-        ) {
+        if (!formData.name || !formData.phone || !formData.email || !formData.message) {
             toast.error(t('errors.required'));
             return;
         }
@@ -49,15 +37,8 @@ export default function ContactForm() {
         try {
             await $api.post(API_ROUTES.CONTACTS, formData);
             toast.success(t('success'));
-            setFormData({
-                name: '',
-                phone: '',
-                email: '',
-                address: '',
-                message: '',
-            });
+            setFormData({ name: '', phone: '', email: '', address: '', message: '' });
         } catch (error: any) {
-            console.error(error);
             const message = error.response?.data?.message || t('errors.general');
             toast.error(message);
         } finally {
@@ -71,108 +52,50 @@ export default function ContactForm() {
     };
 
     return (
-        <section className="bg-brand-primary py-24 sm:py-32 relative overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-full h-px bg-white/10"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-secondary/20 rounded-full blur-3xl -translate-y-20 translate-x-20"></div>
-            <div className="absolute top-20 left-10 w-40 h-40 bg-brand-accent/10 rounded-full blur-2xl"></div>
-
-            <div className="container relative z-10 mx-auto px-4 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-stretch">
-                    <div className="flex flex-col justify-center space-y-10">
-                        <div className="space-y-6">
-                            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tighter uppercase leading-none">
-                                {t('consultationTitle')}
-                            </h2>
-                            <p className="text-base text-slate-300 font-medium leading-relaxed max-w-lg">
-                                {t('consultationDesc')}
-                            </p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {[
-                                {
-                                    icon: Phone,
-                                    label: t('hotlineLabel'),
-                                    value: COMPANY_INFO.phone,
-                                    sub: t('hotlineSub'),
-                                },
-                                {
-                                    icon: Mail,
-                                    label: t('emailLabel'),
-                                    value: COMPANY_INFO.email,
-                                    sub: t('emailSub'),
-                                },
-                                {
-                                    icon: MapPin,
-                                    label: t('addressLabel'),
-                                    value: COMPANY_INFO.address,
-                                    sub: t('addressSub'),
-                                },
-                                {
-                                    icon: MessageSquare,
-                                    label: t('zaloLabel'),
-                                    value: COMPANY_INFO.hotline,
-                                    sub: t('zaloSub'),
-                                },
-                            ].map((item, i) => (
-                                <div
-                                    key={i}
-                                    className="space-y-3 p-4 bg-white/5 border border-white/10 rounded-sm hover:bg-white/10 transition-colors"
-                                >
-                                    <div className="flex items-center gap-3 text-brand-accent">
-                                        <item.icon size={18} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            {item.label}
-                                        </span>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <div className="text-sm font-bold text-white leading-snug">
-                                            {item.value}
-                                        </div>
-                                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                            {item.sub}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="flex gap-4 pt-4">
-                            {[Facebook, Linkedin, Youtube].map((Icon, i) => (
-                                <a
-                                    key={i}
-                                    href="#"
-                                    className="h-11 w-11 flex items-center justify-center bg-white/5 border border-white/10 text-white hover:bg-brand-accent hover:border-brand-accent transition-all"
-                                >
-                                    <Icon size={18} />
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="bg-white p-8 sm:p-12 lg:p-14 shadow-2xl relative"
-                    >
-                        {/* Simple Border Accent */}
-                        <div className="absolute top-0 right-0 h-1.5 w-full bg-brand-accent"></div>
-
-                        <div className="space-y-8">
-                            <div className="space-y-2">
-                                <h3 className="text-2xl sm:text-3xl font-bold text-brand-primary uppercase tracking-tight">
-                                    {t('title')}
-                                </h3>
-                                <p className="text-sm text-slate-500 font-medium">
-                                    {t('subtitle')}
+        <section className="bg-white py-12 lg:py-16">
+            <div className="container mx-auto px-4 lg:px-8">
+                {/* 
+                    Full Aligned Card: 
+                    Matches Header width, no border radius, sharp and professional.
+                */}
+                <div className="bg-slate-50 border border-slate-100">
+                    <div className="grid grid-cols-1 lg:grid-cols-5 items-stretch">
+                        
+                        {/* Left: Quick Info (Sharp Style) */}
+                        <div className="lg:col-span-2 bg-brand-primary p-8 lg:p-12 text-white flex flex-col justify-between space-y-12">
+                            <div className="space-y-6">
+                                <h2 className="text-3xl font-black uppercase tracking-tight leading-[1.2]">
+                                    {t('title', { defaultValue: 'Liên Hệ' })} <br />
+                                    <span className="text-brand-accent">Tư Vấn Ngay</span>
+                                </h2>
+                                <p className="text-[11px] text-white/60 font-medium leading-relaxed max-w-xs">
+                                    {t('subtitle', { defaultValue: 'Đội ngũ chuyên gia của SG - VAL luôn sẵn sàng hỗ trợ giải pháp tối ưu nhất cho hệ thống của bạn.' })}
                                 </p>
                             </div>
 
+                            <div className="space-y-6">
+                                {[
+                                    { icon: Phone, label: COMPANY_INFO.phone },
+                                    { icon: Mail, label: COMPANY_INFO.email },
+                                    { icon: MapPin, label: COMPANY_INFO.address },
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-start gap-4">
+                                        <div className="h-10 w-10 bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                            <item.icon size={16} className="text-brand-accent" />
+                                        </div>
+                                        <div className="text-[11px] font-bold tracking-wide leading-relaxed pt-1">
+                                            {item.label}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Right: Sharp Form */}
+                        <div className="lg:col-span-3 p-8 lg:p-12 bg-white">
                             <form className="space-y-6" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
+                                    <div className="space-y-1.5">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                             {t('labels.name')}
                                         </label>
@@ -182,11 +105,11 @@ export default function ContactForm() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
+                                            className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
                                             placeholder={t('placeholders.name')}
                                         />
                                     </div>
-                                    <div className="space-y-2">
+                                    <div className="space-y-1.5">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                             {t('labels.phone')}
                                         </label>
@@ -196,44 +119,28 @@ export default function ContactForm() {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             required
-                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
+                                            className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
                                             placeholder={t('placeholders.phone')}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            {t('labels.email')}
-                                        </label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
-                                            placeholder={t('placeholders.email')}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            {t('labels.address')}
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="address"
-                                            value={formData.address}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors bg-transparent"
-                                            placeholder={t('placeholders.address')}
-                                        />
-                                    </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        {t('labels.email')}
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
+                                        placeholder={t('placeholders.email')}
+                                    />
                                 </div>
 
-                                <div className="space-y-2">
+                                <div className="space-y-1.5">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                         {t('labels.message')}
                                     </label>
@@ -242,8 +149,8 @@ export default function ContactForm() {
                                         value={formData.message}
                                         onChange={handleChange}
                                         required
-                                        rows={3}
-                                        className="w-full border-b-2 border-slate-200 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:border-brand-primary transition-colors resize-none bg-transparent"
+                                        rows={4}
+                                        className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all resize-none"
                                         placeholder={t('placeholders.message')}
                                     ></textarea>
                                 </div>
@@ -251,12 +158,11 @@ export default function ContactForm() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="flex w-full items-center justify-center gap-4 bg-brand-primary py-5 text-xs font-black uppercase tracking-[0.2em] text-white hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex w-full items-center justify-center gap-3 bg-brand-primary py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/5 disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            {t('submitting')}{' '}
-                                            <Loader2 size={16} className="animate-spin" />
+                                            {t('submitting')} <Loader2 size={16} className="animate-spin" />
                                         </>
                                     ) : (
                                         <>
@@ -266,7 +172,7 @@ export default function ContactForm() {
                                 </button>
                             </form>
                         </div>
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </section>
