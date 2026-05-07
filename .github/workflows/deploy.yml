@@ -29,7 +29,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: NEXT_DISABLE_ESLINT=1 pnpm build
+        run: NEXT_DISABLE_ESLINT=1 npx pnpm build
 
   deploy:
     runs-on: ubuntu-latest
@@ -90,14 +90,12 @@ jobs:
 
             cd "$TEMP_PATH"
 
-            corepack enable
-            corepack prepare pnpm@10 --activate
 
             echo "Installing dependencies..."
-            pnpm install --frozen-lockfile
+            npx pnpm install --frozen-lockfile
 
             echo "Building project..."
-            NEXT_DISABLE_ESLINT=1 pnpm build
+            NEXT_DISABLE_ESLINT=1 npx pnpm build
 
             echo "Cleaning old cache..."
             rm -rf "$DEPLOY_PATH/node_modules"
