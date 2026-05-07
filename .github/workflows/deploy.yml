@@ -91,8 +91,15 @@ jobs:
             cd "$TEMP_PATH"
 
 
-            echo "Installing dependencies..."
-            npx pnpm install --frozen-lockfile
+            echo "Building project..."
+
+            export NODE_OPTIONS="--max-old-space-size=2048"
+            export CI=true
+            export GENERATE_SOURCEMAP=false
+            export NEXT_DISABLE_ESLINT=1
+            export RAYON_NUM_THREADS=1
+
+            npx pnpm build
 
             echo "Building project..."
             NEXT_DISABLE_ESLINT=1 npx pnpm build
