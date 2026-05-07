@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,105 +29,37 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
+      - name: Build app
         run: NEXT_DISABLE_ESLINT=1 pnpm build
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
+      - name: Prepare deploy files
+        run: |
+          rm -rf deploy
+          mkdir deploy
 
-    steps:
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.2.0
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-          DEPLOY_GH_TOKEN: ${{ secrets.DEPLOY_GH_TOKEN }}
-          RESTART_COMMAND: ${{ secrets.RESTART_COMMAND }}
+          cp -r .next deploy/.next
+          cp -r dist deploy/dist
+          cp -r public deploy/public
+          cp -r node_modules deploy/node_modules
+
+          cp package.json deploy/package.json
+          cp pnpm-lock.yaml deploy/pnpm-lock.yaml
+
+      - name: Upload build to server
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script_stop: true
-          envs: DEPLOY_PATH,DEPLOY_GH_TOKEN,RESTART_COMMAND
+          source: "deploy/*"
+          target: "${{ secrets.DEPLOY_PATH }}"
+
+      - name: Restart app
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e
-
-            source /home/vcxvobej/nodevenv/public_html/sgv_cms/20/bin/activate
-
-            if [ -z "$DEPLOY_PATH" ] || [ -z "$RESTART_COMMAND" ]; then
-              echo "Missing DEPLOY_PATH or RESTART_COMMAND"
-              exit 1
-            fi
-
-            REPO_URL="https://github.com/saigon-valve/sgv_cms.git"
-
-            if [ -n "$DEPLOY_GH_TOKEN" ]; then
-              REPO_URL="https://x-access-token:$DEPLOY_GH_TOKEN@github.com/saigon-valve/sgv_cms.git"
-            fi
-
-            if [ ! -d "$DEPLOY_PATH" ]; then
-              echo "Current source path not found: $DEPLOY_PATH"
-              exit 1
-            fi
-
-            if [ ! -f "$DEPLOY_PATH/.env" ]; then
-              echo ".env not found in current source"
-              exit 1
-            fi
-
-            DEPLOY_PARENT="$(dirname "$DEPLOY_PATH")"
-            DEPLOY_NAME="$(basename "$DEPLOY_PATH")"
-            TIMESTAMP="$(date +"%Y-%m-%d_%H-%M-%S")"
-            TEMP_PATH="${DEPLOY_PARENT}/${DEPLOY_NAME}_temp"
-            BACKUP_PATH="${DEPLOY_PARENT}/${DEPLOY_NAME}_${TIMESTAMP}"
-
-            rm -rf "$TEMP_PATH"
-
-            echo "Cloning fresh source..."
-            git clone --branch main "$REPO_URL" "$TEMP_PATH"
-
-            echo "Copying .env..."
-            cp -p "$DEPLOY_PATH/.env" "$TEMP_PATH/.env"
-
-            cd "$TEMP_PATH"
-
-
-            echo "Installing dependencies..."
-            npx pnpm install --frozen-lockfile
-
-            echo "Building project..."
-            export NEXT_DISABLE_ESLINT=1
-            export NODE_OPTIONS="--max-old-space-size=2048"
-            export CI=true
-            export GENERATE_SOURCEMAP=false
-            export RAYON_NUM_THREADS=1
-            npx pnpm build
-
-
-            echo "Cleaning old cache..."
-            rm -rf "$DEPLOY_PATH/node_modules"
-            rm -rf "$DEPLOY_PATH/.next"
-
-            echo "Backing up current release..."
-            mv "$DEPLOY_PATH" "$BACKUP_PATH"
-
-            echo "Switching new release..."
-            mv "$TEMP_PATH" "$DEPLOY_PATH"
-
-            echo "Restarting app..."
-            eval "$RESTART_COMMAND"
-
-            echo "Cleaning old backups..."
-            find "$DEPLOY_PARENT" \
-              -maxdepth 1 \
-              -mindepth 1 \
-              -type d \
-              -name "${DEPLOY_NAME}_????-??-??_??-??-??" \
-              | sort -r \
-              | tail -n +4 \
-              | while IFS= read -r old_backup; do
-                  echo "Removing old backup: $old_backup"
-                  rm -rf "$old_backup"
-                done
-
-            echo "Deploy completed successfully."
+            mkdir -p /home/vcxvobej/public_html/sgv_cms/tmp
+            touch /home/vcxvobej/public_html/sgv_cms/tmp/restart.txt
