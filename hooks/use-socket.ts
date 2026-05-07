@@ -1,58 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-
-interface UseSocketOptions {
-    query?: Record<string, any>;
-    transports?: string[];
-    reconnectionAttempts?: number;
-}
+'use client';
 
 /**
- * Custom hook to manage Socket.io connection.
- * Only connects when custom server is running (production or `npm run start`).
- * In dev mode (`next dev`), Socket.IO server is not available.
+ * Inert Socket Hook.
+ * Socket functionality has been disabled per user request.
  */
-export function useSocket(options: UseSocketOptions = {}) {
-    const [isConnected, setIsConnected] = useState(false);
-    const socketRef = useRef<Socket | null>(null);
-
-    const queryStr = JSON.stringify(options.query || {});
-    const transportsStr = JSON.stringify(options.transports || ['websocket', 'polling']);
-
-    useEffect(() => {
-        const socket = io({
-            query: options.query,
-            transports: options.transports || ['websocket', 'polling'],
-            reconnectionAttempts: options.reconnectionAttempts || 3,
-            timeout: 5000,
-        });
-
-        socketRef.current = socket;
-
-        socket.on('connect', () => {
-            setIsConnected(true);
-            console.log('[Socket] Connected:', socket.id);
-        });
-
-        socket.on('disconnect', () => {
-            setIsConnected(false);
-            console.log('[Socket] Disconnected');
-        });
-
-        socket.on('connect_error', (error) => {
-            console.error('[Socket] Connection Error:', error.message);
-        });
-
-        return () => {
-            if (socket) {
-                socket.disconnect();
-                socketRef.current = null;
-            }
-        };
-    }, [queryStr, transportsStr, options.reconnectionAttempts]);
-
+export function useSocket() {
     return {
-        socket: socketRef.current,
-        isConnected,
+        socket: null,
+        isConnected: false,
     };
 }

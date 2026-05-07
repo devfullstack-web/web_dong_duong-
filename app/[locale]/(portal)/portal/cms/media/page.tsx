@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import {
     Upload,
@@ -19,8 +19,10 @@ import { API_ROUTES } from '@/constants/routes';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
+import { TablePagination } from '@/components/portal/table-pagination';
 import Lightbox from '@/components/shared/Lightbox';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useDebounce } from '@/hooks/use-debounce';
 
 interface UploadedImage {
     filename: string;
@@ -32,6 +34,7 @@ interface UploadedImage {
 export default function MediaManagementPage() {
     const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
+    const debouncedSearch = useDebounce(searchTerm, 500);
     const [isUploading, setIsUploading] = useState(false);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -40,22 +43,42 @@ export default function MediaManagementPage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(24);
+
     // Lightbox state
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Query for images list
-    const { data: imagesData, isLoading } = useQuery<{ success: boolean; data: UploadedImage[] }>({
-        queryKey: ['media-images'],
+    // Reset to page 1 when search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch]);
+
+    // Query for images list — server-side pagination
+    const { data: imagesData, isLoading } = useQuery<{
+        success: boolean;
+        data: UploadedImage[];
+        meta: { total: number; page: number; limit: number };
+    }>({
+        queryKey: ['media-images', { page: currentPage, limit: pageSize, search: debouncedSearch }],
         queryFn: async () => {
-            const response = await $api.get(API_ROUTES.UPLOAD);
+            const response = await $api.get(API_ROUTES.UPLOAD, {
+                params: {
+                    page: currentPage,
+                    limit: pageSize,
+                    search: debouncedSearch || undefined,
+                },
+            });
             return response.data;
         },
     });
 
     const images = imagesData?.data || [];
+    const totalItems = imagesData?.meta?.total || 0;
 
     // Delete mutation
     const deleteMutation = useMutation({
@@ -143,10 +166,6 @@ export default function MediaManagementPage() {
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     };
 
-    const filteredImages = images.filter((img) =>
-        img.filename.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-
     const openLightbox = (index: number) => {
         setCurrentImageIndex(index);
         setLightboxOpen(true);
@@ -189,7 +208,7 @@ export default function MediaManagementPage() {
                         <div className="flex items-center gap-2">
                             <HardDrive size={16} />
                             <span className="text-[10px] font-black uppercase">
-                                {images.length} FILE
+                                {totalItems} FILE
                             </span>
                         </div>
                     </div>
@@ -204,9 +223,9 @@ export default function MediaManagementPage() {
                                 className="animate-spin text-brand-primary opacity-20"
                             />
                         </div>
-                    ) : filteredImages.length > 0 ? (
+                    ) : images.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
-                            {filteredImages.map((image, index) => (
+                            {images.map((image, index) => (
                                 <div
                                     key={image.filename}
                                     className="group relative aspect-square bg-slate-50 border border-slate-100 overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1"
@@ -270,6 +289,22 @@ export default function MediaManagementPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Pagination Footer */}
+                {!isLoading && totalItems > 0 && (
+                    <TablePagination
+                        currentPage={currentPage}
+                        totalItems={totalItems}
+                        pageSize={pageSize}
+                        onPageChange={setCurrentPage}
+                        onPageSizeChange={(size) => {
+                            setPageSize(size);
+                            setCurrentPage(1);
+                        }}
+                        pageSizeOptions={[12, 24, 48, 96]}
+                        itemLabel="ảnh"
+                    />
+                )}
             </div>
 
             {/* Upload Dialog */}
@@ -401,7 +436,7 @@ export default function MediaManagementPage() {
 
             {/* Lightbox for Preview */}
             <Lightbox
-                images={filteredImages.map((img) => img.url)}
+                images={images.map((img) => img.url)}
                 currentIndex={currentImageIndex}
                 isOpen={lightboxOpen}
                 onClose={() => setLightboxOpen(false)}

@@ -13,10 +13,15 @@ interface UploadedFile {
     createdAt: Date;
 }
 
-// GET /api/upload - List all uploaded images (recursively)
+// GET /api/upload - List uploaded images with pagination & search
 export const GET = withAuth(
-    async () => {
+    async (request: NextRequest) => {
         try {
+            const { searchParams } = new URL(request.url);
+            const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+            const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '24', 10)));
+            const search = searchParams.get('search')?.toLowerCase() || '';
+
             const baseDir = path.join(process.cwd(), 'public', 'uploads');
             await mkdir(baseDir, { recursive: true });
 
@@ -65,12 +70,27 @@ export const GET = withAuth(
                 return results;
             };
 
-            const images = await getAllFiles(baseDir);
+            let images = await getAllFiles(baseDir);
             images.sort(
                 (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
             );
 
-            return apiResponse(images);
+            // Filter by search term
+            if (search) {
+                images = images.filter((img) =>
+                    img.filename.toLowerCase().includes(search),
+                );
+            }
+
+            const total = images.length;
+
+            // Paginate
+            const startIndex = (page - 1) * limit;
+            const paginatedImages = images.slice(startIndex, startIndex + limit);
+
+            return apiResponse(paginatedImages, {
+                meta: { total, page, limit },
+            });
         } catch (error) {
             console.error('Error listing uploads:', error);
             return apiError('Failed to list uploads', 500);

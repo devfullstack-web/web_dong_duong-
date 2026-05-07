@@ -13,7 +13,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import $api from '@/utils/axios';
-import { useSocket } from '@/hooks/use-socket';
 import Link from 'next/link';
 import { API_ROUTES, PORTAL_ROUTES } from '@/constants/routes';
 import { cn } from '@/lib/utils';
@@ -34,9 +33,6 @@ export function NotificationDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
 
-    const { socket } = useSocket({
-        query: { isAdmin: 'true' },
-    });
 
     useEffect(() => {
         setIsMounted(true);
@@ -58,23 +54,6 @@ export function NotificationDropdown() {
         fetchNotifications();
     }, [fetchNotifications]);
 
-    useEffect(() => {
-        if (!socket) return;
-
-        socket.on('new-notification', (notification: Notification) => {
-            setNotifications((prev) => [notification, ...prev].slice(0, 20));
-            setUnreadCount((prev) => prev + 1);
-
-            if (typeof window !== 'undefined') {
-                const audio = new Audio('/sounds/notification.mp3');
-                audio.play().catch(() => {});
-            }
-        });
-
-        return () => {
-            socket.off('new-notification');
-        };
-    }, [socket]);
 
     const markAsRead = async (id: string) => {
         try {
