@@ -2,19 +2,17 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import { MapPin, ExternalLink, MoveRight, FolderOpen } from 'lucide-react';
-import { SITE_ROUTES, API_ROUTES } from '@/constants/routes';
+import { MapPin, FolderOpen } from 'lucide-react';
+import { API_ROUTES } from '@/constants/routes';
 import $api from '@/utils/axios';
 import { cn } from '@/lib/utils';
 import {
     Pagination,
     PaginationContent,
     PaginationItem,
-    PaginationLink,
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
@@ -31,13 +29,12 @@ interface Project {
     status: string;
 }
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 12;
 
 export default function ProjectsPage() {
     const t = useTranslations('Projects');
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Fetch projects using react-query
     const { data: projectsData, isLoading } = useQuery<{
         data: Project[];
         meta: { total: number; totalPages: number };
@@ -62,7 +59,6 @@ export default function ProjectsPage() {
 
     const projects = projectsData?.data || [];
     const totalPages = projectsData?.meta?.totalPages || 1;
-    const total = projectsData?.meta?.total || 0;
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -72,118 +68,76 @@ export default function ProjectsPage() {
     if (isLoading && projects.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
             </div>
         );
     }
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Hero Section */}
-            <section className="relative pt-40 pb-20 bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-30">
-                    <Image
-                        src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
-                        alt="Projects Background"
-                        fill
-                        unoptimized
-                        className="object-cover brightness-110"
-                        priority
-                    />
-                    {/* <div className="absolute inset-0 bg-linear-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div> */}
-                </div>
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
-                <div className="container relative z-10 mx-auto px-4 lg:px-8">
-                    <div className="max-w-3xl space-y-6">
-                        <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
-                            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                            {t('hero.badge')}
-                        </div>
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
-                            {t('hero.title')} <br />
-                            <span className="text-brand-accent">{t('hero.titleAccent')}</span>
-                        </h1>
-                        <p className="text-xl text-slate-400 font-medium max-w-xl">
-                            {t('hero.desc', { total: total > 0 ? total : 50 })}
-                        </p>
-                    </div>
+            {/* Ultra Clean Title Section with Brand Color */}
+            <section className="pt-48 pb-16 bg-brand-primary">
+                <div className="container mx-auto px-4 lg:px-8">
+                    <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight uppercase leading-none">
+                        {t('hero.title')} <span className="text-brand-accent">{t('hero.titleAccent')}</span>
+                    </h1>
                 </div>
             </section>
 
-            {/* Grid Section */}
-            <section className="py-12 bg-slate-50">
+            {/* Compact Grid Section */}
+            <section className="py-12 bg-white">
                 <div className="container mx-auto px-4 lg:px-8">
                     {projects.length === 0 ? (
-                        <div className="text-center py-20 border-2 border-dashed border-slate-200 bg-white rounded-xl">
-                            <FolderOpen size={64} className="mx-auto mb-6 text-slate-300" />
-                            <h3 className="text-xl font-black text-slate-900 uppercase">
+                        <div className="text-center py-20 border border-dashed border-slate-200 rounded-lg">
+                            <FolderOpen size={48} className="mx-auto mb-4 text-slate-200" />
+                            <h3 className="text-sm font-black text-slate-400 uppercase">
                                 {t('empty.title')}
                             </h3>
-                            <p className="text-muted-foreground font-medium">
-                                {t('empty.desc')}
-                            </p>
                         </div>
                     ) : (
                     <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {projects.map((project, i) => (
                             <motion.div
                                 key={project.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0 }}
+                                whileInView={{ opacity: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.05 }}
-                                className="group relative bg-white overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-500 border border-slate-100"
+                                className="group flex flex-col space-y-4"
                             >
-                                <div className="relative aspect-4/3 w-full overflow-hidden">
+                                <LocalizedLink href={`/du-an/${project.slug}`} className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-slate-100">
                                     <Image
-                                        src={
-                                            project.image_url ||
-                                            'https://saigonvalve.vn/uploads/files/2025/07/16/thumbs/z6809258125215_0bfd24b1d2a12247ce2fe99f8bc81598-306x234-5.jpg'
-                                        }
+                                        src={project.image_url || 'https://saigonvalve.vn/uploads/files/2025/07/16/thumbs/z6809258125215_0bfd24b1d2a12247ce2fe99f8bc81598-306x234-5.jpg'}
                                         alt={project.name}
                                         fill
                                         unoptimized
-                                        className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                                     />
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                </div>
+                                </LocalizedLink>
 
-                                <div className="p-6 grow flex flex-col justify-between space-y-4">
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-brand-primary">
-                                            <span>{project.category || t('grid.defaultCategory')}</span>
-                                            <span className="text-muted-foreground">
-                                                {project.start_date
-                                                    ? new Date(
-                                                          project.start_date,
-                                                      ).toLocaleDateString('vi-VN')
-                                                    : ''}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
-                                            {project.name}
-                                        </h3>
-                                        <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
-                                            <MapPin size={12} className="text-brand-primary" />
-                                            {project.client_name || t('grid.defaultLocation')}
-                                        </div>
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
+                                        <span>{project.category || t('grid.defaultCategory')}</span>
+                                        <span>{project.start_date ? new Date(project.start_date).getFullYear() : ''}</span>
                                     </div>
-
-                                    <LocalizedLink
-                                        href={`/du-an/${project.slug}`}
-                                        className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary transition-colors pt-2 border-t border-slate-50"
-                                    >
-                                        {t('grid.viewDetail')} <ExternalLink size={12} />
-                                    </LocalizedLink>
+                                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                                        <LocalizedLink href={`/du-an/${project.slug}`}>
+                                            {project.name}
+                                        </LocalizedLink>
+                                    </h3>
+                                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase">
+                                        <MapPin size={10} />
+                                        {project.client_name || t('grid.defaultLocation')}
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
                     </div>
 
-                    {/* Pagination */}
+                    {/* Simple Pagination */}
                     {totalPages > 1 && (
-                        <div className="pt-12">
+                        <div className="pt-12 flex justify-center">
                             <Pagination>
                                 <PaginationContent>
                                     <PaginationItem>
@@ -191,48 +145,22 @@ export default function ProjectsPage() {
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                if (currentPage > 1)
-                                                    handlePageChange(currentPage - 1);
+                                                if (currentPage > 1) handlePageChange(currentPage - 1);
                                             }}
-                                            className={cn(
-                                                'text-[9px] font-black uppercase tracking-widest',
-                                                currentPage === 1 &&
-                                                    'pointer-events-none opacity-50',
-                                            )}
+                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === 1 && 'opacity-30 pointer-events-none')}
                                         />
                                     </PaginationItem>
-
-                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                                        (page) => (
-                                            <PaginationItem key={page}>
-                                                <PaginationLink
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handlePageChange(page);
-                                                    }}
-                                                    isActive={currentPage === page}
-                                                    className="text-[11px] font-black"
-                                                >
-                                                    {page}
-                                                </PaginationLink>
-                                            </PaginationItem>
-                                        ),
-                                    )}
-
+                                    <PaginationItem>
+                                        <span className="text-[10px] font-black px-4">{currentPage} / {totalPages}</span>
+                                    </PaginationItem>
                                     <PaginationItem>
                                         <PaginationNext
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                if (currentPage < totalPages)
-                                                    handlePageChange(currentPage + 1);
+                                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
                                             }}
-                                            className={cn(
-                                                'text-[9px] font-black uppercase tracking-widest',
-                                                currentPage === totalPages &&
-                                                    'pointer-events-none opacity-50',
-                                            )}
+                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === totalPages && 'opacity-30 pointer-events-none')}
                                         />
                                     </PaginationItem>
                                 </PaginationContent>

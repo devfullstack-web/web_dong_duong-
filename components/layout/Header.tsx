@@ -95,19 +95,19 @@ export default function Header() {
       className={cn(
         "fixed top-0 lg:top-8 left-0 right-0 z-50 transition-all duration-500",
         isScrolled 
-          ? "lg:top-0 bg-white dark:bg-background shadow-md py-3" 
-          : "bg-white dark:bg-background border-b border-border py-5"
+          ? "lg:top-0 bg-white dark:bg-background shadow-md py-2" 
+          : "bg-white dark:bg-background border-b border-border py-4"
       )}
     >
       <div className="container mx-auto px-4 lg:px-8">
         <nav className="flex items-center justify-between">
           
           {/* Logo */}
-          <Link href={SITE_ROUTES.HOME} className="relative h-14 w-40 xl:w-48 shrink-0 group">
+          <Link href={SITE_ROUTES.HOME} className="relative h-12 w-40 xl:w-44 shrink-0 group flex items-center">
             <img
               src="/images/logo/logo.png"
               alt={t('logoAlt')}
-              className="object-contain group-hover:scale-105 transition-transform h-12 xl:h-16 w-auto"
+              className="object-contain group-hover:scale-105 transition-transform h-10 xl:h-12 w-auto"
             />
           </Link>
 

@@ -5,21 +5,16 @@ import {
     ShieldCheck,
     Target,
     Users,
-    Award,
     MoveRight,
     CheckCircle2,
-    History,
-    Globe2,
-    Briefcase,
     Rocket,
     Eye,
-    Cpu,
+    Globe2,
+    Mail,
+    Phone,
     Waves,
     Factory,
     Building2,
-    Mail,
-    Phone,
-    Link2,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -30,45 +25,49 @@ import { PARTNERS } from '@/components/home/Partners';
 export default function AboutPage() {
     const t = useTranslations('About');
     return (
-        <div className="flex flex-col min-h-screen bg-white pt-24">
-            {/* Hero Section */}
-            <section className="relative h-[60vh] min-h-[550px] w-full bg-gradient-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
-                <Image
-                    src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
-                    alt="Introduce Background"
-                    fill
-                    unoptimized
-                    className="object-cover opacity-40 brightness-110"
-                    priority
-                />
-                {/* <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/60 via-brand-secondary/40 to-brand-primary/90"></div> */}
-                <div className="container relative z-10 mx-auto px-4 lg:px-8 h-full flex flex-col justify-center">
-                    <div className="max-w-4xl space-y-8">
-                        <motion.div
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md"
-                        >
-                            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                            {t('hero.badge')}
-                        </motion.div>
+        <div className="flex flex-col min-h-screen bg-white">
+            {/* Page Title Section - Clean White */}
+            <section className="pt-40 pb-12 bg-white">
+                <div className="container mx-auto px-4 lg:px-8">
+                    <div className="max-w-4xl space-y-6">
                         <motion.h1
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white tracking-tighter uppercase drop-shadow-lg"
+                            className="text-4xl sm:text-5xl lg:text-6xl font-black text-brand-primary tracking-tight uppercase leading-none"
                         >
                             {t('hero.title')} <br />
-                            <span className="text-brand-accent mt-1 inline-block">{t('hero.titleAccent')}</span>
+                            <span className="text-brand-secondary mt-1 inline-block">{t('hero.titleAccent')}</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.3 }}
-                            className="text-base sm:text-lg text-slate-200 font-medium max-w-2xl leading-relaxed italic border-l-4 border-brand-accent pl-8"
+                            className="text-lg text-slate-500 font-medium max-w-2xl leading-relaxed italic border-l-4 border-brand-primary pl-6"
                         >
                             {t('hero.desc')}
                         </motion.p>
                     </div>
+                </div>
+            </section>
+
+            {/* Clear Brand Banner - No Text Overlay */}
+            <section className="w-full px-4 lg:px-8 pb-16">
+                <div className="container mx-auto">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8 }}
+                        className="relative aspect-21/9 w-full overflow-hidden rounded-3xl shadow-2xl"
+                    >
+                        <Image
+                            src="/images/banners/481264911_591002697270931_5782673037351412801_n.jpg"
+                            alt="Sài Gòn Valve Brand Banner"
+                            fill
+                            unoptimized
+                            className="object-cover"
+                            priority
+                        />
+                    </motion.div>
                 </div>
             </section>
 
@@ -134,7 +133,6 @@ export default function AboutPage() {
                                     className="object-cover transition-transform duration-1000 group-hover:scale-110"
                                 />
                             </div>
-                            {/* Decorative Elements */}
                             <div className="absolute -bottom-10 -right-10 h-40 w-40 border-8 border-brand-primary/10 -z-10"></div>
                             <div className="absolute -top-10 -left-10 h-64 w-64 bg-brand-primary/5 rounded-full blur-3xl -z-10"></div>
                         </div>
@@ -196,7 +194,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Business Pillars - Products */}
+            {/* Business Pillars */}
             <section className="py-24 bg-white overflow-hidden">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row items-end justify-between gap-8 mb-20">
@@ -227,11 +225,6 @@ export default function AboutPage() {
                             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
                                 {t('pillars.items.0.desc')}
                             </p>
-                            <div className="pt-4 border-t border-slate-50">
-                                <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest">
-                                    {t('pillars.items.0.footer')}
-                                </div>
-                            </div>
                         </div>
 
                         <div className="bg-white p-16 space-y-8 hover:z-10 hover:shadow-2xl transition-all group">
@@ -246,11 +239,6 @@ export default function AboutPage() {
                             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
                                 {t('pillars.items.1.desc')}
                             </p>
-                            <div className="pt-4 border-t border-slate-50">
-                                <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest">
-                                    {t('pillars.items.1.footer')}
-                                </div>
-                            </div>
                         </div>
 
                         <div className="bg-white p-16 space-y-8 hover:z-10 hover:shadow-2xl transition-all group">
@@ -265,11 +253,6 @@ export default function AboutPage() {
                             <p className="text-sm text-muted-foreground font-medium leading-relaxed">
                                 {t('pillars.items.2.desc')}
                             </p>
-                            <div className="pt-4 border-t border-slate-50">
-                                <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest">
-                                    {t('pillars.items.2.footer')}
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -334,52 +317,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* Applications Section */}
-            <section className="py-24 bg-white">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl font-black uppercase tracking-tight text-brand-secondary">
-                            {t('applications.title')}
-                        </h2>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        {[
-                            {
-                                icon: Waves,
-                                title: t('applications.items.0.title'),
-                                desc: t('applications.items.0.desc'),
-                            },
-                            {
-                                icon: Factory,
-                                title: t('applications.items.1.title'),
-                                desc: t('applications.items.1.desc'),
-                            },
-                            {
-                                icon: Building2,
-                                title: t('applications.items.2.title'),
-                                desc: t('applications.items.2.desc'),
-                            },
-                        ].map((app, i) => (
-                            <div
-                                key={i}
-                                className="flex flex-col items-center text-center space-y-4"
-                            >
-                                <div className="h-20 w-20 rounded-full bg-slate-50 flex items-center justify-center text-brand-primary">
-                                    <app.icon size={32} />
-                                </div>
-                                <h4 className="text-sm font-black uppercase text-slate-900">
-                                    {app.title}
-                                </h4>
-                                <p className="text-xs text-muted-foreground font-medium leading-relaxed max-w-xs">
-                                    {app.desc}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Certifications & Partners - Redesigned */}
+            {/* Certifications & Partners */}
             <section className="py-24 bg-slate-50">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
@@ -424,10 +362,7 @@ export default function AboutPage() {
                                             alt={partner.name}
                                             fill
                                             unoptimized
-                                            quality={100}
-                                            sizes="(max-width: 768px) 50vw, 25vw"
                                             className="object-contain"
-                                            style={{ imageRendering: 'auto' }}
                                         />
                                     </div>
                                 </div>
@@ -437,7 +372,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* CTA Section - Updated with Contact Details */}
+            {/* CTA Section */}
             <section className="py-24 bg-brand-primary relative overflow-hidden">
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-secondary/20 rounded-full blur-3xl"></div>
                 <div className="absolute top-10 left-20 w-48 h-48 bg-brand-accent/10 rounded-full blur-2xl"></div>

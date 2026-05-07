@@ -1,16 +1,14 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import { MapPin, Briefcase, Clock, ChevronRight, Users, ArrowRight } from 'lucide-react';
+import { MapPin, Briefcase, Users, ArrowRight } from 'lucide-react';
 import {
     Pagination,
     PaginationContent,
     PaginationItem,
-    PaginationLink,
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
@@ -34,12 +32,13 @@ interface JobPosting {
     created_at: string;
 }
 
+const ITEMS_PER_PAGE = 12;
+
 export default function RecruitmentHub() {
     const t = useTranslations('Careers');
     const [currentPage, setCurrentPage] = useState(1);
     const jobsListRef = useRef<HTMLDivElement>(null);
 
-    // Fetch jobs using react-query
     const { data: jobsData, isLoading } = useQuery<{
         data: JobPosting[];
         meta: { total: number; totalPages: number };
@@ -50,7 +49,7 @@ export default function RecruitmentHub() {
                 params: {
                     status: 'open',
                     page: currentPage,
-                    limit: 10,
+                    limit: ITEMS_PER_PAGE,
                 },
             });
             if (response.data.success) {
@@ -73,41 +72,24 @@ export default function RecruitmentHub() {
         }
     };
 
-    if (isLoading) {
+    if (isLoading && jobs.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
             </div>
         );
     }
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Hero Section */}
-            <section className="relative pt-40 pb-20 bg-linear-to-br from-brand-primary via-brand-secondary to-brand-primary overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-30">
-                    <Image
-                        src="/uploads/images/2026/01/19/1768814857344-hfho0c.png"
-                        alt="Recruitment Background"
-                        fill
-                        unoptimized
-                        className="object-cover brightness-110"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-linear-to-b from-brand-primary/70 via-brand-secondary/50 to-brand-primary/80"></div>
-                </div>
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
-                <div className="container relative z-10 mx-auto px-4 lg:px-8">
-                    <div className="max-w-3xl space-y-6">
-                        <div className="inline-flex items-center gap-3 border-brand-accent text-brand-accent border bg-brand-accent/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-md">
-                            <span className="h-1.5 w-1.5 rounded-full bg-brand-accent animate-pulse"></span>
-                            {t('hero.badge')}
-                        </div>
-                        <h1 className="text-4xl sm:text-5xl lg:text-5xl font-black text-white tracking-tight uppercase leading-[1.3] drop-shadow-lg">
-                            {t('hero.title')} <br />
-                            <span className="text-brand-accent">{t('hero.titleAccent')}</span>
+            {/* Ultra Clean Title Section with Brand Color */}
+            <section className="pt-48 pb-16 bg-brand-primary">
+                <div className="container mx-auto px-4 lg:px-8">
+                    <div className="max-w-3xl space-y-4">
+                        <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight uppercase leading-none">
+                            {t('hero.title')} <span className="text-brand-accent">{t('hero.titleAccent')}</span>
                         </h1>
-                        <p className="text-lg text-slate-300 font-medium max-w-xl">
+                        <p className="text-lg text-white/70 font-medium max-w-xl">
                             {t('hero.desc')}
                         </p>
                     </div>
@@ -115,72 +97,50 @@ export default function RecruitmentHub() {
             </section>
 
             {/* Jobs List */}
-            <section className="py-20 bg-slate-50" ref={jobsListRef}>
+            <section className="py-16 bg-white" ref={jobsListRef}>
                 <div className="container mx-auto px-4 lg:px-8">
-                    <div className="flex items-center justify-between mb-12">
-                        <div className="space-y-2">
-                            <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
-                                {t('list.title')}
-                            </h2>
-                            <p className="text-muted-foreground font-bold uppercase text-xs tracking-widest mt-2 border-l-4 border-brand-primary pl-4">
-                                {t('list.count', { total: jobs.length })}
-                            </p>
-                        </div>
-                    </div>
-
                     {jobs.length === 0 ? (
-                        <div className="text-center py-20 border-2 border-dashed border-slate-200 bg-white rounded-xl">
-                            <Users size={64} className="mx-auto mb-6 text-slate-300" />
-                            <h3 className="text-xl font-black text-slate-900 uppercase">
+                        <div className="text-center py-20 border border-dashed border-slate-200 rounded-lg">
+                            <Users size={48} className="mx-auto mb-4 text-slate-200" />
+                            <h3 className="text-sm font-black text-slate-400 uppercase">
                                 {t('empty.title')}
                             </h3>
-                            <p className="text-muted-foreground font-medium">
-                                {t('empty.desc')}
-                            </p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {jobs.map((job, i) => (
                                 <motion.div
                                     key={job.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
                                     viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
+                                    transition={{ delay: i * 0.05 }}
                                 >
                                     <LocalizedLink
                                         href={`/tuyen-dung/${job.slug}`}
-                                        className="group block bg-white border border-slate-100 p-8 hover:shadow-xl hover:border-brand-primary/20 transition-all duration-300"
+                                        className="group block bg-slate-50 border border-slate-100 p-8 rounded-2xl hover:bg-white hover:shadow-xl hover:border-brand-primary/20 transition-all duration-300"
                                     >
-                                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                                            <div className="space-y-4">
-                                                <div className="flex items-center gap-4">
-                                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary border-b-2 border-brand-primary pb-1">
-                                                        {job.department || t('list.defaultDepartment')}
-                                                    </span>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary">
+                                                    {job.department || t('list.defaultDepartment')}
+                                                </span>
+                                            </div>
+                                            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors">
+                                                {job.title}
+                                            </h3>
+                                            <div className="flex flex-wrap gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                                <div className="flex items-center gap-1.5">
+                                                    <MapPin size={12} />
+                                                    {job.location || t('list.defaultLocation')}
                                                 </div>
-                                                <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors">
-                                                    {job.title}
-                                                </h3>
-                                                <div className="flex flex-wrap gap-4 text-[11px] font-bold text-slate-500 uppercase">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <MapPin size={14} className="text-brand-primary" />
-                                                        {job.location || t('list.defaultLocation')}
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Briefcase size={14} className="text-brand-primary" />
-                                                        {t(`employmentTypes.${job.employment_type?.toLowerCase() || 'full_time'}`)}
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Clock size={14} className="text-brand-primary" />
-                                                        {t('list.deadlinePrefix')} {job.deadline || 'ASAP'}
-                                                    </div>
+                                                <div className="flex items-center gap-1.5">
+                                                    <Briefcase size={12} />
+                                                    {t(`employmentTypes.${job.employment_type?.toLowerCase() || 'full_time'}`)}
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-4">
-                                                <div className="inline-flex items-center gap-2 bg-slate-900 text-white px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-brand-primary transition-all shadow-lg shadow-slate-200">
-                                                    {t('list.viewDetail')} <ArrowRight size={14} />
-                                                </div>
+                                            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary">
+                                                {t('list.viewDetail')} <ArrowRight size={14} />
                                             </div>
                                         </div>
                                     </LocalizedLink>
@@ -191,7 +151,7 @@ export default function RecruitmentHub() {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="mt-16 pt-10 border-t border-slate-200">
+                        <div className="mt-12 flex justify-center">
                             <Pagination>
                                 <PaginationContent>
                                     <PaginationItem>
@@ -199,45 +159,22 @@ export default function RecruitmentHub() {
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                if (currentPage > 1)
-                                                    handlePageChange(currentPage - 1);
+                                                if (currentPage > 1) handlePageChange(currentPage - 1);
                                             }}
-                                            className={cn(
-                                                currentPage === 1 &&
-                                                    'pointer-events-none opacity-50',
-                                            )}
+                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === 1 && 'opacity-30 pointer-events-none')}
                                         />
                                     </PaginationItem>
-
-                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                                        (page) => (
-                                            <PaginationItem key={page}>
-                                                <PaginationLink
-                                                    href="#"
-                                                    isActive={currentPage === page}
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        handlePageChange(page);
-                                                    }}
-                                                >
-                                                    {page}
-                                                </PaginationLink>
-                                            </PaginationItem>
-                                        ),
-                                    )}
-
+                                    <PaginationItem>
+                                        <span className="text-[10px] font-black px-4">{currentPage} / {totalPages}</span>
+                                    </PaginationItem>
                                     <PaginationItem>
                                         <PaginationNext
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                if (currentPage < totalPages)
-                                                    handlePageChange(currentPage + 1);
+                                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
                                             }}
-                                            className={cn(
-                                                currentPage === totalPages &&
-                                                    'pointer-events-none opacity-50',
-                                            )}
+                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === totalPages && 'opacity-30 pointer-events-none')}
                                         />
                                     </PaginationItem>
                                 </PaginationContent>
