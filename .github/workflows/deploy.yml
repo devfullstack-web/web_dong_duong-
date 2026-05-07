@@ -29,7 +29,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: NEXT_DISABLE_ESLINT=1 npx pnpm build
+        run: NEXT_DISABLE_ESLINT=1 pnpm build
 
   deploy:
     runs-on: ubuntu-latest
