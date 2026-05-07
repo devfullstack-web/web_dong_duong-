@@ -62,13 +62,6 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
         permission: MODULE_CODES.COMMENTS,
     },
     {
-        code: MODULE_CODES.CHAT,
-        name: 'Hỗ trợ trực tuyến',
-        icon: 'MessageCircle',
-        route: PORTAL_ROUTES.cms.chat,
-        permission: MODULE_CODES.CHAT,
-    },
-    {
         code: MODULE_CODES.MEDIA,
         name: 'Thư viện Media',
         icon: 'Images',

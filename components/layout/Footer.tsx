@@ -42,10 +42,16 @@ export default function Footer() {
                             {t('slogan')}
                         </p>
                         <div className="flex gap-3">
-                            {[Facebook, Linkedin, Youtube].map((Icon, i) => (
+                            {[
+                                { Icon: Facebook, href: COMPANY_INFO.social.facebook },
+                                { Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
+                                { Icon: Youtube, href: COMPANY_INFO.social.youtube },
+                            ].map(({ Icon, href }, i) => (
                                 <a
                                     key={i}
-                                    href="#"
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10 hover:bg-brand-accent hover:border-brand-accent transition-all"
                                 >
                                     <Icon size={14} />
@@ -105,10 +111,10 @@ export default function Footer() {
                                     size={16}
                                 />
                                 <a
-                                    href={`tel:${COMPANY_INFO.phoneRaw}`}
+                                    href={`tel:${COMPANY_INFO.hotlineRaw}`}
                                     className="text-[11px] text-slate-400 font-black tracking-widest hover:text-white transition-colors"
                                 >
-                                    {COMPANY_INFO.phone}
+                                    {COMPANY_INFO.hotline}
                                 </a>
                             </li>
                             <li className="flex gap-3 items-center group">

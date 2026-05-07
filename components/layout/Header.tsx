@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/navigation-menu";
 
 import { SITE_ROUTES } from "@/constants/routes";
+import { COMPANY_INFO } from "@/constants/site-info";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -262,18 +263,18 @@ export default function Header() {
               ))}
               
               <div className="pt-8 border-t border-slate-100 dark:border-white/10 space-y-6">
-                 <div className="flex items-center gap-6 text-muted-foreground group">
-                    <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm">
+                 <a href={`tel:${COMPANY_INFO.hotlineRaw}`} className="flex items-center gap-6 text-muted-foreground group">
+                    <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm transition-colors group-hover:bg-brand-primary group-hover:text-white">
                        <Phone size={20} />
                     </div>
-                    <span className="font-black text-sm tracking-widest">{t('phone')}</span>
-                 </div>
-                 <div className="flex items-center gap-6 text-muted-foreground group">
-                    <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm">
+                    <span className="font-black text-sm tracking-widest">{COMPANY_INFO.hotline}</span>
+                 </a>
+                 <a href={`mailto:${COMPANY_INFO.email}`} className="flex items-center gap-6 text-muted-foreground group">
+                    <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm transition-colors group-hover:bg-brand-primary group-hover:text-white">
                        <Mail size={20} />
                     </div>
-                    <span className="font-black text-sm tracking-widest uppercase">{t('email')}</span>
-                 </div>
+                    <span className="font-black text-sm tracking-widest uppercase">{COMPANY_INFO.email}</span>
+                 </a>
               </div>
             </div>
           </motion.div>

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import TopBar from '@/components/layout/TopBar';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import ChatWidget from '@/components/portal/ChatWidget';
+import FloatingContact from '@/components/portal/FloatingContact';
 
 export const metadata: Metadata = {
     title: {
@@ -24,7 +24,7 @@ export default function MainLayout({
             <Header />
             <main className="relative flex min-h-screen flex-col">{children}</main>
             <Footer />
-            <ChatWidget />
+            <FloatingContact />
         </>
     );
 }

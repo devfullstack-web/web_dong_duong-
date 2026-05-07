@@ -28,10 +28,10 @@ export default function TopBar() {
                         <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest leading-none">
                             <Phone size={12} className="text-brand-accent" />
                             <a
-                                href={`tel:${COMPANY_INFO.phoneRaw}`}
+                                href={`tel:${COMPANY_INFO.hotlineRaw}`}
                                 className="hover:text-white transition-colors"
                             >
-                                {COMPANY_INFO.phone}
+                                {COMPANY_INFO.hotline}
                             </a>
                         </div>
                         <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest leading-none">
@@ -56,18 +56,21 @@ export default function TopBar() {
                         <div className="flex items-center gap-4">
                             <Link
                                 href={COMPANY_INFO.social.facebook}
+                                target="_blank"
                                 className="hover:text-brand-accent transition-colors"
                             >
                                 <Facebook size={14} />
                             </Link>
                             <Link
                                 href={COMPANY_INFO.social.linkedin}
+                                target="_blank"
                                 className="hover:text-brand-accent transition-colors"
                             >
                                 <Linkedin size={14} />
                             </Link>
                             <Link
                                 href={COMPANY_INFO.social.youtube}
+                                target="_blank"
                                 className="hover:text-brand-accent transition-colors"
                             >
                                 <Youtube size={14} />

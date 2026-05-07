@@ -11,12 +11,12 @@ export const COMPANY_INFO = {
     address: 'Số 124/16-18 Võ Văn Hát, Long Trường, TP. Thủ Đức, TP. Hồ Chí Minh',
 
     // Liên hệ
-    phone: '(028) 3535 8739',
-    phoneRaw: '02835358739', // Dùng cho href tel:
-    hotline: '0901 234 567',
-    hotlineRaw: '0901234567',
+    phone: process.env.NEXT_PUBLIC_COMPANY_HOTLINE || '090 695 54 59',
+    phoneRaw: process.env.NEXT_PUBLIC_COMPANY_HOTLINE_RAW || '0906955459', // Dùng cho href tel:
+    hotline: process.env.NEXT_PUBLIC_COMPANY_HOTLINE || '090 695 54 59',
+    hotlineRaw: process.env.NEXT_PUBLIC_COMPANY_HOTLINE_RAW || '0906955459',
 
-    email: 'info@saigonvalve.vn',
+    email: process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'info@saigonvalve.vn',
     supportEmail: 'support@saigonvalve.vn',
 
     // Website
@@ -24,10 +24,10 @@ export const COMPANY_INFO = {
 
     // Mạng xã hội
     social: {
-        facebook: 'https://www.facebook.com/saigon.valve.2024',
+        facebook: process.env.NEXT_PUBLIC_COMPANY_FACEBOOK || 'https://www.facebook.com/saigon.valve.2024',
         linkedin: 'https://linkedin.com/company/saigonvalve',
         youtube: 'https://youtube.com/@saigonvalve',
-        zalo: 'https://zalo.me/saigonvalve',
+        zalo: process.env.NEXT_PUBLIC_COMPANY_ZALO || 'https://zalo.me/0906955459',
     },
 
     // Giờ làm việc
