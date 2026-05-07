@@ -27,25 +27,17 @@ export default function AboutPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Page Title Section - Clean White */}
-            <section className="pt-40 pb-12 bg-white">
+            <section className="pt-40 pb-6 bg-white">
                 <div className="container mx-auto px-4 lg:px-8">
-                    <div className="max-w-4xl space-y-6">
+                    <div className="max-w-full">
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="text-4xl sm:text-5xl lg:text-6xl font-black text-brand-primary tracking-tight uppercase leading-none"
+                            className="text-lg sm:text-2xl lg:text-3xl font-black text-brand-primary tracking-tight uppercase leading-none"
                         >
-                            {t('hero.title')} <br />
-                            <span className="text-brand-secondary mt-1 inline-block">{t('hero.titleAccent')}</span>
+                            {t('hero.title')}{' '}
+                            <span className="text-brand-secondary">{t('hero.titleAccent')}</span>
                         </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                            className="text-lg text-slate-500 font-medium max-w-2xl leading-relaxed italic border-l-4 border-brand-primary pl-6"
-                        >
-                            {t('hero.desc')}
-                        </motion.p>
                     </div>
                 </div>
             </section>
@@ -57,7 +49,7 @@ export default function AboutPage() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8 }}
-                        className="relative aspect-21/9 w-full overflow-hidden rounded-3xl shadow-2xl"
+                        className="relative aspect-21/9 w-full overflow-hidden"
                     >
                         <Image
                             src="/images/banners/481264911_591002697270931_5782673037351412801_n.jpg"
