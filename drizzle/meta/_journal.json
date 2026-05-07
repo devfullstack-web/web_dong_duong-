@@ -15,6 +15,13 @@
       "when": 1768451188703,
       "tag": "0001_smooth_venom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1778049447660,
+      "tag": "0002_chilly_marvex",
+      "breakpoints": true
     }
   ]
 }

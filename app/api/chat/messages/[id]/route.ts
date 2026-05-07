@@ -1,26 +1,39 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { db } from '@/db';
 import { chatMessages } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { chatStreamManager } from '@/services/chat-stream';
+import { withAuth, hasPermission } from '@/middlewares/middleware';
+import { PERMISSIONS } from '@/constants/rbac';
+import { apiResponse, apiError } from '@/utils/api-response';
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const DELETE = withAuth(async (_req: NextRequest, session, context) => {
     try {
-        const { id } = await params;
+        const { id } = await (context as any).params;
 
-        // We'll use soft delete (is_deleted flag) so it shows "(Tin nhắn đã bị gỡ)" in UI
+        const canManageChat =
+            hasPermission(session.user, PERMISSIONS.CHAT_VIEW) ||
+            hasPermission(session.user, PERMISSIONS.CHAT_MANAGEMENT_VIEW);
+
+        if (!canManageChat) {
+            return apiError('Forbidden - Required chat permission', 403);
+        }
+
         const [updatedMessage] = await db
             .update(chatMessages)
             .set({ is_deleted: true, content: 'Tin nhắn đã được gỡ' })
             .where(eq(chatMessages.id, id))
             .returning();
 
-        // Broadcast message update to notify clients to update UI
+        if (!updatedMessage) {
+            return apiError('Message not found', 404);
+        }
+
         chatStreamManager.broadcastMessageUpdate(updatedMessage);
 
-        return NextResponse.json(updatedMessage);
+        return apiResponse(updatedMessage);
     } catch (error) {
         console.error('Delete Message Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return apiError('Internal Server Error', 500);
     }
-}
+});
