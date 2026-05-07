@@ -5,15 +5,14 @@ import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import {
-    ShieldCheck,
     ChevronRight,
     Download,
     CheckCircle2,
-    Globe2,
-    FileText,
     Warehouse,
     Truck,
     Maximize2,
+    FileText,
+    Settings2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SITE_ROUTES } from '@/constants/routes';
@@ -23,11 +22,9 @@ import {
     Carousel,
     CarouselContent,
     CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
 } from '@/components/ui/carousel';
 import { getLocalizedValue, getLocalizedArray } from '@/types/i18n';
-import type { LocalizedText, LocalizedArray, Locale } from '@/types/i18n';
+import type { Locale } from '@/types/i18n';
 
 interface ProductDetailClientProps {
     product: any;
@@ -39,11 +36,11 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
     const locale = useLocale() as Locale;
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [activeTab, setActiveTab] = useState<'description' | 'specs'>('specs');
 
     const allImages = useMemo(() => {
         if (!product) return [];
-        const main =
-            product.image_url;
+        const main = product.image_url;
         const gallery = Array.isArray(product.gallery) ? product.gallery : [];
         return [main, ...gallery];
     }, [product]);
@@ -53,23 +50,18 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
         setLightboxOpen(true);
     };
 
-    // Helper to render specs
     const renderSpecs = () => {
         if (!product.tech_specs) return null;
 
         if (Array.isArray(product.tech_specs)) {
-            // Comparison table format
             const headers = Object.keys(product.tech_specs[0]);
             return (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse bg-white shadow-sm ring-1 ring-slate-200">
+                <div className="overflow-x-auto border border-slate-100">
+                    <table className="w-full text-left border-collapse bg-white">
                         <thead>
                             <tr className="bg-slate-50">
                                 {headers.map((h, i) => (
-                                    <th
-                                        key={i}
-                                        className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground border-b border-slate-100"
-                                    >
+                                    <th key={i} className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
                                         {h}
                                     </th>
                                 ))}
@@ -77,15 +69,9 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         </thead>
                         <tbody>
                             {product.tech_specs.map((row: any, i: number) => (
-                                <tr
-                                    key={i}
-                                    className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors"
-                                >
+                                <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
                                     {headers.map((h, j) => (
-                                        <td
-                                            key={j}
-                                            className="px-4 py-3 text-sm font-medium text-slate-900"
-                                        >
+                                        <td key={j} className="px-4 py-3 text-xs font-bold text-slate-800">
                                             {row[h]}
                                         </td>
                                     ))}
@@ -96,234 +82,136 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                 </div>
             );
         } else {
-            // Standard Key-Value format
             const entries = Object.entries(product.tech_specs);
-            const shouldUseGrid = entries.length > 6;
-
-            if (shouldUseGrid) {
-                return (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {entries.map(([label, value], i) => (
-                            <div
-                                key={i}
-                                className="bg-white p-4 border border-slate-200 hover:border-brand-primary/30 transition-colors"
-                            >
-                                <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                                    {label}
-                                </div>
-                                <div className="text-sm font-semibold text-slate-900">
-                                    {String(value)}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                );
-            }
-
             return (
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse bg-white shadow-sm ring-1 ring-slate-200">
-                        <tbody>
-                            {entries.map(([label, value], i) => (
-                                <tr
-                                    key={i}
-                                    className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors"
-                                >
-                                    <td className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground w-1/3 bg-slate-50/50">
-                                        {label}
-                                    </td>
-                                    <td className="px-4 py-3 text-sm font-semibold text-slate-900">
-                                        {String(value)}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-slate-100 border border-slate-100">
+                    {entries.map(([label, value], i) => (
+                        <div key={i} className="bg-white p-5 flex flex-col space-y-1.5">
+                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{label}</span>
+                            <span className="text-xs font-bold text-slate-900 leading-tight">{String(value)}</span>
+                        </div>
+                    ))}
                 </div>
             );
         }
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-white pt-40">
+        <div className="flex flex-col min-h-screen bg-white pt-24 lg:pt-32">
             {/* Breadcrumbs */}
-            <div className="bg-slate-50 border-b border-slate-100 py-4">
+            <div className="bg-slate-50 border-y border-slate-100 py-3">
                 <div className="container mx-auto px-4 lg:px-8">
-                    <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                        <Link href={SITE_ROUTES.HOME} className="hover:text-brand-primary">
-                            {t('breadcrumb.home')}
-                        </Link>
-                        <ChevronRight size={14} />
-                        <Link href={SITE_ROUTES.PRODUCTS} className="hover:text-brand-primary">
-                            {t('breadcrumb.products')}
-                        </Link>
-                        <ChevronRight size={14} />
-                        <span className="text-brand-primary uppercase tracking-tighter">
-                            {getLocalizedValue(product.name_localized, locale) || product.name}
-                        </span>
+                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                        <Link href={SITE_ROUTES.HOME} className="hover:text-brand-primary">{t('breadcrumb.home')}</Link>
+                        <ChevronRight size={12} />
+                        <Link href={SITE_ROUTES.PRODUCTS} className="hover:text-brand-primary">{t('breadcrumb.products')}</Link>
+                        <ChevronRight size={12} />
+                        <span className="text-brand-primary">{getLocalizedValue(product.name_localized, locale) || product.name}</span>
                     </div>
                 </div>
             </div>
 
-            <section className="py-16 sm:py-24">
+            <section className="py-12 lg:py-16">
                 <div className="container mx-auto px-4 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-                        {/* Product Visual */}
-                        <div className="space-y-8">
-                            <div
-                                className="relative aspect-square bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center p-12 group cursor-zoom-in"
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 xl:gap-16">
+                        
+                        {/* Left: Product Visual */}
+                        <div className="lg:col-span-5 space-y-4">
+                            <div 
+                                className="relative aspect-square bg-slate-50 border border-slate-100 overflow-hidden flex items-center justify-center p-8 group cursor-zoom-in"
                                 onClick={() => openLightbox(0)}
                             >
                                 <Image
-                                    src={
-                                        product.image_url ||
-                                        'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
-                                    }
-                                    alt={getLocalizedValue(product.name_localized, locale) || product.name}
+                                    src={product.image_url || '/images/placeholder.png'}
+                                    alt={product.name}
                                     fill
                                     unoptimized
-                                    className="object-contain p-20 transition-transform duration-1000 group-hover:scale-110"
+                                    className="object-contain p-12 transition-transform duration-700 group-hover:scale-105"
                                 />
-                                <div className="absolute top-8 left-8">
-                                    <span className="bg-brand-primary px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white shadow-xl">
-                                        {t('badge')}
-                                    </span>
+                                <div className="absolute top-0 left-0 bg-brand-primary px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white">
+                                    {t('badge')}
                                 </div>
-
-                                {/* Zoom Hint */}
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <div className="bg-white/90 backdrop-blur-sm p-4 rounded-full text-slate-900 shadow-2xl">
-                                        <Maximize2 size={24} />
-                                    </div>
+                                <div className="absolute bottom-4 right-4 h-10 w-10 bg-white/80 backdrop-blur-md flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Maximize2 size={18} />
                                 </div>
                             </div>
-                            <div className="relative w-full max-w-full group">
-                                <Carousel
-                                    opts={{
-                                        align: 'start',
-                                        dragFree: true,
-                                    }}
-                                    className="w-full"
-                                >
-                                    <CarouselContent className="-ml-4 pb-4">
-                                        {allImages.length > 1 ? (
-                                            allImages.map((img: string, i: number) => (
-                                                <CarouselItem
-                                                    key={i}
-                                                    className="pl-4 basis-1/4 sm:basis-1/4 md:basis-1/5 lg:basis-1/4"
+                            
+                            {/* Thumbnails */}
+                            {allImages.length > 1 && (
+                                <Carousel className="w-full">
+                                    <CarouselContent className="-ml-2">
+                                        {allImages.map((img: string, i: number) => (
+                                            <CarouselItem key={i} className="pl-2 basis-1/5">
+                                                <div 
+                                                    className={cn(
+                                                        'relative aspect-square bg-slate-50 border p-1 cursor-pointer overflow-hidden transition-all',
+                                                        currentImageIndex === i ? 'border-brand-primary' : 'border-slate-100 opacity-60 hover:opacity-100'
+                                                    )}
+                                                    onClick={() => openLightbox(i)}
                                                 >
-                                                    <div
-                                                        className={cn(
-                                                            'relative aspect-square bg-slate-50 border border-slate-100 p-2 transition-all cursor-zoom-in overflow-hidden group/thumb',
-                                                            currentImageIndex === i
-                                                                ? 'border-brand-primary opacity-100 shadow-md'
-                                                                : 'opacity-60 hover:opacity-100',
-                                                        )}
-                                                        onClick={() => openLightbox(i)}
-                                                    >
-                                                        <Image
-                                                            src={img}
-                                                            alt={`Thumbnail ${i}`}
-                                                            fill
-                                                            unoptimized
-                                                            className="object-contain p-2 group-hover/thumb:scale-110 transition-transform"
-                                                        />
-                                                    </div>
-                                                </CarouselItem>
-                                            ))
-                                        ) : (
-                                            <CarouselItem className="pl-4 basis-1/4">
-                                                <div className="aspect-square bg-slate-50 border border-slate-100 p-4 opacity-100 shadow-inner">
-                                                    <Image
-                                                        src={
-                                                            product.image_url ||
-                                                            'https://via.placeholder.com/300?text=SGV'}
-                                                        alt="Thumb"
-                                                        width={100}
-                                                        height={100}
-                                                        unoptimized
-                                                        className="object-contain"
-                                                    />
+                                                    <Image src={img} alt="Thumb" fill unoptimized className="object-contain p-1" />
                                                 </div>
                                             </CarouselItem>
-                                        )}
+                                        ))}
                                     </CarouselContent>
-                                    {allImages.length > 4 && (
-                                        <>
-                                            <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden xl:flex" />
-                                            <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden xl:flex" />
-                                        </>
-                                    )}
                                 </Carousel>
-                            </div>
+                            )}
                         </div>
 
-                        {/* Product Info */}
-                        <div className="space-y-12">
-                            <div className="space-y-6">
-                                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-primary">
-                                    {getLocalizedValue(product.category_name_localized, locale) || product.category_name || product.category}
+                        {/* Right: Product Info */}
+                        <div className="lg:col-span-7 space-y-8">
+                            <div className="space-y-4">
+                                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary">
+                                    {getLocalizedValue(product.category_name_localized, locale) || product.category_name}
                                 </div>
-                                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tighter uppercase leading-none">
+                                <h1 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight uppercase leading-none">
                                     {getLocalizedValue(product.name_localized, locale) || product.name}
                                 </h1>
+                                <div className="h-1 w-16 bg-brand-primary"></div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-10 border-y border-slate-100">
-                                <div className="flex items-start gap-4">
-                                    <Warehouse className="text-brand-primary shrink-0" size={24} />
+                            <div className="grid grid-cols-2 gap-px bg-slate-100 border border-slate-100">
+                                <div className="bg-white p-4 flex items-center gap-4">
+                                    <Warehouse size={20} className="text-brand-primary shrink-0" />
                                     <div>
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                                            {t('status.label')}
-                                        </div>
-                                        <div className="text-sm font-bold text-slate-900 uppercase">
-                                            {product.availability || t('status.default')}
-                                        </div>
+                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('status.label')}</div>
+                                        <div className="text-xs font-bold text-slate-900 uppercase">{product.availability || t('status.default')}</div>
                                     </div>
                                 </div>
-                                <div className="flex items-start gap-4">
-                                    <Truck className="text-brand-primary shrink-0" size={24} />
+                                <div className="bg-white p-4 flex items-center gap-4">
+                                    <Truck size={20} className="text-brand-primary shrink-0" />
                                     <div>
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-                                            {t('delivery.label')}
-                                        </div>
-                                        <div className="text-sm font-bold text-slate-900 uppercase">
-                                            {product.delivery_info || t('delivery.default')}
-                                        </div>
+                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('delivery.label')}</div>
+                                        <div className="text-xs font-bold text-slate-900 uppercase">{product.delivery_info || t('delivery.default')}</div>
                                     </div>
                                 </div>
                             </div>
 
+                            {/* Brief Features */}
                             {(() => {
-                                const localizedFeatures = getLocalizedArray(product.features_localized, locale);
-                                const features = localizedFeatures.length > 0 ? localizedFeatures : (Array.isArray(product.features) ? product.features : []);
+                                const features = getLocalizedArray(product.features_localized, locale);
                                 return features.length > 0 && (
-                                    <div className="space-y-6">
-                                        <h4 className="text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4">
+                                    <div className="space-y-4">
+                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">
                                             {t('features')}
                                         </h4>
-                                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            {features.map((item: string, i: number) => (
-                                                <li
-                                                    key={i}
-                                                    className="flex items-center gap-3 text-sm font-bold text-slate-700"
-                                                >
-                                                    <CheckCircle2
-                                                        size={16}
-                                                        className="text-brand-primary shrink-0"
-                                                    />
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                                            {features.slice(0, 8).map((item: string, i: number) => (
+                                                <div key={i} className="flex items-center gap-3 text-xs font-bold text-slate-600">
+                                                    <CheckCircle2 size={14} className="text-brand-primary shrink-0" />
                                                     {item}
-                                                </li>
+                                                </div>
                                             ))}
-                                        </ul>
+                                        </div>
                                     </div>
                                 );
                             })()}
 
-                            <div className="flex flex-col sm:flex-row gap-6 pt-6">
+                            {/* Actions */}
+                            <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <Link
                                     href={SITE_ROUTES.CONTACT}
-                                    className="flex-1 inline-flex items-center justify-center gap-4 bg-brand-primary py-5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl hover:bg-brand-secondary transition-all"
+                                    className="flex-1 bg-brand-primary py-4 text-[10px] font-black uppercase tracking-widest text-white text-center hover:bg-brand-secondary transition-all"
                                 >
                                     {t('getQuote')}
                                 </Link>
@@ -331,9 +219,9 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                     <a
                                         href={product.catalog_url}
                                         target="_blank"
-                                        className="flex-1 inline-flex items-center justify-center gap-4 bg-white border-2 border-slate-100 py-5 text-[10px] font-black uppercase tracking-widest text-slate-900 hover:border-brand-primary transition-all"
+                                        className="flex-1 border border-slate-200 py-4 text-[10px] font-black uppercase tracking-widest text-slate-900 text-center hover:border-brand-primary transition-all flex items-center justify-center gap-3"
                                     >
-                                        {t('downloadCatalog')} <Download size={16} />
+                                        {t('downloadCatalog')} <Download size={14} />
                                     </a>
                                 )}
                             </div>
@@ -342,88 +230,84 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                 </div>
             </section>
 
-            {/* Product Description */}
-            {(getLocalizedValue(product.description_localized, locale) || product.description) && (
-                <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
-                    <div className="container mx-auto px-4 lg:px-8">
-                        <div className=" space-y-4">
-                            <div className="space-b-4">
-                                <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">
-                                    {t('breadcrumb.products') || 'Mô tả chi tiết'}
-                                </h2>
-                                <div className="h-1 w-20 bg-brand-primary"></div>
-                            </div>
-                            <div
-                                className="prose prose-sm sm:prose-base max-w-none text-slate-700
-                                    prose-headings:text-slate-900 prose-headings:font-bold prose-headings:uppercase prose-headings:tracking-tight prose-headings:mb-2
-                                    prose-p:text-slate-600 prose-p:mb-2 prose-p:leading-normal
-                                    prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline
-                                    prose-img:rounded-none prose-img:shadow-sm prose-img:border prose-img:border-slate-200
-                                    prose-table:border-collapse prose-table:w-full
-                                    prose-th:bg-slate-50 prose-th:px-4 prose-th:py-3 prose-th:text-left prose-th:text-xs prose-th:font-black prose-th:uppercase prose-th:tracking-widest prose-th:text-muted-foreground prose-th:border prose-th:border-slate-200
-                                    prose-td:px-4 prose-td:py-3 prose-td:text-sm prose-td:border prose-td:border-slate-200
-                                    prose-ul:space-y-1 prose-ol:space-y-1
-                                    prose-li:text-slate-600
-                                    [&_img]:max-w-full [&_img]:h-auto
-                                    [&_iframe]:max-w-full [&_iframe]:aspect-video
-                                    overflow-hidden wrap-break-word"
-                                dangerouslySetInnerHTML={{
-                                    __html: getLocalizedValue(product.description_localized, locale) || product.description,
-                                }}
-                            />
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* Detailed Specs */}
-            <section className="py-24 bg-slate-50">
+            {/* Combined Tabs Section - Full Width */}
+            <section className="bg-white border-t border-slate-100">
                 <div className="container mx-auto px-4 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-20">
-                        <div className="lg:col-span-2 space-y-12">
-                            <div className="space-y-6">
-                                <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight">
-                                    {t('techSpecs')}
-                                </h2>
-                                <div className="h-1 w-20 bg-brand-primary"></div>
-                            </div>
-                            {renderSpecs()}
-                        </div>
+                    {/* Tab Switcher - More Visible Active State */}
+                    <div className="flex border-x border-slate-100 w-fit">
+                        <button
+                            onClick={() => setActiveTab('specs')}
+                            className={cn(
+                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all",
+                                activeTab === 'specs' 
+                                    ? "bg-brand-primary text-white" 
+                                    : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                            )}
+                        >
+                            <Settings2 size={14} /> Thông số kỹ thuật
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('description')}
+                            className={cn(
+                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all",
+                                activeTab === 'description' 
+                                    ? "bg-brand-primary text-white" 
+                                    : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                            )}
+                        >
+                            <FileText size={14} /> Chi tiết sản phẩm
+                        </button>
+                    </div>
 
-                       
+                    {/* Tab Content */}
+                    <div className="py-12 lg:py-16">
+                        {activeTab === 'description' && (
+                            <div className="animate-in fade-in duration-500">
+                                {(getLocalizedValue(product.description_localized, locale) || product.description) ? (
+                                    <div
+                                        className="prose prose-slate max-w-none prose-sm lg:prose-base 
+                                            prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight
+                                            prose-p:text-slate-600 prose-p:leading-relaxed
+                                            prose-img:border prose-img:border-slate-100 prose-img:p-2
+                                            prose-table:border prose-table:border-slate-100 prose-th:bg-slate-50 prose-th:text-[10px] prose-th:font-black prose-th:uppercase prose-th:p-3
+                                            prose-td:p-3 prose-td:text-xs prose-td:font-medium
+                                        "
+                                        dangerouslySetInnerHTML={{ __html: getLocalizedValue(product.description_localized, locale) || product.description }}
+                                    />
+                                ) : (
+                                    <p className="text-sm text-slate-400 italic">Đang cập nhật nội dung chi tiết...</p>
+                                )}
+                            </div>
+                        )}
+
+                        {activeTab === 'specs' && (
+                            <div className="animate-in fade-in duration-500">
+                                {product.tech_specs ? (
+                                    renderSpecs()
+                                ) : (
+                                    <p className="text-sm text-slate-400 italic">Đang cập nhật thông số kỹ thuật...</p>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </section>
 
-            {/* Comments section */}
-            <section className="bg-white">
+            {/* Comments Section */}
+            <section className="bg-white border-t border-slate-100 pt-8">
                 <div className="container mx-auto px-4 lg:px-8">
                     <ProductComments productId={product.id} productSlug={slug} />
                 </div>
             </section>
 
-            {/* CTA Section */}
-            <section className="py-24 bg-white">
-                <div className="container mx-auto px-4 lg:px-8 text-center space-y-10">
-                    <h2 className="text-4xl font-black uppercase tracking-tighter text-slate-900">
-                        {t('cta.title')}
-                    </h2>
-                    <p className="max-w-xl mx-auto text-muted-foreground font-medium italic">
-                        {t('cta.desc')}
-                    </p>
-                    <div className="flex justify-center flex-col sm:flex-row gap-6">
-                        <Link
-                            href={SITE_ROUTES.CONTACT}
-                            className="px-12 py-5 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-brand-secondary transition-all"
-                        >
+            {/* Final CTA */}
+            <section className="py-16 bg-slate-50 border-t border-slate-100 text-center">
+                <div className="container mx-auto px-4 lg:px-8 space-y-8">
+                    <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">{t('cta.title')}</h2>
+                    <div className="flex justify-center gap-4">
+                        <Link href={SITE_ROUTES.CONTACT} className="px-10 py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-brand-secondary transition-all">
                             {t('cta.submit')}
                         </Link>
-                        <a
-                            href="tel:02835358739"
-                            className="px-12 py-5 bg-slate-100 text-slate-900 text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
-                        >
-                            {t('cta.hotline')}
-                        </a>
                     </div>
                 </div>
             </section>
