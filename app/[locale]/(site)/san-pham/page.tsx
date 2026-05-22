@@ -46,7 +46,7 @@ interface Category {
     children?: Category[];
 }
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 12;
 
 export default function ProductArchive() {
     const t = useTranslations('Products');
@@ -305,17 +305,17 @@ export default function ProductArchive() {
 
                             {/* Grid View */}
                             {viewMode === 'grid' && (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                                     {products.map((product, i) => (
                                         <motion.div
                                             key={product.id}
-                                            initial={{ opacity: 0, y: 20 }}
+                                            initial={{ opacity: 0, y: 15 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
-                                            transition={{ delay: i * 0.05 }}
-                                            className="group bg-white p-8 space-y-8 flex flex-col justify-between hover:z-10 hover:shadow-2xl transition-all duration-500 h-full border border-slate-100"
+                                            transition={{ delay: i * 0.03 }}
+                                            className="group bg-white p-4 space-y-4 flex flex-col justify-between hover:z-10 hover:shadow-lg transition-all duration-500 h-full border border-slate-100 rounded-sm"
                                         >
-                                            <div className="relative aspect-square w-full overflow-hidden transition-all duration-500">
+                                            <div className="relative aspect-square w-full overflow-hidden transition-all duration-500 bg-slate-50/50 rounded-sm">
                                                 <Image
                                                     src={
                                                         product.image_url ||
@@ -329,37 +329,39 @@ export default function ProductArchive() {
                                                     }
                                                     fill
                                                     unoptimized
-                                                    className="object-contain p-4 group-hover:scale-110 transition-transform duration-1000"
+                                                    className="object-contain p-2 group-hover:scale-105 transition-transform duration-700"
                                                 />
                                             </div>
-                                            <div className="space-y-4">
-                                                <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
-                                                    <Shield size={10} />{' '}
-                                                    {getLocalizedValue(
-                                                        product.category_localized,
-                                                        locale,
-                                                    ) || product.category}
+                                            <div className="space-y-3 flex-1 flex flex-col justify-between">
+                                                <div className="space-y-1.5">
+                                                    <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
+                                                        <Shield size={9} />{' '}
+                                                        {getLocalizedValue(
+                                                            product.category_localized,
+                                                            locale,
+                                                        ) || product.category}
+                                                    </div>
+                                                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-[2rem]">
+                                                        {getLocalizedValue(
+                                                            product.name_localized,
+                                                            locale,
+                                                        ) || product.name}
+                                                    </h3>
+                                                    <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
+                                                        {getLocalizedValue(
+                                                            product.tech_summary_localized,
+                                                            locale,
+                                                        ) ||
+                                                            product.tech_summary ||
+                                                            t('grid.defaultSummary')}
+                                                    </p>
                                                 </div>
-                                                <h3 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-10">
-                                                    {getLocalizedValue(
-                                                        product.name_localized,
-                                                        locale,
-                                                    ) || product.name}
-                                                </h3>
-                                                <p className="text-[11px] text-muted-foreground font-medium line-clamp-2">
-                                                    {getLocalizedValue(
-                                                        product.tech_summary_localized,
-                                                        locale,
-                                                    ) ||
-                                                        product.tech_summary ||
-                                                        t('grid.defaultSummary')}
-                                                </p>
                                                 <LocalizedLink
                                                     href={`/san-pham/${product.slug}`}
-                                                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-4 border-t border-slate-50 w-full"
+                                                    className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-100 w-full mt-2"
                                                 >
                                                     {t('grid.viewDetail')}{' '}
-                                                    <ArrowRight size={12} className="ml-auto" />
+                                                    <ArrowRight size={10} className="ml-auto group-hover:translate-x-0.5 transition-transform" />
                                                 </LocalizedLink>
                                             </div>
                                         </motion.div>
@@ -369,21 +371,21 @@ export default function ProductArchive() {
 
                             {/* List View */}
                             {viewMode === 'list' && (
-                                <div className="space-y-4">
+                                <div className="space-y-3">
                                     {products.map((product, i) => (
                                         <motion.div
                                             key={product.id}
-                                            initial={{ opacity: 0, y: 20 }}
+                                            initial={{ opacity: 0, y: 15 }}
                                             whileInView={{ opacity: 1, y: 0 }}
                                             viewport={{ once: true }}
-                                            transition={{ delay: i * 0.05 }}
-                                            className="group bg-white border border-slate-100 hover:shadow-xl transition-all duration-500"
+                                            transition={{ delay: i * 0.03 }}
+                                            className="group bg-white border border-slate-100 hover:shadow-lg transition-all duration-500 rounded-sm"
                                         >
                                             <LocalizedLink
                                                 href={`/san-pham/${product.slug}`}
-                                                className="flex flex-col sm:flex-row gap-6 p-6"
+                                                className="flex flex-col sm:flex-row gap-4 p-4"
                                             >
-                                                <div className="relative w-full sm:w-48 aspect-square sm:aspect-auto sm:h-48 shrink-0 overflow-hidden bg-slate-50">
+                                                <div className="relative w-full sm:w-32 aspect-square sm:aspect-auto sm:h-32 shrink-0 overflow-hidden bg-slate-50/50 rounded-sm">
                                                     <Image
                                                         src={
                                                             product.image_url ||
@@ -397,34 +399,36 @@ export default function ProductArchive() {
                                                         }
                                                         fill
                                                         unoptimized
-                                                        className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+                                                        className="object-contain p-2 group-hover:scale-105 transition-transform duration-700"
                                                     />
                                                 </div>
-                                                <div className="flex-1 space-y-3">
-                                                    <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
-                                                        <Shield size={10} />{' '}
-                                                        {getLocalizedValue(
-                                                            product.category_localized,
-                                                            locale,
-                                                        ) || product.category}
+                                                <div className="flex-1 space-y-2 flex flex-col justify-between">
+                                                    <div className="space-y-1">
+                                                        <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
+                                                            <Shield size={9} />{' '}
+                                                            {getLocalizedValue(
+                                                                product.category_localized,
+                                                                locale,
+                                                            ) || product.category}
+                                                        </div>
+                                                        <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-1">
+                                                            {getLocalizedValue(
+                                                                product.name_localized,
+                                                                locale,
+                                                            ) || product.name}
+                                                        </h3>
+                                                        <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
+                                                            {getLocalizedValue(
+                                                                product.tech_summary_localized,
+                                                                locale,
+                                                            ) ||
+                                                                product.tech_summary ||
+                                                                t('grid.defaultSummary')}
+                                                        </p>
                                                     </div>
-                                                    <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase">
-                                                        {getLocalizedValue(
-                                                            product.name_localized,
-                                                            locale,
-                                                        ) || product.name}
-                                                    </h3>
-                                                    <p className="text-xs text-muted-foreground font-medium line-clamp-2">
-                                                        {getLocalizedValue(
-                                                            product.tech_summary_localized,
-                                                            locale,
-                                                        ) ||
-                                                            product.tech_summary ||
-                                                            t('grid.defaultSummary')}
-                                                    </p>
-                                                    <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2">
+                                                    <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-50 w-full mt-1">
                                                         {t('grid.viewDetail')}{' '}
-                                                        <ArrowRight size={12} />
+                                                        <ArrowRight size={10} className="ml-auto group-hover:translate-x-0.5 transition-transform" />
                                                     </div>
                                                 </div>
                                             </LocalizedLink>
