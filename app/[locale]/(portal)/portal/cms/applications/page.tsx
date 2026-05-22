@@ -229,11 +229,11 @@ export default function ApplicationsManagementPage() {
         })) || [];
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2 mb-1">
                         <span className="px-2 py-0.5 bg-brand-primary text-white text-[8px] font-black uppercase tracking-widest">
                             Recruitment Portal
                         </span>
@@ -242,28 +242,27 @@ export default function ApplicationsManagementPage() {
                             Live Analysis
                         </span>
                     </div>
-                    <h1 className="text-4xl font-black uppercase tracking-tight text-slate-900 border-l-8 border-brand-primary pl-6 leading-none">
+                    <h1 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-900 border-l-4 border-brand-primary pl-4 leading-none">
                         Quản lý Ứng viên
                     </h1>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
-                        Hệ thống quản lý và phân tích hồ sơ ứng tuyển chuyên sâu. Theo dõi tỷ lệ
-                        chuyển đổi, trạng thái hồ sơ và xu hướng tuyển dụng trong thời gian thực.
+                        Hệ thống quản lý và phân tích hồ sơ ứng tuyển chuyên sâu.
                     </p>
                 </div>
             </div>
 
-            <Tabs defaultValue="list" className="space-y-8">
+            <Tabs defaultValue="list" className="space-y-6">
                 <div className="flex items-center justify-between">
                     <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
                         >
                             <LayoutList size={14} /> Danh sách hồ sơ
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
                         >
                             <PieChartIcon size={14} /> Biểu đồ phân tích
                         </TabsTrigger>
@@ -276,18 +275,18 @@ export default function ApplicationsManagementPage() {
                     </div>
                 </div>
 
-                <TabsContent value="list" className="space-y-8 mt-0 border-none p-0">
+                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
                     {/* Filters & Table */}
-                    <div className="space-y-6">
-                        <div className="flex flex-col md:flex-row gap-4 p-6">
+                    <div className="space-y-4">
+                        <div className="flex flex-col md:flex-row gap-4 p-4 md:p-5 bg-slate-50 border border-slate-100">
                             <div className="relative flex-1">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <input
                                     type="text"
                                     placeholder="TÌM KIẾM ỨNG VIÊN THEO TÊN, EMAIL, SỐ ĐIỆN THOẠI..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full h-12 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
+                                    className="w-full h-10 pl-10 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
                                 />
                             </div>
                         </div>
@@ -310,22 +309,22 @@ export default function ApplicationsManagementPage() {
                                     <table className="w-full">
                                         <thead>
                                             <tr className="border-b border-slate-50 bg-slate-50/50">
-                                                <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                     Ứng viên
                                                 </th>
-                                                <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                     Vị trí ứng tuyển
                                                 </th>
-                                                <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                     Thông tin liên hệ
                                                 </th>
-                                                <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                     Ngày nộp
                                                 </th>
-                                                <th className="text-left p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                     Trạng thái
                                                 </th>
-                                                <th className="text-right p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                <th className="text-right px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                     Thao tác
                                                 </th>
                                             </tr>
@@ -336,17 +335,17 @@ export default function ApplicationsManagementPage() {
                                                     key={app.id}
                                                     className="hover:bg-slate-50/30 transition-colors"
                                                 >
-                                                    <td className="p-6">
+                                                    <td className="px-4 py-3 md:py-3.5">
                                                         <p className="text-sm font-black text-slate-900 uppercase tracking-tight">
                                                             {app.full_name}
                                                         </p>
                                                     </td>
-                                                    <td className="p-6">
+                                                    <td className="px-4 py-3 md:py-3.5">
                                                         <p className="text-[10px] font-black text-brand-primary uppercase truncate max-w-[200px] flex items-center gap-2">
                                                             <Briefcase size={12} /> {app.job_title}
                                                         </p>
                                                     </td>
-                                                    <td className="p-6">
+                                                    <td className="px-4 py-3 md:py-3.5">
                                                         <div className="space-y-1">
                                                             <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
                                                                 <Mail
@@ -364,7 +363,7 @@ export default function ApplicationsManagementPage() {
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="p-6">
+                                                    <td className="px-4 py-3 md:py-3.5">
                                                         <span className="text-[10px] font-bold text-slate-500 italic">
                                                             {format(
                                                                 new Date(app.created_at),
@@ -373,15 +372,15 @@ export default function ApplicationsManagementPage() {
                                                             )}
                                                         </span>
                                                     </td>
-                                                    <td className="p-6">
+                                                    <td className="px-4 py-3 md:py-3.5">
                                                         {getStatusBadge(app.status)}
                                                     </td>
-                                                    <td className="p-6 text-right">
+                                                    <td className="px-4 py-3 md:py-3.5 text-right">
                                                         <div className="flex items-center justify-end gap-2">
                                                             <Button
                                                                 variant="ghost"
                                                                 size="icon"
-                                                                className="h-9 w-9 bg-slate-50 hover:bg-brand-primary hover:text-white text-slate-400 transition-all rounded-none"
+                                                                className="h-8 w-8 bg-slate-50 hover:bg-brand-primary hover:text-white text-slate-400 transition-all rounded-none"
                                                                 onClick={() =>
                                                                     router.push(
                                                                         `${PORTAL_ROUTES.cms.applications.list}/${app.id}`,
@@ -396,7 +395,7 @@ export default function ApplicationsManagementPage() {
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 title="Tải CV / Xem hồ sơ"
-                                                                className="h-9 w-9 flex items-center justify-center bg-slate-50 hover:bg-brand-primary hover:text-white text-slate-400 transition-all rounded-none"
+                                                                className="h-8 w-8 flex items-center justify-center bg-slate-50 hover:bg-brand-primary hover:text-white text-slate-400 transition-all rounded-none"
                                                             >
                                                                 <FileDown size={14} />
                                                             </a>
@@ -405,16 +404,16 @@ export default function ApplicationsManagementPage() {
                                                                 <DropdownMenuTrigger asChild>
                                                                     <Button
                                                                         variant="ghost"
-                                                                        className="h-9 w-9 p-0 rounded-none hover:bg-slate-50"
+                                                                        className="h-8 w-8 p-0 rounded-none hover:bg-slate-50"
                                                                     >
                                                                         <MoreHorizontal className="h-4 w-4" />
                                                                     </Button>
                                                                 </DropdownMenuTrigger>
                                                                 <DropdownMenuContent
                                                                     align="end"
-                                                                    className="rounded-none w-56 p-2 shadow-xl border-slate-100"
+                                                                    className="rounded-none w-48 p-1 shadow-xl border-slate-100"
                                                                 >
-                                                                    <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-3 py-2">
+                                                                    <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-2.5 py-1.5">
                                                                         Thao tác hồ sơ
                                                                     </DropdownMenuLabel>
                                                                     <DropdownMenuItem
@@ -423,7 +422,7 @@ export default function ApplicationsManagementPage() {
                                                                                 `${PORTAL_ROUTES.cms.applications.list}/${app.id}`,
                                                                             )
                                                                         }
-                                                                        className="text-[10px] font-black uppercase tracking-tight flex items-center gap-3 px-3 py-2 cursor-pointer"
+                                                                        className="text-[10px] font-black uppercase tracking-tight flex items-center gap-3 px-2.5 py-1.5 cursor-pointer"
                                                                     >
                                                                         <Eye
                                                                             size={14}
@@ -432,7 +431,7 @@ export default function ApplicationsManagementPage() {
                                                                         Xem chi tiết
                                                                     </DropdownMenuItem>
                                                                     <DropdownMenuSeparator className="bg-slate-50" />
-                                                                    <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-3 py-2">
+                                                                    <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-widest text-slate-400 px-2.5 py-1.5">
                                                                         Cập nhật trạng thái
                                                                     </DropdownMenuLabel>
                                                                     {Object.entries(
@@ -446,7 +445,7 @@ export default function ApplicationsManagementPage() {
                                                                                     key,
                                                                                 )
                                                                             }
-                                                                            className="text-[10px] font-black uppercase tracking-tight flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-slate-50"
+                                                                            className="text-[10px] font-black uppercase tracking-tight flex items-center gap-3 px-2.5 py-1.5 cursor-pointer hover:bg-slate-50"
                                                                         >
                                                                             <config.icon
                                                                                 size={14}
@@ -467,7 +466,7 @@ export default function ApplicationsManagementPage() {
                                                                                 true,
                                                                             );
                                                                         }}
-                                                                        className="text-rose-600 flex items-center gap-3 text-[10px] font-black uppercase tracking-tight px-3 py-2 cursor-pointer hover:bg-rose-50"
+                                                                        className="text-rose-600 flex items-center gap-3 text-[10px] font-black uppercase tracking-tight px-2.5 py-1.5 cursor-pointer hover:bg-rose-50"
                                                                     >
                                                                         <Trash2 size={14} /> Xóa hồ
                                                                         sơ

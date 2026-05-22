@@ -124,7 +124,7 @@ export default function ApplicationDetailPage() {
     if (!application) return null;
 
     return (
-        <div className="space-y-10 pb-20">
+        <div className="space-y-6 pb-20">
             {/* breadcrumb-style return */}
             <div className="flex items-center gap-4">
                 <Button
@@ -149,15 +149,15 @@ export default function ApplicationDetailPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Left Column: Info & Preview */}
-                <div className="lg:col-span-8 space-y-10">
+                <div className="lg:col-span-8 space-y-6">
                     {/* Header Info */}
                     <div className="bg-white border border-slate-100 overflow-hidden relative group">
                         <div className="absolute top-0 left-0 w-2 h-full bg-brand-primary" />
-                        <div className="p-10 space-y-8">
+                        <div className="p-5 md:p-6 space-y-6">
                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                                <div className="space-y-4 flex-1">
+                                <div className="space-y-3 flex-1">
                                     <div className="flex items-center gap-3 flex-wrap">
                                         <Badge
                                             className={cn(
@@ -177,11 +177,11 @@ export default function ApplicationDetailPage() {
                                             )}
                                         </span>
                                     </div>
-                                    <h1 className="text-4xl font-black uppercase tracking-tight text-slate-950 leading-none">
+                                    <h1 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-950 leading-none">
                                         {application.full_name}
                                     </h1>
-                                    <p className="text-lg font-bold text-brand-primary flex items-center gap-3 uppercase tracking-widest">
-                                        <Users size={20} />
+                                    <p className="text-sm font-bold text-brand-primary flex items-center gap-2 uppercase tracking-widest">
+                                        <Users size={16} />
                                         {application.job_title}
                                     </p>
                                 </div>
@@ -191,22 +191,22 @@ export default function ApplicationDetailPage() {
                                         variant="ghost"
                                         size="icon"
                                         onClick={() => setDeleteDialogOpen(true)}
-                                        className="h-14 w-14 rounded-none border border-slate-100 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                                        className="h-10 w-10 rounded-none border border-slate-100 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm"
                                     >
-                                        <Trash2 size={24} />
+                                        <Trash2 size={16} />
                                     </Button>
                                 </div>
                             </div>
 
                             {/* Grid Info */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8 border-t border-slate-50">
-                                <div className="space-y-2 p-6 bg-slate-50 border border-slate-100 transition-all hover:border-brand-primary/20 hover:bg-white group">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-5 border-t border-slate-50">
+                                <div className="space-y-1.5 p-4 bg-slate-50 border border-slate-100 transition-all hover:border-brand-primary/20 hover:bg-white group">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary transition-colors">
                                         Địa chỉ Email
                                     </p>
-                                    <p className="text-md font-bold text-slate-900 flex items-center gap-3">
+                                    <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <Mail
-                                            size={18}
+                                            size={14}
                                             className="text-brand-primary group-hover:scale-110 transition-transform"
                                         />
                                         <a
@@ -217,13 +217,13 @@ export default function ApplicationDetailPage() {
                                         </a>
                                     </p>
                                 </div>
-                                <div className="space-y-2 p-6 bg-slate-50 border border-slate-100 transition-all hover:border-brand-primary/20 hover:bg-white group">
+                                <div className="space-y-1.5 p-4 bg-slate-50 border border-slate-100 transition-all hover:border-brand-primary/20 hover:bg-white group">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary transition-colors">
                                         Số điện thoại
                                     </p>
-                                    <p className="text-md font-bold text-slate-900 flex items-center gap-3">
+                                    <p className="text-sm font-bold text-slate-900 flex items-center gap-2">
                                         <Phone
-                                            size={18}
+                                            size={14}
                                             className="text-brand-primary group-hover:scale-110 transition-transform"
                                         />
                                         <a
@@ -261,7 +261,7 @@ export default function ApplicationDetailPage() {
                                 <a
                                     href={application.cv_url}
                                     download
-                                    className="bg-slate-950 text-white p-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-brand-primary transition-colors shadow-lg"
+                                    className="bg-slate-950 text-white px-4 py-2.5 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest hover:bg-brand-primary transition-colors shadow-lg"
                                 >
                                     <FileDown size={16} /> Tải hồ sơ gốc
                                 </a>
@@ -278,12 +278,12 @@ export default function ApplicationDetailPage() {
                 </div>
 
                 {/* Right Column: Sidebar Actions */}
-                <div className="lg:col-span-4 space-y-10">
+                <div className="lg:col-span-4 space-y-6">
                     {/* Status Management */}
-                    <div className="bg-slate-950 text-white p-10 space-y-8 relative overflow-hidden group shadow-2xl">
+                    <div className="bg-slate-950 text-white p-5 md:p-6 space-y-6 relative overflow-hidden group shadow-2xl">
                         <div className="absolute top-0 right-0 size-40 bg-white/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />
 
-                        <div className="space-y-4">
+                        <div className="space-y-2">
                             <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 border-l-4 border-brand-accent pl-4">
                                 Quản lý quy trình
                             </h3>
@@ -292,7 +292,7 @@ export default function ApplicationDetailPage() {
                             </p>
                         </div>
 
-                        <div className="space-y-3 pt-4 border-t border-white/10">
+                        <div className="space-y-3 pt-3 border-t border-white/10">
                             {Object.entries(STATUS_CONFIG).map(([key, config]) => (
                                 <Button
                                     key={key}
@@ -300,7 +300,7 @@ export default function ApplicationDetailPage() {
                                     disabled={isUpdating}
                                     onClick={() => handleUpdateStatus(key)}
                                     className={cn(
-                                        'w-full h-16 justify-between rounded-none border-white/10 font-black tracking-widest text-[10px] uppercase gap-4 transition-all pr-6',
+                                        'w-full h-10 justify-between rounded-none border-white/10 font-black tracking-widest text-[10px] uppercase gap-4 transition-all pr-6',
                                         application.status === key
                                             ? 'bg-brand-primary text-white border-brand-primary translate-x-3'
                                             : 'bg-transparent text-white/60 hover:text-white hover:bg-white/5 hover:border-white/20',
@@ -308,7 +308,7 @@ export default function ApplicationDetailPage() {
                                 >
                                     <div className="flex items-center gap-4">
                                         <config.icon
-                                            size={18}
+                                            size={14}
                                             className={cn(
                                                 application.status === key
                                                     ? 'text-white'
@@ -330,7 +330,7 @@ export default function ApplicationDetailPage() {
                         <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-l-4 border-brand-primary pl-4">
                             Thư giới thiệu / Ghi chú
                         </h3>
-                        <div className="bg-white border border-slate-100 p-8 relative min-h-[300px] group shadow-sm">
+                        <div className="bg-white border border-slate-100 p-5 md:p-6 relative min-h-[250px] group shadow-sm">
                             <div className="absolute -top-3 -right-3 text-slate-100 group-hover:text-brand-primary/10 transition-colors pointer-events-none italic">
                                 <AlertCircle size={80} strokeWidth={1} />
                             </div>
@@ -338,7 +338,7 @@ export default function ApplicationDetailPage() {
                                 {application.cover_letter ||
                                     'Ứng viên không để lại lời nhắn kèm theo hồ sơ này.'}
                             </p>
-                            <div className="mt-10 pt-6 border-t border-slate-50 flex items-center justify-between opacity-40 group-hover:opacity-100 transition-opacity">
+                            <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between opacity-40 group-hover:opacity-100 transition-opacity">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     Kết thúc tin nhắn
                                 </span>

@@ -199,10 +199,10 @@ export default function CommentsManagementPage() {
         })) || [];
 
     return (
-        <div className="flex-1 space-y-10 py-8 pt-6">
+        <div className="flex-1 space-y-6 py-6 pt-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2 mb-1">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest">
                             Customer Feedback
                         </span>
@@ -211,28 +211,27 @@ export default function CommentsManagementPage() {
                             Interactive Monitoring
                         </span>
                     </div>
-                    <h2 className="text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-8 border-[#002d6b] pl-6 leading-none">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
                         Quản lý Bình luận
                     </h2>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
-                        Hệ thống phê duyệt và phản hồi tương tác khách hàng. Theo dõi mức độ quan
-                        tâm về sản phẩm qua biểu đồ xu hướng và trạng thái xử lý bình luận.
+                        Hệ thống phê duyệt và phản hồi tương tác khách hàng.
                     </p>
                 </div>
             </div>
 
-            <Tabs defaultValue="list" className="space-y-8">
+            <Tabs defaultValue="list" className="space-y-6">
                 <div className="flex items-center justify-between">
                     <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
                         >
                             <LayoutList size={14} /> Danh sách bình luận
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
                         >
                             <PieChartIcon size={14} /> Biểu đồ phân tích
                         </TabsTrigger>
@@ -248,14 +247,14 @@ export default function CommentsManagementPage() {
                 <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
                     <div className="grid gap-4">
                         <Card className="rounded-none border border-slate-100 shadow-sm overflow-hidden">
-                            <CardHeader className="bg-slate-50/50 pb-6 border-b border-slate-100">
+                            <CardHeader className="bg-slate-50/50 p-4 md:p-5 border-b border-slate-100">
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                     <div className="flex items-center gap-2 flex-1 max-w-md">
                                         <div className="relative w-full">
-                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                                             <Input
                                                 placeholder="TÌM THEO TÊN, EMAIL, NỘI DUNG..."
-                                                className="pl-12 h-12 rounded-none border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
+                                                className="pl-10 h-10 rounded-none border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus-visible:ring-brand-primary focus-visible:ring-offset-0"
                                                 value={search}
                                                 onChange={(e) => setSearch(e.target.value)}
                                             />
@@ -269,7 +268,7 @@ export default function CommentsManagementPage() {
                                             </span>
                                         </div>
                                         <Select value={status} onValueChange={setStatus}>
-                                            <SelectTrigger className="h-12 w-[200px] rounded-none border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest focus:ring-0 focus:ring-offset-0">
+                                            <SelectTrigger className="h-10 w-[180px] rounded-none border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest focus:ring-0 focus:ring-offset-0">
                                                 <SelectValue placeholder="Tất cả trạng thái" />
                                             </SelectTrigger>
                                             <SelectContent className="rounded-none border-slate-100">
@@ -316,15 +315,15 @@ export default function CommentsManagementPage() {
                                         {comments.map((comment) => (
                                             <div
                                                 key={comment.id}
-                                                className="p-8 hover:bg-slate-50/30 transition-colors"
+                                                className="p-5 md:p-6 hover:bg-slate-50/30 transition-colors"
                                             >
                                                 <div className="flex items-start justify-between gap-8">
                                                     <div className="flex-1 space-y-4">
                                                         {/* Header: Guest Info & Product */}
                                                         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
                                                             <div className="flex items-center gap-3">
-                                                                <div className="size-10 rounded-none bg-[#002d6b]/5 flex items-center justify-center text-[#002d6b] border border-[#002d6b]/10">
-                                                                    <User size={18} />
+                                                                <div className="size-8 rounded-none bg-[#002d6b]/5 flex items-center justify-center text-[#002d6b] border border-[#002d6b]/10">
+                                                                    <User size={14} />
                                                                 </div>
                                                                 <div className="flex flex-col">
                                                                     <span className="text-sm font-black text-slate-900 uppercase tracking-tight">
@@ -378,7 +377,7 @@ export default function CommentsManagementPage() {
                                                         </div>
 
                                                         {/* Content */}
-                                                        <div className="bg-slate-50/50 border-l-4 border-l-[#002d6b] p-6 text-sm text-slate-700 leading-relaxed italic">
+                                                        <div className="bg-slate-50/50 border-l-4 border-l-[#002d6b] p-4 text-sm text-slate-700 leading-relaxed italic">
                                                             "{comment.content}"
                                                         </div>
 
@@ -389,7 +388,7 @@ export default function CommentsManagementPage() {
                                                                     <CheckCircle2 size={12} /> PHẢN
                                                                     HỒI TỪ HỆ THỐNG:
                                                                 </div>
-                                                                <p className="text-sm text-slate-500 italic leading-relaxed bg-amber-50/30 p-4 border border-amber-100/50">
+                                                                <p className="text-sm text-slate-500 italic leading-relaxed bg-amber-50/30 p-3 border border-amber-100/50">
                                                                     {comment.reply_content}
                                                                 </p>
                                                             </div>
@@ -401,7 +400,7 @@ export default function CommentsManagementPage() {
                                                         <Button
                                                             variant="outline"
                                                             size="sm"
-                                                            className="h-10 rounded-none gap-3 text-[10px] font-black uppercase tracking-widest border-slate-200 hover:bg-[#002d6b] hover:text-white hover:border-[#002d6b] transition-all"
+                                                            className="h-8 rounded-none gap-2 px-3 text-[10px] font-black uppercase tracking-widest border-slate-200 hover:bg-[#002d6b] hover:text-white hover:border-[#002d6b] transition-all"
                                                             onClick={() => {
                                                                 setReplyingTo(comment);
                                                                 setReplyContent(
@@ -417,21 +416,21 @@ export default function CommentsManagementPage() {
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
-                                                                    className="h-10 w-10 hover:bg-slate-100 rounded-none transition-colors"
+                                                                    className="h-8 w-8 hover:bg-slate-100 rounded-none transition-colors"
                                                                 >
-                                                                    <MoreHorizontal size={18} />
+                                                                    <MoreHorizontal size={14} />
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent
                                                                 align="end"
-                                                                className="rounded-none border-slate-100 shadow-xl w-56 p-2"
+                                                                className="rounded-none border-slate-100 shadow-xl w-48 p-1"
                                                             >
-                                                                <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
+                                                                <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-2.5 py-1.5">
                                                                     Thao tác quản trị
                                                                 </DropdownMenuLabel>
                                                                 <DropdownMenuSeparator className="bg-slate-50" />
                                                                 <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2 transition-colors"
+                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-2.5 py-1.5 transition-colors"
                                                                     onSelect={() =>
                                                                         handleApprove(
                                                                             comment.id,
@@ -459,7 +458,7 @@ export default function CommentsManagementPage() {
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuSeparator className="bg-slate-50" />
                                                                 <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 text-rose-500 focus:text-rose-500 px-3 py-2 hover:bg-rose-50"
+                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 text-rose-500 focus:text-rose-500 px-2.5 py-1.5 hover:bg-rose-50"
                                                                     onSelect={() =>
                                                                         handleDelete(comment.id)
                                                                     }
@@ -488,19 +487,19 @@ export default function CommentsManagementPage() {
                                     <Button
                                         variant="outline"
                                         size="icon"
-                                        className="h-10 w-10 rounded-none border-slate-200 transition-all hover:bg-slate-50"
+                                        className="h-8 w-8 rounded-none border-slate-200 transition-all hover:bg-slate-50"
                                         onClick={() => setPage(page - 1)}
                                         disabled={page === 1}
                                     >
                                         <ChevronLeft size={16} />
                                     </Button>
-                                    <div className="h-10 min-w-[60px] flex items-center justify-center text-[10px] font-black border border-slate-200 px-4 bg-white uppercase tracking-widest">
+                                    <div className="h-8 min-w-[60px] flex items-center justify-center text-[10px] font-black border border-slate-200 px-4 bg-white uppercase tracking-widest">
                                         TRANG {page}
                                     </div>
                                     <Button
                                         variant="outline"
                                         size="icon"
-                                        className="h-10 w-10 rounded-none border-slate-200 transition-all hover:bg-slate-50"
+                                        className="h-8 w-8 rounded-none border-slate-200 transition-all hover:bg-slate-50"
                                         onClick={() => setPage(page + 1)}
                                         disabled={page * 10 >= total}
                                     >
@@ -550,50 +549,50 @@ export default function CommentsManagementPage() {
             {/* Reply Dialog */}
             <Dialog open={!!replyingTo} onOpenChange={() => setReplyingTo(null)}>
                 <DialogContent className="max-w-2xl rounded-none border-none p-0 overflow-hidden shadow-2xl">
-                    <DialogHeader className="p-10 bg-[#002d6b] text-white space-y-4">
-                        <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic flex items-center gap-6">
-                            <Reply size={32} className="text-[#fbbf24]" />
+                    <DialogHeader className="p-5 md:p-6 bg-[#002d6b] text-white space-y-2">
+                        <DialogTitle className="text-lg md:text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
+                            <Reply size={20} className="text-[#fbbf24]" />
                             Phản hồi tương tác
                         </DialogTitle>
-                        <DialogDescription className="text-white/60 font-medium italic text-sm">
+                        <DialogDescription className="text-white/60 font-medium italic text-xs">
                             Câu trả lời của bạn sẽ được hiển thị công khai dưới bình luận của khách
                             hàng. Hãy đảm bảo nội dung chuyên nghiệp và chính xác.
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="p-10 space-y-8">
-                        <div className="space-y-4">
+                    <div className="p-5 md:p-6 space-y-4">
+                        <div className="space-y-2">
                             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                                 Câu hỏi từ {replyingTo?.guest_name}:
                             </div>
-                            <div className="bg-slate-50 p-8 rounded-none border border-slate-100 text-sm text-slate-600 italic leading-relaxed border-l-4 border-l-[#fbbf24]">
+                            <div className="bg-slate-50 p-4 rounded-none border border-slate-100 text-sm text-slate-600 italic leading-relaxed border-l-4 border-l-[#fbbf24]">
                                 "{replyingTo?.content}"
                             </div>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-2">
                             <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#002d6b]">
                                 Nội dung trả lời hệ thống:
                             </div>
                             <Textarea
                                 placeholder="NHẬP NỘI DUNG PHẢN HỒI CHI TIẾT TẠI ĐÂY..."
-                                className="min-h-[200px] rounded-none border-slate-200 focus-visible:ring-offset-0 focus-visible:ring-brand-primary text-sm font-medium leading-relaxed italic placeholder:text-slate-200"
+                                className="min-h-[120px] rounded-none border-slate-200 focus-visible:ring-offset-0 focus-visible:ring-brand-primary text-sm font-medium leading-relaxed italic placeholder:text-slate-200"
                                 value={replyContent}
                                 onChange={(e) => setReplyContent(e.target.value)}
                             />
                         </div>
                     </div>
 
-                    <DialogFooter className="p-10 bg-slate-50/50 flex sm:justify-between items-center gap-6 border-t border-slate-100">
+                    <DialogFooter className="p-5 md:p-6 bg-slate-50/50 flex sm:justify-between items-center gap-4 border-t border-slate-100">
                         <Button
                             variant="ghost"
                             onClick={() => setReplyingTo(null)}
-                            className="rounded-none text-[10px] font-black uppercase tracking-widest h-14 px-8"
+                            className="rounded-none text-[10px] font-black uppercase tracking-widest h-10 px-4"
                         >
                             Hủy thao tác
                         </Button>
                         <Button
-                            className="bg-[#002d6b] hover:bg-[#001d4b] text-white rounded-none h-14 px-12 text-[10px] font-black uppercase tracking-widest transition-all shadow-xl shadow-[#002d6b]/20 flex items-center gap-3"
+                            className="bg-[#002d6b] hover:bg-[#001d4b] text-white rounded-none h-10 px-6 text-[10px] font-black uppercase tracking-widest transition-all shadow-xl shadow-[#002d6b]/20 flex items-center gap-3"
                             onClick={handleReplySubmit}
                             disabled={isSubmittingReply || !replyContent.trim()}
                         >
@@ -603,7 +602,7 @@ export default function CommentsManagementPage() {
                                 </>
                             ) : (
                                 'GỬI PHẢN HỒI & PHÊ DUYỆT'
-                            )}
+                             )}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

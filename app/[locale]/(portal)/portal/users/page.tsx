@@ -158,10 +158,10 @@ export default function UsersManagementPage() {
         })) || [];
 
     return (
-        <div className="flex-1 space-y-6 md:space-y-10 py-4 md:py-8 pt-4 md:pt-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <div className="flex-1 space-y-6 py-4 pt-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 mb-1 flex-wrap pl-4">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest ">
                             Sài Gòn Valve CMS
                         </span>
@@ -170,37 +170,35 @@ export default function UsersManagementPage() {
                             Security Pulse
                         </span>
                     </div>
-                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 md:border-l-8 border-[#002d6b] pl-4 md:pl-6 leading-none">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
                         Quản lý Tài khoản
                     </h2>
-                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
-                        Hệ thống quản trị truy cập và phân quyền người dùng. Kiểm soát danh tính
-                        quản trị, theo dõi tốc độ mở rộng đội ngũ và cấu trúc vai trò trong hệ
-                        thống.
+                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed pl-4">
+                        Hệ thống quản trị truy cập và phân quyền người dùng.
                     </p>
                 </div>
                 {hasPermission(PERMISSIONS.USERS_CREATE) && (
                     <Link href={PORTAL_ROUTES.users.add}>
-                        <Button className="h-10 hover:cursor-pointer px-6 md:px-10 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3">
+                        <Button className="h-10 hover:cursor-pointer px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3">
                             <Plus size={18} /> Tạo tài khoản mới
                         </Button>
                     </Link>
                 )}
             </div>
 
-            <Tabs defaultValue="list" className="space-y-4 md:space-y-8">
+            <Tabs defaultValue="list" className="space-y-4 md:space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
                             <LayoutList size={14} />{' '}
                             <span className="hidden sm:inline">Danh sách</span> tài khoản
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
                             <PieChartIcon size={14} />{' '}
                             <span className="hidden sm:inline">Biểu đồ</span> phân tích
@@ -216,12 +214,12 @@ export default function UsersManagementPage() {
                 </div>
 
                 <TabsContent value="list" className="space-y-4 md:space-y-6 mt-0 border-none p-0">
-                    <div className="p-4 md:p-8 bg-slate-50 border border-slate-100">
+                    <div className="p-4 md:p-5 bg-slate-50 border border-slate-100">
                         <div className="relative max-w-md group">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-[#002d6b] transition-colors" />
                             <input
                                 placeholder="TÌM KIẾM THEO TÊN HOẶC USERNAME..."
-                                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20 rounded-none outline-none"
+                                className="w-full h-10 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20 rounded-none outline-none"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -241,19 +239,19 @@ export default function UsersManagementPage() {
                                 <table className="w-full min-w-[600px]">
                                     <thead>
                                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="px-4 md:px-6 py-3 text-left text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Người dùng
                                             </th>
-                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
+                                            <th className="px-4 md:px-6 py-3 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
                                                 Thông tin chi tiết
                                             </th>
-                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
+                                            <th className="px-4 md:px-6 py-3 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
                                                 Phân quyền
                                             </th>
-                                            <th className="px-4 md:px-8 py-4 md:py-6 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
+                                            <th className="px-4 md:px-6 py-3 text-left text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
                                                 Ngày gia nhập
                                             </th>
-                                            <th className="px-4 md:px-8 py-4 md:py-6 text-right text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="px-4 md:px-6 py-3 text-right text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Thao tác
                                             </th>
                                         </tr>
@@ -264,16 +262,16 @@ export default function UsersManagementPage() {
                                                 key={user.id}
                                                 className="hover:bg-slate-50/30 transition-colors group"
                                             >
-                                                <td className="px-4 md:px-8 py-4 md:py-6">
-                                                    <div className="flex items-center gap-3 md:gap-4">
-                                                        <div className="size-8 md:size-10 bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
+                                                <td className="px-4 md:px-6 py-3">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="size-8 md:size-9 bg-slate-100 flex items-center justify-center border border-slate-200 shrink-0">
                                                             <UserIcon
-                                                                size={18}
+                                                                size={16}
                                                                 className="text-slate-400"
                                                             />
                                                         </div>
                                                         <div className="flex flex-col">
-                                                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+                                                            <span className="text-xs font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
                                                                 {user.username}
                                                                 {(user.isLocked ?? user.is_locked) && (
                                                                     <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-500 text-[8px] font-black uppercase tracking-widest">
@@ -281,41 +279,41 @@ export default function UsersManagementPage() {
                                                                     </span>
                                                                 )}
                                                             </span>
-                                                            <span className="text-[10px] font-bold text-slate-400">
+                                                            <span className="text-[9px] font-bold text-slate-400">
                                                                 {user.email ||
                                                                     'Chưa cập nhật email'}
                                                             </span>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-4 md:px-8 py-4 md:py-6 hidden lg:table-cell">
-                                                    <span className="text-[11px] font-bold text-slate-600 uppercase italic">
+                                                <td className="px-4 md:px-6 py-3 hidden lg:table-cell">
+                                                    <span className="text-[10px] font-bold text-slate-600 uppercase italic">
                                                         {user.full_name || user.fullName || '---'}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 md:px-8 py-4 md:py-6 hidden md:table-cell">
-                                                    <div className="flex flex-wrap gap-2">
+                                                <td className="px-4 md:px-6 py-3 hidden md:table-cell">
+                                                    <div className="flex flex-wrap gap-1.5">
                                                         {user.roles && user.roles.length > 0 ? (
                                                             user.roles.map((r: any) => (
                                                                 <Badge
                                                                     key={r.id}
-                                                                    className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-none"
+                                                                    className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none"
                                                                 >
                                                                     <Shield
-                                                                        size={10}
-                                                                        className="mr-1.5"
+                                                                        size={8}
+                                                                        className="mr-1"
                                                                     />{' '}
                                                                     {r.name}
                                                                 </Badge>
                                                             ))
                                                         ) : (
-                                                            <Badge className="bg-slate-50 text-slate-400 border border-slate-100 text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-none">
+                                                            <Badge className="bg-slate-50 text-slate-400 border border-slate-100 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none">
                                                                 CHƯA PHÂN QUYỀN
                                                             </Badge>
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="px-4 md:px-8 py-4 md:py-6 hidden sm:table-cell">
+                                                <td className="px-4 md:px-6 py-3 hidden sm:table-cell">
                                                     <span className="text-[10px] font-black text-slate-500 uppercase flex items-center gap-2">
                                                         <Activity
                                                             size={12}
@@ -337,8 +335,8 @@ export default function UsersManagementPage() {
                                                     </span>
                                                 </td>
 
-                                                <td className="px-4 md:px-8 py-4 md:py-6 text-right">
-                                                    <div className="flex items-center justify-end gap-2">
+                                                <td className="px-4 md:px-6 py-3 text-right">
+                                                    <div className="flex items-center justify-end gap-1.5">
                                                         {hasPermission(
                                                             PERMISSIONS.USERS_UPDATE,
                                                         ) && (
@@ -350,9 +348,9 @@ export default function UsersManagementPage() {
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
-                                                                    className="h-9 w-9 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none"
+                                                                    className="h-8 w-8 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none"
                                                                 >
-                                                                    <Edit2 size={14} />
+                                                                    <Edit2 size={13} />
                                                                 </Button>
                                                             </Link>
                                                         )}
@@ -361,16 +359,16 @@ export default function UsersManagementPage() {
                                                             <DropdownMenuTrigger asChild>
                                                                 <Button
                                                                     variant="ghost"
-                                                                    className="h-9 w-9 p-0 rounded-none hover:bg-slate-50"
+                                                                    className="h-8 w-8 p-0 rounded-none hover:bg-slate-50"
                                                                 >
                                                                     <MoreHorizontal className="h-4 w-4" />
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent
                                                                 align="end"
-                                                                className="rounded-none border-slate-100 shadow-xl w-56 p-2"
+                                                                className="rounded-none border-slate-100 shadow-xl w-48 p-1"
                                                             >
-                                                                <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
+                                                                <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-2.5 py-1.5">
                                                                     Quản trị bảo mật
                                                                 </DropdownMenuLabel>
                                                                 <DropdownMenuSeparator className="bg-slate-50" />
@@ -378,7 +376,7 @@ export default function UsersManagementPage() {
                                                                 {hasPermission(PERMISSIONS.USERS_UPDATE) && (
                                                                     <DropdownMenuItem
                                                                         className={cn(
-                                                                            'text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
+                                                                            'text-[10px] font-black uppercase tracking-tight cursor-pointer gap-2 px-2.5 py-1.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
                                                                             (user.isLocked ?? user.is_locked)
                                                                                 ? 'text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50 hover:text-emerald-700 focus:text-emerald-700'
                                                                                 : 'text-amber-600 hover:bg-amber-50 focus:bg-amber-50 hover:text-amber-700 focus:text-amber-700',
@@ -387,9 +385,9 @@ export default function UsersManagementPage() {
                                                                         disabled={currentUser?.id === user.id || lockMutation.isPending}
                                                                     >
                                                                         {(user.isLocked ?? user.is_locked) ? (
-                                                                            <><LockOpen size={14} className="shrink-0 text-emerald-500" /> Mở khóa tài khoản</>
+                                                                            <><LockOpen size={13} className="shrink-0 text-emerald-500" /> Mở khóa tài khoản</>
                                                                         ) : (
-                                                                            <><Lock size={14} className="shrink-0 text-amber-500" /> Khóa tài khoản</>
+                                                                            <><Lock size={13} className="shrink-0 text-amber-500" /> Khóa tài khoản</>
                                                                         )}
                                                                     </DropdownMenuItem>
                                                                 )}
@@ -397,7 +395,7 @@ export default function UsersManagementPage() {
                                                                 {hasPermission(PERMISSIONS.USERS_DELETE) && (
                                                                     <DropdownMenuItem
                                                                         className={cn(
-                                                                            'text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
+                                                                            'text-[10px] font-black uppercase tracking-tight cursor-pointer gap-2 px-2.5 py-1.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
                                                                             currentUser?.id === user.id
                                                                                 ? 'text-slate-400'
                                                                                 : 'text-rose-500 hover:bg-rose-50 focus:bg-rose-50 hover:text-rose-600 focus:text-rose-600',
@@ -410,7 +408,7 @@ export default function UsersManagementPage() {
                                                                                 Không thể xóa tài khoản của chính bạn
                                                                             </span>
                                                                         ) : (
-                                                                            <><Trash2 size={14} className="shrink-0 text-rose-500" /> Xóa tài khoản</>
+                                                                            <><Trash2 size={13} className="shrink-0 text-rose-500" /> Xóa tài khoản</>
                                                                         )}
                                                                     </DropdownMenuItem>
                                                                 )}

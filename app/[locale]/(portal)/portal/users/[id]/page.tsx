@@ -12,6 +12,8 @@ import {
     Loader2,
     CheckCircle2,
     Circle,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -30,6 +32,7 @@ export default function EditUserPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         username: '',
         password: '', // Optional for edit
@@ -101,7 +104,7 @@ export default function EditUserPage() {
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center h-[500px] space-y-4">
-                <Loader2 size={48} className="animate-spin text-brand-primary opacity-20" />
+                <Loader2 size={40} className="animate-spin text-brand-primary opacity-20" />
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                     Đang đồng bộ dữ liệu...
                 </p>
@@ -110,44 +113,44 @@ export default function EditUserPage() {
     }
 
     return (
-        <div className="space-y-12 pb-20">
-            <div className="flex items-center gap-6">
+        <div className="space-y-6 pb-12">
+            <div className="flex items-center gap-4">
                 <Link href={PORTAL_ROUTES.users.list}>
                     <Button
                         variant="outline"
-                        className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50 transition-all active:scale-95"
+                        className="h-10 w-10 p-0 border-slate-100 rounded-none hover:bg-slate-50 transition-all active:scale-95"
                     >
-                        <ArrowLeft size={20} />
+                        <ArrowLeft size={18} />
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none border-l-4 border-fbbf24 pl-4">
                         Chỉnh sửa tài khoản
                     </h1>
-                    <p className="text-slate-500 font-medium italic mt-2 text-sm">
+                    <p className="text-slate-500 font-medium italic mt-1.5 text-xs pl-4">
                         Cập nhật thông tin định danh và bảo mật cho quản trị viên.
                     </p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div className="lg:col-span-7">
                     <form
                         onSubmit={handleSubmit}
-                        className="bg-white p-10 border-l-4 border-l-fbbf24 shadow-[20px_20px_60px_-15px_rgba(0,0,0,0.03)] space-y-10 relative overflow-hidden group"
+                        className="bg-white p-5 md:p-6 border-l-4 border-l-fbbf24 shadow-sm space-y-6 relative overflow-hidden group"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-fbbf24/5 -mr-16 -mt-16 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
 
-                        <div className="space-y-8 relative">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-4">
+                        <div className="space-y-4 relative">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
                                         <UserIcon size={12} className="text-[#002d6b]" /> Username{' '}
                                         <span className="text-rose-500">*</span>
                                     </Label>
                                     <Input
                                         placeholder="VD: NGUYENVANA"
-                                        className="h-16 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                        className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                         value={formData.username}
                                         onChange={(e) =>
                                             setFormData({
@@ -158,30 +161,40 @@ export default function EditUserPage() {
                                         disabled={isSubmitting}
                                     />
                                 </div>
-                                <div className="space-y-4">
+                                <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
                                         <Lock size={12} className="text-[#002d6b]" /> Mật khẩu mới
                                     </Label>
-                                    <Input
-                                        type="password"
-                                        placeholder="ĐỂ TRỐNG NẾU KHÔNG ĐỔI"
-                                        className="h-16 bg-slate-50 border-none text-xs font-bold rounded-none focus:ring-2 focus:ring-fbbf24/20 transition-all placeholder:text-[9px] placeholder:italic"
-                                        value={formData.password}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, password: e.target.value })
-                                        }
-                                        disabled={isSubmitting}
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            type={showPassword ? 'text' : 'password'}
+                                            placeholder="ĐỂ TRỐNG NẾU KHÔNG ĐỔI"
+                                            className="h-10 bg-slate-50 border-none text-xs font-bold rounded-none focus:ring-2 focus:ring-fbbf24/20 transition-all placeholder:text-[9px] placeholder:italic pr-10"
+                                            value={formData.password}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, password: e.target.value })
+                                            }
+                                            disabled={isSubmitting}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                            disabled={isSubmitting}
+                                        >
+                                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-2">
                                 <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                                     Họ và tên hiển thị
                                 </Label>
                                 <Input
                                     placeholder="VD: NGUYỄN VĂN A"
-                                    className="h-16 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                    className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                     value={formData.fullName}
                                     onChange={(e) =>
                                         setFormData({ ...formData, fullName: e.target.value })
@@ -190,14 +203,14 @@ export default function EditUserPage() {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                                         Email liên hệ
                                     </Label>
                                     <Input
                                         placeholder="example@saigonvalve.vn"
-                                        className="h-16 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                        className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                         value={formData.email}
                                         onChange={(e) =>
                                             setFormData({ ...formData, email: e.target.value })
@@ -205,13 +218,13 @@ export default function EditUserPage() {
                                         disabled={isSubmitting}
                                     />
                                 </div>
-                                <div className="space-y-4">
+                                <div className="space-y-2">
                                     <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                                         Số điện thoại
                                     </Label>
                                     <Input
                                         placeholder="09xx xxx xxx"
-                                        className="h-16 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                        className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                         value={formData.phone}
                                         onChange={(e) =>
                                             setFormData({ ...formData, phone: e.target.value })
@@ -222,17 +235,17 @@ export default function EditUserPage() {
                             </div>
 
                             {!isSuperAdmin && (
-                                <div className="pt-6 border-t border-slate-50 space-y-6">
+                                <div className="pt-4 border-t border-slate-100 space-y-4">
                                     <div>
-                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 block">
+                                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block">
                                             Gán vai trò (RBAC)
                                         </Label>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             {availableRoles.map((role) => (
                                                 <div
                                                     key={role.id}
                                                     className={cn(
-                                                        'p-4 border border-slate-100 flex items-center justify-between cursor-pointer transition-all hover:bg-slate-50',
+                                                        'p-3 border border-slate-100 flex items-center justify-between cursor-pointer transition-all hover:bg-slate-50',
                                                         formData.roleIds.includes(role.id)
                                                             ? 'bg-indigo-50/50 border-indigo-200'
                                                             : 'bg-white',
@@ -276,10 +289,10 @@ export default function EditUserPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-start gap-4 p-5 bg-fbbf24/5 border-l-2 border-l-fbbf24 mt-6">
+                                    <div className="flex items-start gap-3 p-4 bg-fbbf24/5 border-l-2 border-l-fbbf24 mt-4">
                                         <Shield
-                                            size={20}
-                                            className="text-[#002d6b] shrink-0 mt-1"
+                                            size={18}
+                                            className="text-[#002d6b] shrink-0 mt-0.5"
                                         />
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-[#002d6b]">
@@ -295,16 +308,16 @@ export default function EditUserPage() {
                             )}
                         </div>
 
-                        <div className="pt-4">
+                        <div className="pt-2">
                             <Button
                                 type="submit"
-                                className="w-full md:w-auto bg-[#002d6b] hover:bg-brand-primary text-[10px] font-black uppercase tracking-[0.2em] px-16 py-4 hover:cursor-pointer h-auto shadow-2xl shadow-brand-primary/20 transition-all rounded-none hover:-translate-y-1 active:scale-95"
+                                className="w-full md:w-auto bg-[#002d6b] hover:bg-brand-primary text-[10px] font-black uppercase tracking-[0.2em] px-8 h-10 hover:cursor-pointer shadow-xl shadow-brand-primary/10 transition-all rounded-none hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? (
-                                    <Loader2 className="mr-3 size-5 animate-spin" />
+                                    <Loader2 className="mr-2 size-4 animate-spin" />
                                 ) : (
-                                    <Save className="mr-3 size-5" />
+                                    <Save className="mr-2 size-4" />
                                 )}
                                 Lưu mọi thay đổi
                             </Button>
@@ -313,11 +326,11 @@ export default function EditUserPage() {
                 </div>
 
                 <div className="lg:col-span-5 space-y-6">
-                    <div className="p-8 bg-slate-50 border border-slate-100 space-y-6">
+                    <div className="p-5 md:p-6 bg-slate-50 border border-slate-100 space-y-4">
                         <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 border-l-4 border-l-brand-primary pl-4">
                             Thông tin bổ sung
                         </h3>
-                        <div className="space-y-4">
+                        <div className="space-y-2">
                             {[
                                 {
                                     label: 'Trạng thái',
@@ -337,7 +350,7 @@ export default function EditUserPage() {
                             ].map((item, i) => (
                                 <div
                                     key={i}
-                                    className="flex items-center justify-between py-3 border-b border-slate-200/50 last:border-none"
+                                    className="flex items-center justify-between py-2 border-b border-slate-200/50 last:border-none"
                                 >
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                         {item.label}
@@ -353,7 +366,7 @@ export default function EditUserPage() {
                                 </div>
                             ))}
                         </div>
-                        <p className="text-[11px] text-slate-400 italic font-medium leading-relaxed pt-4 border-t border-slate-200/50">
+                        <p className="text-[11px] text-slate-400 italic font-medium leading-relaxed pt-2 border-t border-slate-200/50">
                             * Việc thay đổi mật khẩu sẽ có hiệu lực ngay trong lần đăng nhập kế tiếp
                             của người dùng này.
                         </p>

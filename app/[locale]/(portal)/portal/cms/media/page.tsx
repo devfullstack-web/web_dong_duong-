@@ -172,34 +172,34 @@ export default function MediaManagementPage() {
     };
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none border-l-4 border-brand-primary pl-4">
                         Thư viện Media
                     </h1>
-                    <p className="text-slate-500 font-medium italic mt-2 text-sm">
+                    <p className="text-slate-500 font-medium italic mt-1.5 text-xs pl-4">
                         Quản lý toàn bộ tài sản hình ảnh và kỹ thuật của hệ thống.
                     </p>
                 </div>
                 <Button
                     onClick={() => setUploadDialogOpen(true)}
-                    className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-4 hover:cursor-pointer h-auto transition-all rounded-none"
+                    className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 h-10 hover:cursor-pointer transition-all rounded-none"
                 >
                     <Upload className="mr-2 size-4" /> Tải ảnh mới
                 </Button>
             </div>
 
             {/* Main Content */}
-            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[600px] flex flex-col">
+            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px] flex flex-col">
                 {/* Filters */}
-                <div className="p-8 border-b border-slate-50 flex flex-col sm:flex-row gap-6 items-center justify-between bg-white">
+                <div className="p-4 md:p-5 border-b border-slate-50 flex flex-col sm:flex-row gap-4 items-center justify-between bg-white">
                     <div className="relative w-full sm:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
                             placeholder="TÌM KIẾM THEO TÊN FILE..."
-                            className="w-full pl-12 bg-slate-50 border-none text-[10px] font-bold uppercase tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-14 rounded-none outline-none"
+                            className="w-full pl-12 bg-slate-50 border-none text-[10px] font-bold uppercase tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-10 rounded-none outline-none"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -215,7 +215,7 @@ export default function MediaManagementPage() {
                 </div>
 
                 {/* Grid/List */}
-                <div className="flex-1 p-8">
+                <div className="flex-1 p-4 md:p-6">
                     {isLoading ? (
                         <div className="flex items-center justify-center h-[400px]">
                             <Loader2
@@ -224,7 +224,7 @@ export default function MediaManagementPage() {
                             />
                         </div>
                     ) : images.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
                             {images.map((image, index) => (
                                 <div
                                     key={image.filename}
@@ -241,11 +241,11 @@ export default function MediaManagementPage() {
 
                                     {/* Overlay Actions */}
                                     <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col">
-                                        <div className="flex justify-end p-2 gap-2">
+                                        <div className="flex justify-end p-1.5 gap-1.5">
                                             <button
                                                 onClick={() => copyToClipboard(image.url)}
                                                 title="Sao chép URL"
-                                                className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-2 text-white transition-colors"
+                                                className="bg-white/10 hover:bg-white/20 backdrop-blur-md p-1.5 text-white transition-colors"
                                             >
                                                 <Copy size={14} />
                                             </button>
@@ -255,7 +255,7 @@ export default function MediaManagementPage() {
                                                     setDeleteDialogOpen(true);
                                                 }}
                                                 title="Xóa ảnh"
-                                                className="bg-rose-500/80 hover:bg-rose-600 backdrop-blur-md p-2 text-white transition-colors"
+                                                className="bg-rose-500/80 hover:bg-rose-600 backdrop-blur-md p-1.5 text-white transition-colors"
                                             >
                                                 <Trash2 size={14} />
                                             </button>
@@ -263,12 +263,12 @@ export default function MediaManagementPage() {
                                         <div className="flex-1 flex items-center justify-center">
                                             <button
                                                 onClick={() => openLightbox(index)}
-                                                className="bg-white text-slate-900 p-3 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 ease-out shadow-2xl"
+                                                className="bg-white text-slate-900 p-2 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 ease-out shadow-2xl"
                                             >
                                                 <Maximize2 size={20} />
                                             </button>
                                         </div>
-                                        <div className="bg-slate-900/80 backdrop-blur-md p-3 space-y-1 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                        <div className="bg-slate-900/80 backdrop-blur-md p-2 space-y-0.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                                             <p className="text-[8px] font-black text-white/90 truncate uppercase tracking-tighter">
                                                 {image.filename}
                                             </p>
@@ -407,7 +407,7 @@ export default function MediaManagementPage() {
                                 handleClearSelection();
                                 setUploadDialogOpen(false);
                             }}
-                            className="text-sm rounded-none"
+                            className="text-xs h-10 px-4 rounded-none"
                         >
                             Hủy
                         </Button>
@@ -415,7 +415,7 @@ export default function MediaManagementPage() {
                             <Button
                                 onClick={handleUpload}
                                 disabled={uploadMutation.isPending}
-                                className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 rounded-none"
+                                className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 h-10 rounded-none"
                             >
                                 {uploadMutation.isPending ? (
                                     <>
