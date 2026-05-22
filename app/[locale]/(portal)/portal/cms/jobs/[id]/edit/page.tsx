@@ -132,19 +132,19 @@ export default function EditJobPage() {
     }
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
                     <Link href={PORTAL_ROUTES.cms.jobs.list}>
                         <Button
                             variant="outline"
-                            className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50"
+                            className="h-10 w-10 p-0 border-slate-100 rounded-none hover:bg-slate-50"
                         >
-                            <ArrowLeft size={20} />
+                            <ArrowLeft size={16} />
                         </Button>
                     </Link>
                     <div className="space-y-1">
-                        <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900">
+                        <h1 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-900 border-l-4 border-brand-primary pl-3">
                             Chỉnh sửa tin tuyển dụng
                         </h1>
                         <p className="text-xs text-muted-foreground font-medium">
@@ -155,26 +155,26 @@ export default function EditJobPage() {
                 <Button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="h-14 px-8 bg-brand-primary hover:bg-brand-secondary text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-lg"
+                    className="h-10 px-6 bg-brand-primary hover:bg-brand-secondary text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-lg"
                 >
                     {isSubmitting ? (
-                        <Loader2 size={18} className="mr-3 animate-spin" />
+                        <Loader2 size={16} className="mr-2 animate-spin" />
                     ) : (
-                        <Save size={18} className="mr-3" />
+                        <Save size={16} className="mr-2" />
                     )}
                     Lưu thay đổi
                 </Button>
             </div>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Content */}
-                <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Thông tin cơ bản
                         </h3>
-                        <div className="space-y-6">
-                            <div className="space-y-3">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="title"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -184,12 +184,12 @@ export default function EditJobPage() {
                                 <Input
                                     id="title"
                                     placeholder="VD: Kỹ sư Tự động hóa"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.title}
                                     onChange={(e) => handleTitleChange(e.target.value)}
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="slug"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -199,14 +199,14 @@ export default function EditJobPage() {
                                 <Input
                                     id="slug"
                                     placeholder="ky-su-tu-dong-hoa"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.slug}
                                     onChange={(e) =>
                                         setFormData({ ...formData, slug: e.target.value })
                                     }
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="description"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -220,7 +220,7 @@ export default function EditJobPage() {
                                     }
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="requirements"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -234,7 +234,7 @@ export default function EditJobPage() {
                                     }
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="benefits"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -251,7 +251,7 @@ export default function EditJobPage() {
                 </div>
 
                 {/* Sidebar */}
-                <div className="space-y-8">
+                <div className="space-y-6">
                     <StatusFormSection
                         isActive={formData.status === 'open'}
                         onActiveChange={(isActive) =>
@@ -261,12 +261,12 @@ export default function EditJobPage() {
                         description="Tin tuyển dụng đang tuyển sẽ hiển thị trên website."
                     />
 
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Chi tiết vị trí
                         </h3>
                         <div className="space-y-4">
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="department"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -276,14 +276,14 @@ export default function EditJobPage() {
                                 <Input
                                     id="department"
                                     placeholder="VD: Kỹ thuật"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.department}
                                     onChange={(e) =>
                                         setFormData({ ...formData, department: e.target.value })
                                     }
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="location"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -293,14 +293,14 @@ export default function EditJobPage() {
                                 <Input
                                     id="location"
                                     placeholder="VD: TP. Hồ Chí Minh"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.location}
                                     onChange={(e) =>
                                         setFormData({ ...formData, location: e.target.value })
                                     }
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="employment_type"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -313,7 +313,7 @@ export default function EditJobPage() {
                                         setFormData({ ...formData, employment_type: value })
                                     }
                                 >
-                                    <SelectTrigger className="h-14 bg-slate-50 border-none rounded-none text-sm font-bold">
+                                    <SelectTrigger className="h-11 bg-slate-50 border-none rounded-none text-sm font-bold">
                                         <SelectValue placeholder="Chọn loại hình" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-none">
@@ -324,7 +324,7 @@ export default function EditJobPage() {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="salary_range"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -334,14 +334,14 @@ export default function EditJobPage() {
                                 <Input
                                     id="salary_range"
                                     placeholder="VD: 15-25 triệu VND"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.salary_range}
                                     onChange={(e) =>
                                         setFormData({ ...formData, salary_range: e.target.value })
                                     }
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="experience_level"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -351,7 +351,7 @@ export default function EditJobPage() {
                                 <Input
                                     id="experience_level"
                                     placeholder="VD: 2-3 năm"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.experience_level}
                                     onChange={(e) =>
                                         setFormData({
@@ -361,7 +361,7 @@ export default function EditJobPage() {
                                     }
                                 />
                             </div>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 <Label
                                     htmlFor="deadline"
                                     className="text-[10px] font-black uppercase tracking-widest text-slate-500"
@@ -373,7 +373,7 @@ export default function EditJobPage() {
                                         <Button
                                             variant={'outline'}
                                             className={cn(
-                                                'h-14 w-full justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
+                                                'h-11 w-full justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
                                                 !formData.deadline && 'text-slate-300',
                                             )}
                                         >

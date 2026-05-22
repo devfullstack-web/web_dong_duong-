@@ -180,10 +180,10 @@ export default function JobsManagementPage() {
         })) || [];
 
     return (
-        <div className="flex-1 space-y-6 md:space-y-10 py-4 md:py-8 pt-4 md:pt-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2">
+        <div className="flex-1 space-y-5 md:space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2 mb-1">
                         <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest text-[#fbbf24]">
                             Sài Gòn Valve CMS
                         </span>
@@ -192,29 +192,29 @@ export default function JobsManagementPage() {
                             Live Recruitment
                         </span>
                     </div>
-                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 md:border-l-8 border-[#002d6b] pl-3 md:pl-6 leading-none">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-3 md:pl-4 leading-none">
                         Quản lý Tuyển dụng
                     </h2>
-                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
+                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed mt-2">
                         Hệ thống quản trị tin tuyển dụng và nguồn nhân lực. Theo dõi mật độ đăng
                         tin, phân tích trạng thái tuyển dụng và hiệu quả thu hút nhân tài.
                     </p>
                 </div>
                 {hasPermission(PERMISSIONS.RECRUITMENT_CREATE) && (
                     <Link href={PORTAL_ROUTES.cms.jobs.add}>
-                        <Button className="h-12 md:h-14 px-6 md:px-10 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center gap-3 justify-center">
-                            <Plus size={18} /> Thêm tin mới
+                        <Button className="h-10 px-4 md:px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest flex items-center gap-3 justify-center">
+                            <Plus size={16} /> Thêm tin mới
                         </Button>
                     </Link>
                 )}
             </div>
 
-            <Tabs defaultValue="list" className="space-y-6 md:space-y-8">
+            <Tabs defaultValue="list" className="space-y-5 md:space-y-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
                         <TabsTrigger
                             value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
                             <LayoutList size={14} />{' '}
                             <span className="hidden sm:inline">Danh sách</span>{' '}
@@ -222,7 +222,7 @@ export default function JobsManagementPage() {
                         </TabsTrigger>
                         <TabsTrigger
                             value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
+                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
                         >
                             <PieChartIcon size={14} />{' '}
                             <span className="hidden sm:inline">Biểu đồ phân tích</span>{' '}
@@ -237,13 +237,13 @@ export default function JobsManagementPage() {
                     </div>
                 </div>
 
-                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
-                    <div className="flex flex-col md:flex-row gap-4 p-4 md:p-6 bg-slate-50 border border-slate-100">
+                <TabsContent value="list" className="space-y-5 mt-0 border-none p-0">
+                    <div className="flex flex-col md:flex-row gap-4 p-4 md:p-5 bg-slate-50 border border-slate-100">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <input
                                 placeholder="TÌM KIẾM THEO TIÊU ĐỀ, PHÒNG BAN..."
-                                className="w-full h-12 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
+                                className="w-full h-10 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -270,19 +270,19 @@ export default function JobsManagementPage() {
                                 <table className="w-full min-w-[550px]">
                                     <thead>
                                         <tr className="border-b border-slate-50 bg-slate-50/50">
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Vị trí & Phòng ban
                                             </th>
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
+                                            <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
                                                 Địa điểm & Loại hình
                                             </th>
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Trạng thái
                                             </th>
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
+                                            <th className="text-left px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
                                                 Hạn nộp
                                             </th>
-                                            <th className="text-right p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                            <th className="text-right px-4 py-3 md:py-3.5 text-[9px] font-black uppercase tracking-widest text-slate-400">
                                                 Thao tác
                                             </th>
                                         </tr>
@@ -293,7 +293,7 @@ export default function JobsManagementPage() {
                                                 key={job.id}
                                                 className="hover:bg-slate-50/30 transition-colors group"
                                             >
-                                                <td className="p-3 md:p-6">
+                                                <td className="px-4 py-3 md:py-3.5">
                                                     <div className="space-y-1">
                                                         <p className="text-sm font-black text-slate-900 uppercase tracking-tight line-clamp-1">
                                                             {job.title}
@@ -305,7 +305,7 @@ export default function JobsManagementPage() {
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="p-3 md:p-6 text-xs font-bold text-slate-600 hidden md:table-cell">
+                                                <td className="px-4 py-3 md:py-3.5 text-xs font-bold text-slate-600 hidden md:table-cell">
                                                     <div className="flex flex-col gap-1.5">
                                                         <div className="flex items-center gap-2">
                                                             <MapPin
@@ -325,7 +325,7 @@ export default function JobsManagementPage() {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="p-3 md:p-6">
+                                                <td className="px-4 py-3 md:py-3.5">
                                                     <Badge
                                                         className={cn(
                                                             'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none',
@@ -341,7 +341,7 @@ export default function JobsManagementPage() {
                                                         }
                                                     </Badge>
                                                 </td>
-                                                <td className="p-3 md:p-6 whitespace-nowrap hidden sm:table-cell">
+                                                <td className="px-4 py-3 md:py-3.5 whitespace-nowrap hidden sm:table-cell">
                                                     {job.deadline ? (
                                                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase">
                                                             <Calendar
@@ -360,7 +360,7 @@ export default function JobsManagementPage() {
                                                         </span>
                                                     )}
                                                 </td>
-                                                <td className="p-3 md:p-6 text-right">
+                                                <td className="px-4 py-3 md:py-3.5 text-right">
                                                     <div className="flex items-center justify-end gap-2">
                                                         {hasPermission(
                                                             PERMISSIONS.RECRUITMENT_UPDATE,
@@ -373,7 +373,7 @@ export default function JobsManagementPage() {
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
-                                                                    className="h-9 w-9 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none"
+                                                                    className="h-8 w-8 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none"
                                                                 >
                                                                     <Edit2 size={14} />
                                                                 </Button>
@@ -384,14 +384,14 @@ export default function JobsManagementPage() {
                                                             <DropdownMenuTrigger asChild>
                                                                 <Button
                                                                     variant="ghost"
-                                                                    className="h-9 w-9 p-0 rounded-none hover:bg-slate-50"
+                                                                    className="h-8 w-8 p-0 rounded-none hover:bg-slate-50"
                                                                 >
                                                                     <MoreHorizontal className="h-4 w-4" />
                                                                 </Button>
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent
                                                                 align="end"
-                                                                className="rounded-none border-slate-100 shadow-xl w-56 p-2"
+                                                                className="rounded-none border-slate-100 shadow-xl w-48 p-1 bg-white"
                                                             >
                                                                 <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
                                                                     Quản trị tin
