@@ -181,7 +181,7 @@ export default function NewsManagementPage() {
     };
 
     return (
-        <div className="space-y-5 md:space-y-6">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
                     <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">

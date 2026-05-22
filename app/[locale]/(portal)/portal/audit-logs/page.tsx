@@ -115,20 +115,28 @@ export default function AuditLogsPage() {
     };
 
     return (
-        <div className="space-y-4 md:space-y-8 pb-10 md:pb-20">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight uppercase leading-none border-l-4 md:border-l-8 border-[#002d6b] pl-4 md:pl-6">
+        <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="space-y-1.5 pl-4">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
                         Nhật ký Hệ thống
-                    </h1>
-                    <p className="text-slate-500 font-medium italic mt-2 text-xs ml-4 md:ml-6">
+                    </h2>
+                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed pl-4">
                         Giám sát và kiểm soát mọi hoạt động tác động đến dữ liệu của quản trị viên.
                     </p>
+                </div>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <div className="hidden md:flex items-center gap-3">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                            Tổng số bản ghi:{' '}
+                            <span className="text-[#002d6b]">{totalItems}</span>
+                        </span>
+                    </div>
                 </div>
             </div>
 
             <div className="bg-white border border-slate-100 shadow-sm rounded-none overflow-hidden">
-                <div className="p-3 md:p-6 border-b border-slate-50 flex flex-col xl:flex-row xl:items-center justify-between gap-3 md:gap-4 bg-slate-50/30">
+                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 md:gap-4 p-4 md:p-5 bg-slate-50 border border-slate-100">
                     <div className="relative flex-1 max-w-md">
                         <Search
                             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -136,7 +144,7 @@ export default function AuditLogsPage() {
                         />
                         <Input
                             placeholder="TÌM THEO MÔ TẢ HOẶC NGƯỜI DÙNG..."
-                            className="pl-11 h-12 bg-white border-slate-200 text-[10px] font-black uppercase tracking-widest rounded-none"
+                            className="pl-11 h-10 bg-white border-slate-100 text-[10px] font-black uppercase tracking-widest rounded-none placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20 outline-none"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
@@ -235,19 +243,19 @@ export default function AuditLogsPage() {
                     <table className="w-full text-left min-w-[700px]">
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-100">
-                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     Thời gian / IP
                                 </th>
-                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
+                                <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
                                     Quản trị viên
                                 </th>
-                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     Hành động
                                 </th>
-                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
+                                <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
                                     Nội dung thay đổi
                                 </th>
-                                <th className="px-4 md:px-8 py-4 md:py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">
+                                <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 text-right">
                                     Chi tiết
                                 </th>
                             </tr>
@@ -279,7 +287,7 @@ export default function AuditLogsPage() {
                                         key={log.id}
                                         className="group hover:bg-slate-50/50 transition-colors"
                                     >
-                                        <td className="px-4 md:px-8 py-4 md:py-5">
+                                        <td className="px-4 py-3 md:py-3.5">
                                             <div className="flex flex-col">
                                                 <span className="text-[11px] font-black text-slate-900 flex items-center gap-1.5">
                                                     <Clock size={12} className="text-slate-300" />
@@ -294,7 +302,7 @@ export default function AuditLogsPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-5 hidden sm:table-cell">
+                                        <td className="px-4 py-3 md:py-3.5 hidden sm:table-cell">
                                             <div className="flex items-center gap-3">
                                                 <div className="size-8 bg-slate-100 flex items-center justify-center rounded-none border border-slate-200 shrink-0">
                                                     <User size={14} className="text-slate-400" />
@@ -311,7 +319,7 @@ export default function AuditLogsPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-5">
+                                        <td className="px-4 py-3 md:py-3.5">
                                             <div className="flex flex-col gap-1.5">
                                                 {getActionBadge(log.action)}
                                                 <span className="text-[9px] font-black text-slate-400 flex items-center gap-1">
@@ -319,16 +327,16 @@ export default function AuditLogsPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-5 hidden lg:table-cell">
+                                        <td className="px-4 py-3 md:py-3.5 hidden lg:table-cell">
                                             <p className="text-xs font-medium text-slate-600 max-w-xs truncate italic">
                                                 {log.description}
                                             </p>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-5 text-right">
+                                        <td className="px-4 py-3 md:py-3.5 text-right">
                                             <Button
                                                 variant="outline"
                                                 size="icon"
-                                                className="h-10 w-10 border-slate-100 rounded-none bg-white hover:bg-[#002d6b] hover:text-white transition-all shadow-sm"
+                                                className="h-8 w-8 border-slate-100 rounded-none bg-white hover:bg-[#002d6b] hover:text-white transition-all shadow-sm"
                                                 onClick={() => setSelectedLog(log)}
                                             >
                                                 <Eye size={14} />

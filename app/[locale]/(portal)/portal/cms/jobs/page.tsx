@@ -148,7 +148,7 @@ export default function JobsManagementPage() {
     };
 
     return (
-        <div className="flex-1 space-y-5 md:space-y-6">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div className="space-y-1">
                     <h2 className="text-xl md:text-2xl font-black tracking-tight uppercase text-slate-900 border-l-4 border-[#002d6b] pl-3 leading-none">

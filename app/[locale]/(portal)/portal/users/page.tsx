@@ -120,7 +120,7 @@ export default function UsersManagementPage() {
     );
 
     return (
-        <div className="flex-1 space-y-6 py-4 pt-4">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1.5 pl-4">
                     <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
