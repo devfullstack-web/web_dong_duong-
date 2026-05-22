@@ -83,31 +83,38 @@ export default function RolesManagementPage() {
     );
 
     return (
-        <div className="space-y-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
-                        Phân quyền & Vai trò
-                    </h1>
-                    <p className="text-slate-500 font-medium italic mt-2 text-sm">
+        <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="space-y-1.5 pl-4">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
+                        Quản lý Vai trò
+                    </h2>
+                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed pl-4">
                         Định nghĩa các nhóm quyền và gán cho tài khoản quản trị.
                     </p>
                 </div>
-                <Link href={PORTAL_ROUTES.users.roles.add}>
-                    <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-4 hover:cursor-pointer h-auto transition-all rounded-none">
-                        <Plus className="mr-2 size-4" /> Tạo vai trò mới
-                    </Button>
-                </Link>
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <div className="hidden md:flex items-center gap-3">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                            Tổng vai trò: <span className="text-[#002d6b]">{filteredRoles.length}</span>
+                        </span>
+                    </div>
+                    <Link href={PORTAL_ROUTES.users.roles.add}>
+                        <Button className="h-10 hover:cursor-pointer px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3">
+                            <Plus size={18} /> Tạo vai trò mới
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
                 {/* Table Filters */}
-                <div className="p-8 border-b border-slate-50 flex flex-col md:flex-row gap-6 items-center justify-between bg-white">
-                    <div className="relative w-full md:w-1/2 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
+                <div className="p-4 md:p-5 bg-slate-50 border border-slate-100">
+                    <div className="relative max-w-md group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-[#002d6b] transition-colors" />
                         <input
                             placeholder="TÌM KIẾM THEO TÊN VAI TRÒ HOẶC MÔ TẢ..."
-                            className="w-full pl-12 bg-slate-50 border-none text-[10px] font-bold uppercase tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-14 rounded-none outline-none"
+                            className="w-full h-10 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20 rounded-none outline-none"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -124,13 +131,13 @@ export default function RolesManagementPage() {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/30">
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 w-64">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 w-64">
                                         Tên vai trò
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Mô tả
                                     </th>
-                                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
                                         Thao tác
                                     </th>
                                 </tr>
@@ -141,7 +148,7 @@ export default function RolesManagementPage() {
                                         key={role.id}
                                         className="hover:bg-slate-50/30 transition-colors group"
                                     >
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 py-3 md:py-3.5">
                                             <div className="flex items-center gap-3">
                                                 <div className="size-8 bg-indigo-50 flex items-center justify-center">
                                                     <ShieldCheck
@@ -162,19 +169,19 @@ export default function RolesManagementPage() {
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6">
+                                        <td className="px-4 py-3 md:py-3.5">
                                             <span className="text-sm font-medium text-slate-600 line-clamp-1">
                                                 {role.description || '---'}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-6 text-right">
+                                        <td className="px-4 py-3 md:py-3.5 text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
                                                         variant="ghost"
-                                                        className="h-12 w-12 p-0 hover:bg-white hover:text-brand-primary border border-transparent hover:border-slate-100 rounded-none transition-all"
+                                                        className="h-8 w-8 p-0 hover:bg-slate-100 border border-transparent rounded-none transition-all"
                                                     >
-                                                        <MoreHorizontal className="h-5 w-5" />
+                                                        <MoreHorizontal className="h-4 w-4 text-slate-400" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent
