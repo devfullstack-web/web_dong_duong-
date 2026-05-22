@@ -414,9 +414,9 @@ export default function ProductsManagementPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent
                                                     align="end"
-                                                    className="w-64 p-2 rounded-none border border-slate-100 bg-white"
+                                                    className="w-48 p-1 rounded-none border border-slate-100 bg-white"
                                                 >
-                                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-4 py-3">
+                                                    <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
                                                         Tùy chọn sản phẩm
                                                     </DropdownMenuLabel>
                                                     <DropdownMenuSeparator className="bg-slate-50" />
@@ -427,13 +427,13 @@ export default function ProductsManagementPage() {
                                                                 href={PORTAL_ROUTES.cms.products.edit(
                                                                     product.id,
                                                                 )}
-                                                                className="rounded-none px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-slate-50 group"
+                                                                className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-slate-50 group"
                                                             >
                                                                 <Edit2
-                                                                    size={16}
+                                                                    size={14}
                                                                     className="text-slate-400 group-hover:text-brand-primary transition-colors"
                                                                 />
-                                                                <span className="text-xs font-bold uppercase tracking-tight text-slate-900">
+                                                                <span className="text-[11px] font-bold uppercase tracking-tight text-slate-900">
                                                                     Sửa thông tin
                                                                 </span>
                                                             </Link>
@@ -444,16 +444,16 @@ export default function ProductsManagementPage() {
                                                         <>
                                                             <DropdownMenuSeparator className="bg-slate-50" />
                                                             <DropdownMenuItem
-                                                                className="rounded-none px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-rose-50 group"
+                                                                className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-rose-50 group"
                                                                 onClick={() =>
                                                                     handleDeleteClick(product)
                                                                 }
                                                             >
                                                                 <Trash2
-                                                                    size={16}
+                                                                    size={14}
                                                                     className="text-slate-400 group-hover:text-rose-600 transition-colors"
                                                                 />
-                                                                <span className="text-xs font-bold uppercase tracking-tight text-rose-600">
+                                                                <span className="text-[11px] font-bold uppercase tracking-tight text-rose-600">
                                                                     Xóa sản phẩm
                                                                 </span>
                                                             </DropdownMenuItem>
