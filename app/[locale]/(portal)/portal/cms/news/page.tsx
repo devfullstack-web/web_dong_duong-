@@ -44,6 +44,35 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+function NewsImage({ src, alt }: { src?: string | null; alt: string }) {
+    const [imgSrc, setImgSrc] = useState(src);
+    const [hasError, setHasError] = useState(false);
+
+    useEffect(() => {
+        setImgSrc(src);
+        setHasError(false);
+    }, [src]);
+
+    if (!imgSrc || hasError) {
+        return (
+            <div className="flex items-center justify-center h-full w-full text-slate-300 bg-slate-100">
+                <Newspaper size={20} />
+            </div>
+        );
+    }
+
+    return (
+        <Image
+            src={imgSrc}
+            alt={alt}
+            fill
+            unoptimized
+            className="object-cover"
+            onError={() => setHasError(true)}
+        />
+    );
+}
+
 export default function NewsManagementPage() {
     const { hasPermission } = useAuth();
     const queryClient = useQueryClient();
@@ -290,19 +319,7 @@ export default function NewsManagementPage() {
                                         <td className="px-4 md:px-5 py-3 md:py-3.5">
                                             <div className="flex items-center gap-3 md:gap-6">
                                                 <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
-                                                    {news.image_url ? (
-                                                        <Image
-                                                            src={news.image_url}
-                                                            alt={news.title}
-                                                            fill
-                                                            unoptimized
-                                                            className="object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex items-center justify-center h-full w-full text-slate-300">
-                                                            <Newspaper size={20} />
-                                                        </div>
-                                                    )}
+                                                    <NewsImage src={news.image_url} alt={news.title} />
                                                 </div>
                                                 <div className="max-w-[250px] md:max-w-[450px]">
                                                     <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-1">
