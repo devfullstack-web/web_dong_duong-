@@ -18,6 +18,13 @@ import { PORTAL_ROUTES } from '@/constants/routes';
 
 export default function Footer() {
     const t = useTranslations('Footer');
+    const socialLinks = [
+        { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
+        { label: 'LinkedIn', Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
+        { label: 'YouTube', Icon: Youtube, href: COMPANY_INFO.social.youtube },
+        { label: 'Zalo', href: COMPANY_INFO.social.zalo },
+    ].filter((item) => item.href);
+
     return (
         <footer className="bg-brand-primary pt-10 pb-4 text-white relative overflow-hidden">
             {/* Background decoration */}
@@ -41,19 +48,20 @@ export default function Footer() {
                             {t('slogan')}
                         </p>
                         <div className="flex gap-3">
-                            {[
-                                { Icon: Facebook, href: COMPANY_INFO.social.facebook },
-                                { Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
-                                { Icon: Youtube, href: COMPANY_INFO.social.youtube },
-                            ].map(({ Icon, href }, i) => (
+                            {socialLinks.map(({ label, Icon, href }) => (
                                 <a
-                                    key={i}
+                                    key={label}
                                     href={href}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={label}
                                     className="h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10 hover:bg-brand-accent hover:border-brand-accent transition-all"
                                 >
-                                    <Icon size={14} />
+                                    {Icon ? (
+                                        <Icon size={14} />
+                                    ) : (
+                                        <span className="text-[8px] font-black uppercase tracking-tight">Zalo</span>
+                                    )}
                                 </a>
                             ))}
                         </div>

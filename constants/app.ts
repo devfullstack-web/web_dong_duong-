@@ -1,3 +1,11 @@
+import { COMPANY_INFO } from './site-info';
+
+export const COMPANY = {
+  NAME: COMPANY_INFO.name,
+  SHORT_NAME: COMPANY_INFO.shortName,
+  EMAIL: process.env.ADMIN_EMAIL || COMPANY_INFO.email,
+  WEBSITE: process.env.APP_URL || COMPANY_INFO.website,
+} as const;
 
 
 export const PAGINATION = {

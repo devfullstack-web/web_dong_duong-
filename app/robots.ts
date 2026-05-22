@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
+import { COMPANY_INFO } from '@/constants/site-info';
 
-// TODO: Đổi domain nếu khác production
-const SITE_URL = 'https://saigonvalve.vn';
+const SITE_URL = COMPANY_INFO.website;
 
 export default function robots(): MetadataRoute.Robots {
   return {

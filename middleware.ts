@@ -8,148 +8,134 @@ import { SITE_ROUTES, ADMIN_ROUTES, API_ROUTES } from '@/constants/routes';
 
 const intlMiddleware = createMiddleware(routing);
 
-// Add paths that don't require authentication
-const publicPaths = [
+const PUBLIC_PATHS = [
     SITE_ROUTES.LOGIN,
-    '/api' + API_ROUTES.AUTH.LOGIN,
-    '/api' + API_ROUTES.AUTH.REFRESH,
-    '/api' + API_ROUTES.AUTH.LOGOUT,
+    `/api${API_ROUTES.AUTH.LOGIN}`,
+    `/api${API_ROUTES.AUTH.REFRESH}`,
+    `/api${API_ROUTES.AUTH.LOGOUT}`,
 ];
+
+const WRITE_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
+const CHAT_GUEST_METHODS = new Set(['GET', 'POST', 'PATCH']);
+
+const isLocalHostname = (hostname: string) =>
+    hostname === 'localhost' || hostname === '127.0.0.1';
+
+const matchesPath = (value: string, target: string) =>
+    value === target || value.startsWith(`${target}/`);
+
+const localized = (path: string, locale: string | undefined) =>
+    locale ? `/${locale}${path}` : path;
+
+async function isValidSession(token: string | undefined): Promise<boolean> {
+    if (!token) return false;
+    try {
+        await decrypt(token);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+// Reverse proxy may forward upstream ports (e.g. :3000) into the Location
+// header. Strip them so the browser doesn't follow back to the internal port.
+function fixRedirectPort(response: NextResponse): NextResponse {
+    const location = response.headers.get('location');
+    if (!location) return response;
+    try {
+        const url = new URL(location);
+        if (isLocalHostname(url.hostname)) return response;
+        if (url.port && url.port !== '80' && url.port !== '443') {
+            url.port = '';
+            return NextResponse.redirect(url.toString(), response.status || 307);
+        }
+    } catch {}
+    return response;
+}
+
+function safeRedirect(path: string, request: NextRequest): NextResponse {
+    const host = request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '';
+    const hostname = host.split(':')[0];
+
+    if (isLocalHostname(hostname)) {
+        return NextResponse.redirect(new URL(path, request.url));
+    }
+
+    const proto = request.headers.get('x-forwarded-proto') ?? 'https';
+    return NextResponse.redirect(new URL(path, `${proto}://${hostname}`));
+}
+
+const apiUnauthorized = (reason: string) =>
+    NextResponse.json(
+        { success: false, error: `Unauthorized - ${reason}` },
+        { status: 401 },
+    );
+
+const isStaticAsset = (pathname: string) =>
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/socket.io') ||
+    pathname.includes('favicon.ico') ||
+    (pathname.includes('.') && !pathname.startsWith('/api'));
 
 export default async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+
+    if (isStaticAsset(pathname)) return NextResponse.next();
+    if (pathname.startsWith('/api')) return handleApi(request);
+
     const locale = routing.locales.find(
-        (item) => pathname === `/${item}` || pathname.startsWith(`/${item}/`),
+        (loc) => pathname === `/${loc}` || pathname.startsWith(`/${loc}/`),
     );
-    const normalizedPath = locale
-        ? pathname.slice(locale.length + 1) || '/'
-        : pathname;
-    
-    // Ignore internal next.js paths and assets
-    if (
-        pathname.startsWith('/_next') ||
-        pathname.startsWith('/socket.io') ||
-        pathname.startsWith('/api') ||
-        pathname.includes('favicon.ico') ||
-        pathname.includes('.')
-    ) {
-        // For API routes, we still need our custom proxy logic
-        if (pathname.startsWith('/api')) {
-             return proxy(request);
-        }
-        return NextResponse.next();
-    }
+    const normalizedPath = locale ? pathname.slice(locale.length + 1) || '/' : pathname;
 
-    // Only run next-intl middleware when the URL is missing a locale prefix.
-    // Running it on already-localized routes like /en can cause unnecessary
-    // self-proxying in production custom-server mode.
-    if (!locale) {
-        return intlMiddleware(request);
-    }
+    const authRedirect = await checkPageAuth(request, normalizedPath, locale);
+    if (authRedirect) return authRedirect;
 
-    return proxy(request, normalizedPath, locale);
+    return fixRedirectPort(intlMiddleware(request));
 }
 
-async function proxy(request: NextRequest, normalizedPath?: string, currentLocale?: string) {
-    const { pathname } = request.nextUrl;
-    const method = request.method;
-    const effectivePath = normalizedPath || pathname;
-
-    // Define locale-prefixed matches
-    const isPath = (target: string) => 
-        effectivePath === target ||
-        effectivePath.startsWith(target + '/');
-
-    // 1. Allow public paths explicitly
-    // Since routes might be prefixed with /[locale], we need to check both
-    const isPublic = publicPaths.some(path => isPath(path));
+async function checkPageAuth(
+    request: NextRequest,
+    normalizedPath: string,
+    locale: string | undefined,
+): Promise<NextResponse | null> {
+    const session = request.cookies.get('session')?.value;
+    const isPublic = PUBLIC_PATHS.some((p) => matchesPath(normalizedPath, p));
 
     if (isPublic) {
-        // If it's the login page and user is already logged in, redirect to portal
-        if (isPath(SITE_ROUTES.LOGIN)) {
-            const session = request.cookies.get('session')?.value;
-            if (session) {
-                try {
-                    await decrypt(session);
-                    // Determine current locale to redirect correctly
-                    const targetUrl = currentLocale
-                        ? `/${currentLocale}${ADMIN_ROUTES.DASHBOARD}`
-                        : ADMIN_ROUTES.DASHBOARD;
-                    return NextResponse.redirect(new URL(targetUrl, request.url));
-                } catch (e) {
-                    // Invalid session, continue to login
-                }
-            }
+        const onLogin = matchesPath(normalizedPath, SITE_ROUTES.LOGIN);
+        if (onLogin && (await isValidSession(session))) {
+            return safeRedirect(localized(ADMIN_ROUTES.DASHBOARD, locale), request);
         }
+        return null;
+    }
+
+    if (!normalizedPath.startsWith(ADMIN_ROUTES.ROOT)) return null;
+
+    if (await isValidSession(session)) return null;
+    return safeRedirect(localized(SITE_ROUTES.LOGIN, locale), request);
+}
+
+async function handleApi(request: NextRequest): Promise<NextResponse> {
+    const { pathname } = request.nextUrl;
+    const { method } = request;
+
+    if (method === 'GET') return NextResponse.next();
+    if (PUBLIC_PATHS.some((p) => matchesPath(pathname, p))) return NextResponse.next();
+
+    if (pathname === `/api${API_ROUTES.CONTACTS}` && method === 'POST') {
         return NextResponse.next();
     }
 
-    // 2. Allow ALL public GET requests for API (Content fetching)
-    if (pathname.startsWith('/api/') && method === 'GET') {
+    if (pathname.startsWith('/api/chat/') && CHAT_GUEST_METHODS.has(method)) {
         return NextResponse.next();
     }
 
-    // 3. Special case: POST /api/contacts is public (with rate limit already applied)
-    if (pathname === '/api' + API_ROUTES.CONTACTS && method === 'POST') {
-        return NextResponse.next();
-    }
+    if (!WRITE_METHODS.has(method)) return NextResponse.next();
 
-    // 4. Special case: Chat API routes are public (for guest users)
-    if (pathname.startsWith('/api/chat/') && ['POST', 'GET', 'PATCH'].includes(method)) {
-        return NextResponse.next();
-    }
-
-    // 4. Protect /portal and other API methods (POST/PATCH/DELETE)
-    const isPortalPath = effectivePath.startsWith(ADMIN_ROUTES.ROOT);
-    const isProtectedApi =
-        pathname.startsWith('/api/') && ['POST', 'PATCH', 'DELETE', 'PUT'].includes(method);
-
-    if (isPortalPath || isProtectedApi) {
-        const session = request.cookies.get('session')?.value;
-
-        if (!session) {
-            if (pathname.startsWith('/api/')) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Unauthorized - Authentication required',
-                    },
-                    { status: 401 },
-                );
-            }
-            // Add locale to redirect url if needed
-            const loginUrl = currentLocale
-                ? `/${currentLocale}${SITE_ROUTES.LOGIN}`
-                : SITE_ROUTES.LOGIN;
-            return NextResponse.redirect(new URL(loginUrl, request.url));
-        }
-
-        try {
-            await decrypt(session);
-            // In the new RBAC system, we let the individual route handlers (using withAuth)
-            // handle granular permission checks. The global proxy should only ensure:
-            // 1. User is authenticated (done above)
-
-            return NextResponse.next();
-        } catch (error) {
-            if (pathname.startsWith('/api/')) {
-                return NextResponse.json(
-                    {
-                        success: false,
-                        error: 'Unauthorized - Invalid session',
-                    },
-                    { status: 401 },
-                );
-            }
-            // Add locale to redirect url if needed
-            const loginUrl = currentLocale
-                ? `/${currentLocale}${SITE_ROUTES.LOGIN}`
-                : SITE_ROUTES.LOGIN;
-            return NextResponse.redirect(new URL(loginUrl, request.url));
-        }
-    }
-
-    // Allow everything else (site pages like /, /san-pham, etc.)
+    const session = request.cookies.get('session')?.value;
+    if (!session) return apiUnauthorized('Authentication required');
+    if (!(await isValidSession(session))) return apiUnauthorized('Invalid session');
     return NextResponse.next();
 }
 

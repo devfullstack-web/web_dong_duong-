@@ -41,8 +41,8 @@ export const getBaseLayout = (content: string) => `
                     </p>
                     <p style="margin: 0;">
                       ĐỊA CHỈ: ${MAIL_CONTACT.address}<br>
-                      HOTLINE: <a href="tel:02835358739" style="color: ${MAIL_BRAND.primary}; text-decoration: none; font-weight: 700;">${MAIL_CONTACT.hotline}</a><br>
-                      WEBSITE: <a href="${MAIL_ASSETS.website}" style="color: ${MAIL_BRAND.primary}; text-decoration: none;">www.saigonvalve.vn</a>
+                      HOTLINE: <a href="tel:${MAIL_CONTACT.hotlineRaw}" style="color: ${MAIL_BRAND.primary}; text-decoration: none; font-weight: 700;">${MAIL_CONTACT.hotline}</a><br>
+                      WEBSITE: <a href="${MAIL_ASSETS.website}" style="color: ${MAIL_BRAND.primary}; text-decoration: none;">${MAIL_ASSETS.websiteLabel}</a>
                     </p>
                   </td>
                 </tr>

@@ -1,4 +1,4 @@
-import { MAIL_BRAND } from "../constants";
+import { MAIL_ASSETS, MAIL_BRAND } from "../constants";
 import { getBaseLayout } from "./layout";
 
 export const getApplicationConfirmationTemplate = (name: string, jobTitle: string) => {
@@ -27,8 +27,8 @@ export const getApplicationConfirmationTemplate = (name: string, jobTitle: strin
       </p>
       
       <ul style="margin: 0 0 25px; padding-left: 20px;">
-        <li style="margin-bottom: 8px;">Website: <a href="https://saigonvalve.vn" style="color: ${MAIL_BRAND.primary}; text-decoration: none;">saigonvalve.vn</a></li>
-        <li style="margin-bottom: 8px;">Fanpage: <a href="#" style="color: ${MAIL_BRAND.primary}; text-decoration: none;">facebook.com/saigonvalve</a></li>
+        <li style="margin-bottom: 8px;">Website: <a href="${MAIL_ASSETS.website}" style="color: ${MAIL_BRAND.primary}; text-decoration: none;">${MAIL_ASSETS.websiteLabel}</a></li>
+        <li style="margin-bottom: 8px;">Fanpage: <a href="${MAIL_ASSETS.facebook}" style="color: ${MAIL_BRAND.primary}; text-decoration: none;">${MAIL_ASSETS.facebook}</a></li>
       </ul>
       
       <p style="margin-bottom: 5px;">Trân trọng,</p>

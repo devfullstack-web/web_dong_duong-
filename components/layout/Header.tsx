@@ -386,6 +386,22 @@ export default function Header() {
                     </div>
                     <span className="font-black text-sm tracking-widest uppercase">{COMPANY_INFO.email}</span>
                  </a>
+                 {mobileSocialLinks.length > 0 && (
+                  <div className="flex items-center gap-3">
+                    {mobileSocialLinks.map(({ label, Icon, href }) => (
+                      <a
+                        key={label}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        className="h-10 min-w-10 px-3 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm transition-colors hover:bg-brand-primary hover:text-white"
+                      >
+                        {Icon ? <Icon size={20} /> : <span className="text-[10px] font-black uppercase">Zalo</span>}
+                      </a>
+                    ))}
+                  </div>
+                 )}
               </div>
             </div>
           </motion.div>

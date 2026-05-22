@@ -1,49 +1,62 @@
 /**
- * Thông tin công ty - Chỉnh sửa tại đây sẽ cập nhật toàn bộ website
+ * Thong tin cong ty - lay tu bien moi truong de dung chung toan bo website.
  */
 
+const getEnv = (value: string | undefined) => value?.trim() || '';
+const companyWebsite = getEnv(process.env.NEXT_PUBLIC_COMPANY_WEBSITE) || getEnv(process.env.NEXT_PUBLIC_SITE_URL);
+const companyWebsiteLabel =
+    getEnv(process.env.NEXT_PUBLIC_COMPANY_WEBSITE_LABEL) ||
+    companyWebsite.replace(/^https?:\/\//, '').replace(/\/$/, '');
+const companyHotline = getEnv(process.env.NEXT_PUBLIC_COMPANY_HOTLINE);
+const companyHotlineRaw =
+    getEnv(process.env.NEXT_PUBLIC_COMPANY_HOTLINE_RAW) || companyHotline.replace(/[^\d+]/g, '');
+const companyFullName = getEnv(process.env.NEXT_PUBLIC_COMPANY_FULL_NAME);
+const companyCopyrightName = getEnv(process.env.NEXT_PUBLIC_COMPANY_COPYRIGHT_NAME) || companyFullName;
+const companyCopyrightText = getEnv(process.env.NEXT_PUBLIC_COMPANY_COPYRIGHT_TEXT);
+
 export const COMPANY_INFO = {
-    name: 'Sài Gòn Valve',
-    shortName: 'SGV',
-    fullName: 'CÔNG TY TNHH SÀI GÒN VALVE',
+    name: getEnv(process.env.NEXT_PUBLIC_COMPANY_NAME),
+    shortName: getEnv(process.env.NEXT_PUBLIC_COMPANY_SHORT_NAME),
+    fullName: companyFullName,
 
-    // Địa chỉ
-    address: 'Số 124/16-18 Võ Văn Hát, Long Trường, TP. Thủ Đức, TP. Hồ Chí Minh',
+    // Dia chi
+    address: getEnv(process.env.NEXT_PUBLIC_COMPANY_ADDRESS),
 
-    // Liên hệ
-    phone: process.env.NEXT_PUBLIC_COMPANY_HOTLINE || '090 695 54 59',
-    phoneRaw: process.env.NEXT_PUBLIC_COMPANY_HOTLINE_RAW || '0906955459', // Dùng cho href tel:
-    hotline: process.env.NEXT_PUBLIC_COMPANY_HOTLINE || '090 695 54 59',
-    hotlineRaw: process.env.NEXT_PUBLIC_COMPANY_HOTLINE_RAW || '0906955459',
+    // Lien he
+    phone: companyHotline,
+    phoneRaw: companyHotlineRaw,
+    hotline: companyHotline,
+    hotlineRaw: companyHotlineRaw,
 
-    email: process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'info@saigonvalve.vn',
-    supportEmail: 'support@saigonvalve.vn',
+    email: getEnv(process.env.NEXT_PUBLIC_COMPANY_EMAIL),
+    supportEmail: getEnv(process.env.NEXT_PUBLIC_COMPANY_SUPPORT_EMAIL),
 
     // Website
-    website: 'https://saigonvalve.vn',
+    website: companyWebsite,
+    websiteLabel: companyWebsiteLabel,
 
-    // Mạng xã hội
+    // Mang xa hoi
     social: {
-        facebook: process.env.NEXT_PUBLIC_COMPANY_FACEBOOK || 'https://www.facebook.com/saigon.valve.2024',
-        linkedin: 'https://linkedin.com/company/saigonvalve',
-        youtube: 'https://youtube.com/@saigonvalve',
-        zalo: process.env.NEXT_PUBLIC_COMPANY_ZALO || 'https://zalo.me/0906955459',
+        facebook: getEnv(process.env.NEXT_PUBLIC_COMPANY_FACEBOOK),
+        linkedin: getEnv(process.env.NEXT_PUBLIC_COMPANY_LINKEDIN),
+        youtube: getEnv(process.env.NEXT_PUBLIC_COMPANY_YOUTUBE),
+        zalo: getEnv(process.env.NEXT_PUBLIC_COMPANY_ZALO),
     },
 
-    // Giờ làm việc
+    // Gio lam viec
     workingHours: {
-        weekdays: '08:00 - 17:30',
-        saturday: '08:00 - 12:00',
-        sunday: 'Nghỉ',
+        weekdays: getEnv(process.env.NEXT_PUBLIC_COMPANY_WORKING_HOURS_WEEKDAYS),
+        saturday: getEnv(process.env.NEXT_PUBLIC_COMPANY_WORKING_HOURS_SATURDAY),
+        sunday: getEnv(process.env.NEXT_PUBLIC_COMPANY_WORKING_HOURS_SUNDAY),
     },
 
-    // Thông tin pháp lý
-    taxCode: '0123456789',
-    foundedYear: 2015,
+    // Thong tin phap ly
+    taxCode: getEnv(process.env.NEXT_PUBLIC_COMPANY_TAX_CODE),
+    foundedYear: Number(getEnv(process.env.NEXT_PUBLIC_COMPANY_FOUNDED_YEAR)) || undefined,
 
-    // Slogan / Mô tả
-    slogan: 'Nhà phân phối độc quyền thiết bị ngành nước và giải pháp quan trắc thông minh từ Nhật Bản & Hàn Quốc tại thị trường Việt Nam.',
+    // Slogan / Mo ta
+    slogan: getEnv(process.env.NEXT_PUBLIC_COMPANY_SLOGAN),
 
     // Copyright
-    copyright: `© ${new Date().getFullYear()} SÀI GÒN VALVE. BẢO LƯU TẤT CẢ QUYỀN.`,
+    copyright: `© ${new Date().getFullYear()} ${companyCopyrightName}. ${companyCopyrightText}`.trim(),
 } as const;
