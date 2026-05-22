@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { cn } from '@/lib/utils';
 import {
     FileText,
@@ -29,6 +30,7 @@ import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient'
 
 export default function DashboardPage() {
     const queryClient = useQueryClient();
+    const [timeRange, setTimeRange] = React.useState('6m');
 
     const { data: statsData, isLoading: loading } = useQuery<{ data: any }>({
         queryKey: ['stats'],
@@ -61,14 +63,21 @@ export default function DashboardPage() {
         contacts: { label: 'Liên hệ', color: '#ef4444' },
     };
 
-    const activityData =
-        stats?.trends?.map((t: any) => ({
+    const activityDataRaw = React.useMemo(() => {
+        return stats?.trends?.map((t: any) => ({
             month: t.month.toUpperCase(),
             news: t.news,
             projects: t.projects,
             products: t.products,
             total: t.news + t.projects + t.products,
         })) || [];
+    }, [stats?.trends]);
+
+    const activityData = React.useMemo(() => {
+        if (timeRange === '3m') return activityDataRaw.slice(-3);
+        if (timeRange === '1m') return activityDataRaw.slice(-1);
+        return activityDataRaw;
+    }, [activityDataRaw, timeRange]);
 
     const activityConfig = {
         news: { label: 'Tin tức', color: 'var(--brand-primary)' },
@@ -130,19 +139,43 @@ export default function DashboardPage() {
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                <div className="space-y-1.5 pl-4">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
                         Tổng quan
-                    </h1>
-                    <p className="text-slate-500 font-medium italic mt-2 text-sm">
-                        Chào mừng trở lại. Đây là hoạt động của hệ thống trong 30 ngày qua.
+                    </h2>
+                    <p className="text-slate-500 font-medium italic text-xs pl-4 leading-relaxed">
+                        Chào mừng trở lại. Đây là hoạt động của hệ thống.
                     </p>
                 </div>
-                <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-none border border-slate-100">
-                    <Clock size={14} className="text-brand-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-                        Cập nhật lúc: {updateTime}
-                    </span>
+                <div className="flex flex-wrap items-center gap-3">
+                    {/* Time Range Filter */}
+                    <div className="flex items-center bg-slate-50 border border-slate-100 p-0.5 rounded-none">
+                        {[
+                            { value: '6m', label: '6 THÁNG' },
+                            { value: '3m', label: '3 THÁNG' },
+                            { value: '1m', label: '1 THÁNG' },
+                        ].map((item) => (
+                            <button
+                                key={item.value}
+                                onClick={() => setTimeRange(item.value)}
+                                className={cn(
+                                    'px-3 py-1.5 text-[9px] font-black tracking-wider uppercase transition-all rounded-none hover:cursor-pointer',
+                                    timeRange === item.value
+                                        ? 'bg-[#002d6b] text-white'
+                                        : 'text-slate-400 hover:text-slate-600 bg-transparent'
+                                )}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-none border border-slate-100">
+                        <Clock size={14} className="text-[#002d6b]" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+                            Cập nhật lúc: {updateTime}
+                        </span>
+                    </div>
                 </div>
             </div>
 
