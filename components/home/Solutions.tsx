@@ -1,15 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SITE_ROUTES } from '@/constants/routes';
-
-
 
 export default function Solutions() {
     const t = useTranslations('Solutions');
@@ -102,7 +99,7 @@ export default function Solutions() {
                                 src={item.image}
                                 alt={item.brand}
                                 fill
-                                unoptimized
+                                sizes="(max-width: 1024px) 100vw, 20vw"
                                 className="object-cover"
                             />
                         </div>
@@ -128,7 +125,7 @@ export default function Solutions() {
                                                 src="/images/logo/logo.png"
                                                 alt="Sài Gòn Valve Logo"
                                                 fill
-                                                unoptimized
+                                                sizes="(max-width: 640px) 144px, (max-width: 1024px) 176px, 208px"
                                                 className="object-contain p-2 sm:p-3"
                                             />
                                         </div>

@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main
+
   workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,58 +29,37 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Build app
+        run: NEXT_DISABLE_ESLINT=1 pnpm build
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
+      - name: Prepare deploy files
+        run: |
+          rm -rf deploy
+          mkdir deploy
 
-    steps:
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.2.0
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-          RESTART_COMMAND: ${{ secrets.RESTART_COMMAND }}
+          cp -r .next deploy/.next
+          cp -r dist deploy/dist
+          cp -r public deploy/public
+          cp -r node_modules deploy/node_modules
+
+          cp package.json deploy/package.json
+          cp pnpm-lock.yaml deploy/pnpm-lock.yaml
+
+      - name: Upload build to server
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script_stop: true
-          envs: DEPLOY_PATH,RESTART_COMMAND
+          source: "deploy/*"
+          target: "${{ secrets.DEPLOY_PATH }}"
+
+      - name: Restart app
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            set -e
-
-            source /home/vcxvobej/nodevenv/public_html/sgv_cms/20/bin/activate
-
-            if [ -z "$DEPLOY_PATH" ] || [ -z "$RESTART_COMMAND" ]; then
-              echo "Missing DEPLOY_PATH or RESTART_COMMAND"
-              exit 1
-            fi
-
-            REPO_URL="https://github.com/saigon-valve/sgv_cms.git"
-
-            if [ ! -d "$DEPLOY_PATH/.git" ]; then
-              mkdir -p "$DEPLOY_PATH"
-              git clone --branch main "$REPO_URL" "$DEPLOY_PATH"
-            fi
-
-            cd "$DEPLOY_PATH"
-
-            git fetch origin main --prune
-            git reset --hard origin/main
-
-            if [ ! -f .env ]; then
-              echo ".env not found"
-              exit 1
-            fi
-
-            corepack enable
-            corepack prepare pnpm@10 --activate
-
-            pnpm install --frozen-lockfile
-
-            pnpm build
-
-            eval "$RESTART_COMMAND"
-
+            mkdir -p /home/vcxvobej/public_html/sgv_cms/tmp
+            touch /home/vcxvobej/public_html/sgv_cms/tmp/restart.txt

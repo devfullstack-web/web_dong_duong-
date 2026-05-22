@@ -3,8 +3,7 @@
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { motion } from 'motion/react';
-import { ArrowRight } from 'lucide-react';
-import { Link } from '@/i18n/routing';
+import { Button } from '../ui/button';
 
 export default function SystemHighlight() {
     const t = useTranslations('SystemHighlight');
@@ -41,29 +40,22 @@ export default function SystemHighlight() {
                         viewport={{ once: true }}
                         className={`flex flex-col ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-20`}
                     >
-                        {/* Image Side: Sharp & Technical */}
-                        <div className="w-full lg:w-1/2 relative aspect-video lg:aspect-square xl:aspect-[4/3] bg-slate-50 overflow-hidden shadow-2xl">
-                            <Image
-                                src={item.image}
-                                alt={item.title}
-                                fill
-                                unoptimized
-                                className="object-cover lg:object-contain p-4 lg:p-12 hover:scale-105 transition-transform duration-700"
-                            />
-                            <div className="absolute top-0 left-0 w-2 h-full bg-brand-primary"></div>
-                        </div>
+                        <Image
+                            src={banner.image}
+                            alt={banner.title}
+                            fill
+                            sizes="100vw"
+                            className="object-cover opacity-50 transition-transform duration-1000 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/40 to-transparent"></div>
 
-                        {/* Content Side: Professional & Structured */}
-                        <div className="w-full lg:w-1/2 space-y-8">
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary">
-                                        {item.tag}
-                                    </span>
-                                    <div className="h-px w-12 bg-slate-200"></div>
-                                </div>
-                                <h2 className="text-3xl lg:text-4xl font-black text-slate-900 leading-[1.1] uppercase tracking-tight">
-                                    {item.title}
+                        <div className="absolute inset-0 container mx-auto px-12 py-16 flex flex-col justify-center space-y-6">
+                            <div className="space-y-4 max-w-xl">
+                                <p className="text-[10px] font-black tracking-[0.2em] text-brand-accent uppercase">
+                                    {banner.tag}
+                                </p>
+                                <h2 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tight">
+                                    {banner.title}
                                 </h2>
                                 <p className="text-sm lg:text-base text-slate-500 font-medium leading-relaxed max-w-xl">
                                     {item.desc}

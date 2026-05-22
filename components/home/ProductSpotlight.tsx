@@ -11,45 +11,23 @@ import {
 } from '@/components/ui/carousel';
 import { motion } from 'motion/react';
 import Autoplay from 'embla-carousel-autoplay';
-import $api from '@/utils/axios';
-import { API_ROUTES } from '@/constants/routes';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { ArrowRight, Box } from 'lucide-react';
 
-export default function ProductSpotlight() {
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    image_url: string | null;
+    description: string;
+}
+
+interface ProductSpotlightProps {
+    products?: Product[];
+}
+
+export default function ProductSpotlight({ products = [] }: ProductSpotlightProps) {
     const t = useTranslations('ProductSpotlight');
-    const commonT = useTranslations('Common');
-    const [products, setProducts] = React.useState<any[]>([]);
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        const fetchFeaturedProducts = async () => {
-            try {
-                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true&status=active`);
-                if (response.data.success) {
-                    setProducts(response.data.data);
-                }
-            } catch (error) {
-                console.error('Error fetching featured products:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFeaturedProducts();
-    }, []);
-
-    if (loading) {
-        return (
-            <section className="bg-slate-50 py-12 lg:py-16">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <div className="h-48 flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
-                    </div>
-                </div>
-            </section>
-        );
-    }
 
     if (products.length === 0) return null;
 
@@ -111,68 +89,32 @@ export default function ProductSpotlight() {
                 >
                     <CarouselContent className="-ml-4">
                         {products.map((product) => (
-                            <CarouselItem key={product.id} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    className="h-full"
+                            <CarouselItem key={product.id} className="md:basis-1/2 lg:basis-1/3">
+                                <Link
+                                    href={`/san-pham/${product.slug}`}
+                                    className="p-4 flex flex-col items-center text-center space-y-6 group"
                                 >
-                                    <Link
-                                        href={`/san-pham/${product.slug}`}
-                                        className="flex flex-col h-full bg-white border border-slate-100 group hover:shadow-xl hover:shadow-brand-primary/5 transition-all duration-300 rounded-xl overflow-hidden"
-                                    >
-                                        {/* Image Area - Smaller aspect */}
-                                        <div className="relative aspect-square bg-slate-50/50 overflow-hidden">
-                                            <Image
-                                                src={product.image_url || '/images/placeholder.png'}
-                                                alt={product.name}
-                                                fill
-                                                unoptimized
-                                                className="object-contain p-6 group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                            {product.category_name && (
-                                                <div className="absolute top-3 left-3">
-                                                    <div className="bg-white/80 backdrop-blur-sm px-2 py-0.5 rounded-sm border border-slate-100 flex items-center gap-1.5">
-                                                        <Box size={10} className="text-brand-primary" />
-                                                        <span className="text-[8px] font-black text-slate-900 uppercase tracking-wider">{product.category_name}</span>
-                                                    </div>
-                                                </div>
-                                            )}
+                                    <div className="relative aspect-square w-full max-w-75 transition-transform duration-500 group-hover:scale-110">
+                                        <Image
+                                            src={
+                                                product.image_url ||
+                                                '/images/placeholder-product.png'
+                                            }
+                                            alt={product.name}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                            className="object-contain"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight leading-tight min-h-10 flex items-center justify-center">
+                                            {product.name}
+                                        </h3>
+                                        <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-brand-primary uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                                            {t('productDetail')}
                                         </div>
-
-                                        {/* Content Area - Compact & Real Data */}
-                                        <div className="flex-1 p-5 flex flex-col space-y-3">
-                                            <div className="space-y-1 flex-1">
-                                                <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-tight group-hover:text-brand-primary transition-colors line-clamp-2">
-                                                    {product.name}
-                                                </h3>
-                                                {product.summary && (
-                                                    <p className="text-[10px] text-slate-500 font-medium leading-relaxed line-clamp-2">
-                                                        {product.summary}
-                                                    </p>
-                                                )}
-                                            </div>
-
-                                            {/* Dynamic Metadata from API */}
-                                            {(product.brand || product.origin) && (
-                                                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-50">
-                                                    {product.brand && (
-                                                        <span className="text-[8px] font-bold text-brand-primary uppercase tracking-widest">{product.brand}</span>
-                                                    )}
-                                                    {product.origin && (
-                                                        <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">• {product.origin}</span>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            <div className="flex items-center justify-between pt-1">
-                                                <span className="text-[9px] font-black text-brand-primary uppercase tracking-widest">{t('productDetail')}</span>
-                                                <ArrowRight size={14} className="text-slate-300 group-hover:text-brand-primary transition-colors translate-x-0 group-hover:translate-x-1" />
-                                            </div>
-                                        </div>
-                                    </Link>
-                                </motion.div>
+                                    </div>
+                                </Link>
                             </CarouselItem>
                         ))}
                     </CarouselContent>

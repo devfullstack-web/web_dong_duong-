@@ -35,18 +35,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 import { useSocket } from '@/hooks/use-socket';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { ConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { SimpleConfirmDialog } from '@/components/shared/simple-confirm-dialog';
 import type { ChatSession, ChatMessage, ChatSessionStatus } from '@/types';
@@ -161,12 +156,24 @@ export default function ChatAdminPage() {
             if (updated) {
                 setSessions((prev) =>
                     prev.map((s) =>
-                        s.id === sessionId ? { ...s, unread_count: 0, admin_last_seen_at: updated.admin_last_seen_at } : s,
+                        s.id === sessionId
+                            ? {
+                                  ...s,
+                                  unread_count: 0,
+                                  admin_last_seen_at: updated.admin_last_seen_at,
+                              }
+                            : s,
                     ),
                 );
                 if (selectedSession?.id === sessionId) {
                     setSelectedSession((prev) =>
-                        prev ? { ...prev, unread_count: 0, admin_last_seen_at: updated.admin_last_seen_at } : prev,
+                        prev
+                            ? {
+                                  ...prev,
+                                  unread_count: 0,
+                                  admin_last_seen_at: updated.admin_last_seen_at,
+                              }
+                            : prev,
                     );
                 }
             }
@@ -195,7 +202,10 @@ export default function ChatAdminPage() {
                 updated[index] = {
                     ...updated[index],
                     last_message_at: data.created_at,
-                    last_message_preview: data.content.length > 100 ? data.content.slice(0, 100) + '...' : data.content,
+                    last_message_preview:
+                        data.content.length > 100
+                            ? data.content.slice(0, 100) + '...'
+                            : data.content,
                     unread_count:
                         data.sender_type === 'guest' && selectedSession?.id !== data.session_id
                             ? updated[index].unread_count + 1
@@ -337,10 +347,18 @@ export default function ChatAdminPage() {
     };
 
     // ─── Derived ────────────────────────────────────────
-    const totalUnread = useMemo(() => sessions.reduce((sum, s) => sum + s.unread_count, 0), [sessions]);
+    const totalUnread = useMemo(
+        () => sessions.reduce((sum, s) => sum + s.unread_count, 0),
+        [sessions],
+    );
 
     const tabCounts = useMemo(() => {
-        const counts: Record<FilterTab, number> = { all: sessions.length, active: 0, resolved: 0, spam: 0 };
+        const counts: Record<FilterTab, number> = {
+            all: sessions.length,
+            active: 0,
+            resolved: 0,
+            spam: 0,
+        };
         // We need all sessions for tab counts, but filter is already applied server-side
         // So counts only reflect current filter results
         return counts;
@@ -394,7 +412,9 @@ export default function ChatAdminPage() {
                                 disabled={isLoadingSessions}
                                 className="h-9 w-9 shrink-0"
                             >
-                                <RefreshCw className={cn('w-4 h-4', isLoadingSessions && 'animate-spin')} />
+                                <RefreshCw
+                                    className={cn('w-4 h-4', isLoadingSessions && 'animate-spin')}
+                                />
                             </Button>
                         </div>
 
@@ -450,7 +470,8 @@ export default function ChatAdminPage() {
                                             'w-full px-4 py-3 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer outline-none',
                                             selectedSession?.id === session.id &&
                                                 'bg-blue-50 dark:bg-slate-800 border-l-2 border-[#002d6b]',
-                                            session.unread_count > 0 && 'bg-blue-50/50 dark:bg-slate-800/30',
+                                            session.unread_count > 0 &&
+                                                'bg-blue-50/50 dark:bg-slate-800/30',
                                         )}
                                     >
                                         {/* Avatar */}
@@ -518,7 +539,9 @@ export default function ChatAdminPage() {
                                         {/* Unread badge */}
                                         {session.unread_count > 0 && (
                                             <Badge className="bg-[#002d6b] text-white text-[10px] h-5 min-w-5 flex items-center justify-center shrink-0 rounded-full">
-                                                {session.unread_count > 99 ? '99+' : session.unread_count}
+                                                {session.unread_count > 99
+                                                    ? '99+'
+                                                    : session.unread_count}
                                             </Badge>
                                         )}
                                     </div>
@@ -568,21 +591,26 @@ export default function ChatAdminPage() {
                                                 variant="outline"
                                                 className={cn(
                                                     'text-[10px] h-5 px-1.5 border-0',
-                                                    selectedSession.status === 'active' && 'bg-emerald-50 text-emerald-600',
-                                                    selectedSession.status === 'resolved' && 'bg-slate-100 text-slate-500',
-                                                    selectedSession.status === 'spam' && 'bg-rose-50 text-rose-500',
+                                                    selectedSession.status === 'active' &&
+                                                        'bg-emerald-50 text-emerald-600',
+                                                    selectedSession.status === 'resolved' &&
+                                                        'bg-slate-100 text-slate-500',
+                                                    selectedSession.status === 'spam' &&
+                                                        'bg-rose-50 text-rose-500',
                                                 )}
                                             >
                                                 {statusLabel(selectedSession.status)}
                                             </Badge>
                                             {selectedSession.guest_phone && (
                                                 <span className="hidden sm:flex items-center gap-1">
-                                                    <Phone className="w-3 h-3" /> {selectedSession.guest_phone}
+                                                    <Phone className="w-3 h-3" />{' '}
+                                                    {selectedSession.guest_phone}
                                                 </span>
                                             )}
                                             {selectedSession.guest_email && (
                                                 <span className="hidden md:flex items-center gap-1 truncate">
-                                                    <Mail className="w-3 h-3" /> {selectedSession.guest_email}
+                                                    <Mail className="w-3 h-3" />{' '}
+                                                    {selectedSession.guest_email}
                                                 </span>
                                             )}
                                         </div>
@@ -592,27 +620,37 @@ export default function ChatAdminPage() {
                                 {/* Actions */}
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 shrink-0"
+                                        >
                                             <MoreVertical className="w-4 h-4" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem
-                                            onClick={() => handleUpdateStatus(selectedSession.id, 'active')}
+                                            onClick={() =>
+                                                handleUpdateStatus(selectedSession.id, 'active')
+                                            }
                                             disabled={selectedSession.status === 'active'}
                                         >
                                             <CircleDot className="w-4 h-4 mr-2 text-emerald-500" />
                                             Đánh dấu đang mở
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() => handleUpdateStatus(selectedSession.id, 'resolved')}
+                                            onClick={() =>
+                                                handleUpdateStatus(selectedSession.id, 'resolved')
+                                            }
                                             disabled={selectedSession.status === 'resolved'}
                                         >
                                             <Archive className="w-4 h-4 mr-2 text-slate-500" />
                                             Đánh dấu đã xử lý
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() => handleUpdateStatus(selectedSession.id, 'spam')}
+                                            onClick={() =>
+                                                handleUpdateStatus(selectedSession.id, 'spam')
+                                            }
                                             disabled={selectedSession.status === 'spam'}
                                         >
                                             <Ban className="w-4 h-4 mr-2 text-rose-500" />
@@ -621,7 +659,9 @@ export default function ChatAdminPage() {
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             className="text-rose-600"
-                                            onClick={(e) => handleDeleteSession(e as any, selectedSession.id)}
+                                            onClick={(e) =>
+                                                handleDeleteSession(e as any, selectedSession.id)
+                                            }
                                         >
                                             <Trash2 className="w-4 h-4 mr-2" />
                                             Xóa hội thoại
@@ -636,7 +676,9 @@ export default function ChatAdminPage() {
                                     {isLoadingMessages ? (
                                         <div className="flex flex-col items-center justify-center py-20">
                                             <Loader2 className="w-6 h-6 animate-spin text-slate-400 mb-2" />
-                                            <span className="text-xs text-slate-400">Đang tải tin nhắn...</span>
+                                            <span className="text-xs text-slate-400">
+                                                Đang tải tin nhắn...
+                                            </span>
                                         </div>
                                     ) : messages.length === 0 ? (
                                         <div className="flex flex-col items-center justify-center py-20 text-slate-400">
@@ -653,18 +695,28 @@ export default function ChatAdminPage() {
 
                                             if (isSystem) {
                                                 return (
-                                                    <div key={msg.id} className="flex justify-start my-2">
+                                                    <div
+                                                        key={msg.id}
+                                                        className="flex justify-start my-2"
+                                                    >
                                                         <div className="flex items-start gap-2 max-w-md">
                                                             <div className="w-7 h-7 bg-amber-500 rounded-full flex items-center justify-center shrink-0 mt-5">
                                                                 <Bot className="w-3.5 h-3.5 text-white" />
                                                             </div>
                                                             <div className="flex flex-col">
-                                                                <span className="text-[9px] text-amber-600 dark:text-amber-400 font-semibold mb-0.5 px-1">Tin nhắn tự động (Bot)</span>
+                                                                <span className="text-[9px] text-amber-600 dark:text-amber-400 font-semibold mb-0.5 px-1">
+                                                                    Tin nhắn tự động (Bot)
+                                                                </span>
                                                                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl rounded-bl-md px-4 py-2.5 text-xs text-amber-700 dark:text-amber-300 whitespace-pre-line leading-relaxed">
                                                                     {msg.content}
                                                                 </div>
                                                                 <span className="text-[9px] text-slate-400 mt-0.5 px-1">
-                                                                    {new Date(msg.created_at).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                                                    {new Date(
+                                                                        msg.created_at,
+                                                                    ).toLocaleTimeString('vi-VN', {
+                                                                        hour: '2-digit',
+                                                                        minute: '2-digit',
+                                                                    })}
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -709,28 +761,44 @@ export default function ChatAdminPage() {
                                                                     <div className="flex items-center gap-0.5 opacity-0 group-hover/msg:opacity-100 transition-opacity">
                                                                         <TooltipProvider>
                                                                             <Tooltip>
-                                                                                <TooltipTrigger asChild>
+                                                                                <TooltipTrigger
+                                                                                    asChild
+                                                                                >
                                                                                     <button
-                                                                                        onClick={() => setReplyingTo(msg)}
+                                                                                        onClick={() =>
+                                                                                            setReplyingTo(
+                                                                                                msg,
+                                                                                            )
+                                                                                        }
                                                                                         className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
                                                                                     >
                                                                                         <Reply className="w-3 h-3" />
                                                                                     </button>
                                                                                 </TooltipTrigger>
-                                                                                <TooltipContent>Trả lời</TooltipContent>
+                                                                                <TooltipContent>
+                                                                                    Trả lời
+                                                                                </TooltipContent>
                                                                             </Tooltip>
                                                                         </TooltipProvider>
                                                                         <TooltipProvider>
                                                                             <Tooltip>
-                                                                                <TooltipTrigger asChild>
+                                                                                <TooltipTrigger
+                                                                                    asChild
+                                                                                >
                                                                                     <button
-                                                                                        onClick={() => handleDeleteMessage(msg.id)}
+                                                                                        onClick={() =>
+                                                                                            handleDeleteMessage(
+                                                                                                msg.id,
+                                                                                            )
+                                                                                        }
                                                                                         className="p-1 rounded hover:bg-rose-50 dark:hover:bg-rose-900/20 text-slate-400 hover:text-rose-500"
                                                                                     >
                                                                                         <Trash2 className="w-3 h-3" />
                                                                                     </button>
                                                                                 </TooltipTrigger>
-                                                                                <TooltipContent>Gỡ tin nhắn</TooltipContent>
+                                                                                <TooltipContent>
+                                                                                    Gỡ tin nhắn
+                                                                                </TooltipContent>
                                                                             </Tooltip>
                                                                         </TooltipProvider>
                                                                     </div>
@@ -751,15 +819,23 @@ export default function ChatAdminPage() {
                                                                     <div className="flex items-center gap-0.5 opacity-0 group-hover/msg:opacity-100 transition-opacity">
                                                                         <TooltipProvider>
                                                                             <Tooltip>
-                                                                                <TooltipTrigger asChild>
+                                                                                <TooltipTrigger
+                                                                                    asChild
+                                                                                >
                                                                                     <button
-                                                                                        onClick={() => setReplyingTo(msg)}
+                                                                                        onClick={() =>
+                                                                                            setReplyingTo(
+                                                                                                msg,
+                                                                                            )
+                                                                                        }
                                                                                         className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400"
                                                                                     >
                                                                                         <Reply className="w-3 h-3" />
                                                                                     </button>
                                                                                 </TooltipTrigger>
-                                                                                <TooltipContent>Trả lời</TooltipContent>
+                                                                                <TooltipContent>
+                                                                                    Trả lời
+                                                                                </TooltipContent>
                                                                             </Tooltip>
                                                                         </TooltipProvider>
                                                                     </div>
@@ -771,15 +847,21 @@ export default function ChatAdminPage() {
                                                                     isAdmin && 'justify-end',
                                                                 )}
                                                             >
-                                                                {new Date(msg.created_at).toLocaleTimeString('vi-VN', {
+                                                                {new Date(
+                                                                    msg.created_at,
+                                                                ).toLocaleTimeString('vi-VN', {
                                                                     hour: '2-digit',
                                                                     minute: '2-digit',
                                                                 })}
                                                                 {isAdmin && (
                                                                     <>
                                                                         {selectedSession.guest_last_seen_at &&
-                                                                        new Date(selectedSession.guest_last_seen_at) >=
-                                                                            new Date(msg.created_at) ? (
+                                                                        new Date(
+                                                                            selectedSession.guest_last_seen_at,
+                                                                        ) >=
+                                                                            new Date(
+                                                                                msg.created_at,
+                                                                            ) ? (
                                                                             <CheckCheck className="w-3 h-3 text-blue-500" />
                                                                         ) : (
                                                                             <Check className="w-3 h-3 text-slate-400" />
@@ -811,9 +893,13 @@ export default function ChatAdminPage() {
                                                 <div className="min-w-0">
                                                     <p className="text-[10px] text-[#002d6b] dark:text-blue-400 font-semibold">
                                                         Đang trả lời{' '}
-                                                        {replyingTo.sender_type === 'guest' ? 'Khách' : 'Admin'}
+                                                        {replyingTo.sender_type === 'guest'
+                                                            ? 'Khách'
+                                                            : 'Admin'}
                                                     </p>
-                                                    <p className="text-xs text-slate-500 truncate">{replyingTo.content}</p>
+                                                    <p className="text-xs text-slate-500 truncate">
+                                                        {replyingTo.content}
+                                                    </p>
                                                 </div>
                                                 <Button
                                                     variant="ghost"
@@ -850,7 +936,9 @@ export default function ChatAdminPage() {
                                             ) : (
                                                 <>
                                                     <Send className="w-4 h-4 md:mr-1.5" />
-                                                    <span className="hidden md:inline text-sm">Gửi</span>
+                                                    <span className="hidden md:inline text-sm">
+                                                        Gửi
+                                                    </span>
                                                 </>
                                             )}
                                         </Button>
@@ -867,7 +955,8 @@ export default function ChatAdminPage() {
                                 Chọn cuộc hội thoại
                             </h3>
                             <p className="text-sm text-slate-400 max-w-sm">
-                                Chọn một cuộc hội thoại từ danh sách bên trái để bắt đầu hỗ trợ khách hàng.
+                                Chọn một cuộc hội thoại từ danh sách bên trái để bắt đầu hỗ trợ
+                                khách hàng.
                             </p>
                         </div>
                     )}
