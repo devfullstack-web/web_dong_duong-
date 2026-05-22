@@ -46,6 +46,35 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+function ProductImage({ src, alt }: { src?: string | null; alt: string }) {
+    const [imgSrc, setImgSrc] = useState(src);
+    const [hasError, setHasError] = useState(false);
+
+    useEffect(() => {
+        setImgSrc(src);
+        setHasError(false);
+    }, [src]);
+
+    if (!imgSrc || hasError) {
+        return (
+            <div className="flex items-center justify-center h-full w-full text-slate-300 bg-slate-100">
+                <Package size={20} />
+            </div>
+        );
+    }
+
+    return (
+        <Image
+            src={imgSrc}
+            alt={alt}
+            fill
+            unoptimized
+            className="object-cover"
+            onError={() => setHasError(true)}
+        />
+    );
+}
+
 export default function ProductsManagementPage() {
     const { hasPermission } = useAuth();
     const queryClient = useQueryClient();
@@ -116,6 +145,42 @@ export default function ProductsManagementPage() {
 
     const productsList = productsData?.data || [];
     const totalItems = productsData?.meta?.total || 0;
+
+    const handleExportExcel = () => {
+        if (!productsList || productsList.length === 0) {
+            toast.error('Không có dữ liệu sản phẩm để xuất');
+            return;
+        }
+
+        const headers = ['Mã sản phẩm (ID)', 'Tên sản phẩm', 'SKU', 'Giá bán (VND)', 'Tồn kho', 'Danh mục', 'Trạng thái'];
+        
+        const csvRows = [
+            headers.join(','),
+            ...productsList.map(product => {
+                const id = `"${product.id.replace(/"/g, '""')}"`;
+                const name = `"${product.name.replace(/"/g, '""')}"`;
+                const sku = `"${product.sku.replace(/"/g, '""')}"`;
+                const price = product.price;
+                const stock = product.stock;
+                const category = `"${(product.category || 'Chưa phân loại').replace(/"/g, '""')}"`;
+                const status = product.status === 'active' ? '"Đang bán"' : '"Ngừng kinh doanh"';
+                
+                return [id, name, sku, price, stock, category, status].join(',');
+            })
+        ];
+
+        const csvContent = '\uFEFF' + csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `danh_sach_san_pham_${format(new Date(), 'dd_MM_yyyy')}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success('Đã xuất dữ liệu Excel thành công');
+    };
 
     // Delete mutation
     const deleteMutation = useMutation({
@@ -188,8 +253,9 @@ export default function ProductsManagementPage() {
                     <Button
                         variant="outline"
                         className="text-[10px] font-black uppercase tracking-widest px-4 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none hidden sm:flex"
+                        onClick={handleExportExcel}
                     >
-                        Xuất dữ liệu
+                        Xuất Excel
                     </Button>
                     {hasPermission(PERMISSIONS.PRODUCTS_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.products.add}>
@@ -352,19 +418,7 @@ export default function ProductsManagementPage() {
                                         <td className="px-4 py-3 md:py-3.5">
                                             <div className="flex items-center gap-3 md:gap-4">
                                                 <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
-                                                    {product.image_url ? (
-                                                        <Image
-                                                            src={product.image_url}
-                                                            alt={product.name}
-                                                            fill
-                                                            unoptimized
-                                                            className="object-cover"
-                                                        />
-                                                    ) : (
-                                                        <div className="flex items-center justify-center h-full w-full text-slate-300">
-                                                            <Package size={20} />
-                                                        </div>
-                                                    )}
+                                                    <ProductImage src={product.image_url} alt={product.name} />
                                                 </div>
                                                 <div className="max-w-87.5">
                                                     <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-0.5">
