@@ -29,7 +29,6 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { API_ROUTES } from '@/constants/routes';
-import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { RadialChartGrid } from '@/components/portal/charts/RadialChartGrid';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -55,7 +54,6 @@ export default function NotificationsPage() {
     const [activeTab, setActiveTab] = React.useState('all');
     const [searchTerm, setSearchTerm] = React.useState('');
     const [page, setPage] = React.useState(1);
-    const { user } = useAuth();
 
     // Query for notifications
     const { data: notificationsData, isLoading } = useQuery<{

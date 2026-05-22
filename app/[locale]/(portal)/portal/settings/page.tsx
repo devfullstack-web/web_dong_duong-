@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import {
     Card,
     CardContent,
@@ -13,7 +13,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { User, Bell, Shield, Globe, Save, Loader2 } from 'lucide-react';
+import { Save, Loader2 } from 'lucide-react';
 import { ImageUploader } from '@/components/portal/ImageUploader';
 import { useAuth } from '@/hooks/use-auth';
 import $api from '@/utils/axios';

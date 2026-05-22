@@ -47,5 +47,3 @@ export const COMPANY_INFO = {
     // Copyright
     copyright: `© ${new Date().getFullYear()} SÀI GÒN VALVE. BẢO LƯU TẤT CẢ QUYỀN.`,
 } as const;
-
-export type CompanyInfo = typeof COMPANY_INFO;

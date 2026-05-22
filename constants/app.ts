@@ -1,11 +1,4 @@
 
-export const COMPANY = {
-  NAME: "Sài Gòn Valve",
-  SHORT_NAME: "SGV",
-  EMAIL: process.env.ADMIN_EMAIL || "info@saigonvalve.vn",
-  WEBSITE: process.env.APP_URL || "https://saigonvalve.vn",
-} as const;
-
 
 export const PAGINATION = {
   DEFAULT_PAGE: 1,

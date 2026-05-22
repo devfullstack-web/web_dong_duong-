@@ -117,5 +117,3 @@ export const API_ROUTES = {
     AUDIT_LOGS: '/audit-logs',
     AUDIT_LOGS_CLEANUP: '/audit-logs/cleanup',
 } as const;
-
-export type PortalRoute = typeof PORTAL_ROUTES;

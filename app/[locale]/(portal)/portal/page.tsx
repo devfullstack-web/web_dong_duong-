@@ -7,13 +7,8 @@ import {
     Briefcase,
     Box,
     Users,
-    TrendingUp,
-    BarChart3,
     ArrowUpRight,
     Clock,
-    ExternalLink,
-    Settings,
-    Globe,
     Loader2,
     Mail,
     Calendar as CalendarIcon,
@@ -24,7 +19,7 @@ import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import $api from '@/utils/axios';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { RadialChartGrid } from '@/components/portal/charts/RadialChartGrid';
 import { RadialChartShape } from '@/components/portal/charts/RadialChartShape';
 import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
@@ -35,7 +30,6 @@ import { DateRange } from 'react-day-picker';
 import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
-    const queryClient = useQueryClient();
     const [date, setDate] = React.useState<DateRange | undefined>();
     const [contentType, setContentType] = React.useState('all');
 

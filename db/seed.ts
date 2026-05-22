@@ -15,7 +15,8 @@ import {
 } from './schema';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import { AUTH, SEED_DEFAULTS, COMPANY } from '@/constants/app';
+import { AUTH, SEED_DEFAULTS } from '@/constants/app';
+import { COMPANY_INFO } from '@/constants/site-info';
 import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 import { MODULE_CODES } from '@/constants/rbac';
 
@@ -197,7 +198,7 @@ async function main() {
                     username: userData.username,
                     email:
                         userData.username === SEED_DEFAULTS.SUPER_ADMIN_USERNAME
-                            ? COMPANY.EMAIL
+                            ? COMPANY_INFO.email
                             : `${userData.username}@saigonvalve.vn`,
                     password: hashedPassword,
                     full_name: userData.fullName,
