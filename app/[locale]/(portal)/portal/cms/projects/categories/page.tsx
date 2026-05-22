@@ -41,7 +41,7 @@ function CategoryTreeItem({
     return (
         <>
             <div
-                className="flex items-center justify-between p-4 hover:bg-slate-50/30 transition-colors group border-b border-slate-50"
+                className="flex items-center justify-between py-2.5 px-4 hover:bg-slate-50/30 transition-colors group border-b border-slate-50"
                 style={{ paddingLeft: `${24 + level * 32}px` }}
             >
                 <div className="flex items-center gap-3">
@@ -52,12 +52,12 @@ function CategoryTreeItem({
                     ) : (
                         <span className="h-6 w-6" />
                     )}
-                    <div className="h-8 w-8 flex items-center justify-center bg-brand-primary/5 text-brand-primary">
-                        {hasChildren ? <Folder size={16} /> : <FolderOpen size={16} />}
+                    <div className="h-7 w-7 flex items-center justify-center bg-brand-primary/5 text-brand-primary rounded-none">
+                        {hasChildren ? <Folder size={14} /> : <FolderOpen size={14} />}
                     </div>
                     <div>
-                        <div className="text-sm font-black text-slate-900 uppercase tracking-tight">{displayName}</div>
-                        <span className="text-[10px] text-slate-400 font-medium">Thứ tự: {cat.display_order}</span>
+                        <div className="text-xs font-black text-slate-900 uppercase tracking-tight">{displayName}</div>
+                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Thứ tự: {cat.display_order}</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -65,18 +65,18 @@ function CategoryTreeItem({
                         {cat.is_visible ? <><Eye size={10} className="mr-1" /> Hiển thị</> : <><EyeOff size={10} className="mr-1" /> Ẩn</>}
                     </Badge>
                     {cat.count !== undefined && (
-                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-none">
+                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none">
                             {cat.count} dự án
                         </Badge>
                     )}
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link href={PORTAL_ROUTES.cms.projects.categories.edit(cat.id)}>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-none hover:bg-slate-100">
-                                <Edit2 size={14} className="text-slate-400" />
+                            <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-none hover:bg-slate-100">
+                                <Edit2 size={13} className="text-slate-400" />
                             </Button>
                         </Link>
-                        <Button variant="ghost" size="sm" onClick={() => onDelete(cat)} className="h-8 w-8 p-0 rounded-none hover:bg-rose-50">
-                            <Trash2 size={14} className="text-rose-500" />
+                        <Button variant="ghost" size="sm" onClick={() => onDelete(cat)} className="h-7 w-7 p-0 rounded-none hover:bg-rose-50">
+                            <Trash2 size={13} className="text-rose-500" />
                         </Button>
                     </div>
                 </div>
@@ -129,21 +129,21 @@ export default function ProjectCategoriesPage() {
     };
 
     return (
-        <div className="space-y-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-6">
+        <div className="space-y-5 md:space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+                <div className="flex items-center gap-3 md:gap-4">
                     <Link href={PORTAL_ROUTES.cms.projects.list}>
-                        <Button variant="outline" className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50">
-                            <ArrowLeft size={20} />
+                        <Button variant="outline" className="h-10 w-10 p-0 border-slate-100 rounded-none hover:bg-slate-50">
+                            <ArrowLeft size={16} />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">Danh mục dự án</h1>
-                        <p className="text-slate-500 font-medium italic mt-2 text-sm">Quản lý danh mục phân loại dự án và công trình.</p>
+                        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">Danh mục dự án</h1>
+                        <p className="text-slate-500 font-medium italic mt-2 text-xs">Quản lý danh mục phân loại dự án và công trình.</p>
                     </div>
                 </div>
-                <Link href={PORTAL_ROUTES.cms.projects.categories.add}>
-                    <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-6 h-auto transition-all rounded-none">
+                <Link href={PORTAL_ROUTES.cms.projects.categories.add} className="w-full md:w-auto">
+                    <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 h-10 transition-all rounded-none w-full md:w-auto">
                         <Plus className="mr-2 size-4" /> Thêm danh mục
                     </Button>
                 </Link>

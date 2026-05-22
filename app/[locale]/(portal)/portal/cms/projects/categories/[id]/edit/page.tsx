@@ -79,22 +79,22 @@ export default function EditProjectCategoryPage() {
     }
 
     return (
-        <div className="space-y-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-6">
+        <div className="space-y-5 md:space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
+                <div className="flex items-center gap-3 md:gap-4">
                     <Link href={PORTAL_ROUTES.cms.projects.categories.list}>
                         <Button
                             variant="outline"
-                            className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50"
+                            className="h-10 w-10 p-0 border-slate-100 rounded-none hover:bg-slate-50"
                         >
-                            <ArrowLeft size={20} />
+                            <ArrowLeft size={16} />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
                             Sửa danh mục dự án
                         </h1>
-                        <p className="text-slate-500 font-medium italic mt-2 text-sm">
+                        <p className="text-slate-500 font-medium italic mt-2 text-xs">
                             Chỉnh sửa thông tin danh mục và cấu hình hiển thị.
                         </p>
                     </div>

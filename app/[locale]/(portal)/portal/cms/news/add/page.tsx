@@ -142,22 +142,22 @@ export default function AddNewsPage() {
     };
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
                     <Link href={PORTAL_ROUTES.cms.news.list}>
                         <Button
                             variant="outline"
-                            className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50"
+                            className="h-10 w-10 p-0 border-slate-100 rounded-none hover:bg-slate-50"
                         >
                             <ArrowLeft size={20} />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
                             Thêm bài viết mới
                         </h1>
-                        <p className="text-slate-500 font-medium italic mt-2 text-sm">
+                        <p className="text-slate-500 font-medium italic mt-2 text-xs">
                             Tạo bài viết tin tức mới với chuẩn dữ liệu chuyên nghiệp.
                         </p>
                     </div>
@@ -165,13 +165,13 @@ export default function AddNewsPage() {
                 <div className="flex items-center gap-3">
                     <Button
                         variant="outline"
-                        className="text-[10px] font-black uppercase tracking-widest px-6 py-6 h-auto border-slate-100 rounded-none text-slate-500"
+                        className="text-[10px] font-black uppercase tracking-widest px-4 md:px-6 h-10 border-slate-100 rounded-none text-slate-500"
                         onClick={() => router.back()}
                         disabled={isSubmitting}
                     >
                         Hủy bỏ
                     </Button>
-
+ 
                     <Tabs
                         value={viewMode}
                         onValueChange={(v) => setViewMode(v as any)}
@@ -192,11 +192,11 @@ export default function AddNewsPage() {
                             </TabsTrigger>
                         </TabsList>
                     </Tabs>
-
+ 
                     <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-6 h-auto transition-all rounded-none"
+                        className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 h-10 transition-all rounded-none"
                     >
                         {isSubmitting ? (
                             <Loader2 className="mr-2 size-4 animate-spin" />
@@ -418,7 +418,7 @@ export default function AddNewsPage() {
                     className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20"
                 >
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                        <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                             <div className="space-y-3">
                                 <Label
                                     htmlFor="title"
@@ -429,7 +429,7 @@ export default function AddNewsPage() {
                                 <Input
                                     id="title"
                                     placeholder="Nhập tiêu đề bài viết..."
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
                                     value={formData.title}
                                     onChange={(e) => handleTitleChange(e.target.value)}
                                     required
@@ -449,7 +449,7 @@ export default function AddNewsPage() {
                                     </span>
                                     <Input
                                         id="slug"
-                                        className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
+                                        className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
                                         value={formData.slug}
                                         onChange={(e) =>
                                             setFormData({ ...formData, slug: e.target.value })
@@ -509,11 +509,11 @@ export default function AddNewsPage() {
                             description="Cho phép bài viết hiển thị công khai trên website."
                         />
 
-                        <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                        <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                                 Phân loại & Thời gian
                             </h3>
-
+ 
                             <div className="space-y-3">
                                 <Label
                                     htmlFor="category_id"
@@ -527,7 +527,7 @@ export default function AddNewsPage() {
                                         setFormData({ ...formData, category_id: value })
                                     }
                                 >
-                                    <SelectTrigger className="h-14 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
+                                    <SelectTrigger className="h-11 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
                                         <SelectValue placeholder="Chọn danh mục" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-none border-slate-100">
@@ -553,7 +553,7 @@ export default function AddNewsPage() {
                                         <Button
                                             variant={'outline'}
                                             className={cn(
-                                                'h-14 w-full justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
+                                                'h-11 w-full justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
                                                 !formData.published_at && 'text-slate-300',
                                             )}
                                         >
@@ -583,7 +583,7 @@ export default function AddNewsPage() {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                        <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                                 Hình ảnh bài viết
                             </h3>

@@ -41,7 +41,7 @@ function CategoryTreeItem({
     return (
         <>
             <div
-                className="flex items-center justify-between p-4 hover:bg-slate-50/30 transition-colors group border-b border-slate-50"
+                className="flex items-center justify-between py-2.5 px-4 hover:bg-slate-50/30 transition-colors group border-b border-slate-50"
                 style={{ paddingLeft: `${24 + level * 32}px` }}
             >
                 <div className="flex items-center gap-3">
@@ -129,21 +129,21 @@ export default function NewsCategoriesPage() {
     };
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
                     <Link href={PORTAL_ROUTES.cms.news.list}>
-                        <Button variant="outline" className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50">
+                        <Button variant="outline" className="h-10 w-10 p-0 border-slate-100 rounded-none hover:bg-slate-50">
                             <ArrowLeft size={20} />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">Danh mục tin tức</h1>
-                        <p className="text-slate-500 font-medium italic mt-2 text-sm">Quản lý danh mục phân loại bài viết tin tức.</p>
+                        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">Danh mục tin tức</h1>
+                        <p className="text-slate-500 font-medium italic mt-2 text-xs">Quản lý danh mục phân loại bài viết tin tức.</p>
                     </div>
                 </div>
                 <Link href={PORTAL_ROUTES.cms.news.categories.add}>
-                    <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-6 h-auto transition-all rounded-none">
+                    <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 h-10 transition-all rounded-none">
                         <Plus className="mr-2 size-4" /> Thêm danh mục
                     </Button>
                 </Link>

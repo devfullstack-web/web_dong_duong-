@@ -152,13 +152,13 @@ export default function NewsManagementPage() {
     };
 
     return (
-        <div className="space-y-6 md:space-y-10">
+        <div className="space-y-5 md:space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
-                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
                         Quản lý tin tức
                     </h1>
-                    <p className="text-slate-500 font-medium italic mt-2 text-sm">
+                    <p className="text-slate-500 font-medium italic mt-2 text-xs">
                         Cập nhật tin tức, sự kiện và kiến thức kỹ thuật của Sài Gòn Valve.
                     </p>
                 </div>
@@ -167,7 +167,7 @@ export default function NewsManagementPage() {
                         <Link href={PORTAL_ROUTES.cms.news.categories.list}>
                             <Button
                                 variant="outline"
-                                className="text-[10px] font-black uppercase tracking-widest px-4 md:px-6 py-3 md:py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none"
+                                className="text-[10px] font-black uppercase tracking-widest px-4 md:px-5 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none"
                             >
                                 Danh mục
                             </Button>
@@ -175,7 +175,7 @@ export default function NewsManagementPage() {
                     )}
                     {hasPermission(PERMISSIONS.BLOG_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.news.add}>
-                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-8 py-3 md:py-4 hover:cursor-pointer h-auto transition-all rounded-none">
+                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 hover:cursor-pointer h-10 transition-all rounded-none">
                                 <Plus className="mr-2 size-4" /> Viết bài mới
                             </Button>
                         </Link>
@@ -185,7 +185,7 @@ export default function NewsManagementPage() {
 
             <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
                 {/* Table Filters */}
-                <div className="p-4 md:p-8 border-b border-slate-50 flex flex-col xl:flex-row gap-4 md:gap-6 items-center justify-between bg-white">
+                <div className="p-4 md:p-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 md:gap-5 items-center justify-between bg-white">
                     <div className="relative w-full xl:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
@@ -264,19 +264,19 @@ export default function NewsManagementPage() {
                         <table className="w-full text-left border-collapse min-w-[700px]">
                             <thead>
                                 <tr className="bg-slate-50/30">
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Bài viết
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
+                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
                                         Tác giả
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
+                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
                                         Ngày đăng
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Trạng thái
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
+                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
                                         Thao tác
                                     </th>
                                 </tr>
@@ -287,9 +287,9 @@ export default function NewsManagementPage() {
                                         key={news.id}
                                         className="hover:bg-slate-50/30 transition-colors group"
                                     >
-                                        <td className="px-4 md:px-8 py-4 md:py-6">
+                                        <td className="px-4 md:px-5 py-3 md:py-3.5">
                                             <div className="flex items-center gap-3 md:gap-6">
-                                                <div className="relative h-12 w-16 md:h-16 md:w-24 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
+                                                <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
                                                     {news.image_url ? (
                                                         <Image
                                                             src={news.image_url}
@@ -317,7 +317,7 @@ export default function NewsManagementPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden md:table-cell">
+                                        <td className="px-4 md:px-5 py-3 md:py-3.5 hidden md:table-cell">
                                             <div className="flex items-center gap-2">
                                                 <div className="h-6 w-6 rounded-none bg-slate-100 flex items-center justify-center text-[8px] font-black text-slate-500">
                                                     {news.author?.substring(0, 2).toUpperCase() ||
@@ -328,7 +328,7 @@ export default function NewsManagementPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden sm:table-cell">
+                                        <td className="px-4 md:px-5 py-3 md:py-3.5 hidden sm:table-cell">
                                             <div className="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-tight">
                                                 <CalendarIcon
                                                     size={14}
@@ -337,35 +337,35 @@ export default function NewsManagementPage() {
                                                 <span>{formatDate(news.published_at)}</span>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6">
+                                        <td className="px-4 md:px-5 py-3 md:py-3.5">
                                             {getStatusBadge(news.status)}
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6 text-right">
+                                        <td className="px-4 md:px-5 py-3 md:py-3.5 text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
                                                         variant="ghost"
-                                                        className="h-12 w-12 p-0 hover:bg-white hover:text-brand-primary border border-transparent hover:border-slate-100 rounded-none transition-all"
+                                                        className="h-9 w-9 p-0 hover:bg-white hover:text-brand-primary border border-transparent hover:border-slate-100 rounded-none transition-all"
                                                     >
                                                         <MoreHorizontal className="h-5 w-5" />
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent
                                                     align="end"
-                                                    className="w-64 p-2 rounded-none border border-slate-100 bg-white"
+                                                    className="w-48 p-1 rounded-none border border-slate-100 bg-white"
                                                 >
-                                                    <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-4 py-3">
+                                                    <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
                                                         Tùy chọn bài viết
                                                     </DropdownMenuLabel>
                                                     <DropdownMenuSeparator className="bg-slate-50" />
-
+ 
                                                     {hasPermission(PERMISSIONS.BLOG_UPDATE) && (
                                                         <DropdownMenuItem asChild>
                                                             <Link
                                                                 href={PORTAL_ROUTES.cms.news.edit(
                                                                     news.id,
                                                                 )}
-                                                                className="rounded-none px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-slate-50 group"
+                                                                className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-slate-50 group"
                                                             >
                                                                 <Edit2
                                                                     size={16}
@@ -377,12 +377,12 @@ export default function NewsManagementPage() {
                                                             </Link>
                                                         </DropdownMenuItem>
                                                     )}
-
+ 
                                                     {hasPermission(PERMISSIONS.BLOG_DELETE) && (
                                                         <>
                                                             <DropdownMenuSeparator className="bg-slate-50" />
                                                             <DropdownMenuItem
-                                                                className="rounded-none px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-rose-50 group"
+                                                                className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-rose-50 group"
                                                                 onClick={() =>
                                                                     handleDeleteClick(news)
                                                                 }
