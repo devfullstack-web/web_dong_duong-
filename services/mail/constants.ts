@@ -15,10 +15,13 @@ export const MAIL_BRAND = {
 export const MAIL_ASSETS = {
     logo: '/images/logo/logo.png',
     website: COMPANY_INFO.website,
+    websiteLabel: COMPANY_INFO.websiteLabel,
+    facebook: COMPANY_INFO.social.facebook,
 };
 
 export const MAIL_CONTACT = {
     hotline: COMPANY_INFO.phone,
+    hotlineRaw: COMPANY_INFO.phoneRaw,
     address: COMPANY_INFO.address,
     company: COMPANY_INFO.fullName,
 };

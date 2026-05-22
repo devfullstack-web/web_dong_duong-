@@ -1,6 +1,8 @@
+import { COMPANY_INFO } from '@/constants/site-info';
+
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://saigonvalve.vn';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || COMPANY_INFO.website;
 
 interface TelegramNotifyParams {
     guestName?: string | null;

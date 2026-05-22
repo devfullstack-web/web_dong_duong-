@@ -8,6 +8,12 @@ import { COMPANY_INFO } from '@/constants/site-info';
 
 export default function TopBar() {
     const [isScrolled, setIsScrolled] = React.useState(false);
+    const socialLinks = [
+        { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
+        { label: 'LinkedIn', Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
+        { label: 'YouTube', Icon: Youtube, href: COMPANY_INFO.social.youtube },
+        { label: 'Zalo', href: COMPANY_INFO.social.zalo },
+    ].filter((item) => item.href);
 
     React.useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 40);
@@ -55,27 +61,21 @@ export default function TopBar() {
                             Follow us:
                         </span>
                         <div className="flex items-center gap-4">
-                            <Link
-                                href={COMPANY_INFO.social.facebook}
-                                target="_blank"
-                                className="hover:text-brand-accent transition-colors"
-                            >
-                                <Facebook size={14} />
-                            </Link>
-                            <Link
-                                href={COMPANY_INFO.social.linkedin}
-                                target="_blank"
-                                className="hover:text-brand-accent transition-colors"
-                            >
-                                <Linkedin size={14} />
-                            </Link>
-                            <Link
-                                href={COMPANY_INFO.social.youtube}
-                                target="_blank"
-                                className="hover:text-brand-accent transition-colors"
-                            >
-                                <Youtube size={14} />
-                            </Link>
+                            {socialLinks.map(({ label, Icon, href }) => (
+                                <Link
+                                    key={label}
+                                    href={href}
+                                    target="_blank"
+                                    className="hover:text-brand-accent transition-colors"
+                                    aria-label={label}
+                                >
+                                    {Icon ? (
+                                        <Icon size={14} />
+                                    ) : (
+                                        <span className="text-[9px] font-black uppercase leading-none">Zalo</span>
+                                    )}
+                                </Link>
+                            ))}
                         </div>
                     </div>
                 </div>
