@@ -175,59 +175,29 @@ export default function RolesManagementPage() {
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 md:py-3.5 text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
+                                            <div className="flex items-center justify-end gap-1.5">
+                                                <Link href={PORTAL_ROUTES.users.roles.edit(role.id)}>
                                                     <Button
-                                                        variant="ghost"
-                                                        className="h-8 w-8 p-0 hover:bg-slate-100 border border-transparent rounded-none transition-all"
+                                                        variant="outline"
+                                                        size="icon"
+                                                        className="h-8 w-8 border-slate-100 rounded-none bg-white hover:bg-[#002d6b] hover:text-white transition-all shadow-sm"
+                                                        title="Cấu hình quyền"
                                                     >
-                                                        <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                                                        <Edit2 size={14} />
                                                     </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent
-                                                    align="end"
-                                                    className="w-64 p-2 rounded-none border border-slate-100 bg-white"
-                                                >
-                                                    <DropdownMenuItem
-                                                        asChild
-                                                        className="rounded-none px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-slate-50 group"
+                                                </Link>
+                                                {!role.is_super && (
+                                                    <Button
+                                                        variant="outline"
+                                                        size="icon"
+                                                        className="h-8 w-8 border-slate-100 rounded-none bg-white text-rose-500 hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm"
+                                                        onClick={() => handleDeleteClick(role)}
+                                                        title="Xóa vai trò"
                                                     >
-                                                        <Link
-                                                            href={PORTAL_ROUTES.users.roles.edit(
-                                                                role.id,
-                                                            )}
-                                                            className="flex items-center gap-3 w-full"
-                                                        >
-                                                            <Edit2
-                                                                size={16}
-                                                                className="text-slate-400 group-hover:text-brand-primary transition-colors"
-                                                            />
-                                                            <span className="text-xs font-bold uppercase tracking-tight">
-                                                                Cấu hình quyền
-                                                            </span>
-                                                        </Link>
-                                                    </DropdownMenuItem>
-                                                    {!role.is_super && (
-                                                        <>
-                                                            <DropdownMenuSeparator className="bg-slate-50" />
-                                                            <DropdownMenuItem
-                                                                className="rounded-none px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-rose-50 group"
-                                                                onClick={() =>
-                                                                    handleDeleteClick(role)
-                                                                }
-                                                            >
-                                                                <Trash2
-                                                                    size={16}
-                                                                    className="text-slate-400 group-hover:text-rose-600 transition-colors"
-                                                                />
-                                                                <span className="text-xs font-bold uppercase tracking-tight text-rose-600">
-                                                                    Xóa vai trò
-                                                                </span>
-                                                            </DropdownMenuItem>
-                                                        </>
-                                                    )}
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                                        <Trash2 size={14} />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

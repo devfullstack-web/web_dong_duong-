@@ -166,22 +166,22 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
     const isSuperRole = !!initialData?.is_super;
 
     return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between">
+        <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <Link href={PORTAL_ROUTES.users.roles.list}>
                         <Button
                             variant="ghost"
-                            className="h-10 w-10 p-0 rounded-full hover:bg-slate-100 transition-all active:scale-95"
+                            className="h-10 w-10 p-0 rounded-full hover:bg-slate-100 transition-all active:scale-95 flex items-center justify-center"
                         >
                             <ArrowLeft size={18} className="text-slate-600" />
                         </Button>
                     </Link>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    <div className="space-y-1.5">
+                        <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
                             {isEditing ? 'Cấu hình vai trò' : 'Tạo vai trò mới'}
-                        </h1>
-                        <p className="text-slate-500 font-medium mt-1 text-xs">
+                        </h2>
+                        <p className="text-slate-500 font-medium italic text-xs pl-4 leading-relaxed">
                             {isEditing
                                 ? `Chỉnh sửa: ${initialData?.name}`
                                 : 'Định nghĩa nhóm quyền hạn mới cho hệ thống.'}
@@ -191,13 +191,13 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
 
                 <Button
                     onClick={handleSubmit}
-                    className="bg-brand-primary hover:bg-[#002d6b] text-[10px] font-black uppercase tracking-[0.2em] px-8 py-4 hover:cursor-pointer h-auto shadow-lg transition-all rounded-none hover:-translate-y-0.5 active:scale-95 border-b-4 border-b-brand-secondary"
+                    className="bg-[#002d6b] hover:bg-[#002d6b]/90 text-[10px] font-black uppercase tracking-[0.2em] px-6 hover:cursor-pointer h-10 shadow-lg transition-all rounded-none hover:-translate-y-0.5 active:scale-95 border-b-4 border-b-brand-secondary flex items-center justify-center gap-2"
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? (
-                        <Loader2 className="mr-2 size-4 animate-spin" />
+                        <Loader2 className="size-4 animate-spin" />
                     ) : (
-                        <Save className="mr-2 size-4" />
+                        <Save className="size-4" />
                     )}
                     {isEditing ? 'Lưu thay đổi' : 'Tạo vai trò'}
                 </Button>
