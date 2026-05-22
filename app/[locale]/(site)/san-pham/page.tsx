@@ -164,7 +164,7 @@ export default function ProductArchive() {
             <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Main Content */}
-            <section className="py-8 md:py-16">
+            <section className="py-8 ">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">
                         {/* Sidebar Filters */}
