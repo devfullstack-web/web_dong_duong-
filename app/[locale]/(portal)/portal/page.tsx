@@ -50,6 +50,7 @@ export default function DashboardPage() {
             });
             return res.data;
         },
+        placeholderData: (previousData) => previousData,
     });
 
     const stats = statsData?.data;
@@ -142,7 +143,7 @@ export default function DashboardPage() {
         },
     ];
 
-    if (loading) {
+    if (loading && !stats) {
         return (
             <div className="flex items-center justify-center min-h-100">
                 <Loader2 className="h-10 w-10 animate-spin text-brand-primary opacity-20" />
@@ -171,6 +172,7 @@ export default function DashboardPage() {
                         ].map((item) => (
                             <button
                                 key={item.value}
+                                type="button"
                                 onClick={() => setContentType(item.value)}
                                 className={cn(
                                     'px-3 py-1.5 text-[9px] font-black tracking-wider uppercase transition-all rounded-none hover:cursor-pointer',
@@ -190,6 +192,7 @@ export default function DashboardPage() {
                             <PopoverTrigger asChild>
                                 <Button
                                     id="date"
+                                    type="button"
                                     variant={'outline'}
                                     className={cn(
                                         'w-full justify-start text-left font-black text-[9px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50 hover:bg-slate-100 shadow-none transition-all duration-200 hover:cursor-pointer',
@@ -225,6 +228,7 @@ export default function DashboardPage() {
                         {date && (
                             <Button
                                 variant="ghost"
+                                type="button"
                                 onClick={() => setDate(undefined)}
                                 className="h-10 w-10 p-0 rounded-none hover:bg-rose-50 hover:text-rose-600 border border-slate-100 shrink-0 shadow-none hover:cursor-pointer bg-slate-50"
                             >
