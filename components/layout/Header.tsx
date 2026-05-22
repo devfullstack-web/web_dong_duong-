@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { usePathname as useNextPathname, useRouter } from 'next/navigation';
+import { useParams, usePathname as useNextPathname, useRouter } from 'next/navigation';
 import { Link, usePathname } from '@/i18n/routing';
 import { Menu, X, Globe, Phone, Mail, Check } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
@@ -36,6 +36,7 @@ export default function Header() {
     const ts = useTranslations('Solutions');
     const intlLocale = useLocale();
     const router = useRouter();
+    const params = useParams<{ locale?: string | string[] }>();
 
     const NAV_LINKS: NavLink[] = [
         { label: t('home'), href: SITE_ROUTES.HOME },
@@ -83,7 +84,12 @@ export default function Header() {
     const languageMenuRef = React.useRef<HTMLDivElement>(null);
     const pathname = usePathname();
     const nextPathname = useNextPathname();
+    const routeLocale = Array.isArray(params.locale) ? params.locale[0] : params.locale;
     const activeLocale = React.useMemo<Locale>(() => {
+        if (isLocale(routeLocale)) {
+            return routeLocale;
+        }
+
         const localeFromPath = nextPathname.split('/')[1];
 
         if (isLocale(localeFromPath)) {
@@ -95,7 +101,7 @@ export default function Header() {
         }
 
         return 'vi';
-    }, [intlLocale, nextPathname]);
+    }, [intlLocale, nextPathname, routeLocale]);
 
     React.useEffect(() => {
         setMounted(true);
