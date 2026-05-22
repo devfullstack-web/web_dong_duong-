@@ -1,11 +1,7 @@
-'use client';
-
-import * as React from 'react';
 import Image from 'next/image';
 import { MoveRight, Newspaper } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import { motion } from 'motion/react';
 
 interface NewsArticle {
     id: string;
@@ -53,13 +49,9 @@ export default function News({ articles = [] }: NewsProps) {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {articles.map((item, i) => (
-                            <motion.article
+                        {articles.map((item) => (
+                            <article
                                 key={item.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
                                 className="group relative h-[300px] overflow-hidden cursor-pointer bg-slate-100"
                             >
                                 {item.image_url ? (
@@ -94,7 +86,7 @@ export default function News({ articles = [] }: NewsProps) {
                                 >
                                     <span className="sr-only">Đọc tiếp {item.title}</span>
                                 </Link>
-                            </motion.article>
+                            </article>
                         ))}
                     </div>
                 )}

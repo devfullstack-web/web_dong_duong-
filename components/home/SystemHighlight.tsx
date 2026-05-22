@@ -1,8 +1,5 @@
-'use client';
-
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { motion } from 'motion/react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 
@@ -34,11 +31,8 @@ export default function SystemHighlight() {
         <section className="bg-white py-16 lg:py-24">
             <div className="container mx-auto px-4 lg:px-8 space-y-16 lg:space-y-24">
                 {HIGHLIGHTS.map((item, i) => (
-                    <motion.div
+                    <div
                         key={i}
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
                         className={`flex flex-col ${i % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-20`}
                     >
                         {/* Image column */}
@@ -98,7 +92,7 @@ export default function SystemHighlight() {
                                 </div>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
         </section>
