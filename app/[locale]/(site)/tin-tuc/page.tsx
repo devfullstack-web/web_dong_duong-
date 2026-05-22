@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { Newspaper, Calendar } from 'lucide-react';
+import { PageBanner } from '@/components/site/PageBanner';
 import {
     Pagination,
     PaginationContent,
@@ -75,14 +76,7 @@ export default function NewsPage() {
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Ultra Clean Title Section with Brand Color */}
-            <section className="pt-48 pb-16 bg-brand-primary">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight uppercase leading-none">
-                        {t('hero.title')} <span className="text-brand-accent">{t('hero.titleAccent')}</span>
-                    </h1>
-                </div>
-            </section>
+            <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Compact News Grid */}
             <section className="py-12 bg-white">
@@ -95,81 +89,104 @@ export default function NewsPage() {
                             </h3>
                         </div>
                     ) : (
-                    <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                        {news.map((article, i) => (
-                            <motion.div
-                                key={article.id}
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.05 }}
-                                className="group flex flex-col space-y-4"
-                            >
-                                <LocalizedLink href={`/tin-tuc/${article.slug}`} className="relative aspect-video w-full overflow-hidden rounded-lg bg-slate-100">
-                                    <Image
-                                        src={article.image_url}
-                                        alt={article.title}
-                                        fill
-                                        unoptimized
-                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                </LocalizedLink>
-
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
-                                        <span>{article.category || t('grid.defaultCategory')}</span>
-                                        <div className="flex items-center gap-1">
-                                            <Calendar size={8} />
-                                            <span>{article.published_at ? new Date(article.published_at).toLocaleDateString('vi-VN') : ''}</span>
-                                        </div>
-                                    </div>
-                                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
-                                        <LocalizedLink href={`/tin-tuc/${article.slug}`}>
-                                            {article.title}
+                        <>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                                {news.map((article, i) => (
+                                    <motion.div
+                                        key={article.id}
+                                        initial={{ opacity: 0 }}
+                                        whileInView={{ opacity: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: i * 0.05 }}
+                                        className="group flex flex-col space-y-4"
+                                    >
+                                        <LocalizedLink
+                                            href={`/tin-tuc/${article.slug}`}
+                                            className="relative aspect-video w-full overflow-hidden rounded-lg bg-slate-100"
+                                        >
+                                            <Image
+                                                src={article.image_url}
+                                                alt={article.title}
+                                                fill
+                                                unoptimized
+                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
                                         </LocalizedLink>
-                                    </h3>
-                                    <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                                        {article.summary}
-                                    </p>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
 
-                    {/* Simple Pagination */}
-                    {totalPages > 1 && (
-                        <div className="pt-12 flex justify-center">
-                            <Pagination>
-                                <PaginationContent>
-                                    <PaginationItem>
-                                        <PaginationPrevious
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage > 1) handlePageChange(currentPage - 1);
-                                            }}
-                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === 1 && 'opacity-30 pointer-events-none')}
-                                        />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <span className="text-[10px] font-black px-4">{currentPage} / {totalPages}</span>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationNext
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
-                                            }}
-                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === totalPages && 'opacity-30 pointer-events-none')}
-                                        />
-                                    </PaginationItem>
-                                </PaginationContent>
-                            </Pagination>
-                        </div>
-                    )}
-                    </>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
+                                                <span>
+                                                    {article.category || t('grid.defaultCategory')}
+                                                </span>
+                                                <div className="flex items-center gap-1">
+                                                    <Calendar size={8} />
+                                                    <span>
+                                                        {article.published_at
+                                                            ? new Date(
+                                                                  article.published_at,
+                                                              ).toLocaleDateString('vi-VN')
+                                                            : ''}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                                                <LocalizedLink href={`/tin-tuc/${article.slug}`}>
+                                                    {article.title}
+                                                </LocalizedLink>
+                                            </h3>
+                                            <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                                                {article.summary}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* Simple Pagination */}
+                            {totalPages > 1 && (
+                                <div className="pt-12 flex justify-center">
+                                    <Pagination>
+                                        <PaginationContent>
+                                            <PaginationItem>
+                                                <PaginationPrevious
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage > 1)
+                                                            handlePageChange(currentPage - 1);
+                                                    }}
+                                                    className={cn(
+                                                        'text-[10px] font-bold uppercase tracking-widest',
+                                                        currentPage === 1 &&
+                                                            'opacity-30 pointer-events-none',
+                                                    )}
+                                                />
+                                            </PaginationItem>
+                                            <PaginationItem>
+                                                <span className="text-[10px] font-black px-4">
+                                                    {currentPage} / {totalPages}
+                                                </span>
+                                            </PaginationItem>
+                                            <PaginationItem>
+                                                <PaginationNext
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage < totalPages)
+                                                            handlePageChange(currentPage + 1);
+                                                    }}
+                                                    className={cn(
+                                                        'text-[10px] font-bold uppercase tracking-widest',
+                                                        currentPage === totalPages &&
+                                                            'opacity-30 pointer-events-none',
+                                                    )}
+                                                />
+                                            </PaginationItem>
+                                        </PaginationContent>
+                                    </Pagination>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </section>

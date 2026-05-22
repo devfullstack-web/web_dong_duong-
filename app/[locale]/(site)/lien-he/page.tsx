@@ -2,18 +2,10 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import {
-    Phone,
-    Mail,
-    MapPin,
-    Send,
-    Facebook,
-    Linkedin,
-    Youtube,
-    Loader2,
-} from 'lucide-react';
+import { Phone, Mail, MapPin, Send, Facebook, Linkedin, Youtube, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { PageBanner } from '@/components/site/PageBanner';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { COMPANY_INFO } from '@/constants/site-info';
@@ -71,14 +63,7 @@ export default function ContactPage() {
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Ultra Clean Title Section with Brand Color */}
-            <section className="pt-48 pb-16 bg-brand-primary">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight uppercase leading-none">
-                        {t('headerTitle')} <span className="text-brand-accent">{t('headerTitleAccent')}</span>
-                    </h1>
-                </div>
-            </section>
+            <PageBanner title={t('headerTitle')} accent={t('headerTitleAccent')} />
 
             {/* Contact Grid */}
             <section className="py-16">

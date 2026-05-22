@@ -21,47 +21,13 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { COMPANY_INFO } from '@/constants/site-info';
 import { PARTNERS } from '@/components/home/Partners';
+import { PageBanner } from '@/components/site/PageBanner';
 
 export default function AboutPage() {
     const t = useTranslations('About');
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Page Title Section - Clean White */}
-            <section className="pt-40 pb-6 bg-white">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <div className="max-w-full">
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-lg sm:text-2xl lg:text-3xl font-black text-brand-primary tracking-tight uppercase leading-none"
-                        >
-                            {t('hero.title')}{' '}
-                            <span className="text-brand-secondary">{t('hero.titleAccent')}</span>
-                        </motion.h1>
-                    </div>
-                </div>
-            </section>
-
-            {/* Clear Brand Banner - No Text Overlay */}
-            <section className="w-full px-4 lg:px-8 pb-16">
-                <div className="container mx-auto">
-                    <motion.div 
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.8 }}
-                        className="relative aspect-21/9 w-full overflow-hidden"
-                    >
-                        <Image
-                            src="/images/banners/481264911_591002697270931_5782673037351412801_n.jpg"
-                            alt="Sài Gòn Valve Brand Banner"
-                            fill
-                            unoptimized
-                            className="object-cover"
-                            priority
-                        />
-                    </motion.div>
-                </div>
-            </section>
+            <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Intro Section - Mission & Vision */}
             <section className="py-24 bg-white overflow-hidden">
@@ -82,9 +48,7 @@ export default function AboutPage() {
                                 <p className="text-lg text-slate-700 font-bold">
                                     {t('intro.content1')}
                                 </p>
-                                <p>
-                                    {t('intro.content2')}
-                                </p>
+                                <p>{t('intro.content2')}</p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -196,7 +160,9 @@ export default function AboutPage() {
                             </div>
                             <h2 className="text-4xl sm:text-5xl font-bold text-brand-secondary uppercase tracking-tight leading-none">
                                 {t('pillars.title')} <br />
-                                <span className="text-brand-primary">{t('pillars.titleAccent')}</span>
+                                <span className="text-brand-primary">
+                                    {t('pillars.titleAccent')}
+                                </span>
                             </h2>
                         </div>
                         <p className="max-w-md text-muted-foreground font-medium text-sm">
@@ -264,7 +230,8 @@ export default function AboutPage() {
                             {t('scada.badge')}
                         </div>
                         <h2 className="text-4xl sm:text-6xl font-bold uppercase tracking-tighter leading-none">
-                            {t('scada.title')} <span className="text-brand-accent">{t('scada.titleAccent')}</span>
+                            {t('scada.title')}{' '}
+                            <span className="text-brand-accent">{t('scada.titleAccent')}</span>
                         </h2>
                         <p className="text-slate-400 font-medium max-w-2xl leading-relaxed">
                             {t('scada.desc')}

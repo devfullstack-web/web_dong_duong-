@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
@@ -15,24 +15,13 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-} from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
+import { PageBanner } from '@/components/site/PageBanner';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useQuery } from '@tanstack/react-query';
 import { getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText, Locale } from '@/types/i18n';
-
-const BANNER_IMAGES = [
-    '/images/banners/banner1.png',
-    "/images/banners/banner2.png",
-    "/images/banners/banner3.png"
-];
 
 interface Product {
     id: string;
@@ -62,9 +51,6 @@ const ITEMS_PER_PAGE = 6;
 export default function ProductArchive() {
     const t = useTranslations('Products');
     const locale = useLocale() as Locale;
-    const plugin = useRef(
-        Autoplay({ delay: 5000, stopOnInteraction: false })
-    );
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
@@ -164,12 +150,9 @@ export default function ProductArchive() {
     const handleChildCategoryClick = (parentId: string, childId: string) => {
         handleCategoryChange(childId);
         setExpandedCategoryIds((prevExpanded) =>
-            prevExpanded.includes(parentId)
-                ? prevExpanded
-                : [...prevExpanded, parentId],
+            prevExpanded.includes(parentId) ? prevExpanded : [...prevExpanded, parentId],
         );
     };
-
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
@@ -177,40 +160,8 @@ export default function ProductArchive() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-white pt-24">
-            {/* Page Header */}
-            <section className="relative w-full aspect-19/4 md:aspect-24/5 lg:aspect-23/5 bg-white overflow-hidden">
-                <div className="absolute inset-0 z-0 **:data-[slot=carousel]:h-full **:data-[slot=carousel-content]:h-full">
-                    <Carousel
-                        opts={{ loop: true }}
-                        plugins={[plugin.current]}
-                        className="w-full h-full"
-                    >
-                        <CarouselContent className="h-full ml-0">
-                            {BANNER_IMAGES.map((src, index) => (
-                                <CarouselItem key={index} className="pl-0 h-full relative">
-                                    <div className="relative w-full h-full">
-                                        <Image
-                                            src={src}
-                                            alt={`Banner ${index + 1}`}
-                                            fill
-                                            unoptimized
-                                            className="object-contain"
-                                            priority={index === 0}
-                                        />
-                                    </div>
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                    </Carousel>
-                </div>
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl"></div>
-                <div className="container relative z-10 mx-auto px-4 lg:px-8">
-                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
-                      
-                    </div>
-                </div>
-            </section>
+        <div className="flex flex-col min-h-screen bg-white">
+            <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Main Content */}
             <section className="py-8 md:py-16">
@@ -272,8 +223,7 @@ export default function ProductArchive() {
                                                                     size={14}
                                                                     className={cn(
                                                                         'shrink-0 transition-transform duration-200',
-                                                                        isExpanded &&
-                                                                            'rotate-180',
+                                                                        isExpanded && 'rotate-180',
                                                                     )}
                                                                 />
                                                             )}
@@ -371,7 +321,12 @@ export default function ProductArchive() {
                                                         product.image_url ||
                                                         'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
                                                     }
-                                                    alt={getLocalizedValue(product.name_localized, locale) || product.name}
+                                                    alt={
+                                                        getLocalizedValue(
+                                                            product.name_localized,
+                                                            locale,
+                                                        ) || product.name
+                                                    }
                                                     fill
                                                     unoptimized
                                                     className="object-contain p-4 group-hover:scale-110 transition-transform duration-1000"
@@ -379,13 +334,24 @@ export default function ProductArchive() {
                                             </div>
                                             <div className="space-y-4">
                                                 <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
-                                                    <Shield size={10} /> {getLocalizedValue(product.category_localized, locale) || product.category}
+                                                    <Shield size={10} />{' '}
+                                                    {getLocalizedValue(
+                                                        product.category_localized,
+                                                        locale,
+                                                    ) || product.category}
                                                 </div>
                                                 <h3 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-10">
-                                                    {getLocalizedValue(product.name_localized, locale) || product.name}
+                                                    {getLocalizedValue(
+                                                        product.name_localized,
+                                                        locale,
+                                                    ) || product.name}
                                                 </h3>
                                                 <p className="text-[11px] text-muted-foreground font-medium line-clamp-2">
-                                                    {getLocalizedValue(product.tech_summary_localized, locale) || product.tech_summary ||
+                                                    {getLocalizedValue(
+                                                        product.tech_summary_localized,
+                                                        locale,
+                                                    ) ||
+                                                        product.tech_summary ||
                                                         t('grid.defaultSummary')}
                                                 </p>
                                                 <LocalizedLink
@@ -423,7 +389,12 @@ export default function ProductArchive() {
                                                             product.image_url ||
                                                             'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
                                                         }
-                                                        alt={getLocalizedValue(product.name_localized, locale) || product.name}
+                                                        alt={
+                                                            getLocalizedValue(
+                                                                product.name_localized,
+                                                                locale,
+                                                            ) || product.name
+                                                        }
                                                         fill
                                                         unoptimized
                                                         className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
@@ -431,17 +402,29 @@ export default function ProductArchive() {
                                                 </div>
                                                 <div className="flex-1 space-y-3">
                                                     <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-2">
-                                                        <Shield size={10} /> {getLocalizedValue(product.category_localized, locale) || product.category}
+                                                        <Shield size={10} />{' '}
+                                                        {getLocalizedValue(
+                                                            product.category_localized,
+                                                            locale,
+                                                        ) || product.category}
                                                     </div>
                                                     <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase">
-                                                        {getLocalizedValue(product.name_localized, locale) || product.name}
+                                                        {getLocalizedValue(
+                                                            product.name_localized,
+                                                            locale,
+                                                        ) || product.name}
                                                     </h3>
                                                     <p className="text-xs text-muted-foreground font-medium line-clamp-2">
-                                                        {getLocalizedValue(product.tech_summary_localized, locale) || product.tech_summary ||
+                                                        {getLocalizedValue(
+                                                            product.tech_summary_localized,
+                                                            locale,
+                                                        ) ||
+                                                            product.tech_summary ||
                                                             t('grid.defaultSummary')}
                                                     </p>
                                                     <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2">
-                                                        {t('grid.viewDetail')} <ArrowRight size={12} />
+                                                        {t('grid.viewDetail')}{' '}
+                                                        <ArrowRight size={12} />
                                                     </div>
                                                 </div>
                                             </LocalizedLink>

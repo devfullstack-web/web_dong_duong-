@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Phone, Facebook, Mail } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
 import { COMPANY_INFO } from '@/constants/site-info';
 
@@ -45,11 +45,11 @@ export default function FloatingContact() {
                     rel="noopener noreferrer"
                     initial={{ opacity: 0, x: 20, scale: 0.8 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
-                    transition={{ 
+                    transition={{
                         delay: index * 0.1,
                         type: 'spring',
                         stiffness: 260,
-                        damping: 20
+                        damping: 20,
                     }}
                     whileHover={{ scale: 1.15, rotate: 5 }}
                     whileTap={{ scale: 0.9 }}
@@ -65,7 +65,7 @@ export default function FloatingContact() {
                         </div>
                     )}
                     {contact.icon}
-                    
+
                     {/* Tooltip on hover */}
                     <span className="absolute right-full mr-3 px-2 py-1 bg-[#002d6b] text-[#fbbf24] text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-[#fbbf24]/20 shadow-xl">
                         {contact.name}

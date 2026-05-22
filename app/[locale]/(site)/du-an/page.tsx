@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { MapPin, FolderOpen } from 'lucide-react';
+import { PageBanner } from '@/components/site/PageBanner';
 import { API_ROUTES } from '@/constants/routes';
 import $api from '@/utils/axios';
 import { cn } from '@/lib/utils';
@@ -75,14 +76,7 @@ export default function ProjectsPage() {
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Ultra Clean Title Section with Brand Color */}
-            <section className="pt-48 pb-16 bg-brand-primary">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight uppercase leading-none">
-                        {t('hero.title')} <span className="text-brand-accent">{t('hero.titleAccent')}</span>
-                    </h1>
-                </div>
-            </section>
+            <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Compact Grid Section */}
             <section className="py-12 bg-white">
@@ -95,79 +89,103 @@ export default function ProjectsPage() {
                             </h3>
                         </div>
                     ) : (
-                    <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {projects.map((project, i) => (
-                            <motion.div
-                                key={project.id}
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.05 }}
-                                className="group flex flex-col space-y-4"
-                            >
-                                <LocalizedLink href={`/du-an/${project.slug}`} className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-slate-100">
-                                    <Image
-                                        src={project.image_url || 'https://saigonvalve.vn/uploads/files/2025/07/16/thumbs/z6809258125215_0bfd24b1d2a12247ce2fe99f8bc81598-306x234-5.jpg'}
-                                        alt={project.name}
-                                        fill
-                                        unoptimized
-                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                </LocalizedLink>
-
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
-                                        <span>{project.category || t('grid.defaultCategory')}</span>
-                                        <span>{project.start_date ? new Date(project.start_date).getFullYear() : ''}</span>
-                                    </div>
-                                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
-                                        <LocalizedLink href={`/du-an/${project.slug}`}>
-                                            {project.name}
+                        <>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {projects.map((project, i) => (
+                                    <motion.div
+                                        key={project.id}
+                                        initial={{ opacity: 0 }}
+                                        whileInView={{ opacity: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: i * 0.05 }}
+                                        className="group flex flex-col space-y-4"
+                                    >
+                                        <LocalizedLink
+                                            href={`/du-an/${project.slug}`}
+                                            className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-slate-100"
+                                        >
+                                            <Image
+                                                src={
+                                                    project.image_url ||
+                                                    'https://saigonvalve.vn/uploads/files/2025/07/16/thumbs/z6809258125215_0bfd24b1d2a12247ce2fe99f8bc81598-306x234-5.jpg'
+                                                }
+                                                alt={project.name}
+                                                fill
+                                                unoptimized
+                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                            />
                                         </LocalizedLink>
-                                    </h3>
-                                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase">
-                                        <MapPin size={10} />
-                                        {project.client_name || t('grid.defaultLocation')}
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
 
-                    {/* Simple Pagination */}
-                    {totalPages > 1 && (
-                        <div className="pt-12 flex justify-center">
-                            <Pagination>
-                                <PaginationContent>
-                                    <PaginationItem>
-                                        <PaginationPrevious
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage > 1) handlePageChange(currentPage - 1);
-                                            }}
-                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === 1 && 'opacity-30 pointer-events-none')}
-                                        />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <span className="text-[10px] font-black px-4">{currentPage} / {totalPages}</span>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationNext
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
-                                            }}
-                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === totalPages && 'opacity-30 pointer-events-none')}
-                                        />
-                                    </PaginationItem>
-                                </PaginationContent>
-                            </Pagination>
-                        </div>
-                    )}
-                    </>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
+                                                <span>
+                                                    {project.category || t('grid.defaultCategory')}
+                                                </span>
+                                                <span>
+                                                    {project.start_date
+                                                        ? new Date(project.start_date).getFullYear()
+                                                        : ''}
+                                                </span>
+                                            </div>
+                                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                                                <LocalizedLink href={`/du-an/${project.slug}`}>
+                                                    {project.name}
+                                                </LocalizedLink>
+                                            </h3>
+                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase">
+                                                <MapPin size={10} />
+                                                {project.client_name || t('grid.defaultLocation')}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+
+                            {/* Simple Pagination */}
+                            {totalPages > 1 && (
+                                <div className="pt-12 flex justify-center">
+                                    <Pagination>
+                                        <PaginationContent>
+                                            <PaginationItem>
+                                                <PaginationPrevious
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage > 1)
+                                                            handlePageChange(currentPage - 1);
+                                                    }}
+                                                    className={cn(
+                                                        'text-[10px] font-bold uppercase tracking-widest',
+                                                        currentPage === 1 &&
+                                                            'opacity-30 pointer-events-none',
+                                                    )}
+                                                />
+                                            </PaginationItem>
+                                            <PaginationItem>
+                                                <span className="text-[10px] font-black px-4">
+                                                    {currentPage} / {totalPages}
+                                                </span>
+                                            </PaginationItem>
+                                            <PaginationItem>
+                                                <PaginationNext
+                                                    href="#"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (currentPage < totalPages)
+                                                            handlePageChange(currentPage + 1);
+                                                    }}
+                                                    className={cn(
+                                                        'text-[10px] font-bold uppercase tracking-widest',
+                                                        currentPage === totalPages &&
+                                                            'opacity-30 pointer-events-none',
+                                                    )}
+                                                />
+                                            </PaginationItem>
+                                        </PaginationContent>
+                                    </Pagination>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </section>

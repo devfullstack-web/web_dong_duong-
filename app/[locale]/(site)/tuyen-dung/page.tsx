@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { MapPin, Briefcase, Users, ArrowRight } from 'lucide-react';
+import { PageBanner } from '@/components/site/PageBanner';
 import {
     Pagination,
     PaginationContent,
@@ -82,19 +83,7 @@ export default function RecruitmentHub() {
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
-            {/* Ultra Clean Title Section with Brand Color */}
-            <section className="pt-48 pb-16 bg-brand-primary">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <div className="max-w-3xl space-y-4">
-                        <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight uppercase leading-none">
-                            {t('hero.title')} <span className="text-brand-accent">{t('hero.titleAccent')}</span>
-                        </h1>
-                        <p className="text-lg text-white/70 font-medium max-w-xl">
-                            {t('hero.desc')}
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Jobs List */}
             <section className="py-16 bg-white" ref={jobsListRef}>
@@ -118,7 +107,7 @@ export default function RecruitmentHub() {
                                 >
                                     <LocalizedLink
                                         href={`/tuyen-dung/${job.slug}`}
-                                        className="group block bg-slate-50 border border-slate-100 p-8 rounded-2xl hover:bg-white hover:shadow-xl hover:border-brand-primary/20 transition-all duration-300"
+                                        className="group block bg-white border border-slate-200 border-l-4 border-l-brand-primary p-6 hover:shadow-md hover:border-l-brand-secondary transition-all duration-200"
                                     >
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
@@ -136,7 +125,9 @@ export default function RecruitmentHub() {
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
                                                     <Briefcase size={12} />
-                                                    {t(`employmentTypes.${job.employment_type?.toLowerCase() || 'full_time'}`)}
+                                                    {t(
+                                                        `employmentTypes.${job.employment_type?.toLowerCase() || 'full_time'}`,
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary">
@@ -159,22 +150,34 @@ export default function RecruitmentHub() {
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                if (currentPage > 1) handlePageChange(currentPage - 1);
+                                                if (currentPage > 1)
+                                                    handlePageChange(currentPage - 1);
                                             }}
-                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === 1 && 'opacity-30 pointer-events-none')}
+                                            className={cn(
+                                                'text-[10px] font-bold uppercase tracking-widest',
+                                                currentPage === 1 &&
+                                                    'opacity-30 pointer-events-none',
+                                            )}
                                         />
                                     </PaginationItem>
                                     <PaginationItem>
-                                        <span className="text-[10px] font-black px-4">{currentPage} / {totalPages}</span>
+                                        <span className="text-[10px] font-black px-4">
+                                            {currentPage} / {totalPages}
+                                        </span>
                                     </PaginationItem>
                                     <PaginationItem>
                                         <PaginationNext
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                                                if (currentPage < totalPages)
+                                                    handlePageChange(currentPage + 1);
                                             }}
-                                            className={cn('text-[10px] font-bold uppercase tracking-widest', currentPage === totalPages && 'opacity-30 pointer-events-none')}
+                                            className={cn(
+                                                'text-[10px] font-bold uppercase tracking-widest',
+                                                currentPage === totalPages &&
+                                                    'opacity-30 pointer-events-none',
+                                            )}
                                         />
                                     </PaginationItem>
                                 </PaginationContent>
