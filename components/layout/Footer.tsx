@@ -33,9 +33,8 @@ export default function Footer() {
                                 src="/images/logo/logo.png"
                                 alt="Sài Gòn Valve Logo"
                                 fill
-                                unoptimized
+                                sizes="176px"
                                 className="object-contain brightness-0 invert group-hover:scale-105 transition-transform"
-                                priority
                             />
                         </Link>
                         <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
@@ -133,7 +132,8 @@ export default function Footer() {
                             {COMPANY_INFO.copyright}
                         </p>
                         <div className="flex items-center gap-1.5 justify-center md:justify-start text-[10px] font-bold text-slate-600 uppercase tracking-widest">
-                            <ShieldCheck size={12} className="text-brand-accent" /> {t('securityWarning')}
+                            <ShieldCheck size={12} className="text-brand-accent" />{' '}
+                            {t('securityWarning')}
                         </div>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6">
@@ -150,11 +150,11 @@ export default function Footer() {
                             {t('privacy')}
                         </Link>
                         <Link
-                             href={PORTAL_ROUTES.dashboard as any}
-                             className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
-                         >
-                             {t('admin')}
-                         </Link>
+                            href={PORTAL_ROUTES.dashboard as any}
+                            className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                        >
+                            {t('admin')}
+                        </Link>
                     </div>
                 </div>
             </div>

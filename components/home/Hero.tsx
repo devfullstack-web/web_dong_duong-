@@ -7,69 +7,65 @@ import { MoveRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
-import $api from '@/utils/axios';
-import { API_ROUTES } from '@/constants/routes';
-export default function Hero() {
+
+interface HeroProduct {
+    id: string;
+    name: string;
+    slug: string;
+    image_url: string | null;
+}
+
+interface HeroProps {
+    products?: HeroProduct[];
+}
+
+export default function Hero({ products = [] }: HeroProps) {
     const t = useTranslations('Hero');
     const tc = useTranslations('Common');
     const [current, setCurrent] = React.useState(0);
     const [, setDirection] = React.useState(0);
-    const [featuredProducts, setFeaturedProducts] = React.useState<any[]>([]);
 
-    React.useEffect(() => {
-        const fetchFeaturedProducts = async () => {
-            try {
-                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true&status=active`);
-                if (response.data.success) {
-                    setFeaturedProducts(response.data.data.slice(0, 3));
-                }
-            } catch (error) {
-                console.error('Error fetching featured products for hero:', error);
-            }
-        };
-        fetchFeaturedProducts();
-    }, []);
-
-    const SLIDES_CONTENT = [
-        {
-            type: 'video',
-            src: '/videos/hero-background.mp4',
-            title: t('slide1.title'),
-            highlight: t('slide1.highlight'),
-            titleSuffix: t('slide1.titleSuffix'),
-            desc: t('slide1.description'),
-            accent: t('slide1.accent'),
-        },
-        {
-            type: 'image',
-            src: '/uploads/images/2026/03/14/diagram-scada.png',
-            title: t('slide2.title'),
-            highlight: t('slide2.highlight'),
-            titleSuffix: t('slide2.titleSuffix'),
-            desc: t('slide2.description'),
-            accent: t('slide2.accent'),
-        },
-
-        {
-            type: 'image',
-            src: '/uploads/images/2026/03/14/scada2.png',
-            title: t('slide3.title'),
-            highlight: t('slide3.highlight'),
-            titleSuffix: t('slide3.titleSuffix'),
-            desc: t('slide3.description'),
-            accent: t('slide3.accent'),
-        },
-
-        {
-            type: 'image',
-            src: '/uploads/images/2026/03/14/scada4.png',
-            title: t('slide3.title'),
-            highlight: t('slide3.highlight'),
-            titleSuffix: t('slide3.titleSuffix'),
-            desc: t('slide3.description'),
-            accent: t('slide3.accent'),
-        },
-    ];
+    const SLIDES_CONTENT = React.useMemo(
+        () => [
+            {
+                type: 'video',
+                src: '/videos/hero-background.mp4',
+                title: t('slide1.title'),
+                highlight: t('slide1.highlight'),
+                titleSuffix: t('slide1.titleSuffix'),
+                desc: t('slide1.description'),
+                accent: t('slide1.accent'),
+            },
+            {
+                type: 'image',
+                src: '/uploads/images/2026/03/14/diagram-scada.png',
+                title: t('slide2.title'),
+                highlight: t('slide2.highlight'),
+                titleSuffix: t('slide2.titleSuffix'),
+                desc: t('slide2.description'),
+                accent: t('slide2.accent'),
+            },
+            {
+                type: 'image',
+                src: '/uploads/images/2026/03/14/scada2.png',
+                title: t('slide3.title'),
+                highlight: t('slide3.highlight'),
+                titleSuffix: t('slide3.titleSuffix'),
+                desc: t('slide3.description'),
+                accent: t('slide3.accent'),
+            },
+            {
+                type: 'image',
+                src: '/uploads/images/2026/03/14/scada4.png',
+                title: t('slide3.title'),
+                highlight: t('slide3.highlight'),
+                titleSuffix: t('slide3.titleSuffix'),
+                desc: t('slide3.description'),
+                accent: t('slide3.accent'),
+            },
+        ],
+        [t],
+    );
 
     React.useEffect(() => {
         const timer = setInterval(() => {
@@ -81,22 +77,20 @@ export default function Hero() {
 
     return (
         <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden ">
-            {/* Persistent Video Background Layer */}
+            {/* Video Background - preload="none" to avoid blocking LCP */}
             <div className="absolute inset-0 z-0">
                 <video
                     autoPlay
                     loop
                     muted
                     playsInline
-                    preload="auto"
+                    preload="none"
                     className="absolute inset-0 w-full h-full object-cover object-center"
                     src="/videos/hero-background.mp4"
                 />
-                {/* Master Overlay - base darkening for all slides */}
-                {/* <div className="absolute inset-0 bg-black/40" /> */}
             </div>
 
-            {/* Slide-Specific Overlays (e.g., Water IoT Dashboard) */}
+            {/* Slide-Specific Overlays */}
             <div className="absolute inset-0 z-10">
                 <AnimatePresence initial={false}>
                     {SLIDES_CONTENT[current].type === 'image' && (
@@ -105,21 +99,21 @@ export default function Hero() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 1, ease: "easeInOut" }}
+                            transition={{ duration: 1, ease: 'easeInOut' }}
                             className="absolute inset-0 overflow-hidden"
                         >
                             <div className="absolute inset-0">
-                                {/* Professional Technical Background */}
                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,#1e293b_0%,transparent_70%)] opacity-20" />
                                 <div className="absolute inset-0 bg-size-[60px_60px] bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)]" />
-                                
+
                                 <div className="absolute inset-0 flex items-end lg:items-center justify-center lg:justify-end pb-8 lg:pb-0 lg:py-32 px-4 sm:px-8 lg:px-24">
                                     <div className="relative w-full lg:w-[45%] h-[40%] sm:h-[45%] lg:h-full flex items-center justify-center lg:justify-end">
                                         <Image
                                             src={SLIDES_CONTENT[current].src}
                                             alt={SLIDES_CONTENT[current].title}
                                             fill
-                                            priority
+                                            priority={current === 0}
+                                            sizes="(max-width: 1024px) 100vw, 45vw"
                                             className="object-contain object-bottom lg:object-right"
                                         />
                                     </div>
@@ -153,10 +147,6 @@ export default function Hero() {
                                     </span>
                                 </h1>
 
-                                {/* <p className="max-w-lg mx-auto lg:mx-0 text-sm sm:text-base text-white/70 font-medium leading-relaxed text-center lg:text-left">
-                                    {SLIDES_CONTENT[current].desc}
-                                </p> */}
-
                                 <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-4">
                                     <Link
                                         href="/san-pham"
@@ -178,8 +168,8 @@ export default function Hero() {
                             </motion.div>
                         </AnimatePresence>
 
-                        {/* Featured Products Mini Showcase */}
-                        {featuredProducts.length > 0 && (
+                        {/* Featured Products - data from server, no client fetch */}
+                        {products.length > 0 && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -188,12 +178,14 @@ export default function Hero() {
                             >
                                 <div className="flex items-center gap-3">
                                     <h3 className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
-                                        {tc('featuredProducts', { defaultValue: 'Sản phẩm nổi bật' })}
+                                        {tc('featuredProducts', {
+                                            defaultValue: 'Sản phẩm nổi bật',
+                                        })}
                                     </h3>
                                     <div className="w-12 sm:w-16 h-px bg-brand-accent/50"></div>
                                 </div>
                                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
-                                    {featuredProducts.map((product) => (
+                                    {products.map((product) => (
                                         <Link
                                             key={product.id}
                                             href={`/san-pham/${product.slug}`}
@@ -201,16 +193,17 @@ export default function Hero() {
                                         >
                                             <div className="absolute inset-0 bg-slate-900/40 group-hover:bg-slate-900/10 transition-colors duration-500 z-0"></div>
                                             <div className="relative w-full h-full p-2 z-10 flex items-center justify-center">
-                                                <Image
-                                                    src={product.image_url}
-                                                    alt={product.name}
-                                                    fill
-                                                    unoptimized
-                                                    className="object-contain p-2 sm:p-2.5 drop-shadow-xl group-hover:scale-[1.15] transition-transform duration-500"
-                                                />
+                                                {product.image_url && (
+                                                    <Image
+                                                        src={product.image_url}
+                                                        alt={product.name}
+                                                        fill
+                                                        sizes="(max-width: 640px) 64px, (max-width: 1024px) 80px, 112px"
+                                                        className="object-contain p-2 sm:p-2.5 drop-shadow-xl group-hover:scale-[1.15] transition-transform duration-500"
+                                                    />
+                                                )}
                                             </div>
-                                            
-                                            {/* Tooltip on hover */}
+
                                             <div className="absolute inset-x-0 bottom-0 p-1 sm:p-1.5 bg-linear-to-t from-black/80 via-black/50 to-transparent text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20 flex">
                                                 <span className="text-[8px] sm:text-[9px] font-semibold tracking-wide truncate w-full text-center drop-shadow-md">
                                                     {product.name}
@@ -244,13 +237,12 @@ export default function Hero() {
                 </div>
             </div>
 
-
-            {/* Modern Technical Scroll Indicator */}
+            {/* Scroll Indicator */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
-                className="absolute bottom-12 left-4 lg:left-12 z-20 flex flex-col items-start gap-4 hidden md:flex"
+                className="absolute bottom-12 left-4 lg:left-12 z-20 flex-col items-start gap-4 hidden md:flex"
             >
                 <div className="flex items-center gap-4">
                     <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.3em]">
@@ -260,7 +252,9 @@ export default function Hero() {
                         <motion.div
                             className="h-full bg-brand-accent shadow-[0_0_8px_rgba(251,191,36,0.5)]"
                             initial={{ width: 0 }}
-                            animate={{ width: `${((current + 1) / SLIDES_CONTENT.length) * 100}%` }}
+                            animate={{
+                                width: `${((current + 1) / SLIDES_CONTENT.length) * 100}%`,
+                            }}
                             transition={{ duration: 0.5 }}
                         />
                     </div>

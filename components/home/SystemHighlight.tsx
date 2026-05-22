@@ -5,8 +5,6 @@ import { useTranslations } from 'next-intl';
 import { motion } from 'motion/react';
 import { Button } from '../ui/button';
 
-
-
 export default function SystemHighlight() {
     const t = useTranslations('SystemHighlight');
 
@@ -44,7 +42,7 @@ export default function SystemHighlight() {
                             src={banner.image}
                             alt={banner.title}
                             fill
-                            unoptimized
+                            sizes="100vw"
                             className="object-cover opacity-50 transition-transform duration-1000 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-linear-to-r from-black/95 via-black/40 to-transparent"></div>

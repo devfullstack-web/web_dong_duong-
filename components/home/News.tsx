@@ -2,51 +2,35 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { CalendarDays, MoveRight, Newspaper, Loader2 } from 'lucide-react';
+import { MoveRight, Newspaper } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import $api from '@/utils/axios';
-import { API_ROUTES } from '@/constants/routes';
 
-interface NewsItem {
+interface NewsArticle {
     id: string;
     title: string;
     slug: string;
     summary: string;
-    category?: string;
-    image_url?: string;
-    published_at?: string;
-    created_at: string;
+    category_id?: string;
+    image_url?: string | null;
+    published_at?: Date | null;
+    created_at: Date;
 }
 
-function formatDate(dateString: string | null): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+interface NewsProps {
+    articles?: NewsArticle[];
 }
 
-export default function News() {
+function formatDate(date: Date | string | null): string {
+    if (!date) return '';
+    const d = date instanceof Date ? date : new Date(date);
+    return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+export default function News({ articles = [] }: NewsProps) {
     const t = useTranslations('News');
     const tc = useTranslations('Common');
-    const [news, setNews] = React.useState<NewsItem[]>([]);
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        const fetchNews = async () => {
-            try {
-                const response = await $api.get(`${API_ROUTES.NEWS}?status=published&limit=3`);
-                if (response.data.success) {
-                    setNews(response.data.data || []);
-                }
-            } catch (error) {
-                console.error('Error fetching news:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchNews();
-    }, []);
 
     return (
         <section className="bg-white py-24 sm:py-32">
@@ -62,21 +46,14 @@ export default function News() {
                     </p>
                 </div>
 
-                {/* Loading State */}
-                {loading ? (
-                    <div className="flex items-center justify-center h-[300px]">
-                        <Loader2 size={40} className="animate-spin text-brand-primary opacity-30" />
-                        <span className="sr-only">{t('loading')}</span>
-                    </div>
-                ) : news.length === 0 ? (
+                {articles.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[300px] text-slate-400">
                         <Newspaper size={48} className="mb-4 opacity-30" />
                         <p className="text-sm font-medium">{t('noNews')}</p>
                     </div>
                 ) : (
-                    /* News Grid - Delta style overlay */
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {news.map((item, i) => (
+                        {articles.map((item, i) => (
                             <motion.article
                                 key={item.id}
                                 initial={{ opacity: 0, y: 30 }}
@@ -90,7 +67,7 @@ export default function News() {
                                         src={item.image_url}
                                         alt={item.title}
                                         fill
-                                        unoptimized
+                                        sizes="(max-width: 768px) 100vw, 33vw"
                                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
                                 ) : (
@@ -102,7 +79,7 @@ export default function News() {
 
                                 <div className="absolute bottom-6 left-6 right-6 space-y-3">
                                     <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest text-brand-primary">
-                                        {item.category || 'Tin tức'}
+                                        Tin tức
                                         <span className="h-1 w-1 rounded-full bg-brand-primary/20"></span>
                                         {formatDate(item.published_at || item.created_at)}
                                     </div>

@@ -11,43 +11,23 @@ import {
 } from '@/components/ui/carousel';
 import { motion } from 'motion/react';
 import Autoplay from 'embla-carousel-autoplay';
-import $api from '@/utils/axios';
-import { API_ROUTES } from '@/constants/routes';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 
-export default function ProductSpotlight() {
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    image_url: string | null;
+    description: string;
+}
+
+interface ProductSpotlightProps {
+    products?: Product[];
+}
+
+export default function ProductSpotlight({ products = [] }: ProductSpotlightProps) {
     const t = useTranslations('ProductSpotlight');
-    const [products, setProducts] = React.useState<any[]>([]);
-    const [loading, setLoading] = React.useState(true);
-
-    React.useEffect(() => {
-        const fetchFeaturedProducts = async () => {
-            try {
-                const response = await $api.get(`${API_ROUTES.PRODUCTS}?isFeatured=true&status=active`);
-                if (response.data.success) {
-                    setProducts(response.data.data);
-                }
-            } catch (error) {
-                console.error('Error fetching featured products:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFeaturedProducts();
-    }, []);
-
-    if (loading) {
-        return (
-            <section className="bg-white py-24 sm:py-32">
-                <div className="container mx-auto px-4 lg:px-8">
-                    <div className="h-64 flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
-                    </div>
-                </div>
-            </section>
-        );
-    }
 
     if (products.length === 0) return null;
 
@@ -88,18 +68,15 @@ export default function ProductSpotlight() {
                                         <Image
                                             src={
                                                 product.image_url ||
-                                                'https://via.placeholder.com/300?text=SGV'
+                                                '/images/placeholder-product.png'
                                             }
                                             alt={product.name}
                                             fill
-                                            unoptimized
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                             className="object-contain"
                                         />
                                     </div>
                                     <div className="space-y-3">
-                                        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                            {product.category}
-                                        </div>
                                         <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight leading-tight min-h-10 flex items-center justify-center">
                                             {product.name}
                                         </h3>
