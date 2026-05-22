@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
-import { Link, usePathname, useRouter } from '@/i18n/routing';
-import { Menu, X, Search, Globe, Phone, Mail, Check } from 'lucide-react';
+import { usePathname as useNextPathname, useRouter } from 'next/navigation';
+import { Link, usePathname } from '@/i18n/routing';
+import { Menu, X, Globe, Phone, Mail, Check } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -15,17 +15,14 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
     NavigationMenuTrigger,
-    navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
 import { SITE_ROUTES } from '@/constants/routes';
 import { COMPANY_INFO } from "@/constants/site-info";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+
+type Locale = 'vi' | 'en';
+
+const isLocale = (value: string | undefined): value is Locale => value === 'vi' || value === 'en';
 
 interface NavLink {
     label: string;
@@ -37,7 +34,7 @@ interface NavLink {
 export default function Header() {
     const t = useTranslations('Header');
     const ts = useTranslations('Solutions');
-    const locale = useLocale();
+    const intlLocale = useLocale();
     const router = useRouter();
 
     const NAV_LINKS: NavLink[] = [
@@ -82,14 +79,80 @@ export default function Header() {
     const [isScrolled, setIsScrolled] = React.useState(false);
     const [mounted, setMounted] = React.useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+    const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false);
+    const languageMenuRef = React.useRef<HTMLDivElement>(null);
     const pathname = usePathname();
+    const nextPathname = useNextPathname();
+    const activeLocale = React.useMemo<Locale>(() => {
+        const localeFromPath = nextPathname.split('/')[1];
+
+        if (isLocale(localeFromPath)) {
+            return localeFromPath;
+        }
+
+        if (isLocale(intlLocale)) {
+            return intlLocale;
+        }
+
+        return 'vi';
+    }, [intlLocale, nextPathname]);
 
     React.useEffect(() => {
         setMounted(true);
         const handleScroll = () => setIsScrolled(window.scrollY > 40);
-        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    React.useEffect(() => {
+        if (!languageMenuOpen) return;
+
+        const handlePointerDown = (event: PointerEvent) => {
+            if (!languageMenuRef.current?.contains(event.target as Node)) {
+                setLanguageMenuOpen(false);
+            }
+        };
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setLanguageMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('pointerdown', handlePointerDown);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('pointerdown', handlePointerDown);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [languageMenuOpen]);
+
+    const switchLocale = React.useCallback(
+        (nextLocale: Locale) => {
+            setLanguageMenuOpen(false);
+
+            if (nextLocale === activeLocale) {
+                setMobileMenuOpen(false);
+                return;
+            }
+
+            const currentPath = window.location.pathname;
+            const pathWithoutLocale = currentPath.replace(/^\/(vi|en)(?=\/|$)/, '') || '/';
+            const nextPath =
+                pathWithoutLocale === '/'
+                    ? `/${nextLocale}`
+                    : `/${nextLocale}${pathWithoutLocale}`;
+
+            document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
+            setMobileMenuOpen(false);
+            router.replace(`${nextPath}${window.location.search}${window.location.hash}`, {
+                scroll: false,
+            });
+        },
+        [activeLocale, router],
+    );
 
   return (
     <header 
@@ -172,37 +235,58 @@ export default function Header() {
 
                         {/* Actions */}
                         <div className="flex items-center gap-4 xl:gap-6   pl-4 xl:pl-8  dark:border-white/10">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center ml-2 border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none">
+                            <div ref={languageMenuRef} className="relative ml-2">
+                                <button
+                                    type="button"
+                                    aria-haspopup="menu"
+                                    aria-expanded={languageMenuOpen}
+                                    onClick={() => setLanguageMenuOpen((open) => !open)}
+                                    className="flex items-center border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none hover:border-brand-primary/30 transition-colors"
+                                >
                                     <Globe size={16} className="mr-2 text-brand-primary" />
                                     <span className="text-[13px] font-black tracking-widest uppercase">
-                                        {locale}
+                                        {activeLocale}
                                     </span>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                    align="end"
-                                    className="bg-white dark:bg-slate-900 border-slate-100 dark:border-white/10"
-                                >
-                                    <DropdownMenuItem
-                                        onClick={() => router.replace(pathname, { locale: 'vi' })}
-                                        className="text-xs font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
+                                </button>
+
+                                {languageMenuOpen && (
+                                    <div
+                                        role="menu"
+                                        className="absolute right-0 top-full z-50 mt-2 min-w-36 border border-slate-100 bg-white p-1 shadow-lg dark:border-white/10 dark:bg-slate-900"
                                     >
-                                        {t('vi')}
-                                        {locale === 'vi' && (
-                                            <Check size={12} className="ml-2 text-brand-primary" />
-                                        )}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() => router.replace(pathname, { locale: 'en' })}
-                                        className="text-xs font-black tracking-widest cursor-pointer flex items-center justify-between uppercase"
-                                    >
-                                        {t('en')}
-                                        {locale === 'en' && (
-                                            <Check size={12} className="ml-2 text-brand-primary" />
-                                        )}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                                        <button
+                                            type="button"
+                                            role="menuitemradio"
+                                            aria-checked={activeLocale === 'vi'}
+                                            onClick={() => switchLocale('vi')}
+                                            className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-xs font-black tracking-widest uppercase text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800/70"
+                                        >
+                                            {t('vi')}
+                                            {activeLocale === 'vi' && (
+                                                <Check
+                                                    size={12}
+                                                    className="ml-2 text-brand-primary"
+                                                />
+                                            )}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            role="menuitemradio"
+                                            aria-checked={activeLocale === 'en'}
+                                            onClick={() => switchLocale('en')}
+                                            className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-xs font-black tracking-widest uppercase text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800/70"
+                                        >
+                                            {t('en')}
+                                            {activeLocale === 'en' && (
+                                                <Check
+                                                    size={12}
+                                                    className="ml-2 text-brand-primary"
+                                                />
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -234,10 +318,10 @@ export default function Header() {
                                     Language:
                                 </span>
                                 <button
-                                    onClick={() => router.replace(pathname, { locale: 'vi' })}
+                                    onClick={() => switchLocale('vi')}
                                     className={cn(
                                         'px-3 py-1.5 text-xs font-black tracking-widest uppercase rounded-sm border transition-all',
-                                        locale === 'vi'
+                                        activeLocale === 'vi'
                                             ? 'bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20'
                                             : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground',
                                     )}
@@ -245,10 +329,10 @@ export default function Header() {
                                     {t('vi')}
                                 </button>
                                 <button
-                                    onClick={() => router.replace(pathname, { locale: 'en' })}
+                                    onClick={() => switchLocale('en')}
                                     className={cn(
                                         'px-3 py-1.5 text-xs font-black tracking-widest uppercase rounded-sm border transition-all',
-                                        locale === 'en'
+                                        activeLocale === 'en'
                                             ? 'bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20'
                                             : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground',
                                     )}

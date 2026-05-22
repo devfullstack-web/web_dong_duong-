@@ -106,7 +106,7 @@ export default async function RootLayout({
 
     // Providing all messages to the client
     // side is the easiest way to get started
-    const messages = await getMessages();
+    const messages = await getMessages({ locale });
 
     return (
         <html lang={locale} suppressHydrationWarning className={beVietnamPro.variable}>
@@ -114,7 +114,7 @@ export default async function RootLayout({
                 suppressHydrationWarning
                 className="antialiased font-sans bg-background text-foreground"
             >
-                <NextIntlClientProvider messages={messages}>
+                <NextIntlClientProvider locale={locale} messages={messages}>
                     <ThemeProvider
                         attribute="class"
                         defaultTheme="light"
