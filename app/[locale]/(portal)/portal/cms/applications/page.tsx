@@ -28,7 +28,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -39,9 +39,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
-import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
-import { BarChart3, PieChart as PieChartIcon, LayoutList } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 
 interface JobApplication {
@@ -202,80 +200,26 @@ export default function ApplicationsManagementPage() {
         );
     };
 
-    // Prepare chart data
-    const statusChartData = stats?.applicationStats
-        ? Object.entries(stats.applicationStats).map(([status, count]) => {
-              const config = STATUS_CONFIG[status] || { label: status, chartColor: '#64748b' };
-              return {
-                  status,
-                  count: Number(count),
-                  fill: config.chartColor,
-              };
-          })
-        : [];
-
-    const statusConfig = Object.entries(STATUS_CONFIG).reduce(
-        (acc: any, [key, val]) => {
-            acc[key] = { label: val.label, color: val.chartColor };
-            return acc;
-        },
-        { count: { label: 'Số lượng' } },
-    );
-
-    const trendData =
-        stats?.trends?.map((t: any) => ({
-            month: t.month.toUpperCase(),
-            applications: t.applications || 0,
-        })) || [];
-
     return (
         <div className="space-y-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 bg-brand-primary text-white text-[8px] font-black uppercase tracking-widest">
-                            Recruitment Portal
-                        </span>
-                        <span className="text-[9px] font-bold text-blue-500 uppercase tracking-widest flex items-center gap-1">
-                            <span className="size-1.5 bg-blue-500 rounded-full animate-pulse" />{' '}
-                            Live Analysis
-                        </span>
-                    </div>
-                    <h1 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-900 border-l-4 border-brand-primary pl-4 leading-none">
+                    <h1 className="text-xl md:text-2xl font-black uppercase tracking-tight text-slate-900 border-l-4 border-brand-primary pl-3 leading-none">
                         Quản lý Ứng viên
                     </h1>
-                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
-                        Hệ thống quản lý và phân tích hồ sơ ứng tuyển chuyên sâu.
+                    <p className="text-xs text-slate-500 font-medium">
+                        Hệ thống quản lý và phê duyệt hồ sơ ứng viên ứng tuyển.
                     </p>
+                </div>
+                <div className="hidden md:flex items-center gap-3">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        Tổng hồ sơ: <span className="text-brand-primary">{totalItems}</span>
+                    </span>
                 </div>
             </div>
 
-            <Tabs defaultValue="list" className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
-                        <TabsTrigger
-                            value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
-                        >
-                            <LayoutList size={14} /> Danh sách hồ sơ
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
-                        >
-                            <PieChartIcon size={14} /> Biểu đồ phân tích
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <div className="hidden md:flex items-center gap-3">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                            Tổng hồ sơ: <span className="text-brand-primary">{totalItems}</span>
-                        </span>
-                    </div>
-                </div>
-
-                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
+            <div className="space-y-6 mt-0">
                     {/* Filters & Table */}
                     <div className="space-y-4">
                         <div className="flex flex-col md:flex-row gap-4 p-4 md:p-5 bg-slate-50 border border-slate-100">
@@ -494,40 +438,7 @@ export default function ApplicationsManagementPage() {
                             />
                         </div>
                     </div>
-                </TabsContent>
-
-                <TabsContent
-                    value="analytics"
-                    className="space-y-8 mt-0 border-none p-0 animate-in fade-in duration-500"
-                >
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <PieChartLabel
-                            title="Trạng thái hồ sơ"
-                            description="Phân bổ ứng viên theo quy trình tuyển dụng"
-                            data={statusChartData}
-                            config={statusConfig}
-                            dataKey="count"
-                            nameKey="status"
-                            footerTitle="Tỷ lệ xét duyệt"
-                            footerDescription="Dựa trên tổng số hồ sơ đã nhận"
-                            className="lg:col-span-1"
-                        />
-                        <AreaChartGradient
-                            title="Xu hướng ứng tuyển"
-                            description="Số lượng hồ sơ nhận được qua các tháng"
-                            data={trendData}
-                            config={{
-                                applications: { label: 'Hồ sơ', color: 'var(--brand-primary)' },
-                            }}
-                            dataKeys={['applications']}
-                            xAxisKey="month"
-                            footerTitle="Tốc độ thu hút nhân tài"
-                            footerDescription="Thống kê hồ sơ mới trong 6 tháng qua"
-                            className="lg:col-span-2"
-                        />
-                    </div>
-                </TabsContent>
-            </Tabs>
+            </div>
 
             {/* Delete Confirmation Dialog */}
             <DeleteConfirmationDialog

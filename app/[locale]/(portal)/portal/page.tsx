@@ -14,15 +14,22 @@ import {
     Settings,
     Globe,
     Loader2,
+    Mail,
 } from 'lucide-react';
 import Link from 'next/link';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import $api from '@/utils/axios';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { RadialChartGrid } from '@/components/portal/charts/RadialChartGrid';
+import { RadialChartShape } from '@/components/portal/charts/RadialChartShape';
+import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
+import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
 
 export default function DashboardPage() {
+    const queryClient = useQueryClient();
+
     const { data: statsData, isLoading: loading } = useQuery<{ data: any }>({
         queryKey: ['stats'],
         queryFn: async () => {
@@ -33,6 +40,50 @@ export default function DashboardPage() {
 
     const stats = statsData?.data;
     const updateTime = format(new Date(), 'hh:mm a', { locale: vi });
+
+    // Data for Charts
+    const distributionData = [
+        { browser: 'news', visitors: stats?.counts?.news || 0, fill: 'var(--brand-primary)' },
+        { browser: 'projects', visitors: stats?.counts?.projects || 0, fill: 'var(--brand-cyan)' },
+        {
+            browser: 'products',
+            visitors: stats?.counts?.products || 0,
+            fill: 'var(--brand-accent)',
+        },
+        { browser: 'contacts', visitors: stats?.counts?.contacts || 0, fill: '#ef4444' },
+    ];
+
+    const distributionConfig = {
+        visitors: { label: 'Số lượng' },
+        news: { label: 'Tin tức', color: 'var(--brand-primary)' },
+        projects: { label: 'Dự án', color: 'var(--brand-cyan)' },
+        products: { label: 'Sản phẩm', color: 'var(--brand-accent)' },
+        contacts: { label: 'Liên hệ', color: '#ef4444' },
+    };
+
+    const activityData =
+        stats?.trends?.map((t: any) => ({
+            month: t.month.toUpperCase(),
+            news: t.news,
+            projects: t.projects,
+            products: t.products,
+            total: t.news + t.projects + t.products,
+        })) || [];
+
+    const activityConfig = {
+        news: { label: 'Tin tức', color: 'var(--brand-primary)' },
+        projects: { label: 'Dự án', color: 'var(--brand-cyan)' },
+        products: { label: 'Sản phẩm', color: 'var(--brand-accent)' },
+        total: { label: 'Tổng số', color: 'var(--brand-primary)' },
+    };
+
+    const totalContent =
+        (stats?.counts?.news || 0) +
+        (stats?.counts?.projects || 0) +
+        (stats?.counts?.products || 0);
+    const totalContentData = [
+        { browser: 'total', visitors: totalContent, fill: 'var(--brand-primary)' },
+    ];
 
     const statsConfig = [
         {
@@ -139,6 +190,70 @@ export default function DashboardPage() {
                 ))}
             </div>
 
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+                <AreaChartGradient
+                    title="Tăng trưởng hệ thống"
+                    description="Biểu đồ xu hướng cập nhật dữ liệu 6 tháng qua"
+                    data={activityData}
+                    config={activityConfig}
+                    dataKeys={['products', 'projects', 'news']}
+                    xAxisKey="month"
+                    footerTitle="Tốc độ số hóa"
+                    footerDescription="Dữ liệu tổng hợp từ các module chính"
+                    className="lg:col-span-2"
+                />
+
+                <RadialChartShape
+                    title="Tổng quy mô nội dung"
+                    description="Toàn bộ dữ liệu News, Projects & Products"
+                    data={totalContentData}
+                    config={{ visitors: { label: 'Nội dung', color: 'var(--brand-primary)' } }}
+                    dataKey="visitors"
+                    label="Tài nguyên"
+                    footerTitle="Tăng trưởng 7.2%"
+                    footerDescription="Dựa trên tốc độ đăng bài 30 ngày qua"
+                    className="lg:col-span-1"
+                />
+
+                <PieChartLabel
+                    title="Tỷ lệ phân bổ tài nguyên"
+                    description="So sánh khối lượng giữa các danh mục CMS"
+                    data={distributionData}
+                    config={distributionConfig}
+                    dataKey="visitors"
+                    nameKey="browser"
+                    footerTitle="Cơ cấu ổn định"
+                    footerDescription="Sản phẩm chiếm tỷ trọng cao nhất hiện tại"
+                    className="lg:col-span-1"
+                />
+
+                <RadialChartGrid
+                    title="Chỉ số phản hồi"
+                    description="Liên hệ và tương tác khách hàng"
+                    data={[
+                        {
+                            browser: 'contacts',
+                            visitors: stats?.counts?.contacts || 0,
+                            fill: 'var(--brand-accent)',
+                        },
+                        {
+                            browser: 'pending',
+                            visitors: stats?.contactStats?.new || 0,
+                            fill: '#ef4444',
+                        },
+                    ]}
+                    config={{
+                        visitors: { label: 'Lượt' },
+                        contacts: { label: 'Tổng liên hệ', color: 'var(--brand-accent)' },
+                        pending: { label: 'Chưa xử lý', color: '#ef4444' },
+                    }}
+                    footerTitle="Hỗ trợ 24/7"
+                    footerDescription="Thời gian phản hồi trung bình: 15 phút"
+                    className="lg:col-span-2"
+                />
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
                 <div className="lg:col-span-2 bg-white rounded-none border border-slate-100 overflow-hidden">
                     <div className="p-4 md:p-8 border-b border-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white">
@@ -221,18 +336,18 @@ export default function DashboardPage() {
                         </h3>
                         <div className="grid grid-cols-1 gap-4 relative">
                             <Link
-                                href="/portal/analytics"
+                                href={PORTAL_ROUTES.contacts}
                                 className="flex items-center gap-4 p-5 rounded-none border border-slate-100 hover:border-brand-primary/20 hover:bg-brand-primary/5 transition-all text-left bg-white shadow-xs group/item"
                             >
                                 <div className="h-10 w-10 flex items-center justify-center bg-brand-accent text-brand-primary rounded-none shrink-0 group-hover/item:scale-110 transition-transform">
-                                    <BarChart3 size={18} />
+                                    <Mail size={18} />
                                 </div>
                                 <div className="space-y-0.5">
                                     <div className="text-xs font-black uppercase tracking-tight">
-                                        Phân tích chuyên sâu
+                                        Quản lý Liên hệ
                                     </div>
                                     <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                                        Biểu đồ & Thống kê
+                                        Hộp thư khách hàng
                                     </div>
                                 </div>
                             </Link>

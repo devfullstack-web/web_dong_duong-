@@ -50,10 +50,6 @@ import { API_ROUTES } from '@/constants/routes';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { SimpleConfirmDialog } from '@/components/shared/simple-confirm-dialog';
-import { RadialChartGrid } from '@/components/portal/charts/RadialChartGrid';
-import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LayoutList, PieChart as PieChartIcon } from 'lucide-react';
 
 interface Comment {
     id: string;
@@ -178,73 +174,25 @@ export default function CommentsManagementPage() {
         }
     };
 
-    // Prepare chart data
-    const commentChartData = [
-        {
-            browser: 'approved',
-            visitors: stats?.commentStats?.approved || 0,
-            fill: '#10b981',
-        },
-        {
-            browser: 'pending',
-            visitors: stats?.commentStats?.pending || 0,
-            fill: '#f59e0b',
-        },
-    ];
-
-    const commentTrendData =
-        stats?.trends?.map((t: any) => ({
-            month: t.month.toUpperCase(),
-            comments: t.comments || 0,
-        })) || [];
-
     return (
         <div className="flex-1 space-y-6 py-6 pt-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest">
-                            Customer Feedback
-                        </span>
-                        <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                            <span className="size-1.5 bg-emerald-500 rounded-full animate-pulse" />{' '}
-                            Interactive Monitoring
-                        </span>
-                    </div>
-                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tight uppercase text-slate-900 border-l-4 border-[#002d6b] pl-3 leading-none">
                         Quản lý Bình luận
                     </h2>
-                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
+                    <p className="text-xs text-slate-500 font-medium">
                         Hệ thống phê duyệt và phản hồi tương tác khách hàng.
                     </p>
                 </div>
+                <div className="hidden md:flex items-center gap-3">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        Tổng bình luận: <span className="text-[#002d6b]">{total}</span>
+                    </span>
+                </div>
             </div>
 
-            <Tabs defaultValue="list" className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1">
-                        <TabsTrigger
-                            value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
-                        >
-                            <LayoutList size={14} /> Danh sách bình luận
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2"
-                        >
-                            <PieChartIcon size={14} /> Biểu đồ phân tích
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <div className="hidden md:flex items-center gap-3">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                            Tổng bình luận: <span className="text-[#002d6b]">{total}</span>
-                        </span>
-                    </div>
-                </div>
-
-                <TabsContent value="list" className="space-y-6 mt-0 border-none p-0">
+            <div className="space-y-6 mt-0">
                     <div className="grid gap-4">
                         <Card className="rounded-none border border-slate-100 shadow-sm overflow-hidden">
                             <CardHeader className="bg-slate-50/50 p-4 md:p-5 border-b border-slate-100">
@@ -509,42 +457,7 @@ export default function CommentsManagementPage() {
                             </div>
                         )}
                     </div>
-                </TabsContent>
-
-                <TabsContent
-                    value="analytics"
-                    className="space-y-8 mt-0 border-none p-0 animate-in fade-in duration-500"
-                >
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <RadialChartGrid
-                            title="Trạng thái phê duyệt"
-                            description="Tỷ lệ bình luận đã duyệt vs chờ xử lý"
-                            data={commentChartData}
-                            config={{
-                                visitors: { label: 'Bình luận' },
-                                approved: { label: 'Đã duyệt', color: '#10b981' },
-                                pending: { label: 'Chờ duyệt', color: '#f59e0b' },
-                            }}
-                            footerTitle="Mức độ tương tác"
-                            footerDescription="Cập nhật tự động từ hệ thống"
-                            className="lg:col-span-1"
-                        />
-                        <AreaChartGradient
-                            title="Mật độ thảo luận"
-                            description="Số lượng bình luận mới được gửi qua các tháng"
-                            data={commentTrendData}
-                            config={{
-                                comments: { label: 'Bình luận', color: '#002d6b' },
-                            }}
-                            dataKeys={['comments']}
-                            xAxisKey="month"
-                            footerTitle="Xu hướng quan tâm"
-                            footerDescription="Dựa trên dữ liệu 6 tháng gần nhất"
-                            className="lg:col-span-2"
-                        />
-                    </div>
-                </TabsContent>
-            </Tabs>
+            </div>
 
             {/* Reply Dialog */}
             <Dialog open={!!replyingTo} onOpenChange={() => setReplyingTo(null)}>

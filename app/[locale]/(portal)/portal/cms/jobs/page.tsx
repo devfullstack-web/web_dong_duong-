@@ -38,10 +38,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { cn } from '@/lib/utils';
-import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
-import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LayoutList, PieChart as PieChartIcon } from 'lucide-react';
+
 
 interface JobPosting {
     id: string;
@@ -150,94 +147,34 @@ export default function JobsManagementPage() {
         deleteMutation.mutate(itemToDelete.id);
     };
 
-    // Prepare chart data
-    const statusChartData = stats?.jobStats
-        ? Object.entries(stats.jobStats).map(([status, count]) => {
-              const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || {
-                  label: status,
-                  chartColor: '#64748b',
-              };
-              return {
-                  status,
-                  count: Number(count),
-                  fill: config.chartColor,
-              };
-          })
-        : [];
-
-    const statusConfig = Object.entries(STATUS_CONFIG).reduce(
-        (acc: any, [key, val]) => {
-            acc[key] = { label: val.label, color: val.chartColor };
-            return acc;
-        },
-        { count: { label: 'Số lượng' } },
-    );
-
-    const trendData =
-        stats?.trends?.map((t: any) => ({
-            month: t.month.toUpperCase(),
-            jobs: t.jobs || 0,
-        })) || [];
-
     return (
         <div className="flex-1 space-y-5 md:space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div className="space-y-1">
-                    <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest text-[#fbbf24]">
-                            Sài Gòn Valve CMS
-                        </span>
-                        <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest flex items-center gap-1">
-                            <span className="size-1.5 bg-emerald-500 rounded-full animate-pulse" />{' '}
-                            Live Recruitment
-                        </span>
-                    </div>
-                    <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-3 md:pl-4 leading-none">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tight uppercase text-slate-900 border-l-4 border-[#002d6b] pl-3 leading-none">
                         Quản lý Tuyển dụng
                     </h2>
-                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed mt-2">
-                        Hệ thống quản trị tin tuyển dụng và nguồn nhân lực. Theo dõi mật độ đăng
-                        tin, phân tích trạng thái tuyển dụng và hiệu quả thu hút nhân tài.
+                    <p className="text-xs text-slate-500 font-medium">
+                        Danh sách và thông tin các vị trí tuyển dụng.
                     </p>
                 </div>
-                {hasPermission(PERMISSIONS.RECRUITMENT_CREATE) && (
-                    <Link href={PORTAL_ROUTES.cms.jobs.add}>
-                        <Button className="h-10 px-4 md:px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest flex items-center gap-3 justify-center">
-                            <Plus size={16} /> Thêm tin mới
-                        </Button>
-                    </Link>
-                )}
-            </div>
-
-            <Tabs defaultValue="list" className="space-y-5 md:space-y-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
-                        <TabsTrigger
-                            value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
-                        >
-                            <LayoutList size={14} />{' '}
-                            <span className="hidden sm:inline">Danh sách</span>{' '}
-                            <span className="sm:hidden">DS</span>
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-4 md:px-5 py-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
-                        >
-                            <PieChartIcon size={14} />{' '}
-                            <span className="hidden sm:inline">Biểu đồ phân tích</span>{' '}
-                            <span className="sm:hidden">Biểu đồ</span>
-                        </TabsTrigger>
-                    </TabsList>
-
+                <div className="flex items-center gap-3 w-full md:w-auto justify-end">
                     <div className="hidden md:flex items-center gap-3">
                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
                             Tổng tin: <span className="text-[#002d6b]">{totalItems}</span>
                         </span>
                     </div>
+                    {hasPermission(PERMISSIONS.RECRUITMENT_CREATE) && (
+                        <Link href={PORTAL_ROUTES.cms.jobs.add}>
+                            <Button className="h-10 px-4 md:px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest flex items-center gap-3 justify-center">
+                                <Plus size={16} /> Thêm tin mới
+                            </Button>
+                        </Link>
+                    )}
                 </div>
+            </div>
 
-                <TabsContent value="list" className="space-y-5 mt-0 border-none p-0">
+            <div className="space-y-5 mt-0">
                     <div className="flex flex-col md:flex-row gap-4 p-4 md:p-5 bg-slate-50 border border-slate-100">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -453,38 +390,7 @@ export default function JobsManagementPage() {
                             setCurrentPage(1);
                         }}
                     />
-                </TabsContent>
-
-                <TabsContent
-                    value="analytics"
-                    className="space-y-8 mt-0 border-none p-0 animate-in fade-in duration-500"
-                >
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
-                        <PieChartLabel
-                            title="Trạng thái tuyển dụng"
-                            description="Phân bổ tin tuyển dụng theo trạng thái"
-                            data={statusChartData}
-                            config={statusConfig}
-                            dataKey="count"
-                            nameKey="status"
-                            footerTitle="Tỷ lệ lấp đầy"
-                            footerDescription="Tình trạng tin tuyển dụng đang hoạt động"
-                            className="lg:col-span-1"
-                        />
-                        <AreaChartGradient
-                            title="Mật độ đăng tin"
-                            description="Số lượng tin tuyển dụng mới qua các tháng"
-                            data={trendData}
-                            config={{ jobs: { label: 'Tin tuyển dụng', color: '#002d6b' } }}
-                            dataKeys={['jobs']}
-                            xAxisKey="month"
-                            footerTitle="Tăng trưởng nhân sự"
-                            footerDescription="Phân tích nhu cầu tuyển dụng 6 tháng qua"
-                            className="lg:col-span-2"
-                        />
-                    </div>
-                </TabsContent>
-            </Tabs>
+            </div>
 
             <DeleteConfirmationDialog
                 open={deleteDialogOpen}

@@ -14,8 +14,6 @@ import {
     Calendar as CalendarIcon,
     Building,
     Eye,
-    LayoutList,
-    PieChart as PieChartIcon,
     FileSpreadsheet,
     X,
 } from 'lucide-react';
@@ -37,7 +35,6 @@ import {
     SheetHeader,
     SheetTitle,
 } from '@/components/ui/sheet';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
@@ -49,8 +46,6 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { TablePagination } from '@/components/portal/table-pagination';
 import { API_ROUTES } from '@/constants/routes';
-import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
-import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Contact {
@@ -231,86 +226,25 @@ export default function ContactsManagementPage() {
         }
     };
 
-    // Prepare chart data
-    const statusChartData = stats?.contactStats
-        ? Object.entries(stats.contactStats).map(([status, count]) => {
-              const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || {
-                  label: status,
-                  chartColor: '#64748b',
-              };
-              return {
-                  status,
-                  count: Number(count),
-                  fill: config.chartColor,
-              };
-          })
-        : [];
-
-    const statusConfig = Object.entries(STATUS_CONFIG).reduce(
-        (acc: any, [key, val]) => {
-            acc[key] = { label: val.label, color: val.chartColor };
-            return acc;
-        },
-        { count: { label: 'Số lượng' } },
-    );
-
-    const trendData =
-        stats?.trends?.map((t: any) => ({
-            month: t.month.toUpperCase(),
-            contacts: t.contacts || 0,
-        })) || [];
-
     return (
         <div className="flex-1 space-y-6 md:space-y-10 py-4 md:py-8 pt-4 md:pt-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2 flex-wrap">
-                        <span className="px-2 py-0.5 bg-[#002d6b] text-white text-[8px] font-black uppercase tracking-widest">
-                            Sài Gòn Valve CMS
-                        </span>
-                        <span className="text-[9px] font-bold text-amber-500 uppercase tracking-widest flex items-center gap-1">
-                            <span className="size-1.5 bg-amber-500 rounded-full animate-pulse" />{' '}
-                            Channel Monitoring
-                        </span>
-                    </div>
-                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 md:border-l-8 border-[#002d6b] pl-4 md:pl-6 leading-none">
+                <div className="space-y-1">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tight uppercase text-slate-900 border-l-4 border-[#002d6b] pl-3 leading-none">
                         Quản lý Liên hệ
                     </h2>
-                    <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
-                        Hệ thống tiếp nhận và xử lý thông tin khách hàng. Theo dõi lưu lượng liên hệ
-                        đa kênh, phân tích trạng thái xử lý và xu hướng phản hồi trong thời gian
-                        thực.
+                    <p className="text-xs text-slate-500 font-medium">
+                        Danh sách thông tin liên hệ và yêu cầu từ khách hàng.
                     </p>
+                </div>
+                <div className="hidden md:flex items-center gap-3">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                        Tổng liên hệ: <span className="text-[#002d6b]">{totalItems}</span>
+                    </span>
                 </div>
             </div>
 
-            <Tabs defaultValue="list" className="space-y-4 md:space-y-8">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <TabsList className="h-auto p-1 bg-slate-100/80 rounded-none gap-1 w-full sm:w-auto">
-                        <TabsTrigger
-                            value="list"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
-                        >
-                            <LayoutList size={14} />{' '}
-                            <span className="hidden sm:inline">Danh sách</span> liên hệ
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="analytics"
-                            className="data-[state=active]:bg-white data-[state=active]:text-[#002d6b] data-[state=active]:shadow-sm rounded-none px-3 md:px-6 py-2.5 md:py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-all duration-200 gap-2 flex-1 sm:flex-initial"
-                        >
-                            <PieChartIcon size={14} />{' '}
-                            <span className="hidden sm:inline">Biểu đồ</span> phân tích
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <div className="hidden md:flex items-center gap-3">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                            Tổng liên hệ: <span className="text-[#002d6b]">{totalItems}</span>
-                        </span>
-                    </div>
-                </div>
-
-                <TabsContent value="list" className="space-y-4 md:space-y-6 mt-0 border-none p-0">
+            <div className="space-y-4 md:space-y-6 mt-0">
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 md:p-4 bg-slate-50 border border-slate-100">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -613,38 +547,7 @@ export default function ContactsManagementPage() {
                             setCurrentPage(1);
                         }}
                     />
-                </TabsContent>
-
-                <TabsContent
-                    value="analytics"
-                    className="space-y-8 mt-0 border-none p-0 animate-in fade-in duration-500"
-                >
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <PieChartLabel
-                            title="Trạng thái xử lý"
-                            description="Phân bổ liên hệ theo quy trình vận hành"
-                            data={statusChartData}
-                            config={statusConfig}
-                            dataKey="count"
-                            nameKey="status"
-                            footerTitle="Hiệu quả phản hồi"
-                            footerDescription="Dựa trên tỷ lệ liên hệ đã giải quyết"
-                            className="lg:col-span-1"
-                        />
-                        <AreaChartGradient
-                            title="Lưu lượng liên hệ"
-                            description="Số lượng yêu cầu nhận được qua các tháng"
-                            data={trendData}
-                            config={{ contacts: { label: 'Liên hệ', color: '#fbbf24' } }}
-                            dataKeys={['contacts']}
-                            xAxisKey="month"
-                            footerTitle="Động thái thị trường"
-                            footerDescription="Phân tích tăng trưởng liên hệ 6 tháng qua"
-                            className="lg:col-span-2"
-                        />
-                    </div>
-                </TabsContent>
-            </Tabs>
+            </div>
 
             {/* Detail Sheet */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>

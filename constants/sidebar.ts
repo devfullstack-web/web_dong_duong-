@@ -90,13 +90,6 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
         permission: MODULE_CODES.ROLES,
     },
     {
-        code: MODULE_CODES.NOTIFICATIONS,
-        name: 'Thông báo hệ thống',
-        icon: 'Bell',
-        route: '/portal/notifications',
-        permission: MODULE_CODES.NOTIFICATIONS,
-    },
-    {
         code: MODULE_CODES.LOGS,
         name: 'Nhật ký hệ thống',
         icon: 'History',

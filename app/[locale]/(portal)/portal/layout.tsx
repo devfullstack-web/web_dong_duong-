@@ -12,8 +12,6 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Search, HelpCircle } from 'lucide-react';
 import { PORTAL_ROUTES } from '@/constants/routes';
-import { NotificationDropdown } from '@/components/portal/notification-dropdown';
-
 import { RouteGuard } from '@/components/portal/route-guard';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect } from 'react';
@@ -62,7 +60,6 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                             />
                         </div>
                         <div className="flex items-center gap-1 md:gap-2 border-l border-slate-100 pl-2 md:pl-6 ml-1 md:ml-2">
-                            <NotificationDropdown />
                             <button className="p-2 text-slate-400 hover:text-brand-primary hover:bg-slate-50 rounded-none transition-all">
                                 <HelpCircle size={18} />
                             </button>
