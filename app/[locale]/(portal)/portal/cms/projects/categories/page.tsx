@@ -69,7 +69,7 @@ function CategoryTreeItem({
                             {cat.count} dự án
                         </Badge>
                     )}
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1">
                         <Link href={PORTAL_ROUTES.cms.projects.categories.edit(cat.id)}>
                             <Button variant="ghost" size="sm" className="h-7 w-7 p-0 rounded-none hover:bg-slate-100">
                                 <Edit2 size={13} className="text-slate-400" />

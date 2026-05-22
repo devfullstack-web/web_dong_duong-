@@ -92,7 +92,7 @@ function CategoryTreeItem({
                             {cat.count} sản phẩm
                         </Badge>
                     )}
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1">
                         <Link href={PORTAL_ROUTES.cms.products.categories.edit(cat.id)}>
                             <Button
                                 variant="ghost"
