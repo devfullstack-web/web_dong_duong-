@@ -164,10 +164,10 @@ export default function ProductsManagementPage() {
     };
 
     return (
-        <div className="space-y-6 md:space-y-10">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
-                    <h1 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                    <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
                         Quản lý sản phẩm
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-2 text-sm">
@@ -179,7 +179,7 @@ export default function ProductsManagementPage() {
                         <Link href={PORTAL_ROUTES.cms.products.categories.list}>
                             <Button
                                 variant="outline"
-                                className="text-[10px] font-black uppercase tracking-widest px-4 md:px-6 py-3 md:py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none"
+                                className="text-[10px] font-black uppercase tracking-widest px-4 py-2.5 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none"
                             >
                                 Danh mục
                             </Button>
@@ -187,13 +187,13 @@ export default function ProductsManagementPage() {
                     )}
                     <Button
                         variant="outline"
-                        className="text-[10px] font-black uppercase tracking-widest px-4 md:px-6 py-3 md:py-4 hover:cursor-pointer h-auto border-slate-100 bg-white rounded-none hidden sm:flex"
+                        className="text-[10px] font-black uppercase tracking-widest px-4 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none hidden sm:flex"
                     >
                         Xuất dữ liệu
                     </Button>
                     {hasPermission(PERMISSIONS.PRODUCTS_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.products.add}>
-                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-8 py-3 md:py-4 hover:cursor-pointer h-auto transition-all rounded-none">
+                            <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 hover:cursor-pointer h-10 transition-all rounded-none">
                                 <Plus className="mr-2 size-4" /> Thêm sản phẩm
                             </Button>
                         </Link>
@@ -203,7 +203,7 @@ export default function ProductsManagementPage() {
 
             <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-125">
                 {/* Table Filters */}
-                <div className="p-4 md:p-8 border-b border-slate-50 flex flex-col xl:flex-row gap-4 md:gap-6 items-center justify-between bg-white">
+                <div className="p-4 md:p-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 items-center justify-between bg-white">
                     <div className="relative w-full xl:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
@@ -323,22 +323,22 @@ export default function ProductsManagementPage() {
                         <table className="w-full text-left border-collapse min-w-[700px]">
                             <thead>
                                 <tr className="bg-slate-50/30">
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Sản phẩm
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
                                         SKU
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden lg:table-cell">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden lg:table-cell">
                                         Giá / Tồn kho
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
                                         Danh mục
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Trạng thái
                                     </th>
-                                    <th className="px-4 md:px-8 py-4 md:py-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
                                         Thao tác
                                     </th>
                                 </tr>
@@ -349,9 +349,9 @@ export default function ProductsManagementPage() {
                                         key={product.id}
                                         className="hover:bg-slate-50/30 transition-colors group"
                                     >
-                                        <td className="px-4 md:px-8 py-4 md:py-6">
-                                            <div className="flex items-center gap-3 md:gap-6">
-                                                <div className="relative h-12 w-16 md:h-16 md:w-24 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
+                                        <td className="px-4 py-3 md:py-3.5">
+                                            <div className="flex items-center gap-3 md:gap-4">
+                                                <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
                                                     {product.image_url ? (
                                                         <Image
                                                             src={product.image_url}
@@ -376,12 +376,12 @@ export default function ProductsManagementPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden sm:table-cell">
+                                        <td className="px-4 py-3 md:py-3.5 hidden sm:table-cell">
                                             <code className="text-[11px] font-black text-slate-600 bg-slate-50 px-2 py-1 border border-slate-100">
                                                 {product.sku}
                                             </code>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden lg:table-cell">
+                                        <td className="px-4 py-3 md:py-3.5 hidden lg:table-cell">
                                             <div className="flex flex-col gap-1">
                                                 <span className="text-[11px] font-black text-slate-900">
                                                     {new Intl.NumberFormat('vi-VN', {
@@ -394,20 +394,20 @@ export default function ProductsManagementPage() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6 hidden md:table-cell">
+                                        <td className="px-4 py-3 md:py-3.5 hidden md:table-cell">
                                             <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight">
                                                 {product.category || 'Chưa phân loại'}
                                             </span>
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6">
+                                        <td className="px-4 py-3 md:py-3.5">
                                             {getStatusBadge(product.status)}
                                         </td>
-                                        <td className="px-4 md:px-8 py-4 md:py-6 text-right">
+                                        <td className="px-4 py-3 md:py-3.5 text-right">
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button
                                                         variant="ghost"
-                                                        className="h-12 w-12 p-0 hover:bg-white hover:text-brand-primary border border-transparent hover:border-slate-100 rounded-none transition-all"
+                                                        className="h-9 w-9 p-0 hover:bg-white hover:text-brand-primary border border-transparent hover:border-slate-100 rounded-none transition-all"
                                                     >
                                                         <MoreHorizontal className="h-5 w-5" />
                                                     </Button>

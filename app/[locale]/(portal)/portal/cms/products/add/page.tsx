@@ -189,19 +189,19 @@ export default function AddProductPage() {
     };
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
                     <Link href={PORTAL_ROUTES.cms.products.list}>
                         <Button
                             variant="outline"
-                            className="h-14 w-14 p-0 border-slate-100 rounded-none hover:bg-slate-50"
+                            className="h-10 w-10 p-0 border-slate-100 rounded-none hover:bg-slate-50"
                         >
                             <ArrowLeft size={20} />
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                        <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
                             Thêm sản phẩm mới
                         </h1>
                         <p className="text-slate-500 font-medium italic mt-2 text-sm">
@@ -212,7 +212,7 @@ export default function AddProductPage() {
                 <div className="flex items-center gap-3">
                     <Button
                         variant="outline"
-                        className="text-[10px] font-black uppercase tracking-widest px-6 py-6 h-auto border-slate-100 rounded-none text-slate-500"
+                        className="text-[10px] font-black uppercase tracking-widest px-4 h-10 border-slate-100 rounded-none text-slate-500"
                         onClick={() => router.back()}
                         disabled={isSubmitting}
                     >
@@ -221,7 +221,7 @@ export default function AddProductPage() {
                     <Button
                         onClick={handleSubmit}
                         disabled={isSubmitting}
-                        className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-6 h-auto transition-all rounded-none"
+                        className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 h-10 transition-all rounded-none"
                     >
                         {isSubmitting ? (
                             <Loader2 className="mr-2 size-4 animate-spin" />
@@ -234,8 +234,8 @@ export default function AddProductPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
-                <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                <div className="lg:col-span-2 space-y-5">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <LocalizedInput
                                 id="name"
@@ -262,7 +262,7 @@ export default function AddProductPage() {
                                     id="price"
                                     type="number"
                                     placeholder="0"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
                                     value={formData.price}
                                     onChange={(e) =>
                                         setFormData({ ...formData, price: e.target.value })
@@ -281,7 +281,7 @@ export default function AddProductPage() {
                                     id="stock"
                                     type="number"
                                     placeholder="0"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
                                     value={formData.stock}
                                     onChange={(e) =>
                                         setFormData({ ...formData, stock: e.target.value })
@@ -304,7 +304,7 @@ export default function AddProductPage() {
                                 </span>
                                 <Input
                                     id="slug"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
                                     value={formData.slug}
                                     onChange={(e) =>
                                         setFormData({ ...formData, slug: e.target.value })
@@ -341,7 +341,7 @@ export default function AddProductPage() {
                     </div>
 
                     {/* Features Section */}
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Đặc điểm nổi bật
                         </h3>
@@ -355,7 +355,7 @@ export default function AddProductPage() {
                     </div>
 
                     {/* Tech Specs Section */}
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Thông số kỹ thuật (Bảng)
                         </h3>
@@ -369,7 +369,7 @@ export default function AddProductPage() {
                     </div>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-5">
                     <StatusFormSection
                         isActive={formData.status === 'active'}
                         onActiveChange={(isActive) =>
@@ -379,7 +379,7 @@ export default function AddProductPage() {
                         description="Cho phép sản phẩm hiển thị trên website catalog."
                     />
 
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Phân loại sản phẩm
                         </h3>
@@ -396,7 +396,7 @@ export default function AddProductPage() {
                                     setFormData({ ...formData, category_id: value })
                                 }
                             >
-                                <SelectTrigger className="h-14 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
+                                <SelectTrigger className="h-11 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
                                     <SelectValue placeholder="Chọn danh mục" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-none border-slate-100">
@@ -414,7 +414,7 @@ export default function AddProductPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Thông tin bổ sung
                         </h3>
@@ -429,7 +429,7 @@ export default function AddProductPage() {
                                 <Input
                                     id="origin"
                                     placeholder="VD: OKM Japan"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.origin}
                                     onChange={(e) =>
                                         setFormData({ ...formData, origin: e.target.value })
@@ -446,7 +446,7 @@ export default function AddProductPage() {
                                 <Input
                                     id="warranty"
                                     placeholder="12 tháng"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.warranty}
                                     onChange={(e) =>
                                         setFormData({ ...formData, warranty: e.target.value })
@@ -463,7 +463,7 @@ export default function AddProductPage() {
                                 <Input
                                     id="availability"
                                     placeholder="Sẵn hàng"
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.availability}
                                     onChange={(e) =>
                                         setFormData({ ...formData, availability: e.target.value })
@@ -480,7 +480,7 @@ export default function AddProductPage() {
                                 <Input
                                     id="catalog_url"
                                     placeholder="https://..."
-                                    className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none"
+                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
                                     value={formData.catalog_url}
                                     onChange={(e) =>
                                         setFormData({ ...formData, catalog_url: e.target.value })
@@ -490,7 +490,7 @@ export default function AddProductPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Hình ảnh sản phẩm
                         </h3>
