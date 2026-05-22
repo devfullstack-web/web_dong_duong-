@@ -187,7 +187,7 @@ export default function JobsManagementPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="bg-white border border-slate-100 overflow-hidden">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 opacity-30">
                                 <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
@@ -328,7 +328,7 @@ export default function JobsManagementPage() {
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent
                                                                 align="end"
-                                                                className="rounded-none border-slate-100 shadow-xl w-48 p-1 bg-white"
+                                                                className="rounded-none border-slate-100 shadow-sm w-48 p-1 bg-white"
                                                             >
                                                                 <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
                                                                     Quản trị tin

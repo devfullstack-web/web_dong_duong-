@@ -254,7 +254,7 @@ export default function ProjectsManagementPage() {
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent
-                                    className="w-auto p-0 rounded-none border border-slate-100 shadow-xl"
+                                    className="w-auto p-0 rounded-none border border-slate-100 shadow-sm bg-white"
                                     align="start"
                                 >
                                     <Calendar

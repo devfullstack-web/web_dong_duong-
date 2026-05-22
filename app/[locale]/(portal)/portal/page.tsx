@@ -16,6 +16,8 @@ import {
     Globe,
     Loader2,
     Mail,
+    Calendar as CalendarIcon,
+    X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
@@ -27,15 +29,25 @@ import { RadialChartGrid } from '@/components/portal/charts/RadialChartGrid';
 import { RadialChartShape } from '@/components/portal/charts/RadialChartShape';
 import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
 import { AreaChartGradient } from '@/components/portal/charts/AreaChartGradient';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { DateRange } from 'react-day-picker';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
     const queryClient = useQueryClient();
-    const [timeRange, setTimeRange] = React.useState('6m');
+    const [date, setDate] = React.useState<DateRange | undefined>();
+    const [contentType, setContentType] = React.useState('all');
 
     const { data: statsData, isLoading: loading } = useQuery<{ data: any }>({
-        queryKey: ['stats'],
+        queryKey: ['stats', { startDate: date?.from, endDate: date?.to }],
         queryFn: async () => {
-            const res = await $api.get(API_ROUTES.STATS);
+            const res = await $api.get(API_ROUTES.STATS, {
+                params: {
+                    startDate: date?.from?.toISOString(),
+                    endDate: date?.to?.toISOString(),
+                },
+            });
             return res.data;
         },
     });
@@ -63,7 +75,7 @@ export default function DashboardPage() {
         contacts: { label: 'Liên hệ', color: '#ef4444' },
     };
 
-    const activityDataRaw = React.useMemo(() => {
+    const activityData = React.useMemo(() => {
         return stats?.trends?.map((t: any) => ({
             month: t.month.toUpperCase(),
             news: t.news,
@@ -73,11 +85,12 @@ export default function DashboardPage() {
         })) || [];
     }, [stats?.trends]);
 
-    const activityData = React.useMemo(() => {
-        if (timeRange === '3m') return activityDataRaw.slice(-3);
-        if (timeRange === '1m') return activityDataRaw.slice(-1);
-        return activityDataRaw;
-    }, [activityDataRaw, timeRange]);
+    const activeKeys = React.useMemo(() => {
+        if (contentType === 'news') return ['news'];
+        if (contentType === 'projects') return ['projects'];
+        if (contentType === 'products') return ['products'];
+        return ['products', 'projects', 'news'];
+    }, [contentType]);
 
     const activityConfig = {
         news: { label: 'Tin tức', color: 'var(--brand-primary)' },
@@ -148,19 +161,20 @@ export default function DashboardPage() {
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                    {/* Time Range Filter */}
+                    {/* Content Type Filter */}
                     <div className="flex items-center bg-slate-50 border border-slate-100 p-0.5 rounded-none">
                         {[
-                            { value: '6m', label: '6 THÁNG' },
-                            { value: '3m', label: '3 THÁNG' },
-                            { value: '1m', label: '1 THÁNG' },
+                            { value: 'all', label: 'TẤT CẢ' },
+                            { value: 'news', label: 'TIN TỨC' },
+                            { value: 'projects', label: 'DỰ ÁN' },
+                            { value: 'products', label: 'SẢN PHẨM' },
                         ].map((item) => (
                             <button
                                 key={item.value}
-                                onClick={() => setTimeRange(item.value)}
+                                onClick={() => setContentType(item.value)}
                                 className={cn(
                                     'px-3 py-1.5 text-[9px] font-black tracking-wider uppercase transition-all rounded-none hover:cursor-pointer',
-                                    timeRange === item.value
+                                    contentType === item.value
                                         ? 'bg-[#002d6b] text-white'
                                         : 'text-slate-400 hover:text-slate-600 bg-transparent'
                                 )}
@@ -170,7 +184,56 @@ export default function DashboardPage() {
                         ))}
                     </div>
 
-                    <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-none border border-slate-100">
+                    {/* Date Range Picker */}
+                    <div className="flex items-center gap-2 w-full sm:w-[260px]">
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    id="date"
+                                    variant={'outline'}
+                                    className={cn(
+                                        'w-full justify-start text-left font-black text-[9px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50 hover:bg-slate-100 shadow-none transition-all duration-200 hover:cursor-pointer',
+                                        !date && 'text-slate-400',
+                                    )}
+                                >
+                                    <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#002d6b]" />
+                                    {date?.from ? (
+                                        date.to ? (
+                                            <>
+                                                {format(date.from, 'dd/MM/yy')} -{' '}
+                                                {format(date.to, 'dd/MM/yy')}
+                                            </>
+                                        ) : (
+                                            format(date.from, 'dd/MM/yy')
+                                        )
+                                    ) : (
+                                        <span>Lọc ngày tháng năm</span>
+                                    )}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0 rounded-none border border-slate-100 shadow-sm bg-white" align="end">
+                                <Calendar
+                                    initialFocus
+                                    mode="range"
+                                    defaultMonth={date?.from}
+                                    selected={date}
+                                    onSelect={setDate}
+                                    numberOfMonths={2}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                        {date && (
+                            <Button
+                                variant="ghost"
+                                onClick={() => setDate(undefined)}
+                                className="h-10 w-10 p-0 rounded-none hover:bg-rose-50 hover:text-rose-600 border border-slate-100 shrink-0 shadow-none hover:cursor-pointer bg-slate-50"
+                            >
+                                <X size={14} />
+                            </Button>
+                        )}
+                    </div>
+
+                    <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-none border border-slate-100 h-10 shrink-0">
                         <Clock size={14} className="text-[#002d6b]" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
                             Cập nhật lúc: {updateTime}
@@ -210,7 +273,7 @@ export default function DashboardPage() {
                     description="Biểu đồ xu hướng cập nhật dữ liệu 6 tháng qua"
                     data={activityData}
                     config={activityConfig}
-                    dataKeys={['products', 'projects', 'news']}
+                    dataKeys={activeKeys}
                     xAxisKey="month"
                     footerTitle="Tốc độ số hóa"
                     footerDescription="Dữ liệu tổng hợp từ các module chính"
@@ -266,8 +329,6 @@ export default function DashboardPage() {
                     className="lg:col-span-2"
                 />
             </div>
-
-
         </div>
     );
 }

@@ -115,7 +115,7 @@ export default function AddUserPage() {
                 <div className="lg:col-span-7">
                     <form
                         onSubmit={handleSubmit}
-                        className="bg-white p-5 md:p-6 border-l-4 border-l-brand-primary shadow-sm space-y-6 relative overflow-hidden group"
+                        className="bg-white p-5 md:p-6 border-l-4 border-l-brand-primary space-y-6 relative overflow-hidden group"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-brand-primary/2 -mr-16 -mt-16 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
 
@@ -335,7 +335,7 @@ export default function AddUserPage() {
                         <div className="pt-2">
                             <Button
                                 type="submit"
-                                className="w-full md:w-auto bg-brand-primary hover:bg-[#002d6b] text-[10px] font-black uppercase tracking-[0.2em] px-8 h-10 hover:cursor-pointer shadow-xl shadow-brand-primary/10 transition-all rounded-none hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
+                                className="w-full md:w-auto bg-brand-primary hover:bg-[#002d6b] text-[10px] font-black uppercase tracking-[0.2em] px-8 h-10 hover:cursor-pointer transition-all rounded-none hover:-translate-y-0.5 active:scale-95 flex items-center justify-center"
                                 disabled={isSubmitting}
                             >
                                 {isSubmitting ? (

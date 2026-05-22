@@ -315,7 +315,7 @@ export default function ContactsManagementPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="bg-white border border-slate-100 overflow-hidden">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 opacity-30">
                                 <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
@@ -447,7 +447,7 @@ export default function ContactsManagementPage() {
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent
                                                                 align="end"
-                                                                className="rounded-none border-slate-100 shadow-xl w-56 p-2"
+                                                                className="rounded-none border-slate-100 shadow-sm w-56 p-2 bg-white"
                                                             >
                                                                 <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
                                                                     Quản trị trạng thái
@@ -551,7 +551,7 @@ export default function ContactsManagementPage() {
 
             {/* Detail Sheet */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-                <SheetContent className="w-full sm:max-w-xl p-0 border-none overflow-hidden shadow-2xl rounded-none">
+                <SheetContent className="w-full sm:max-w-xl p-0 border border-slate-100 overflow-hidden shadow-sm rounded-none bg-white">
                     <SheetHeader className="p-5 md:p-10 bg-[#002d6b] text-white">
                         <div className="flex items-center gap-2 mb-2 md:mb-4">
                             <span className="px-2 py-0.5 bg-[#fbbf24] text-[#002d6b] text-[8px] font-black uppercase tracking-widest">
@@ -637,7 +637,7 @@ export default function ContactsManagementPage() {
                                     <div className="flex items-center gap-3">
                                         <Badge
                                             className={cn(
-                                                'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none shadow-sm',
+                                                'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none',
                                                 STATUS_CONFIG[
                                                     selectedContact.status as keyof typeof STATUS_CONFIG
                                                 ]?.color,
@@ -654,7 +654,7 @@ export default function ContactsManagementPage() {
                                 <div className="flex gap-2">
                                     {selectedContact.status !== 'replied' && (
                                         <Button
-                                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-none h-12 px-6 text-[10px] font-black uppercase tracking-widest transition-all shadow-xl shadow-emerald-500/20"
+                                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-none h-12 px-6 text-[10px] font-black uppercase tracking-widest transition-all"
                                             onClick={() => {
                                                 handleUpdateStatus(selectedContact.id, 'replied');
                                                 setIsSheetOpen(false);

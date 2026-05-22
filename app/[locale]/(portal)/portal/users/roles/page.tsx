@@ -100,7 +100,7 @@ export default function RolesManagementPage() {
                         </span>
                     </div>
                     <Link href={PORTAL_ROUTES.users.roles.add}>
-                        <Button className="h-10 hover:cursor-pointer px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3">
+                        <Button className="h-10 hover:cursor-pointer px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3">
                             <Plus size={18} /> Tạo vai trò mới
                         </Button>
                     </Link>
@@ -180,7 +180,7 @@ export default function RolesManagementPage() {
                                                     <Button
                                                         variant="outline"
                                                         size="icon"
-                                                        className="h-8 w-8 border-slate-100 rounded-none bg-white hover:bg-[#002d6b] hover:text-white transition-all shadow-sm"
+                                                        className="h-8 w-8 border-slate-100 rounded-none bg-white hover:bg-[#002d6b] hover:text-white transition-all"
                                                         title="Cấu hình quyền"
                                                     >
                                                         <Edit2 size={14} />
@@ -190,7 +190,7 @@ export default function RolesManagementPage() {
                                                     <Button
                                                         variant="outline"
                                                         size="icon"
-                                                        className="h-8 w-8 border-slate-100 rounded-none bg-white text-rose-500 hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all shadow-sm"
+                                                        className="h-8 w-8 border-slate-100 rounded-none bg-white text-rose-500 hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all"
                                                         onClick={() => handleDeleteClick(role)}
                                                         title="Xóa vai trò"
                                                     >

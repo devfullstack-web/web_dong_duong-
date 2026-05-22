@@ -349,9 +349,9 @@ export default function ProductsManagementPage() {
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent
-                                    className="w-auto p-0 rounded-none border border-slate-100 shadow-xl"
-                                    align="start"
-                                >
+                                     className="w-auto p-0 rounded-none border border-slate-100 shadow-sm bg-white"
+                                     align="start"
+                                 >
                                     <Calendar
                                         initialFocus
                                         mode="range"

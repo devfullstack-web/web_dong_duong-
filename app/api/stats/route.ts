@@ -8,27 +8,50 @@ import {
     jobApplications,
     productComments,
     users,
-    roles,
-    user_roles,
 } from '@/db/schema';
 import { sql } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth } from '@/middlewares/middleware';
+import { NextRequest } from 'next/server';
 
 // GET /api/stats - Dashboard statistics
-export const GET = withAuth(async () => {
+export const GET = withAuth(async (request: NextRequest) => {
     try {
-        const [newsCount] = await db.select({ count: sql`count(*)` }).from(newsArticles);
-        const [projectsCount] = await db.select({ count: sql`count(*)` }).from(projects);
-        const [productsCount] = await db.select({ count: sql`count(*)` }).from(products);
-        const [contactsCount] = await db.select({ count: sql`count(*)` }).from(contacts);
-        const [jobsCount] = await db.select({ count: sql`count(*)` }).from(jobPostings);
-        const [applicationsCount] = await db.select({ count: sql`count(*)` }).from(jobApplications);
-        const [commentsCount] = await db.select({ count: sql`count(*)` }).from(productComments);
+        const { searchParams } = new URL(request.url);
+        const startDate = searchParams.get('startDate');
+        const endDate = searchParams.get('endDate');
+
+        let newsWhere = sql`deleted_at IS NULL`;
+        let projectsWhere = sql`deleted_at IS NULL`;
+        let productsWhere = sql`deleted_at IS NULL`;
+        let contactsWhere = sql`1=1`;
+        let jobsWhere = sql`deleted_at IS NULL`;
+        let applicationsWhere = sql`1=1`;
+        let commentsWhere = sql`deleted_at IS NULL`;
+        let usersWhere = sql`deleted_at IS NULL`;
+
+        if (startDate && endDate) {
+            newsWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate} AND deleted_at IS NULL`;
+            projectsWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate} AND deleted_at IS NULL`;
+            productsWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate} AND deleted_at IS NULL`;
+            contactsWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate}`;
+            jobsWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate} AND deleted_at IS NULL`;
+            applicationsWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate}`;
+            commentsWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate} AND deleted_at IS NULL`;
+            usersWhere = sql`created_at >= ${startDate} AND created_at <= ${endDate} AND deleted_at IS NULL`;
+        }
+
+        const [newsCount] = await db.select({ count: sql`count(*)` }).from(newsArticles).where(newsWhere);
+        const [projectsCount] = await db.select({ count: sql`count(*)` }).from(projects).where(projectsWhere);
+        const [productsCount] = await db.select({ count: sql`count(*)` }).from(products).where(productsWhere);
+        const [contactsCount] = await db.select({ count: sql`count(*)` }).from(contacts).where(contactsWhere);
+        const [jobsCount] = await db.select({ count: sql`count(*)` }).from(jobPostings).where(jobsWhere);
+        const [applicationsCount] = await db.select({ count: sql`count(*)` }).from(jobApplications).where(applicationsWhere);
+        const [commentsCount] = await db.select({ count: sql`count(*)` }).from(productComments).where(commentsWhere);
         const [usersCount] = await db
             .select({ count: sql`count(*)` })
             .from(users)
-            .where(sql`deleted_at IS NULL`);
+            .where(usersWhere);
 
         // Get 5 most recent activities across news, projects, products
         const recentNews = await db
@@ -79,26 +102,77 @@ export const GET = withAuth(async () => {
             })
             .slice(0, 5);
 
-        // Fetch Trends for last 6 months
-        const trendsResult = await db.execute(sql`
-      WITH months AS (
-        SELECT date_trunc('month', now()) - (i || ' month')::interval as month_date
-        FROM generate_series(0, 5) i
-      )
-      SELECT 
-        to_char(m.month_date, 'MM') as month_num,
-        to_char(m.month_date, 'Mon') as month,
-        (SELECT count(*) FROM news_articles WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as news,
-        (SELECT count(*) FROM projects WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as projects,
-        (SELECT count(*) FROM products WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as products,
-        (SELECT count(*) FROM job_applications WHERE date_trunc('month', created_at) = m.month_date)::int as applications,
-        (SELECT count(*) FROM job_postings WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as jobs,
-        (SELECT count(*) FROM users WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as users,
-        (SELECT count(*) FROM product_comments WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as comments,
-        (SELECT count(*) FROM contacts WHERE date_trunc('month', created_at) = m.month_date)::int as contacts
-      FROM months m
-      ORDER BY m.month_date ASC
-    `);
+        // Fetch Trends for last 6 months OR custom date range
+        let trendsResult;
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffTime = Math.abs(end.getTime() - start.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 31) {
+                // Theo ngày
+                trendsResult = await db.execute(sql`
+                    WITH days AS (
+                        SELECT date_trunc('day', d)::date as date_val
+                        FROM generate_series(${startDate}::timestamp, ${endDate}::timestamp, '1 day'::interval) d
+                    )
+                    SELECT 
+                        to_char(d.date_val, 'DD/MM') as month,
+                        (SELECT count(*) FROM news_articles WHERE date_trunc('day', created_at) = d.date_val AND deleted_at IS NULL)::int as news,
+                        (SELECT count(*) FROM projects WHERE date_trunc('day', created_at) = d.date_val AND deleted_at IS NULL)::int as projects,
+                        (SELECT count(*) FROM products WHERE date_trunc('day', created_at) = d.date_val AND deleted_at IS NULL)::int as products,
+                        (SELECT count(*) FROM job_applications WHERE date_trunc('day', created_at) = d.date_val)::int as applications,
+                        (SELECT count(*) FROM job_postings WHERE date_trunc('day', created_at) = d.date_val AND deleted_at IS NULL)::int as jobs,
+                        (SELECT count(*) FROM users WHERE date_trunc('day', created_at) = d.date_val AND deleted_at IS NULL)::int as users,
+                        (SELECT count(*) FROM product_comments WHERE date_trunc('day', created_at) = d.date_val AND deleted_at IS NULL)::int as comments,
+                        (SELECT count(*) FROM contacts WHERE date_trunc('day', created_at) = d.date_val)::int as contacts
+                    FROM days d
+                    ORDER BY d.date_val ASC
+                `);
+            } else {
+                // Theo tháng
+                trendsResult = await db.execute(sql`
+                    WITH months AS (
+                        SELECT date_trunc('month', m)::date as month_date
+                        FROM generate_series(date_trunc('month', ${startDate}::timestamp), date_trunc('month', ${endDate}::timestamp), '1 month'::interval) m
+                    )
+                    SELECT 
+                        to_char(m.month_date, 'Mon') as month,
+                        (SELECT count(*) FROM news_articles WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as news,
+                        (SELECT count(*) FROM projects WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as projects,
+                        (SELECT count(*) FROM products WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as products,
+                        (SELECT count(*) FROM job_applications WHERE date_trunc('month', created_at) = m.month_date)::int as applications,
+                        (SELECT count(*) FROM job_postings WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as jobs,
+                        (SELECT count(*) FROM users WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as users,
+                        (SELECT count(*) FROM product_comments WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as comments,
+                        (SELECT count(*) FROM contacts WHERE date_trunc('month', created_at) = m.month_date)::int as contacts
+                    FROM months m
+                    ORDER BY m.month_date ASC
+                `);
+            }
+        } else {
+            // Mặc định 6 tháng
+            trendsResult = await db.execute(sql`
+                WITH months AS (
+                    SELECT date_trunc('month', now()) - (i || ' month')::interval as month_date
+                    FROM generate_series(0, 5) i
+                )
+                SELECT 
+                    to_char(m.month_date, 'MM') as month_num,
+                    to_char(m.month_date, 'Mon') as month,
+                    (SELECT count(*) FROM news_articles WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as news,
+                    (SELECT count(*) FROM projects WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as projects,
+                    (SELECT count(*) FROM products WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as products,
+                    (SELECT count(*) FROM job_applications WHERE date_trunc('month', created_at) = m.month_date)::int as applications,
+                    (SELECT count(*) FROM job_postings WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as jobs,
+                    (SELECT count(*) FROM users WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as users,
+                    (SELECT count(*) FROM product_comments WHERE date_trunc('month', created_at) = m.month_date AND deleted_at IS NULL)::int as comments,
+                    (SELECT count(*) FROM contacts WHERE date_trunc('month', created_at) = m.month_date)::int as contacts
+                FROM months m
+                ORDER BY m.month_date ASC
+            `);
+        }
 
         // Fetch Contact Status Distribution
         const contactStatsRows = await db

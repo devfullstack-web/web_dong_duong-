@@ -228,7 +228,7 @@ export default function MediaManagementPage() {
                             {images.map((image, index) => (
                                 <div
                                     key={image.filename}
-                                    className="group relative aspect-square bg-slate-50 border border-slate-100 overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1"
+                                    className="group relative aspect-square bg-slate-50 border border-slate-100 overflow-hidden transition-all hover:border-[#002d6b]/30 hover:-translate-y-0.5"
                                 >
                                     <Image
                                         src={image.url}
@@ -263,7 +263,7 @@ export default function MediaManagementPage() {
                                         <div className="flex-1 flex items-center justify-center">
                                             <button
                                                 onClick={() => openLightbox(index)}
-                                                className="bg-white text-slate-900 p-2 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 ease-out shadow-2xl"
+                                                className="bg-white text-slate-900 p-2 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 ease-out shadow-sm"
                                             >
                                                 <Maximize2 size={20} />
                                             </button>

@@ -139,7 +139,7 @@ export default function UsersManagementPage() {
                     </div>
                     {hasPermission(PERMISSIONS.USERS_CREATE) && (
                         <Link href={PORTAL_ROUTES.users.add}>
-                            <Button className="h-10 hover:cursor-pointer px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3">
+                            <Button className="h-10 hover:cursor-pointer px-6 w-full md:w-auto bg-[#002d6b] hover:bg-[#002d6b]/90 text-white rounded-none text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3">
                                 <Plus size={18} /> Tạo tài khoản mới
                             </Button>
                         </Link>
@@ -160,7 +160,7 @@ export default function UsersManagementPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="bg-white border border-slate-100 overflow-hidden">
                         {isLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 opacity-30">
                                 <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
@@ -300,7 +300,7 @@ export default function UsersManagementPage() {
                                                             </DropdownMenuTrigger>
                                                             <DropdownMenuContent
                                                                 align="end"
-                                                                className="rounded-none border-slate-100 shadow-xl w-48 p-1"
+                                                                className="rounded-none border-slate-100 shadow-sm w-48 p-1 bg-white"
                                                             >
                                                                 <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-2.5 py-1.5">
                                                                     Quản trị bảo mật
