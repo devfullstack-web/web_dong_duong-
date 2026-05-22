@@ -13,6 +13,7 @@ import { motion } from 'motion/react';
 import Autoplay from 'embla-carousel-autoplay';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
+import { ArrowRight } from 'lucide-react';
 
 interface Product {
     id: string;
@@ -28,6 +29,7 @@ interface ProductSpotlightProps {
 
 export default function ProductSpotlight({ products = [] }: ProductSpotlightProps) {
     const t = useTranslations('ProductSpotlight');
+    const commonT = useTranslations('Common');
 
     if (products.length === 0) return null;
 
@@ -45,7 +47,9 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                         >
                             <div className="h-px w-6 bg-brand-primary"></div>
                             <span className="text-[9px] font-black uppercase tracking-[0.3em] text-brand-primary">
-                                {commonT('featuredProducts', { defaultValue: 'SẢN PHẨM TIÊU BIỂU' })}
+                                {commonT('featuredProducts', {
+                                    defaultValue: 'SẢN PHẨM TIÊU BIỂU',
+                                })}
                             </span>
                         </motion.div>
                         <motion.h2
@@ -56,7 +60,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                             className="text-2xl lg:text-3xl font-black text-slate-900 uppercase tracking-tight"
                         >
                             GIẢI PHÁP <span className="text-brand-primary">THIẾT BỊ</span>
-                        </motion.h2 >
+                        </motion.h2>
                     </div>
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -64,11 +68,15 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
                     >
-                        <Link 
-                            href="/san-pham" 
+                        <Link
+                            href="/san-pham"
                             className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary transition-colors group"
                         >
-                            Tất cả <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                            Tất cả{' '}
+                            <ArrowRight
+                                size={14}
+                                className="transition-transform group-hover:translate-x-1"
+                            />
                         </Link>
                     </motion.div>
                 </div>
@@ -118,7 +126,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                             </CarouselItem>
                         ))}
                     </CarouselContent>
-                    
+
                     {/* Compact Navigation */}
                     <div className="hidden lg:flex items-center gap-2 mt-8 justify-center">
                         <CarouselPrevious className="static translate-y-0 h-8 w-8 border-slate-200 hover:bg-brand-primary hover:text-white transition-all" />

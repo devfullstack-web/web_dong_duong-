@@ -212,8 +212,8 @@ export default function Hero({ products = [] }: HeroProps) {
                                         </Link>
                                     ))}
                                 </div>
-                            </div>
-                        </motion.div>
+                            </motion.div>
+                        )}
                     </div>
                 </div>
             </div>
