@@ -57,7 +57,7 @@ export function LocalizedInput({
                     <TabsContent key={locale} value={locale} className="mt-3">
                         <Input
                             id={`${id}-${locale}`}
-                            className="h-14 bg-slate-50 border-none text-sm font-bold rounded-none focus-visible:ring-brand-primary/20"
+                            className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none focus-visible:ring-brand-primary/20"
                             value={value[locale] || ''}
                             onChange={(e) =>
                                 onChange({ ...value, [locale]: e.target.value })

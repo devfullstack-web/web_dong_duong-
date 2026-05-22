@@ -116,10 +116,10 @@ export function CategoryForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20">
-      <div className="lg:col-span-2 space-y-8">
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-10">
+      <div className="lg:col-span-2 space-y-6">
         {/* Basic Information */}
-        <section className="bg-white rounded-none border border-slate-100 p-8 space-y-6">
+        <section className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
           <div className="flex items-center gap-3 border-l-4 border-brand-primary pl-4 mb-2">
             <Layout size={18} className="text-brand-primary" />
             <h3 className="text-sm font-black uppercase tracking-widest text-slate-900">Thông tin cơ bản</h3>
@@ -145,7 +145,7 @@ export function CategoryForm({
                 value={formData.parent_id || "__none__"}
                 onValueChange={(value) => setFormData({ ...formData, parent_id: value === "__none__" ? null : value })}
               >
-                <SelectTrigger className="h-14 border-slate-200 text-sm font-bold rounded-none">
+                <SelectTrigger className="h-11 border-slate-200 text-sm font-bold rounded-none">
                   <SelectValue placeholder="Chọn danh mục cha (bỏ trống = danh mục gốc)" />
                 </SelectTrigger>
                 <SelectContent>
@@ -175,7 +175,7 @@ export function CategoryForm({
               <Input
                 type="number"
                 min={0}
-                className="h-14 border-slate-200 text-sm font-bold rounded-none"
+                className="h-11 border-slate-200 text-sm font-bold rounded-none"
                 value={formData.display_order}
                 onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
               />
@@ -183,7 +183,7 @@ export function CategoryForm({
             </div>
 
             {/* Visibility Toggle */}
-            <div className="flex items-center justify-between p-4 bg-slate-50/50 border border-slate-100">
+            <div className="flex items-center justify-between py-3 px-4 bg-slate-50/50 border border-slate-100">
               <div>
                 <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Trạng thái hiển thị</Label>
                 <p className="text-[9px] text-slate-400 italic mt-1">
@@ -201,7 +201,7 @@ export function CategoryForm({
 
       <div className="space-y-8">
         {/* Audit / Action */}
-        <div className="p-6 bg-brand-primary/5 border border-brand-primary/10 space-y-4">
+        <div className="p-5 bg-brand-primary/5 border border-brand-primary/10 space-y-4">
           <div className="flex items-center gap-2 text-brand-primary">
             <CheckCircle2 size={16} />
             <span className="text-[10px] font-black uppercase tracking-widest">Sẵn sàng để lưu</span>
@@ -210,11 +210,11 @@ export function CategoryForm({
             Nhập tên danh mục cho cả tiếng Việt và tiếng Anh để hỗ trợ đa ngôn ngữ.
           </p>
           <div className="pt-2">
-            <Button type="submit" className="w-full bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest h-14 transition-all rounded-none shadow-lg shadow-brand-primary/20">
+            <Button type="submit" className="w-full bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest h-10 transition-all rounded-none">
               <Save className="mr-2 size-4" /> {isEditing ? "Cập nhật danh mục" : "Lưu danh mục mới"}
             </Button>
-            <Link href={backUrl} className="block mt-4">
-              <Button type="button" variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest h-12 rounded-none opacity-50 hover:opacity-100">
+            <Link href={backUrl} className="block mt-3">
+              <Button type="button" variant="ghost" className="w-full text-[10px] font-black uppercase tracking-widest h-10 rounded-none opacity-50 hover:opacity-100">
                 Quay lại
               </Button>
             </Link>
