@@ -73,6 +73,11 @@
       "description": "Nền tảng quản lý hạ tầng nước thông minh, thu thập dữ liệu từ cảm biến và hiển thị trực quan theo thời gian thực.",
       "accent": "Giải pháp thông minh"
     },
+    "fixed": {
+      "title": "NỀN TẢNG WATER IOT",
+      "highlight": "HẠ TẦNG THÔNG MINH",
+      "titleSuffix": "GIẢI PHÁP SCADA"
+    },
     "actionAdvice": "TƯ VẤN GIẢI PHÁP",
     "iotSolutions": "Giải pháp IoT & SCADA",
     "platformTitle": "Nền tảng Hạ tầng Thông minh",

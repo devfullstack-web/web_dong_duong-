@@ -66,6 +66,14 @@ export default function Hero({ products = [] }: HeroProps) {
         ],
         [t],
     );
+    const HERO_COPY = React.useMemo(
+        () => ({
+            title: t('fixed.title'),
+            highlight: t('fixed.highlight'),
+            titleSuffix: t('fixed.titleSuffix'),
+        }),
+        [t],
+    );
 
     React.useEffect(() => {
         const timer = setInterval(() => {
@@ -129,13 +137,13 @@ export default function Hero({ products = [] }: HeroProps) {
                     <div className="max-w-4xl w-full space-y-6 sm:space-y-8">
                         <div className="space-y-6">
                             <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white tracking-tight leading-[1.1] uppercase text-center lg:text-left">
-                                {SLIDES_CONTENT[current].title} <br />
+                                {HERO_COPY.title} <br />
                                 <span className="text-brand-accent">
-                                    {SLIDES_CONTENT[current].highlight}
+                                    {HERO_COPY.highlight}
                                 </span>{' '}
                                 <br />
                                 <span className="text-white/60">
-                                    {SLIDES_CONTENT[current].titleSuffix}
+                                    {HERO_COPY.titleSuffix}
                                 </span>
                             </h1>
 

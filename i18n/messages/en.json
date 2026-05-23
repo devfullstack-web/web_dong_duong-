@@ -73,6 +73,11 @@
       "description": "Smart water infrastructure management platform, collecting data from sensors and visualizing in real-time.",
       "accent": "Smart Solution"
     },
+    "fixed": {
+      "title": "SMART WATER IOT",
+      "highlight": "INFRASTRUCTURE",
+      "titleSuffix": "SCADA SOLUTIONS"
+    },
     "actionAdvice": "SOLUTION CONSULTING",
     "iotSolutions": "IoT Solutions & SCADA",
     "platformTitle": "Smart Infrastructure Platform",

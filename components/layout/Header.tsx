@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useParams, usePathname as useNextPathname, useRouter } from 'next/navigation';
-import { Link, usePathname } from '@/i18n/routing';
-import { Check, Facebook, Globe, Linkedin, Mail, Menu, Phone, X, Youtube } from 'lucide-react';
+import { useParams, usePathname as useNextPathname } from 'next/navigation';
+import { Link, usePathname, useRouter } from '@/i18n/routing';
+import { Check, Facebook, Globe, Linkedin, Mail, Menu, Phone, X, Youtube, ChevronDown } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -81,7 +81,21 @@ export default function Header() {
     const [mounted, setMounted] = React.useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
     const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false);
+    const [expandedLinks, setExpandedLinks] = React.useState<Record<string, boolean>>({});
     const languageMenuRef = React.useRef<HTMLDivElement>(null);
+
+    const toggleExpand = (label: string) => {
+        setExpandedLinks((prev) => ({
+            ...prev,
+            [label]: !prev[label],
+        }));
+    };
+
+    React.useEffect(() => {
+        if (!mobileMenuOpen) {
+            setExpandedLinks({});
+        }
+    }, [mobileMenuOpen]);
     const mobileSocialLinks = [
         { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
         { label: 'LinkedIn', Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
@@ -150,20 +164,14 @@ export default function Header() {
                 return;
             }
 
-            const currentPath = window.location.pathname;
-            const pathWithoutLocale = currentPath.replace(/^\/(vi|en)(?=\/|$)/, '') || '/';
-            const nextPath =
-                pathWithoutLocale === '/'
-                    ? `/${nextLocale}`
-                    : `/${nextLocale}${pathWithoutLocale}`;
-
             document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
             setMobileMenuOpen(false);
-            router.replace(`${nextPath}${window.location.search}${window.location.hash}`, {
+            router.replace(pathname + window.location.search + window.location.hash, {
+                locale: nextLocale,
                 scroll: false,
             });
         },
-        [activeLocale, router],
+        [activeLocale, pathname, router],
     );
 
   return (
@@ -171,26 +179,26 @@ export default function Header() {
       className={cn(
         "fixed top-0 lg:top-8 left-0 right-0 z-50 transition-all duration-500",
         isScrolled 
-          ? "lg:top-0 bg-white dark:bg-background shadow-md py-2" 
-          : "bg-white dark:bg-background border-b border-border py-4"
+          ? "lg:top-0 bg-white dark:bg-background shadow-md py-1.5 lg:py-2" 
+          : "bg-white dark:bg-background border-b border-border py-2.5 lg:py-3.5"
       )}
     >
-      <div className="container mx-auto px-4 lg:px-8">
+      <div className="container mx-auto px-4 lg:px-3 xl:px-8">
         <nav className="flex items-center justify-between">
           
           {/* Logo */}
-          <Link href={SITE_ROUTES.HOME} className="relative h-12 w-40 xl:w-44 shrink-0 group flex items-center">
+          <Link href={SITE_ROUTES.HOME} className="relative h-10 lg:h-10.5 xl:h-12 w-32 lg:w-34 xl:w-44 shrink-0 group flex items-center">
             <img
               src="/images/logo/logo.png"
               alt={t('logoAlt')}
-              className="object-contain group-hover:scale-105 transition-transform h-10 xl:h-12 w-auto"
+              className="object-contain group-hover:scale-105 transition-transform h-8 lg:h-8.5 xl:h-12 w-auto"
             />
           </Link>
 
                     {/* Desktop Nav */}
-                    <div className="hidden lg:flex items-center gap-2">
+                    <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
                         <NavigationMenu viewport={false}>
-                            <NavigationMenuList className="gap-2">
+                            <NavigationMenuList className="gap-1 xl:gap-2">
                                 {mounted &&
                                     NAV_LINKS.map((link) => (
                                         <NavigationMenuItem key={link.label} className="relative">
@@ -198,7 +206,7 @@ export default function Header() {
                                                 <>
                                                     <NavigationMenuTrigger
                                                         className={cn(
-                                                            'h-10 px-2 xl:px-4 text-[13px] font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors',
+                                                            'h-9 xl:h-10 px-2 xl:px-4 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors',
                                                             pathname === link.href &&
                                                                 'text-brand-primary',
                                                         )}
@@ -230,7 +238,7 @@ export default function Header() {
                                                     <Link
                                                         href={link.href}
                                                         className={cn(
-                                                            'group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-2 text-[13px] font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none',
+                                                            'group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-1.5 xl:py-2 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none',
                                                             pathname === link.href
                                                                 ? 'text-brand-primary'
                                                                 : 'text-foreground',
@@ -246,17 +254,17 @@ export default function Header() {
                         </NavigationMenu>
 
                         {/* Actions */}
-                        <div className="flex items-center gap-4 xl:gap-6   pl-4 xl:pl-8  dark:border-white/10">
-                            <div ref={languageMenuRef} className="relative ml-2">
+                        <div className="flex items-center gap-1.5 xl:gap-6 pl-1.5 xl:pl-8 dark:border-white/10">
+                            <div ref={languageMenuRef} className="relative ml-1">
                                 <button
                                     type="button"
                                     aria-haspopup="menu"
                                     aria-expanded={languageMenuOpen}
                                     onClick={() => setLanguageMenuOpen((open) => !open)}
-                                    className="flex items-center border border-slate-100 dark:border-white/10 px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none hover:border-brand-primary/30 transition-colors"
+                                    className="flex items-center border border-slate-100 dark:border-white/10 px-2 xl:px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none hover:border-brand-primary/30 transition-colors"
                                 >
-                                    <Globe size={16} className="mr-2 text-brand-primary" />
-                                    <span className="text-[13px] font-black tracking-widest uppercase">
+                                    <Globe size={14} className="mr-1.5 xl:mr-2 text-brand-primary" />
+                                    <span className="text-[12px] xl:text-[13px] font-bold xl:font-black tracking-widest uppercase">
                                         {activeLocale}
                                     </span>
                                 </button>
@@ -318,114 +326,187 @@ export default function Header() {
             <AnimatePresence>
                 {mobileMenuOpen && (
                     <motion.div
-                        initial={{ opacity: 0, scaleY: 0 }}
-                        animate={{ opacity: 1, scaleY: 1 }}
-                        exit={{ opacity: 0, scaleY: 0 }}
-                        className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-white/10 overflow-y-auto origin-top"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-white/10 overflow-y-auto no-scrollbar max-h-[calc(100vh-5rem)] shadow-2xl rounded-b-2xl border-b border-x border-slate-100 dark:border-white/10"
                     >
-                        <div className="container mx-auto px-6 py-8 space-y-6">
+                        <div className="container mx-auto px-5 py-4 space-y-3.5">
                             {/* Language Switcher for Mobile */}
-                            <div className="flex items-center gap-4 py-4 border-b border-slate-100 dark:border-white/10">
-                                <span className="text-[11px] font-black tracking-widest uppercase text-muted-foreground mr-2">
-                                    Language:
+                            <div className="flex items-center justify-between py-2 border-b border-slate-100/50 dark:border-white/5">
+                                <span className="text-xs font-bold tracking-wider uppercase text-muted-foreground flex items-center gap-1.5">
+                                    <Globe size={14} className="text-brand-primary" />
+                                    {t('language')}:
                                 </span>
-                                <button
-                                    onClick={() => switchLocale('vi')}
-                                    className={cn(
-                                        'px-3 py-1.5 text-xs font-black tracking-widest uppercase rounded-sm border transition-all',
-                                        activeLocale === 'vi'
-                                            ? 'bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20'
-                                            : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground',
-                                    )}
-                                >
-                                    {t('vi')}
-                                </button>
-                                <button
-                                    onClick={() => switchLocale('en')}
-                                    className={cn(
-                                        'px-3 py-1.5 text-xs font-black tracking-widest uppercase rounded-sm border transition-all',
-                                        activeLocale === 'en'
-                                            ? 'bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20'
-                                            : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground',
-                                    )}
-                                >
-                                    {t('en')}
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => switchLocale('vi')}
+                                        className={cn(
+                                            'px-3 py-1 text-[11px] font-bold tracking-widest uppercase rounded-full border transition-all duration-300',
+                                            activeLocale === 'vi'
+                                                ? 'bg-brand-primary text-white border-brand-primary shadow-md shadow-brand-primary/10'
+                                                : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground hover:text-foreground',
+                                        )}
+                                    >
+                                        VI
+                                    </button>
+                                    <button
+                                        onClick={() => switchLocale('en')}
+                                        className={cn(
+                                            'px-3 py-1 text-[11px] font-bold tracking-widest uppercase rounded-full border transition-all duration-300',
+                                            activeLocale === 'en'
+                                                ? 'bg-brand-primary text-white border-brand-primary shadow-md shadow-brand-primary/10'
+                                                : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground hover:text-foreground',
+                                        )}
+                                    >
+                                        EN
+                                    </button>
+                                </div>
                             </div>
 
-              {NAV_LINKS.map((link) => (
-                <div key={link.label} className="space-y-4">
-                  <Link 
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block text-lg font-black uppercase tracking-tight hover:text-brand-primary transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                  {("submenu" in link || "featured" in link) && (
-                    <div className="pl-4 grid grid-cols-1 gap-4 border-l-2 border-brand-primary/20">
-                      {(link.submenu || link.featured)?.map((item: any) =>
-                        item.external ? (
-                          <a
-                            key={item.title}
-                            href={item.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
-                          >
-                            {item.title}
-                          </a>
-                        ) : (
-                          <Link
-                            key={item.title}
-                            href={item.href}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
-                          >
-                            {item.title}
-                          </Link>
-                        ),
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-              
-              <div className="pt-8 border-t border-slate-100 dark:border-white/10 space-y-6">
-                 <a href={`tel:${COMPANY_INFO.hotlineRaw}`} className="flex items-center gap-6 text-muted-foreground group">
-                    <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm transition-colors group-hover:bg-brand-primary group-hover:text-white">
-                       <Phone size={20} />
-                    </div>
-                    <span className="font-black text-sm tracking-widest">{COMPANY_INFO.hotline}</span>
-                 </a>
-                 <a href={`mailto:${COMPANY_INFO.email}`} className="flex items-center gap-6 text-muted-foreground group">
-                    <div className="h-10 w-10 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm transition-colors group-hover:bg-brand-primary group-hover:text-white">
-                       <Mail size={20} />
-                    </div>
-                    <span className="font-black text-sm tracking-widest uppercase">{COMPANY_INFO.email}</span>
-                 </a>
-                 {mobileSocialLinks.length > 0 && (
-                  <div className="flex items-center gap-3">
-                    {mobileSocialLinks.map(({ label, Icon, href }) => (
-                      <a
-                        key={label}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={label}
-                        className="h-10 min-w-10 px-3 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-sm transition-colors hover:bg-brand-primary hover:text-white"
-                      >
-                        {Icon ? <Icon size={20} /> : <span className="text-[10px] font-black uppercase">Zalo</span>}
-                      </a>
-                    ))}
-                  </div>
-                 )}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                            {NAV_LINKS.map((link) => {
+                                const hasSubmenu = "submenu" in link || "featured" in link;
+                                const isExpanded = !!expandedLinks[link.label];
+                                
+                                return (
+                                    <div key={link.label} className="border-b border-slate-100/50 dark:border-white/5 pb-1.5 last:border-0 last:pb-0">
+                                        <div className="flex items-center justify-between">
+                                            {link.href === '#' ? (
+                                                <button
+                                                    onClick={() => toggleExpand(link.label)}
+                                                    className="flex items-center justify-between w-full text-xs sm:text-sm font-bold uppercase tracking-wider text-left text-foreground hover:text-brand-primary transition-colors py-1.5"
+                                                >
+                                                    <span>{link.label}</span>
+                                                    <ChevronDown 
+                                                        size={16} 
+                                                        className={cn(
+                                                            "text-muted-foreground/75 transition-transform duration-300",
+                                                            isExpanded && "rotate-180 text-brand-primary"
+                                                        )}
+                                                    />
+                                                </button>
+                                            ) : (
+                                                <>
+                                                    <Link 
+                                                        href={link.href}
+                                                        onClick={() => setMobileMenuOpen(false)}
+                                                        className="flex-1 text-xs sm:text-sm font-bold uppercase tracking-wider text-foreground hover:text-brand-primary transition-colors py-1.5"
+                                                    >
+                                                        {link.label}
+                                                    </Link>
+                                                    {hasSubmenu && (
+                                                        <button
+                                                            onClick={() => toggleExpand(link.label)}
+                                                            className="p-2 -mr-2 text-muted-foreground/75 hover:text-brand-primary transition-colors"
+                                                            aria-label={`Toggle ${link.label} submenu`}
+                                                        >
+                                                            <ChevronDown 
+                                                                size={16} 
+                                                                className={cn(
+                                                                    "transition-transform duration-300",
+                                                                    isExpanded && "rotate-180 text-brand-primary"
+                                                                )}
+                                                            />
+                                                        </button>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+
+                                        {hasSubmenu && (
+                                            <AnimatePresence initial={false}>
+                                                {isExpanded && (
+                                                    <motion.div
+                                                        initial={{ height: 0, opacity: 0 }}
+                                                        animate={{ height: 'auto', opacity: 1 }}
+                                                        exit={{ height: 0, opacity: 0 }}
+                                                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                                                        className="overflow-hidden"
+                                                    >
+                                                        <div className="pl-4 mt-1 mb-1 py-0.5 grid grid-cols-1 gap-1.5 border-l border-brand-primary/20">
+                                                            {(link.submenu || link.featured)?.map((item: any) => {
+                                                                const subLinkContent = (
+                                                                    <span className="text-xs sm:text-xs font-semibold text-muted-foreground hover:text-brand-primary transition-colors flex items-center gap-1.5 py-0.5">
+                                                                        <span className="h-1 w-1 bg-brand-primary/40 rounded-full group-hover:bg-brand-primary" />
+                                                                        {item.title}
+                                                                    </span>
+                                                                );
+                                                                
+                                                                return item.external ? (
+                                                                    <a
+                                                                        key={item.title}
+                                                                        href={item.href}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        onClick={() => setMobileMenuOpen(false)}
+                                                                        className="group block"
+                                                                    >
+                                                                        {subLinkContent}
+                                                                    </a>
+                                                                ) : (
+                                                                    <Link
+                                                                        key={item.title}
+                                                                        href={item.href}
+                                                                        onClick={() => setMobileMenuOpen(false)}
+                                                                        className="group block"
+                                                                    >
+                                                                        {subLinkContent}
+                                                                    </Link>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                            
+                            <div className="pt-4 border-t border-slate-100/50 dark:border-white/5 space-y-3.5">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <a href={`tel:${COMPANY_INFO.hotlineRaw}`} className="flex items-center gap-3 text-muted-foreground hover:text-brand-primary transition-colors group">
+                                        <div className="h-8 w-8 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-full transition-all group-hover:bg-brand-primary group-hover:text-white group-hover:scale-105">
+                                            <Phone size={14} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/60">Hotline</span>
+                                            <span className="font-bold text-xs sm:text-xs tracking-wider text-foreground">{COMPANY_INFO.hotline}</span>
+                                        </div>
+                                    </a>
+                                    <a href={`mailto:${COMPANY_INFO.email}`} className="flex items-center gap-3 text-muted-foreground hover:text-brand-primary transition-colors group">
+                                        <div className="h-8 w-8 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-full transition-all group-hover:bg-brand-primary group-hover:text-white group-hover:scale-105">
+                                            <Mail size={14} />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/60">Email</span>
+                                            <span className="font-bold text-xs sm:text-xs tracking-wider text-foreground truncate max-w-[200px]">{COMPANY_INFO.email}</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                
+                                {mobileSocialLinks.length > 0 && (
+                                    <div className="flex items-center gap-2 pt-1">
+                                        {mobileSocialLinks.map(({ label, Icon, href }) => (
+                                            <a
+                                                key={label}
+                                                href={href}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label={label}
+                                                className="h-8 px-2.5 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-full border border-slate-100 dark:border-white/5 transition-all hover:bg-brand-primary hover:text-white hover:border-brand-primary hover:scale-105"
+                                            >
+                                                {Icon ? <Icon size={14} /> : <span className="text-[8px] font-bold uppercase tracking-wider">Zalo</span>}
+                                            </a>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
     </header>
   );
 }
