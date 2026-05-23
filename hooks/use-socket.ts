@@ -4,9 +4,9 @@
  * Inert Socket Hook.
  * Socket functionality has been disabled per user request.
  */
-export function useSocket() {
+export function useSocket(_options?: any) {
     return {
-        socket: null,
+        socket: null as any,
         isConnected: false,
     };
 }

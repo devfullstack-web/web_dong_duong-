@@ -73,7 +73,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const locale of locales) {
             entries.push({
                 url: `${SITE_URL}/${locale}/san-pham/${item.slug}`,
-                lastModified: item.updated_at,
+                lastModified: item.updated_at ?? undefined,
                 changeFrequency: 'weekly',
                 priority: 0.7,
             });
@@ -85,7 +85,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const locale of locales) {
             entries.push({
                 url: `${SITE_URL}/${locale}/tin-tuc/${item.slug}`,
-                lastModified: item.updated_at,
+                lastModified: item.updated_at ?? undefined,
                 changeFrequency: 'weekly',
                 priority: 0.6,
             });
@@ -97,7 +97,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const locale of locales) {
             entries.push({
                 url: `${SITE_URL}/${locale}/du-an/${item.slug}`,
-                lastModified: item.updated_at,
+                lastModified: item.updated_at ?? undefined,
                 changeFrequency: 'monthly',
                 priority: 0.6,
             });
@@ -109,7 +109,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         for (const locale of locales) {
             entries.push({
                 url: `${SITE_URL}/${locale}/tuyen-dung/${item.slug}`,
-                lastModified: item.updated_at,
+                lastModified: item.updated_at ?? undefined,
                 changeFrequency: 'weekly',
                 priority: 0.5,
             });

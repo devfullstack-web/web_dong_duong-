@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { newsArticles, authors, categories } from '@/db/schema';
@@ -10,7 +11,7 @@ type PageProps = {
     params: Promise<{ slug: string }>;
 };
 
-async function getArticle(slug: string) {
+const getArticle = cache(async (slug: string) => {
     const [article] = await db
         .select({
             id: newsArticles.id,
@@ -33,7 +34,7 @@ async function getArticle(slug: string) {
         .where(and(eq(newsArticles.slug, slug), isNull(newsArticles.deleted_at)));
 
     return article || null;
-}
+});
 
 async function getRelatedArticles(slug: string) {
     return db

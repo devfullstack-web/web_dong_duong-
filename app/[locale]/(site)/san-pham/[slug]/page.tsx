@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { products, categories } from '@/db/schema';
@@ -11,7 +12,7 @@ type PageProps = {
     params: Promise<{ slug: string; locale: string }>;
 };
 
-async function getProduct(slug: string) {
+const getProduct = cache(async (slug: string) => {
     const [product] = await db
         .select({
             id: products.id,
@@ -47,7 +48,7 @@ async function getProduct(slug: string) {
         .where(and(eq(products.slug, slug), isNull(products.deleted_at)));
 
     return product || null;
-}
+});
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;

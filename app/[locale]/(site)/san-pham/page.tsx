@@ -57,6 +57,7 @@ export default function ProductArchive() {
     const [currentPage, setCurrentPage] = useState(1);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [expandedCategoryIds, setExpandedCategoryIds] = useState<string[]>([]);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Reset to page 1 when search or category changes
     useEffect(() => {
@@ -108,14 +109,6 @@ export default function ProductArchive() {
     const products = productsData?.data || [];
     const totalPages = productsData?.meta?.totalPages || 1;
     const total = productsData?.meta?.total || 0;
-
-    if (productsLoading && products.length === 0) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-primary"></div>
-            </div>
-        );
-    }
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -171,92 +164,117 @@ export default function ProductArchive() {
                         <aside className="lg:w-64 shrink-0">
                             <div className="lg:sticky lg:top-32 space-y-6 lg:space-y-12">
                                 <div className="space-y-4 lg:space-y-6">
-                                    <h4 className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-3 lg:pb-4">
-                                        {t('sidebar.categoryTitle')}
-                                    </h4>
-                                    <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
-                                        {/* "Tất cả" button */}
-                                        <button
-                                            onClick={handleAllCategoriesClick}
-                                            className={cn(
-                                                'px-3 py-2 lg:px-4 lg:py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
-                                                selectedCategoryId === null
-                                                    ? 'bg-brand-primary text-white border-brand-primary'
-                                                    : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
-                                            )}
-                                        >
-                                            {t('sidebar.all')}
-                                        </button>
-                                        {categories
-                                            .filter((cat) => cat.is_visible !== false)
-                                            .map((cat) => {
-                                                const visibleChildren =
-                                                    cat.children?.filter(
-                                                        (child) => child.is_visible !== false,
-                                                    ) || [];
-                                                const hasChildren = visibleChildren.length > 0;
-                                                const isExpanded = expandedCategoryIds.includes(
-                                                    cat.id,
-                                                );
+                                    {/* Mobile Collapsible Category Selector Button */}
+                                    <button
+                                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                        className="w-full bg-brand-primary text-white py-3.5 px-5 flex items-center justify-between uppercase tracking-widest text-[10px] font-black lg:hidden rounded-none shadow-md"
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            {t('sidebar.categoryTitle')}:{' '}
+                                            <span className="text-brand-accent font-black">
+                                                {selectedCategoryId === null 
+                                                    ? t('sidebar.all') 
+                                                    : (categories.find(c => c.id === selectedCategoryId)
+                                                        ? (getLocalizedValue(categories.find(c => c.id === selectedCategoryId)?.name_localized, locale) || categories.find(c => c.id === selectedCategoryId)?.name)
+                                                        : (getLocalizedValue(categories.flatMap(c => c.children || []).find(c => c.id === selectedCategoryId)?.name_localized, locale) || categories.flatMap(c => c.children || []).find(c => c.id === selectedCategoryId)?.name)
+                                                      )}
+                                            </span>
+                                        </span>
+                                        <ChevronDown size={16} className={cn("transition-transform duration-300", isMobileMenuOpen && "rotate-180")} />
+                                    </button>
 
-                                                return (
-                                                    <div key={cat.id} className="space-y-1">
-                                                        <button
-                                                            onClick={() =>
-                                                                handleParentCategoryClick(cat)
-                                                            }
-                                                            className={cn(
-                                                                'w-full px-3 py-2 lg:px-4 lg:py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border flex items-center justify-between gap-2',
-                                                                selectedCategoryId === cat.id
-                                                                    ? 'bg-brand-primary text-white border-brand-primary'
-                                                                    : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
-                                                            )}
-                                                        >
-                                                            <span>
-                                                                {getLocalizedValue(
-                                                                    cat.name_localized,
-                                                                    locale,
-                                                                ) || cat.name}
-                                                            </span>
-                                                            {hasChildren && (
-                                                                <ChevronDown
-                                                                    size={14}
-                                                                    className={cn(
-                                                                        'shrink-0 transition-transform duration-200',
-                                                                        isExpanded && 'rotate-180',
-                                                                    )}
-                                                                />
-                                                            )}
-                                                        </button>
-                                                        {hasChildren &&
-                                                            isExpanded &&
-                                                            visibleChildren.map((child) => (
-                                                                <button
-                                                                    key={child.id}
-                                                                    onClick={() =>
-                                                                        handleChildCategoryClick(
-                                                                            cat.id,
-                                                                            child.id,
-                                                                        )
-                                                                    }
-                                                                    className={cn(
-                                                                        'w-full px-3 py-1.5 lg:px-4 lg:pl-8 lg:py-2 text-left text-[10px] font-bold tracking-widest transition-all hover:cursor-pointer rounded-sm lg:rounded-none border',
-                                                                        selectedCategoryId ===
-                                                                            child.id
-                                                                            ? 'bg-brand-primary text-white border-brand-primary'
-                                                                            : 'bg-white text-muted-foreground hover:bg-slate-50 hover:text-brand-primary border-slate-200 lg:border-transparent',
-                                                                    )}
-                                                                >
-                                                                    —{' '}
+                                    {/* Categories Dropdown Container */}
+                                    <div className={cn(
+                                        "lg:block transition-all duration-300", 
+                                        isMobileMenuOpen ? "block animate-fadeIn" : "hidden lg:block"
+                                    )}>
+                                        <h4 className="hidden lg:flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4 mb-4">
+                                            {t('sidebar.categoryTitle')}
+                                        </h4>
+                                        
+                                        <div className="flex flex-col gap-1.5">
+                                            {/* "Tất cả" button */}
+                                            <button
+                                                onClick={() => {
+                                                    handleAllCategoriesClick();
+                                                    setIsMobileMenuOpen(false);
+                                                }}
+                                                className={cn(
+                                                    'w-full px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-none border-l-4',
+                                                    selectedCategoryId === null
+                                                        ? 'bg-brand-primary text-white border-brand-accent'
+                                                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-brand-primary border-transparent',
+                                                )}
+                                            >
+                                                {t('sidebar.all')}
+                                            </button>
+                                            
+                                            {categories
+                                                .filter((cat) => cat.is_visible !== false)
+                                                .map((cat) => {
+                                                    const visibleChildren =
+                                                        cat.children?.filter(
+                                                            (child) => child.is_visible !== false,
+                                                        ) || [];
+                                                    const hasChildren = visibleChildren.length > 0;
+                                                    const isExpanded = expandedCategoryIds.includes(cat.id);
+
+                                                    return (
+                                                        <div key={cat.id} className="flex flex-col gap-1">
+                                                            <button
+                                                                onClick={() => handleParentCategoryClick(cat)}
+                                                                className={cn(
+                                                                    'w-full px-4 py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-none border-l-4 flex items-center justify-between gap-2',
+                                                                    selectedCategoryId === cat.id
+                                                                        ? 'bg-brand-primary text-white border-brand-accent'
+                                                                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-brand-primary border-transparent',
+                                                                )}
+                                                            >
+                                                                <span>
                                                                     {getLocalizedValue(
-                                                                        child.name_localized,
+                                                                        cat.name_localized,
                                                                         locale,
-                                                                    ) || child.name}
-                                                                </button>
-                                                            ))}
-                                                    </div>
-                                                );
-                                            })}
+                                                                    ) || cat.name}
+                                                                </span>
+                                                                {hasChildren && (
+                                                                    <ChevronDown
+                                                                        size={14}
+                                                                        className={cn(
+                                                                            'shrink-0 transition-transform duration-200',
+                                                                            isExpanded && 'rotate-180',
+                                                                        )}
+                                                                    />
+                                                                )}
+                                                            </button>
+                                                            
+                                                            {hasChildren && isExpanded && (
+                                                                <div className="flex flex-col gap-1 pl-4 border-l border-slate-100 py-1">
+                                                                    {visibleChildren.map((child) => (
+                                                                        <button
+                                                                            key={child.id}
+                                                                            onClick={() => {
+                                                                                handleChildCategoryClick(cat.id, child.id);
+                                                                                setIsMobileMenuOpen(false);
+                                                                            }}
+                                                                            className={cn(
+                                                                                'w-full px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer rounded-none border-l-4',
+                                                                                selectedCategoryId === child.id
+                                                                                    ? 'bg-brand-secondary text-white border-brand-accent'
+                                                                                    : 'bg-slate-100/60 text-slate-600 hover:bg-slate-100 hover:text-brand-primary border-transparent',
+                                                                            )}
+                                                                        >
+                                                                            {getLocalizedValue(
+                                                                                child.name_localized,
+                                                                                locale,
+                                                                            ) || child.name}
+                                                                        </button>
+                                                                    ))}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -303,138 +321,199 @@ export default function ProductArchive() {
                                 </div>
                             </div>
 
-                            {/* Grid View */}
-                            {viewMode === 'grid' && (
-                                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                                    {products.map((product, i) => (
-                                        <motion.div
-                                            key={product.id}
-                                            initial={{ opacity: 0, y: 15 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: i * 0.03 }}
-                                            className="group bg-white p-4 space-y-4 flex flex-col justify-between hover:z-10 hover:shadow-lg transition-all duration-500 h-full border border-slate-100 rounded-sm"
-                                        >
-                                            <div className="relative aspect-square w-full overflow-hidden transition-all duration-500 bg-slate-50/50 rounded-sm">
-                                                <Image
-                                                    src={
-                                                        product.image_url ||
-                                                        'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
-                                                    }
-                                                    alt={
-                                                        getLocalizedValue(
-                                                            product.name_localized,
-                                                            locale,
-                                                        ) || product.name
-                                                    }
-                                                    fill
-                                                    unoptimized
-                                                    className="object-contain p-2 group-hover:scale-105 transition-transform duration-700"
-                                                />
-                                            </div>
-                                            <div className="space-y-3 flex-1 flex flex-col justify-between">
-                                                <div className="space-y-1.5">
-                                                    <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
-                                                        <Shield size={9} />{' '}
-                                                        {getLocalizedValue(
-                                                            product.category_localized,
-                                                            locale,
-                                                        ) || product.category}
-                                                    </div>
-                                                    <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-[2rem]">
-                                                        {getLocalizedValue(
-                                                            product.name_localized,
-                                                            locale,
-                                                        ) || product.name}
-                                                    </h3>
-                                                    <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
-                                                        {getLocalizedValue(
-                                                            product.tech_summary_localized,
-                                                            locale,
-                                                        ) ||
-                                                            product.tech_summary ||
-                                                            t('grid.defaultSummary')}
-                                                    </p>
-                                                </div>
-                                                <LocalizedLink
-                                                    href={`/san-pham/${product.slug}`}
-                                                    className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-100 w-full mt-2"
-                                                >
-                                                    {t('grid.viewDetail')}{' '}
-                                                    <ArrowRight size={10} className="ml-auto group-hover:translate-x-0.5 transition-transform" />
-                                                </LocalizedLink>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            )}
+                             {/* Empty State */}
+                             {!productsLoading && products.length === 0 && (
+                                 <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border border-dashed border-slate-200">
+                                     <Info size={32} className="text-slate-300" />
+                                     <div className="space-y-1">
+                                         <p className="text-xs font-bold text-slate-800 uppercase tracking-widest">
+                                             {locale === 'vi' ? 'Không tìm thấy sản phẩm' : 'No products found'}
+                                         </p>
+                                         <p className="text-[10px] text-slate-400 font-medium">
+                                             {locale === 'vi' 
+                                                 ? 'Vui lòng thử lại với từ khóa khác hoặc bộ lọc khác.' 
+                                                 : 'Please try again with a different search query or filter.'}
+                                         </p>
+                                     </div>
+                                 </div>
+                             )}
 
-                            {/* List View */}
-                            {viewMode === 'list' && (
-                                <div className="space-y-3">
-                                    {products.map((product, i) => (
-                                        <motion.div
-                                            key={product.id}
-                                            initial={{ opacity: 0, y: 15 }}
-                                            whileInView={{ opacity: 1, y: 0 }}
-                                            viewport={{ once: true }}
-                                            transition={{ delay: i * 0.03 }}
-                                            className="group bg-white border border-slate-100 hover:shadow-lg transition-all duration-500 rounded-sm"
-                                        >
-                                            <LocalizedLink
-                                                href={`/san-pham/${product.slug}`}
-                                                className="flex flex-col sm:flex-row gap-4 p-4"
-                                            >
-                                                <div className="relative w-full sm:w-32 aspect-square sm:aspect-auto sm:h-32 shrink-0 overflow-hidden bg-slate-50/50 rounded-sm">
-                                                    <Image
-                                                        src={
-                                                            product.image_url ||
-                                                            'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
-                                                        }
-                                                        alt={
-                                                            getLocalizedValue(
-                                                                product.name_localized,
-                                                                locale,
-                                                            ) || product.name
-                                                        }
-                                                        fill
-                                                        unoptimized
-                                                        className="object-contain p-2 group-hover:scale-105 transition-transform duration-700"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 space-y-2 flex flex-col justify-between">
-                                                    <div className="space-y-1">
-                                                        <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
-                                                            <Shield size={9} />{' '}
-                                                            {getLocalizedValue(
-                                                                product.category_localized,
-                                                                locale,
-                                                            ) || product.category}
-                                                        </div>
-                                                        <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-1">
-                                                            {getLocalizedValue(
-                                                                product.name_localized,
-                                                                locale,
-                                                            ) || product.name}
-                                                        </h3>
-                                                        <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
-                                                            {getLocalizedValue(
-                                                                product.tech_summary_localized,
-                                                                locale,
-                                                            ) ||
-                                                                product.tech_summary ||
-                                                                t('grid.defaultSummary')}
-                                                        </p>
-                                                    </div>
-                                                    <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-50 w-full mt-1">
-                                                        {t('grid.viewDetail')}{' '}
-                                                        <ArrowRight size={10} className="ml-auto group-hover:translate-x-0.5 transition-transform" />
-                                                    </div>
-                                                </div>
-                                            </LocalizedLink>
-                                        </motion.div>
-                                    ))}
+                             {/* Grid View */}
+                             {viewMode === 'grid' && (
+                                 productsLoading ? (
+                                     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 animate-pulse">
+                                         {Array.from({ length: 8 }).map((_, i) => (
+                                             <div key={i} className="bg-slate-50/50 border border-slate-100 p-4 space-y-4 flex flex-col justify-between h-[320px] rounded-none">
+                                                 <div className="w-full aspect-square bg-slate-200/50 rounded-none" />
+                                                 <div className="space-y-3 flex-1 flex flex-col justify-between pt-4">
+                                                     <div className="space-y-2">
+                                                         <div className="h-2 w-1/3 bg-slate-200 rounded-none" />
+                                                         <div className="h-4 w-3/4 bg-slate-200 rounded-none" />
+                                                         <div className="h-3 w-5/6 bg-slate-200 rounded-none" />
+                                                     </div>
+                                                     <div className="h-3 w-full bg-slate-200/40 mt-4 rounded-none" />
+                                                 </div>
+                                             </div>
+                                         ))}
+                                     </div>
+                                 ) : (
+                                     products.length > 0 && (
+                                         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                                             {products.map((product, i) => (
+                                                 <motion.div
+                                                     key={product.id}
+                                                     initial={{ opacity: 0, y: 15 }}
+                                                     whileInView={{ opacity: 1, y: 0 }}
+                                                     viewport={{ once: true }}
+                                                     transition={{ delay: i * 0.03 }}
+                                                     className="group bg-white p-4 space-y-4 flex flex-col justify-between hover:z-10 hover:shadow-2xl hover:border-brand-accent transition-all duration-500 h-full border border-slate-100 rounded-none relative pt-6"
+                                                 >
+                                                     {/* Animated top accent bar */}
+                                                     <div className="absolute top-0 left-0 w-full h-0.5 bg-brand-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+
+                                                     <div className="relative aspect-square w-full overflow-hidden transition-all duration-500 bg-slate-50/50 rounded-none border border-slate-100/60">
+                                                         <Image
+                                                             src={
+                                                                 product.image_url ||
+                                                                 'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
+                                                             }
+                                                             alt={
+                                                                 getLocalizedValue(
+                                                                     product.name_localized,
+                                                                     locale,
+                                                                 ) || product.name
+                                                             }
+                                                             fill
+                                                             unoptimized
+                                                             className="object-contain p-3 group-hover:scale-105 transition-transform duration-700"
+                                                         />
+                                                     </div>
+                                                     <div className="space-y-3 flex-1 flex flex-col justify-between">
+                                                         <div className="space-y-1.5">
+                                                             <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
+                                                                 <Shield size={9} />{' '}
+                                                                 {getLocalizedValue(
+                                                                     product.category_localized,
+                                                                     locale,
+                                                                 ) || product.category}
+                                                             </div>
+                                                             <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-[2rem]">
+                                                                 {getLocalizedValue(
+                                                                     product.name_localized,
+                                                                     locale,
+                                                                 ) || product.name}
+                                                             </h3>
+                                                             <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
+                                                                 {getLocalizedValue(
+                                                                     product.tech_summary_localized,
+                                                                     locale,
+                                                                 ) ||
+                                                                     product.tech_summary ||
+                                                                     t('grid.defaultSummary')}
+                                                             </p>
+                                                         </div>
+                                                         <LocalizedLink
+                                                             href={`/san-pham/${product.slug}`}
+                                                             className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-3 border-t border-slate-100 w-full mt-2"
+                                                         >
+                                                             {t('grid.viewDetail')}{' '}
+                                                             <ArrowRight size={10} className="ml-auto group-hover:translate-x-0.5 transition-transform" />
+                                                         </LocalizedLink>
+                                                     </div>
+                                                 </motion.div>
+                                             ))}
+                                         </div>
+                                     )
+                                 )
+                             )}
+
+                             {/* List View */}
+                             {viewMode === 'list' && (
+                                 productsLoading ? (
+                                     <div className="space-y-3 animate-pulse">
+                                         {Array.from({ length: 4 }).map((_, i) => (
+                                             <div key={i} className="bg-slate-50/50 border border-slate-100 p-4 flex flex-col sm:flex-row gap-4 h-[160px] rounded-none">
+                                                 <div className="w-full sm:w-32 aspect-square sm:aspect-auto bg-slate-200/50 shrink-0 rounded-none" />
+                                                 <div className="flex-1 space-y-3 flex flex-col justify-between">
+                                                     <div className="space-y-2">
+                                                         <div className="h-2 w-1/4 bg-slate-200 rounded-none" />
+                                                         <div className="h-4 w-1/2 bg-slate-200 rounded-none" />
+                                                         <div className="h-3 w-2/3 bg-slate-200 rounded-none" />
+                                                     </div>
+                                                     <div className="h-3 w-full bg-slate-200/40 mt-4 rounded-none" />
+                                                 </div>
+                                             </div>
+                                         ))}
+                                     </div>
+                                 ) : (
+                                     <div className="space-y-3">
+                                     {products.map((product, i) => (
+                                         <motion.div
+                                             key={product.id}
+                                             initial={{ opacity: 0, y: 15 }}
+                                             whileInView={{ opacity: 1, y: 0 }}
+                                             viewport={{ once: true }}
+                                             transition={{ delay: i * 0.03 }}
+                                             className="group bg-white border border-slate-100 hover:shadow-2xl hover:border-brand-accent transition-all duration-500 rounded-none relative overflow-hidden"
+                                         >
+                                             {/* Animated top accent bar */}
+                                             <div className="absolute top-0 left-0 w-full h-0.5 bg-brand-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+
+                                             <LocalizedLink
+                                                 href={`/san-pham/${product.slug}`}
+                                                 className="flex flex-col sm:flex-row gap-4 p-4"
+                                             >
+                                                 <div className="relative w-full sm:w-32 aspect-square sm:aspect-auto sm:h-32 shrink-0 overflow-hidden bg-slate-50/50 rounded-none border border-slate-100/60">
+                                                     <Image
+                                                         src={
+                                                             product.image_url ||
+                                                             'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
+                                                         }
+                                                         alt={
+                                                             getLocalizedValue(
+                                                                 product.name_localized,
+                                                                 locale,
+                                                             ) || product.name
+                                                         }
+                                                         fill
+                                                         unoptimized
+                                                         className="object-contain p-3 group-hover:scale-105 transition-transform duration-700"
+                                                     />
+                                                 </div>
+                                                 <div className="flex-1 space-y-2 flex flex-col justify-between">
+                                                     <div className="space-y-1">
+                                                         <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
+                                                             <Shield size={9} />{' '}
+                                                             {getLocalizedValue(
+                                                                 product.category_localized,
+                                                                 locale,
+                                                             ) || product.category}
+                                                         </div>
+                                                         <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-1">
+                                                             {getLocalizedValue(
+                                                                 product.name_localized,
+                                                                 locale,
+                                                             ) || product.name}
+                                                         </h3>
+                                                         <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
+                                                             {getLocalizedValue(
+                                                                 product.tech_summary_localized,
+                                                                 locale,
+                                                             ) ||
+                                                                 product.tech_summary ||
+                                                                 t('grid.defaultSummary')}
+                                                         </p>
+                                                     </div>
+                                                     <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-100 w-full mt-1">
+                                                         {t('grid.viewDetail')}{' '}
+                                                         <ArrowRight size={10} className="ml-auto group-hover:translate-x-0.5 transition-transform" />
+                                                     </div>
+                                                 </div>
+                                             </LocalizedLink>
+                                         </motion.div>
+                                     ))}
                                 </div>
+                            )
                             )}
 
                             {/* Pagination */}
@@ -497,14 +576,6 @@ export default function ProductArchive() {
                                 </div>
                             )}
 
-                            {products.length === 0 && !productsLoading && (
-                                <div className="py-20 text-center space-y-4">
-                                    <Info className="mx-auto text-slate-200" size={64} />
-                                    <p className="text-muted-foreground font-bold uppercase tracking-widest">
-                                        {t('empty')}
-                                    </p>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>

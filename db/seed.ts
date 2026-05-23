@@ -188,14 +188,14 @@ async function main() {
 
     for (const userData of usersToSeed) {
         let userRecord = (
-            await db.select().from(users).where(eq(users.username, userData.username))
+            await db.select().from(users).where(eq(users.username, userData.username!))
         )[0];
         if (!userRecord) {
-            const hashedPassword = await bcrypt.hash(userData.password, AUTH.BCRYPT_SALT_ROUNDS);
+            const hashedPassword = await bcrypt.hash(userData.password!, AUTH.BCRYPT_SALT_ROUNDS);
             const [inserted] = await db
                 .insert(users)
                 .values({
-                    username: userData.username,
+                    username: userData.username!,
                     email:
                         userData.username === SEED_DEFAULTS.SUPER_ADMIN_USERNAME
                             ? COMPANY_INFO.email

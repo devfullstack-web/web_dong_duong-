@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { projects, categories } from '@/db/schema';
@@ -11,7 +12,7 @@ type PageProps = {
     params: Promise<{ slug: string }>;
 };
 
-async function getProject(slug: string) {
+const getProject = cache(async (slug: string) => {
     const [project] = await db
         .select({
             id: projects.id,
@@ -31,7 +32,7 @@ async function getProject(slug: string) {
         .where(and(eq(projects.slug, slug), isNull(projects.deleted_at)));
 
     return project || null;
-}
+});
 
 async function getRelatedProjects(slug: string) {
     return db

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { jobPostings } from '@/db/schema';
@@ -11,14 +12,14 @@ type PageProps = {
     params: Promise<{ slug: string }>;
 };
 
-async function getJob(slug: string) {
+const getJob = cache(async (slug: string) => {
     const [job] = await db
         .select()
         .from(jobPostings)
         .where(and(eq(jobPostings.slug, slug), isNull(jobPostings.deleted_at)));
 
     return job || null;
-}
+});
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
