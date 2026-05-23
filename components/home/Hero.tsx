@@ -76,7 +76,7 @@ export default function Hero({ products = [] }: HeroProps) {
     }, [SLIDES_CONTENT.length]);
 
     return (
-        <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden ">
+        <section className="relative h-[62svh] min-h-[440px] max-h-[560px] w-full overflow-hidden sm:h-[66svh] sm:min-h-[500px] sm:max-h-[620px] lg:h-[85vh] lg:min-h-[600px] lg:max-h-none">
             {/* Video Background - preload="none" to avoid blocking LCP */}
             <div className="absolute inset-0 z-0">
                 <video
@@ -100,21 +100,21 @@ export default function Hero({ products = [] }: HeroProps) {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 1, ease: 'easeInOut' }}
-                            className="absolute inset-0 overflow-hidden"
+                            className="absolute inset-0 hidden overflow-hidden lg:block"
                         >
                             <div className="absolute inset-0">
                                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,#1e293b_0%,transparent_70%)] opacity-20" />
                                 <div className="absolute inset-0 bg-size-[60px_60px] bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)]" />
 
-                                <div className="absolute inset-0 flex items-end lg:items-center justify-center lg:justify-end pb-8 lg:pb-0 lg:py-32 px-4 sm:px-8 lg:px-24">
-                                    <div className="relative w-full lg:w-[45%] h-[40%] sm:h-[45%] lg:h-full flex items-center justify-center lg:justify-end">
+                                <div className="absolute inset-0 flex items-center justify-end px-24 py-32">
+                                    <div className="relative flex h-full w-[45%] items-center justify-end">
                                         <Image
                                             src={SLIDES_CONTENT[current].src}
                                             alt={SLIDES_CONTENT[current].title}
                                             fill
                                             priority={current === 0}
-                                            sizes="(max-width: 1024px) 100vw, 45vw"
-                                            className="object-contain object-bottom lg:object-right"
+                                            sizes="45vw"
+                                            className="object-contain object-right"
                                         />
                                     </div>
                                 </div>
@@ -125,48 +125,39 @@ export default function Hero({ products = [] }: HeroProps) {
             </div>
 
             <div className="container relative z-10 mx-auto h-full px-4 lg:px-8">
-                <div className="flex h-full flex-col items-center lg:items-start justify-start lg:justify-center pt-32 sm:pt-40 lg:pt-16">
-                    <div className="max-w-4xl w-full space-y-8">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={current}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                                className="space-y-6"
-                            >
-                                <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white tracking-tight leading-[1.1] uppercase text-center lg:text-left">
-                                    {SLIDES_CONTENT[current].title} <br />
-                                    <span className="text-brand-accent">
-                                        {SLIDES_CONTENT[current].highlight}
-                                    </span>{' '}
-                                    <br />
-                                    <span className="text-white/60">
-                                        {SLIDES_CONTENT[current].titleSuffix}
-                                    </span>
-                                </h1>
+                <div className="flex h-full flex-col items-center justify-center pb-10 pt-20 sm:pb-12 sm:pt-24 lg:items-start lg:pb-0 lg:pt-16">
+                    <div className="max-w-4xl w-full space-y-6 sm:space-y-8">
+                        <div className="space-y-6">
+                            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white tracking-tight leading-[1.1] uppercase text-center lg:text-left">
+                                {SLIDES_CONTENT[current].title} <br />
+                                <span className="text-brand-accent">
+                                    {SLIDES_CONTENT[current].highlight}
+                                </span>{' '}
+                                <br />
+                                <span className="text-white/60">
+                                    {SLIDES_CONTENT[current].titleSuffix}
+                                </span>
+                            </h1>
 
-                                <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-4">
-                                    <Link
-                                        href="/san-pham"
-                                        className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary w-full sm:w-auto"
-                                    >
-                                        <span className="relative z-10">{tc('exploreNow')}</span>
-                                        <MoveRight
-                                            size={14}
-                                            className="relative z-10 transition-transform group-hover:translate-x-1"
-                                        />
-                                    </Link>
-                                    <Link
-                                        href="/gioi-thieu"
-                                        className="inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm w-full sm:w-auto"
-                                    >
-                                        {t('actionAdvice')}
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
+                            <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-4">
+                                <Link
+                                    href="/san-pham"
+                                    className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary w-full sm:w-auto"
+                                >
+                                    <span className="relative z-10">{tc('exploreNow')}</span>
+                                    <MoveRight
+                                        size={14}
+                                        className="relative z-10 transition-transform group-hover:translate-x-1"
+                                    />
+                                </Link>
+                                <Link
+                                    href="/gioi-thieu"
+                                    className="inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm w-full sm:w-auto"
+                                >
+                                    {t('actionAdvice')}
+                                </Link>
+                            </div>
+                        </div>
 
                         {/* Featured Products - data from server, no client fetch */}
                         {products.length > 0 && (
