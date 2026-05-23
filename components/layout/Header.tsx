@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useParams, usePathname as useNextPathname, useRouter } from 'next/navigation';
 import { Link, usePathname } from '@/i18n/routing';
-import { Menu, X, Globe, Phone, Mail, Check } from 'lucide-react';
+import { Check, Facebook, Globe, Linkedin, Mail, Menu, Phone, X, Youtube } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '@/lib/utils';
@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/navigation-menu';
 
 import { SITE_ROUTES } from '@/constants/routes';
-import { COMPANY_INFO } from "@/constants/site-info";
+import { COMPANY_INFO } from '@/constants/site-info';
 
 type Locale = 'vi' | 'en';
 
@@ -82,6 +82,12 @@ export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
     const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false);
     const languageMenuRef = React.useRef<HTMLDivElement>(null);
+    const mobileSocialLinks = [
+        { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
+        { label: 'LinkedIn', Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
+        { label: 'YouTube', Icon: Youtube, href: COMPANY_INFO.social.youtube },
+        { label: 'Zalo', href: COMPANY_INFO.social.zalo },
+    ].filter((item) => item.href);
     const pathname = usePathname();
     const nextPathname = useNextPathname();
     const routeLocale = Array.isArray(params.locale) ? params.locale[0] : params.locale;
@@ -358,16 +364,29 @@ export default function Header() {
                   </Link>
                   {("submenu" in link || "featured" in link) && (
                     <div className="pl-4 grid grid-cols-1 gap-4 border-l-2 border-brand-primary/20">
-                      {(link.submenu || link.featured)?.map((item: any) => (
-                        <Link
-                          key={item.title}
-                          href={item.href}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
-                        >
-                          {item.title}
-                        </Link>
-                      ))}
+                      {(link.submenu || link.featured)?.map((item: any) =>
+                        item.external ? (
+                          <a
+                            key={item.title}
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
+                          >
+                            {item.title}
+                          </a>
+                        ) : (
+                          <Link
+                            key={item.title}
+                            href={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-brand-primary transition-colors"
+                          >
+                            {item.title}
+                          </Link>
+                        ),
+                      )}
                     </div>
                   )}
                 </div>
