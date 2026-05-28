@@ -8,6 +8,10 @@ import { eq, desc, and, isNull } from 'drizzle-orm';
 export const revalidate = 60;
 
 // Dynamic imports for below-fold components - reduces initial JS bundle
+const TechnologyOverview = dynamic(() => import('@/components/home/TechnologyOverview'));
+const HowItWorks = dynamic(() => import('@/components/home/HowItWorks'));
+const KeyBenefits = dynamic(() => import('@/components/home/KeyBenefits'));
+
 const ProductSpotlight = dynamic(() => import('@/components/home/ProductSpotlight'), {
     loading: () => <div className="bg-white py-24 sm:py-32" />,
 });
@@ -76,10 +80,13 @@ export default async function Home() {
 
     return (
         <div className="flex flex-col">
-            <Hero products={featuredProducts.slice(0, 3)} />
-            <ProductSpotlight products={featuredProducts} />
-            <SystemHighlight />
+            <Hero />
+            <TechnologyOverview />
+            <HowItWorks />
+            <KeyBenefits />
             <Solutions />
+            <SystemHighlight />
+            <ProductSpotlight products={featuredProducts} />
             <News articles={latestNews} />
             <Partners />
             <ContactForm />
