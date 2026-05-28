@@ -8,15 +8,6 @@ import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { COMPANY_INFO } from '@/constants/site-info';
-import { Be_Vietnam_Pro } from 'next/font/google';
-
-const beVietnamPro = Be_Vietnam_Pro({
-    subsets: ['vietnamese', 'latin'],
-    weight: ['400', '500', '600', '700', '800', '900'],
-    display: 'swap',
-    preload: true,
-    variable: '--font-be-vietnam-pro',
-});
 
 export const viewport: Viewport = {
     width: 'device-width',
@@ -109,7 +100,7 @@ export default async function RootLayout({
     const messages = await getMessages({ locale });
 
     return (
-        <html lang={locale} suppressHydrationWarning className={beVietnamPro.variable}>
+        <html lang={locale} suppressHydrationWarning>
             <body
                 suppressHydrationWarning
                 className="antialiased font-sans bg-background text-foreground"

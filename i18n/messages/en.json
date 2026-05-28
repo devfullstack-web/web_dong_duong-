@@ -1,4 +1,9 @@
 {
+  "Company": {
+    "address": "No. 122/16-18 Vo Van Hat Street, Long Truong Ward, Thu Duc City, Ho Chi Minh City",
+    "workingHoursWeekdays": "MONDAY - SATURDAY: 08:00 - 17:30",
+    "slogan": "Exclusive distributor of water industry equipment and smart monitoring solutions from Japan & Korea in Vietnam."
+  },
   "Header": {
     "home": "HOME",
     "about": "ABOUT",
@@ -39,8 +44,12 @@
     "agriculture": "Precision Agriculture",
     "agricultureDesc": "Applying IoT technology to irrigation management and crop monitoring, enhancing agricultural productivity.",
     "aquaculture": "Aquaculture Monitoring",
+    "aquacultureDesc": "Advanced aquaculture water quality control solutions with 24/7 cloud alerts.",
     "hydrology": "Smart Irrigation & Hydrology",
-    "building": "Smart Building & Infrastructure"
+    "hydrologyDesc": "Automated water regulation systems and smart hydro-meteorological stations for sustainability.",
+    "building": "Smart Building & Infrastructure",
+    "buildingDesc": "Integrated solutions for energy management, ventilation, and smart equipment coordination for buildings.",
+    "digitalEcosystem": "Digital Ecosystem"
   },
   "Common": {
     "exploreNow": "EXPLORE NOW",
@@ -135,15 +144,21 @@
         "desc": "Real-time monitoring and control of water distribution networks. Powered by IoT & SCADA technology with continuous data collection to optimize operations and prevent resource loss.",
         "btnText": "View solutions"
       }
-    }
+    },
+    "technologyLabel": "Technology",
+    "applicationLabel": "Application",
+    "networkManagement": "Network Management"
   },
   "Partners": {
     "title": "STRATEGIC PARTNERS",
-    "description": "TRUST FROM LEADING GLOBAL BRANDS"
+    "description": "TRUST FROM LEADING GLOBAL BRANDS",
+    "partner": "Partner"
   },
   "ContactForm": {
     "title": "REQUEST A CONSULTATION",
     "subtitle": "WE WILL RESPOND WITHIN 24H",
+    "consultationTitle": "CONSULTATION NOW",
+    "consultationDesc": "Our expert team at SG - VAL is always ready to support you with the most optimal system solutions.",
     "labels": {
       "name": "FULL NAME *",
       "phone": "PHONE NUMBER *",

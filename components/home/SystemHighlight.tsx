@@ -18,7 +18,7 @@ export default function SystemHighlight() {
         },
         {
             tag: t('banners.video.tag'),
-            title: 'HỆ THỐNG QUAN TRẮC IOT & SCADA',
+            title: t('banners.video.title'),
             desc: t('banners.video.desc'),
             btnText: t('banners.video.btnText'),
             image: '/uploads/images/2026/03/14/diagram-scada.png',
@@ -76,7 +76,7 @@ export default function SystemHighlight() {
                             <div className="grid grid-cols-2 gap-6 pt-8 border-t border-slate-100">
                                 <div>
                                     <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                                        Công nghệ
+                                        {t('technologyLabel')}
                                     </div>
                                     <div className="text-xs font-bold text-slate-800">
                                         SCADA / IoT Cloud
@@ -84,10 +84,10 @@ export default function SystemHighlight() {
                                 </div>
                                 <div>
                                     <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                                        Ứng dụng
+                                        {t('applicationLabel')}
                                     </div>
                                     <div className="text-xs font-bold text-slate-800">
-                                        Quản lý mạng lưới
+                                        {t('networkManagement')}
                                     </div>
                                 </div>
                             </div>

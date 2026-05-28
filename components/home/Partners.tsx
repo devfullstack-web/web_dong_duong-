@@ -43,7 +43,7 @@ export default function Partners() {
 
                             {/* Partner name tooltip */}
                             <p className="text-center text-sm text-slate-500 mt-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                {partner.name}
+                                {t('partner', { defaultValue: partner.name })}
                             </p>
                         </div>
                     ))}

@@ -45,7 +45,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                             })}
                         </span>
                         <h2 className="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight">
-                            GIẢI PHÁP <span className="text-brand-primary">THIẾT BỊ NỔI BẬT</span>
+                            {t('title')}
                         </h2>
                     </div>
 
@@ -53,7 +53,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                         href="/san-pham"
                         className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary transition-colors group pb-1"
                     >
-                        <span>{activeLocale === 'vi' ? 'Xem tất cả' : 'View all'}</span>
+                        <span>{commonT('viewAll')}</span>
                         <ArrowRight
                             size={12}
                             className="transition-transform group-hover:translate-x-0.5"
@@ -137,7 +137,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
 
                                             {/* Action link with border top */}
                                             <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary transition-colors pt-3 border-t border-slate-100 w-full mt-3">
-                                                <span>{activeLocale === 'vi' ? 'Xem chi tiết' : 'View details'}</span>
+                                                <span>{commonT('viewDetails')}</span>
                                                 <ArrowRight size={10} className="ml-auto transition-transform group-hover:translate-x-0.5" />
                                             </div>
                                         </div>

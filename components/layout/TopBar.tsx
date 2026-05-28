@@ -1,12 +1,14 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import { Phone, Mail, Clock, Facebook, Linkedin, Youtube } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 import { COMPANY_INFO } from '@/constants/site-info';
 
 export default function TopBar() {
+    const t = useTranslations('Company');
     const [isScrolled, setIsScrolled] = React.useState(false);
     const socialLinks = [
         { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
@@ -52,7 +54,7 @@ export default function TopBar() {
                         </div>
                         <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest leading-none">
                             <Clock size={12} className="text-brand-accent" />
-                            <span>THỨ 2 - THỨ 7: {COMPANY_INFO.workingHours.weekdays}</span>
+                            <span>{t('workingHoursWeekdays')}</span>
                         </div>
                     </div>
 

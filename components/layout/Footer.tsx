@@ -18,6 +18,7 @@ import { PORTAL_ROUTES } from '@/constants/routes';
 
 export default function Footer() {
     const t = useTranslations('Footer');
+    const tCompany = useTranslations('Company');
     const socialLinks = [
         { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
         { label: 'LinkedIn', Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
@@ -109,7 +110,7 @@ export default function Footer() {
                                     size={16}
                                 />
                                 <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider leading-relaxed">
-                                    {COMPANY_INFO.address}
+                                    {tCompany('address')}
                                 </span>
                             </li>
                             <li className="flex gap-3 items-center group">

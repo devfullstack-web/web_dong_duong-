@@ -10,6 +10,7 @@ import { Droplet, Sprout, Waves, CloudRain, Building2, ArrowRight } from 'lucide
 
 export default function Solutions() {
     const t = useTranslations('Solutions');
+    const commonT = useTranslations('Common');
     const activeLocale = useLocale();
     const [imageErrors, setImageErrors] = React.useState<Record<string, boolean>>({});
 
@@ -47,9 +48,7 @@ export default function Solutions() {
             brand: 'SGV AQUA',
             title: t('aquaculture'),
             subtitle: 'Aquaculture Monitoring',
-            desc: activeLocale === 'vi' 
-                ? 'Giải pháp kiểm soát chất lượng nước nuôi thủy hải sản chuyên sâu, cảnh báo rủi ro 24/7 bằng công nghệ đám mây.'
-                : 'Advanced aquaculture water quality control solutions with 24/7 cloud alerts.',
+            desc: t('aquacultureDesc'),
             image: '/uploads/images/2026/02/02/1770024641404-d0g5xi.png',
             href: SITE_ROUTES.SOLUTIONS.AQUACULTURE,
             Icon: Waves,
@@ -63,9 +62,7 @@ export default function Solutions() {
             brand: 'SGV HYDRO',
             title: t('hydrology'),
             subtitle: 'Smart Irrigation & Hydrology',
-            desc: activeLocale === 'vi'
-                ? 'Hệ thống tự động hóa điều tiết nguồn nước, trạm khí tượng thủy văn thông minh phục vụ phát triển bền vững.'
-                : 'Automated water regulation systems and smart hydro-meteorological stations for sustainability.',
+            desc: t('hydrologyDesc'),
             image: '/uploads/images/2026/02/02/1770024676466-u4e2w9.png',
             href: '#',
             Icon: CloudRain,
@@ -79,9 +76,7 @@ export default function Solutions() {
             brand: 'SGV BUILDING',
             title: t('building'),
             subtitle: 'Smart Building & Infrastructure',
-            desc: activeLocale === 'vi'
-                ? 'Giải pháp tích hợp quản lý năng lượng, thông gió và điều phối thiết bị thông minh cho cao ốc & hạ tầng công cộng.'
-                : 'Integrated solutions for energy management, ventilation, and smart equipment coordination for buildings.',
+            desc: t('buildingDesc'),
             image: '/uploads/images/2026/02/02/1770024682380-kkc3q0.png',
             href: '#',
             Icon: Building2,
@@ -99,7 +94,7 @@ export default function Solutions() {
                 <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-white/10 border border-white/20 rounded-none mb-4">
                     <span className="w-1.5 h-1.5 rounded-none bg-brand-accent animate-pulse" />
                     <span className="text-[10px] font-bold text-white/90 uppercase tracking-[0.2em]">
-                        {activeLocale === 'vi' ? 'Hệ sinh thái số' : 'Digital Ecosystem'}
+                        {t('digitalEcosystem')}
                     </span>
                 </div>
                 
@@ -206,7 +201,7 @@ export default function Solutions() {
 
                                     {/* Action button */}
                                     <div className="inline-flex items-center gap-2.5 text-xs font-black uppercase tracking-widest text-brand-accent group/btn hover:text-white transition-colors">
-                                        <span>{activeLocale === 'vi' ? 'Khám phá ngay' : 'Explore now'}</span>
+                                        <span>{commonT('exploreNow')}</span>
                                         <div className="w-8 h-8 rounded-none border border-brand-accent/30 flex items-center justify-center bg-brand-accent/5 group-hover/btn:bg-brand-accent group-hover/btn:border-brand-accent group-hover/btn:translate-x-1.5 transition-all duration-300">
                                             <ArrowRight size={14} className="text-white" />
                                         </div>
@@ -284,7 +279,7 @@ export default function Solutions() {
                                         href={item.href}
                                         className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-accent hover:text-white transition-colors"
                                     >
-                                        <span>{activeLocale === 'vi' ? 'Xem chi tiết' : 'Details'}</span>
+                                        <span>{commonT('viewDetails')}</span>
                                         <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
                                     </Link>
                                 </div>

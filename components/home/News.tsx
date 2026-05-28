@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { MoveRight, Newspaper } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
 
 interface NewsArticle {
@@ -18,15 +18,17 @@ interface NewsProps {
     articles?: NewsArticle[];
 }
 
-function formatDate(date: Date | string | null): string {
+function formatDate(date: Date | string | null, locale: string = 'vi'): string {
     if (!date) return '';
     const d = date instanceof Date ? date : new Date(date);
-    return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const localeString = locale === 'vi' ? 'vi-VN' : 'en-US';
+    return d.toLocaleDateString(localeString, { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
 export default function News({ articles = [] }: NewsProps) {
     const t = useTranslations('News');
     const tc = useTranslations('Common');
+    const locale = useLocale();
 
     return (
         <section className="bg-white py-24 sm:py-32">
@@ -71,9 +73,9 @@ export default function News({ articles = [] }: NewsProps) {
 
                                 <div className="absolute bottom-6 left-6 right-6 space-y-3">
                                     <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest text-brand-primary">
-                                        Tin tức
+                                        {t('grid.defaultCategory')}
                                         <span className="h-1 w-1 rounded-full bg-brand-primary/20"></span>
-                                        {formatDate(item.published_at || item.created_at)}
+                                        {formatDate(item.published_at || item.created_at, locale)}
                                     </div>
                                     <h3 className="text-[15px] font-bold text-white leading-tight transition-colors group-hover:text-white line-clamp-2 uppercase">
                                         {item.title}
@@ -84,7 +86,7 @@ export default function News({ articles = [] }: NewsProps) {
                                     href={`/tin-tuc/${item.slug}`}
                                     className="absolute inset-0 z-10"
                                 >
-                                    <span className="sr-only">Đọc tiếp {item.title}</span>
+                                    <span className="sr-only">{t('grid.viewDetail')} {item.title}</span>
                                 </Link>
                             </article>
                         ))}

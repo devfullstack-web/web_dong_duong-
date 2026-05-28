@@ -16,6 +16,7 @@ import { useTranslations } from 'next-intl';
 
 export default function ContactForm() {
     const t = useTranslations('ContactForm');
+    const tCompany = useTranslations('Company');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -65,10 +66,10 @@ export default function ContactForm() {
                             <div className="space-y-6">
                                 <h2 className="text-3xl font-black uppercase tracking-tight leading-[1.2]">
                                     {t('title', { defaultValue: 'Liên Hệ' })} <br />
-                                    <span className="text-brand-accent">Tư Vấn Ngay</span>
+                                    <span className="text-brand-accent">{t('consultationTitle')}</span>
                                 </h2>
                                 <p className="text-[11px] text-white/60 font-medium leading-relaxed max-w-xs">
-                                    {t('subtitle', { defaultValue: 'Đội ngũ chuyên gia của SG - VAL luôn sẵn sàng hỗ trợ giải pháp tối ưu nhất cho hệ thống của bạn.' })}
+                                    {t('consultationDesc')}
                                 </p>
                             </div>
 
@@ -76,7 +77,7 @@ export default function ContactForm() {
                                 {[
                                     { icon: Phone, label: COMPANY_INFO.phone },
                                     { icon: Mail, label: COMPANY_INFO.email },
-                                    { icon: MapPin, label: COMPANY_INFO.address },
+                                    { icon: MapPin, label: tCompany('address') },
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-start gap-4">
                                         <div className="h-10 w-10 bg-white/5 border border-white/10 flex items-center justify-center shrink-0">

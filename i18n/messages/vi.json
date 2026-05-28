@@ -1,4 +1,9 @@
 {
+  "Company": {
+    "address": "Số 122/16-18 Võ Văn Hát, Long Trường, TP. Thủ Đức, TP. Hồ Chí Minh",
+    "workingHoursWeekdays": "THỨ 2 - THỨ 7: 08:00 - 17:30",
+    "slogan": "Nhà phân phối độc quyền thiết bị ngành nước và giải pháp quan trắc thông minh từ Nhật Bản & Hàn Quốc tại thị trường Việt Nam."
+  },
   "Header": {
     "home": "TRANG CHỦ",
     "about": "GIỚI THIỆU",
@@ -39,8 +44,12 @@
     "agriculture": "Nông nghiệp chính xác",
     "agricultureDesc": "Ứng dụng công nghệ IoT vào quản lý tưới tiêu và giám sát cây trồng, nâng cao năng suất nông nghiệp.",
     "aquaculture": "Quan trắc và nuôi trồng thủy sản",
+    "aquacultureDesc": "Giải pháp kiểm soát chất lượng nước nuôi thủy hải sản chuyên sâu, cảnh báo rủi ro 24/7 bằng công nghệ đám mây.",
     "hydrology": "Quản lý thủy lợi thông minh",
-    "building": "Quản lý tòa nhà & hạ tầng đô thị"
+    "hydrologyDesc": "Hệ thống tự động hóa điều tiết nguồn nước, trạm khí tượng thủy văn thông minh phục vụ phát triển bền vững.",
+    "building": "Quản lý tòa nhà & hạ tầng đô thị",
+    "buildingDesc": "Giải pháp tích hợp quản lý năng lượng, thông gió và điều phối thiết bị thông minh cho cao ốc & hạ tầng công cộng.",
+    "digitalEcosystem": "Hệ sinh thái số"
   },
   "Common": {
     "exploreNow": "KHÁM PHÁ NGAY",
@@ -135,15 +144,21 @@
         "desc": "Giải pháp giám sát và điều khiển mạng lưới cấp nước theo thời gian thực. Tích hợp công nghệ IoT & SCADA, thu thập dữ liệu liên tục, giúp tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
         "btnText": "Xem giải pháp"
       }
-    }
+    },
+    "technologyLabel": "Công nghệ",
+    "applicationLabel": "Ứng dụng",
+    "networkManagement": "Quản lý mạng lưới"
   },
   "Partners": {
     "title": "ĐỐI TÁC CHIẾN LƯỢC",
-    "description": "SỰ TIN TƯỞNG TỪ CÁC THƯƠNG HIỆU HÀNG ĐẦU TOÀN CẦU"
+    "description": "SỰ TIN TƯỞNG TỪ CÁC THƯƠNG HIỆU HÀNG ĐẦU TOÀN CẦU",
+    "partner": "Đối tác"
   },
   "ContactForm": {
     "title": "GỬI YÊU CẦU TƯ VẤN",
     "subtitle": "CHÚNG TÔI SẼ PHẢN HỒI TRONG VÒNG 24H",
+    "consultationTitle": "TƯ VẤN NGAY",
+    "consultationDesc": "Đội ngũ chuyên gia của SG - VAL luôn sẵn sàng hỗ trợ giải pháp tối ưu nhất cho hệ thống của bạn.",
     "labels": {
       "name": "HỌ TÊN *",
       "phone": "SỐ ĐIỆN THOẠI *",
