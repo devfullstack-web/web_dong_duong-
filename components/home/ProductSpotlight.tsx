@@ -95,7 +95,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                             return (
                                 <CarouselItem 
                                     key={product.id} 
-                                    className="pl-4 lg:pl-6 basis-1/2 md:basis-1/3 lg:basis-1/4"
+                                    className="pl-4 lg:pl-6 basis-1/2 md:basis-1/3 lg:basis-1/3"
                                 >
                                     <Link
                                         href={`/san-pham/${product.slug}`}
@@ -110,7 +110,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                                                 }
                                                 alt={product.name}
                                                 fill
-                                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                                                sizes="(max-width: 640px) 50vw, 33vw"
                                                 className="object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                             />
                                         </div>
