@@ -3,14 +3,22 @@ import { db } from '@/db';
 import { chatSessions } from '@/db/schemas';
 import { eq } from 'drizzle-orm';
 import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middleware';
-import { chatStreamManager } from '@/services/chat-stream';
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
 
+type ChatSessionPatchBody = {
+    adminLastSeen?: boolean;
+    guestLastSeen?: boolean;
+    status?: string;
+    guest_name?: string | null;
+    guest_email?: string | null;
+    guest_phone?: string | null;
+};
+
 export const PATCH = withHybridAuth(async (req: NextRequest, session, context) => {
     try {
-        const { id } = await (context as any).params;
-        const body = await req.json();
+        const { id } = await (context as { params: Promise<{ id: string }> }).params;
+        const body = (await req.json()) as ChatSessionPatchBody;
 
         const referer = req.headers.get('referer') || '';
         const isPortalRequest = referer.includes('/portal');
@@ -24,7 +32,7 @@ export const PATCH = withHybridAuth(async (req: NextRequest, session, context) =
             }
         }
 
-        const updateData: Record<string, any> = { updated_at: new Date() };
+        const updateData: Partial<typeof chatSessions.$inferInsert> = { updated_at: new Date() };
 
         if (body.adminLastSeen) {
             updateData.admin_last_seen_at = new Date();
@@ -34,7 +42,7 @@ export const PATCH = withHybridAuth(async (req: NextRequest, session, context) =
             updateData.guest_last_seen_at = new Date();
         }
         if (body.status && ['active', 'resolved', 'spam'].includes(body.status)) {
-            updateData.status = body.status;
+            updateData.status = body.status as 'active' | 'resolved' | 'spam';
         }
         if (body.guest_name !== undefined) updateData.guest_name = body.guest_name;
         if (body.guest_email !== undefined) updateData.guest_email = body.guest_email;
@@ -50,8 +58,6 @@ export const PATCH = withHybridAuth(async (req: NextRequest, session, context) =
             return apiError('Session not found', 404);
         }
 
-        chatStreamManager.broadcastSessionUpdate(updatedSession);
-
         return apiResponse(updatedSession);
     } catch (error) {
         console.error('Update Session Error:', error);
@@ -61,7 +67,7 @@ export const PATCH = withHybridAuth(async (req: NextRequest, session, context) =
 
 export const DELETE = withAuth(async (_req: NextRequest, session, context) => {
     try {
-        const { id } = await (context as any).params;
+        const { id } = await (context as { params: Promise<{ id: string }> }).params;
 
         const canDeleteChat =
             hasPermission(session.user, PERMISSIONS.CHAT_DELETE) ||
@@ -72,8 +78,6 @@ export const DELETE = withAuth(async (_req: NextRequest, session, context) => {
         }
 
         await db.delete(chatSessions).where(eq(chatSessions.id, id));
-
-        chatStreamManager.broadcastSessionRemoval(id);
 
         return apiResponse({ success: true });
     } catch (error) {

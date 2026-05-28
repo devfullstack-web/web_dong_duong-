@@ -1,15 +1,10 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/db';
 import { chatMessages, chatSessions } from '@/db/schemas';
-import { eq, asc, sql } from 'drizzle-orm';
+import { eq, asc, sql, type SQL } from 'drizzle-orm';
 import { withHybridAuth, hasPermission } from '@/middlewares/middleware';
-import { chatStreamManager } from '@/services/chat-stream';
-import { telegramService } from '@/services/telegram-service';
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
-
-// Telegram notify cooldown: 5 minutes between notifications per session
-const TELEGRAM_COOLDOWN_MS = 5 * 60 * 1000;
 
 const WELCOME_MESSAGE = `Xin chào! Cảm ơn bạn đã liên hệ với Sài Gòn Valve.
 
@@ -101,7 +96,12 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
             ? sanitizedContent.slice(0, 100) + '...'
             : sanitizedContent;
 
-        const sessionUpdateData: Record<string, any> = {
+        const sessionUpdateData: {
+            last_message_at: Date;
+            last_message_preview: string;
+            updated_at: Date;
+            unread_count?: SQL;
+        } = {
             last_message_at: new Date(),
             last_message_preview: preview,
             updated_at: new Date(),
@@ -117,9 +117,6 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
             .set(sessionUpdateData)
             .where(eq(chatSessions.id, sessionId));
 
-        // Broadcast message via socket
-        chatStreamManager.broadcastMessage(newMessage);
-
         // Auto-reply with welcome message after the first guest message in session
         if (senderType === 'guest') {
             const guestMsgCount = await db
@@ -127,11 +124,10 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
                 .from(chatMessages)
                 .where(
                     sql`${chatMessages.session_id} = ${sessionId} AND ${chatMessages.sender_type} = 'guest'`,
-                );
+            );
 
             if (Number(guestMsgCount[0]?.count) === 1) {
-                // First guest message → send auto welcome reply
-                const [welcomeMsg] = await db
+                await db
                     .insert(chatMessages)
                     .values({
                         session_id: sessionId,
@@ -140,59 +136,6 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
                         sender_id: null,
                     })
                     .returning();
-
-                chatStreamManager.broadcastMessage(welcomeMsg);
-            }
-        }
-
-        // Update session in admin panel
-        if (senderType === 'guest') {
-            const sessionData = await db.query.chatSessions.findFirst({
-                where: eq(chatSessions.id, sessionId),
-            });
-
-            if (sessionData) {
-                chatStreamManager.broadcastSessionUpdate(sessionData);
-
-                // Telegram notification logic (CRM-like):
-                // 1. First guest message ever → always notify
-                // 2. Admin replied since last notify → notify again (new conversation turn)
-                // 3. Cooldown expired (5 min) → notify (guest still active)
-                const lastNotified = sessionData.telegram_notified_at
-                    ? new Date(sessionData.telegram_notified_at).getTime()
-                    : 0;
-                const cooldownExpired = (Date.now() - lastNotified) > TELEGRAM_COOLDOWN_MS;
-                const neverNotified = !sessionData.telegram_notified_at;
-
-                // Check if admin replied since last telegram notification
-                let adminRepliedSinceLastNotify = false;
-                if (sessionData.telegram_notified_at) {
-                    const adminReply = await db
-                        .select({ count: sql<number>`count(*)` })
-                        .from(chatMessages)
-                        .where(
-                            sql`${chatMessages.session_id} = ${sessionId}
-                                AND ${chatMessages.sender_type} = 'admin'
-                                AND ${chatMessages.created_at} > ${sessionData.telegram_notified_at}`,
-                        );
-                    adminRepliedSinceLastNotify = Number(adminReply[0]?.count) > 0;
-                }
-
-                if (neverNotified || cooldownExpired || adminRepliedSinceLastNotify) {
-                    telegramService.notifyNewChat({
-                        guestName: sessionData.guest_name,
-                        guestPhone: sessionData.guest_phone,
-                        guestEmail: sessionData.guest_email,
-                        firstMessage: sanitizedContent,
-                        sessionId,
-                        isFollowUp: !neverNotified,
-                    });
-
-                    await db
-                        .update(chatSessions)
-                        .set({ telegram_notified_at: new Date() })
-                        .where(eq(chatSessions.id, sessionId));
-                }
             }
         }
 

@@ -12,7 +12,6 @@ import {
     X,
     MessageSquare,
     Headphones,
-    Clock,
     ArrowLeft,
     CheckCheck,
     Check,
@@ -40,7 +39,6 @@ import { cn } from '@/lib/utils';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
-import { useSocket } from '@/hooks/use-socket';
 import { motion, AnimatePresence } from 'motion/react';
 import { ConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { SimpleConfirmDialog } from '@/components/shared/simple-confirm-dialog';
@@ -177,97 +175,8 @@ export default function ChatAdminPage() {
                     );
                 }
             }
-        } catch (error) {
-            // silent
-        }
+        } catch {}
     };
-
-    // ─── Socket ─────────────────────────────────────────
-    const { socket } = useSocket({
-        query: {
-            isAdmin: 'true',
-        },
-        transports: ['websocket'],
-    });
-
-    useEffect(() => {
-        if (!socket) return;
-
-        const onMessage = (data: ChatMessage) => {
-            // Update session list
-            setSessions((prev) => {
-                const index = prev.findIndex((s) => s.id === data.session_id);
-                if (index === -1) return prev;
-                const updated = [...prev];
-                updated[index] = {
-                    ...updated[index],
-                    last_message_at: data.created_at,
-                    last_message_preview:
-                        data.content.length > 100
-                            ? data.content.slice(0, 100) + '...'
-                            : data.content,
-                    unread_count:
-                        data.sender_type === 'guest' && selectedSession?.id !== data.session_id
-                            ? updated[index].unread_count + 1
-                            : updated[index].unread_count,
-                };
-                const [moved] = updated.splice(index, 1);
-                return [moved, ...updated];
-            });
-
-            // If current session, add message
-            if (selectedSession?.id === data.session_id) {
-                setMessages((prev) => {
-                    if (prev.find((m) => m.id === data.id)) return prev;
-                    return [...prev, data];
-                });
-
-                if (data.sender_type === 'guest') {
-                    handleMarkSeen(data.session_id);
-                }
-            }
-        };
-
-        const onMessageUpdate = (data: ChatMessage) => {
-            if (selectedSession?.id === data.session_id) {
-                setMessages((prev) => prev.map((m) => (m.id === data.id ? data : m)));
-            }
-        };
-
-        const onSessionUpdate = (data: ChatSession) => {
-            setSessions((prev) => {
-                const exists = prev.find((s) => s.id === data.id);
-                if (exists) {
-                    return prev.map((s) => (s.id === data.id ? { ...s, ...data } : s));
-                }
-                return [data, ...prev];
-            });
-            if (selectedSession?.id === data.id) {
-                setSelectedSession((prev) => (prev ? { ...prev, ...data } : prev));
-            }
-        };
-
-        const onSessionRemoved = (data: { sessionId: string }) => {
-            setSessions((prev) => prev.filter((s) => s.id !== data.sessionId));
-            if (selectedSession?.id === data.sessionId) {
-                setSelectedSession(null);
-                setMessages([]);
-                toast.info('Cuộc hội thoại đã bị xóa');
-            }
-        };
-
-        socket.on('message', onMessage);
-        socket.on('message_update', onMessageUpdate);
-        socket.on('session_update', onSessionUpdate);
-        socket.on('session_removed', onSessionRemoved);
-
-        return () => {
-            socket.off('message', onMessage);
-            socket.off('message_update', onMessageUpdate);
-            socket.off('session_update', onSessionUpdate);
-            socket.off('session_removed', onSessionRemoved);
-        };
-    }, [socket, selectedSession?.id]);
 
     // Scroll to bottom
     useEffect(() => {
@@ -305,7 +214,7 @@ export default function ChatAdminPage() {
         try {
             await $api.patch(`${API_ROUTES.CHAT.SESSIONS}/${sessionId}`, { status });
             toast.success(`Đã chuyển trạng thái: ${statusLabel(status)}`);
-        } catch (error) {
+        } catch {
             toast.error('Không thể cập nhật trạng thái');
         }
     };
@@ -327,7 +236,7 @@ export default function ChatAdminPage() {
             }
             toast.success('Đã xóa cuộc hội thoại');
             setSessionToDelete(null);
-        } catch (error) {
+        } catch {
             toast.error('Không thể xóa cuộc hội thoại');
         } finally {
             setIsDeletingSession(false);
@@ -341,7 +250,7 @@ export default function ChatAdminPage() {
         try {
             await $api.delete(`${API_ROUTES.CHAT.MESSAGES}/${messageToDelete}`);
             setMessageToDelete(null);
-        } catch (error) {
+        } catch {
             toast.error('Không thể gỡ tin nhắn');
         }
     };
@@ -351,18 +260,6 @@ export default function ChatAdminPage() {
         () => sessions.reduce((sum, s) => sum + s.unread_count, 0),
         [sessions],
     );
-
-    const tabCounts = useMemo(() => {
-        const counts: Record<FilterTab, number> = {
-            all: sessions.length,
-            active: 0,
-            resolved: 0,
-            spam: 0,
-        };
-        // We need all sessions for tab counts, but filter is already applied server-side
-        // So counts only reflect current filter results
-        return counts;
-    }, [sessions]);
 
     // ─── Render ─────────────────────────────────────────
     return (
@@ -659,9 +556,7 @@ export default function ChatAdminPage() {
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem
                                             className="text-rose-600"
-                                            onClick={(e) =>
-                                                handleDeleteSession(e as any, selectedSession.id)
-                                            }
+                                            onClick={(e) => handleDeleteSession(e, selectedSession.id)}
                                         >
                                             <Trash2 className="w-4 h-4 mr-2" />
                                             Xóa hội thoại

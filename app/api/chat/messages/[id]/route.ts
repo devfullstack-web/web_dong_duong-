@@ -2,14 +2,13 @@ import { NextRequest } from 'next/server';
 import { db } from '@/db';
 import { chatMessages } from '@/db/schemas';
 import { eq } from 'drizzle-orm';
-import { chatStreamManager } from '@/services/chat-stream';
 import { withAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
 
 export const DELETE = withAuth(async (_req: NextRequest, session, context) => {
     try {
-        const { id } = await (context as any).params;
+        const { id } = await (context as { params: Promise<{ id: string }> }).params;
 
         const canManageChat =
             hasPermission(session.user, PERMISSIONS.CHAT_VIEW) ||
@@ -28,8 +27,6 @@ export const DELETE = withAuth(async (_req: NextRequest, session, context) => {
         if (!updatedMessage) {
             return apiError('Message not found', 404);
         }
-
-        chatStreamManager.broadcastMessageUpdate(updatedMessage);
 
         return apiResponse(updatedMessage);
     } catch (error) {
