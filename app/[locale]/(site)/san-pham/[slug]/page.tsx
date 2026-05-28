@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/db';
-import { products, categories } from '@/db/schema';
+import { products, categories } from '@/db/schemas';
 import { eq, and, isNull } from 'drizzle-orm';
 import { stripHtml } from '@/utils/strip-html';
 import { COMPANY_INFO } from '@/constants/site-info';

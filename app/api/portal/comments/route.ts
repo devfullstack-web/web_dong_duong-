@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { productComments, products } from '@/db/schema';
+import { productComments, products } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, ilike, or, and, isNull, sql, eq } from 'drizzle-orm';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';

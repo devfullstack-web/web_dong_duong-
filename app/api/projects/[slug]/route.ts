@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { projects, categories } from "@/db/schema";
+import { projects, categories } from "@/db/schemas";
 import { eq, or } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";

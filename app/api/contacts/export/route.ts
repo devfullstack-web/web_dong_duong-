@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { contacts } from '@/db/schema';
+import { contacts } from '@/db/schemas';
 import { desc, ilike, or, gte, lte, and } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';

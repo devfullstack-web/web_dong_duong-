@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { newsArticles, categories, authors } from '@/db/schema';
+import { newsArticles, categories, authors } from '@/db/schemas';
 import { eq, desc, sql, and, or, ilike, gte, lte, isNull } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';

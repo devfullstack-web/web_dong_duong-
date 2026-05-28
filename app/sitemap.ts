@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { COMPANY_INFO } from '@/constants/site-info';
 import { db } from '@/db';
-import { products, newsArticles, projects, jobPostings } from '@/db/schema';
+import { products, newsArticles, projects, jobPostings } from '@/db/schemas';
 import { isNull } from 'drizzle-orm';
 
 export const dynamic = 'force-dynamic';

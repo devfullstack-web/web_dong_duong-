@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { contacts } from '@/db/schema';
+import { contacts } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { sendThankYouEmail } from '@/services/mail';
 import { desc, ilike, or, gte, lte, and, sql } from 'drizzle-orm';

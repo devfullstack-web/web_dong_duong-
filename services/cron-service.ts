@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import { db } from '@/db';
-import { auditLogs } from '@/db/schema';
+import { auditLogs } from '@/db/schemas';
 import { lt, sql } from 'drizzle-orm';
 
 // Configuration

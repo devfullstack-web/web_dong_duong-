@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { auditLogs } from '@/db/schema';
+import { auditLogs } from '@/db/schemas';
 import { NextRequest } from 'next/server';
 
 export type AuditAction =

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/db';
-import { chatSessions } from '@/db/schema';
+import { chatSessions } from '@/db/schemas';
 import { eq, and } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 

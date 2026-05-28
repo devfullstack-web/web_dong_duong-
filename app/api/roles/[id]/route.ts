@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { roles, permissions, modules } from '@/db/schema';
+import { roles, permissions, modules } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { eq } from 'drizzle-orm';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';

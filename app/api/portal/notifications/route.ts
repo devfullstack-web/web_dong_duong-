@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/db';
-import { notifications } from '@/db/schema';
+import { notifications } from '@/db/schemas';
 import { desc, eq, and, isNull, sql } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth } from '@/middlewares/middleware';

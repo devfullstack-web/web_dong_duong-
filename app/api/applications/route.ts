@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { jobApplications, jobPostings } from '@/db/schema';
+import { jobApplications, jobPostings } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, ilike, or, and, sql, eq } from 'drizzle-orm';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';

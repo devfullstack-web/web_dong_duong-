@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { notifications } from '@/db/schema';
+import { notifications } from '@/db/schemas';
 import { Server } from 'socket.io';
 
 export type NotificationType = 'comment' | 'contact' | 'application';

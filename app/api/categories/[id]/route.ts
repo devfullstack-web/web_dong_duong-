@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { categories, categoryTypes, newsArticles, products, projects } from "@/db/schema";
+import { categories, categoryTypes, newsArticles, products, projects } from "@/db/schemas";
 import { and, eq, isNull, isNotNull } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";

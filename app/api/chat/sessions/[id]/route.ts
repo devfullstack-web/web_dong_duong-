@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/db';
-import { chatSessions } from '@/db/schema';
+import { chatSessions } from '@/db/schemas';
 import { eq } from 'drizzle-orm';
 import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middleware';
 import { chatStreamManager } from '@/services/chat-stream';

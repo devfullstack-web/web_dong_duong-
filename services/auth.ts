@@ -2,7 +2,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { roles, permissions, user_roles, modules } from '@/db/schema';
+import { roles, permissions, user_roles, modules } from '@/db/schemas';
 import { eq, inArray } from 'drizzle-orm';
 import { AUTH } from '@/constants/app';
 

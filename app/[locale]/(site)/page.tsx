@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import Hero from '@/components/home/Hero';
 import { db } from '@/db';
-import { products, newsArticles } from '@/db/schema';
+import { products, newsArticles } from '@/db/schemas';
 import { eq, desc, and, isNull } from 'drizzle-orm';
 
 // Revalidate homepage data every 60 seconds (ISR)

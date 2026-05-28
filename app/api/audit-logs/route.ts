@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { auditLogs, users } from '@/db/schema';
+import { auditLogs, users } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, eq, ilike, or, and, sql } from 'drizzle-orm';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';

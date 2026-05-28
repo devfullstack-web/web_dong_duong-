@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { categoryTypes } from "@/db/schema";
+import { categoryTypes } from "@/db/schemas";
 import { eq } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 

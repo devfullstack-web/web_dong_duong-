@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { products, categories } from '@/db/schema';
+import { products, categories } from '@/db/schemas';
 import { eq, desc, sql, and, or, ilike, gte, lte, isNull } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { calculateOffset, createPaginationMeta } from '@/utils/pagination';

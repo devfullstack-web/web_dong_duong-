@@ -8,7 +8,7 @@ import {
     jobApplications,
     productComments,
     users,
-} from '@/db/schema';
+} from '@/db/schemas';
 import { sql } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth } from '@/middlewares/middleware';

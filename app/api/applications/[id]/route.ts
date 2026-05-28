@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { jobApplications, jobPostings } from "@/db/schema";
+import { jobApplications, jobPostings } from "@/db/schemas";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";

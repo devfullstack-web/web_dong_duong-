@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { products, productComments } from '@/db/schema';
+import { products, productComments } from '@/db/schemas';
 import { eq, isNull, and, desc } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { verifyAuth, isAdmin } from '@/middlewares/middleware';

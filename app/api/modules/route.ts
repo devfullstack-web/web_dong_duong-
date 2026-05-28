@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { modules } from '@/db/schema';
+import { modules } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { PERMISSIONS } from '@/constants/rbac';
 import { sql, asc, ilike, or, and } from 'drizzle-orm';

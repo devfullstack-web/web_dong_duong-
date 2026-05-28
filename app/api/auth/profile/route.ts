@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { users, roles, user_roles, permissions, modules } from '@/db/schema';
+import { users, roles, user_roles, permissions, modules } from '@/db/schemas';
 import { eq, inArray } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { getSession } from '@/services/auth';

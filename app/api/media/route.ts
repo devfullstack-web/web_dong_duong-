@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { media } from '@/db/schema';
+import { media } from '@/db/schemas';
 import { desc } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth } from '@/middlewares/middleware';
