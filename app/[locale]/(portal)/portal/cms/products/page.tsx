@@ -292,12 +292,12 @@ export default function ProductsManagementPage() {
 
             <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-125">
                 {/* Table Filters */}
-                <div className="p-4 md:p-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 items-center justify-between bg-white">
+                <div className="py-2.5 px-4 md:px-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 items-center justify-between bg-white">
                     <div className="relative w-full xl:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
                             placeholder="TÌM KIẾM THEO TÊN, SKU HOẶC DANH MỤC..."
-                            className="w-full pl-12 bg-slate-50 border-none text-[10px] font-bold uppercase tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-10 rounded-none outline-none"
+                            className="w-full pl-12 bg-slate-50 border-none text-[10px] font-bold uppercase tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-8 rounded-none outline-none text-[9px]"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -309,7 +309,7 @@ export default function ProductsManagementPage() {
                                 <Button
                                     variant="outline"
                                     className={cn(
-                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50 text-[9px]',
                                         selectedCategoryId ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
                                     )}
                                 >
@@ -350,7 +350,7 @@ export default function ProductsManagementPage() {
                                 <Button
                                     variant="outline"
                                     className={cn(
-                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50 text-[9px]',
                                         selectedStatus ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
                                     )}
                                 >
@@ -393,7 +393,7 @@ export default function ProductsManagementPage() {
                                         id="date"
                                         variant={'outline'}
                                         className={cn(
-                                            'w-full justify-start text-left font-bold text-[10px] uppercase hover:cursor-pointer tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                            'w-full justify-start text-left font-bold text-[10px] uppercase hover:cursor-pointer tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50 text-[9px]',
                                             !date && 'text-slate-400',
                                         )}
                                     >
@@ -456,10 +456,10 @@ export default function ProductsManagementPage() {
                                     <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
                                         Sản phẩm
                                     </th>
-                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden">
                                         SKU
                                     </th>
-                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden lg:table-cell">
+                                    <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden">
                                         Giá / Tồn kho
                                     </th>
                                     <th className="px-4 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
@@ -494,12 +494,12 @@ export default function ProductsManagementPage() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 md:py-3.5 hidden sm:table-cell">
+                                        <td className="px-4 py-3 md:py-3.5 hidden">
                                             <code className="text-[11px] font-black text-slate-600 bg-slate-50 px-2 py-1 border border-slate-100">
                                                 {product.sku}
                                             </code>
                                         </td>
-                                        <td className="px-4 py-3 md:py-3.5 hidden lg:table-cell">
+                                        <td className="px-4 py-3 md:py-3.5 hidden">
                                             <div className="flex flex-col gap-1">
                                                 <span className="text-[11px] font-black text-slate-900">
                                                     {new Intl.NumberFormat('vi-VN', {

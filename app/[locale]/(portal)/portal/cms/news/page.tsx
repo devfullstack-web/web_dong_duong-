@@ -222,12 +222,12 @@ export default function NewsManagementPage() {
 
             <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
                 {/* Table Filters */}
-                <div className="p-4 md:p-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 md:gap-5 items-center justify-between bg-white">
+                <div className="py-2.5 px-4 md:px-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 items-center justify-between bg-white">
                     <div className="relative w-full xl:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
                             placeholder="TÌM KIẾM BÀI VIẾT THEO TIÊU ĐỀ HOẶC DANH MỤC..."
-                            className="w-full pl-12 bg-slate-50 border-none text-[10px] font-bold uppercase tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-10 rounded-none outline-none"
+                            className="w-full pl-12 bg-slate-50 border-none text-[9px] font-bold uppercase tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-8 rounded-none outline-none"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -239,7 +239,7 @@ export default function NewsManagementPage() {
                                 <Button
                                     variant="outline"
                                     className={cn(
-                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                        'w-full sm:w-48 justify-between text-left font-bold text-[9px] uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50',
                                         selectedStatus ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
                                     )}
                                 >
@@ -275,14 +275,14 @@ export default function NewsManagementPage() {
                         </DropdownMenu>
 
                         {/* Date Range Picker */}
-                        <div className="grid gap-2 w-full sm:w-[300px]">
+                        <div className="grid gap-2 w-full sm:w-75">
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
                                         id="date"
                                         variant={'outline'}
                                         className={cn(
-                                            'w-full justify-start text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                            'w-full justify-start text-left font-bold text-[9px] uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50',
                                             !date && 'text-slate-400',
                                         )}
                                     >

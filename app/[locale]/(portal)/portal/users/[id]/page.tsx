@@ -137,7 +137,7 @@ export default function EditUserPage() {
                 <div className="lg:col-span-7">
                     <form
                         onSubmit={handleSubmit}
-                        className="bg-white p-5 md:p-6 border-l-4 border-l-fbbf24 space-y-6 relative overflow-hidden group"
+                        className="bg-white p-3.5 md:p-4 border-l-4 border-l-fbbf24 space-y-6 relative overflow-hidden group"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-fbbf24/5 -mr-16 -mt-16 rounded-full group-hover:scale-110 transition-transform duration-1000"></div>
 
@@ -150,7 +150,7 @@ export default function EditUserPage() {
                                     </Label>
                                     <Input
                                         placeholder="VD: NGUYENVANA"
-                                        className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                        className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                         value={formData.username}
                                         onChange={(e) =>
                                             setFormData({
@@ -169,7 +169,7 @@ export default function EditUserPage() {
                                         <Input
                                             type={showPassword ? 'text' : 'password'}
                                             placeholder="ĐỂ TRỐNG NẾU KHÔNG ĐỔI"
-                                            className="h-10 bg-slate-50 border-none text-xs font-bold rounded-none focus:ring-2 focus:ring-fbbf24/20 transition-all placeholder:text-[9px] placeholder:italic pr-10"
+                                            className="h-9 bg-slate-50 border-none text-xs font-bold rounded-none focus:ring-2 focus:ring-fbbf24/20 transition-all placeholder:text-[9px] placeholder:italic pr-10"
                                             value={formData.password}
                                             onChange={(e) =>
                                                 setFormData({ ...formData, password: e.target.value })
@@ -194,7 +194,7 @@ export default function EditUserPage() {
                                 </Label>
                                 <Input
                                     placeholder="VD: NGUYỄN VĂN A"
-                                    className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                    className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                     value={formData.fullName}
                                     onChange={(e) =>
                                         setFormData({ ...formData, fullName: e.target.value })
@@ -210,7 +210,7 @@ export default function EditUserPage() {
                                     </Label>
                                     <Input
                                         placeholder="example@saigonvalve.vn"
-                                        className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                        className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                         value={formData.email}
                                         onChange={(e) =>
                                             setFormData({ ...formData, email: e.target.value })
@@ -224,7 +224,7 @@ export default function EditUserPage() {
                                     </Label>
                                     <Input
                                         placeholder="09xx xxx xxx"
-                                        className="h-10 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                        className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
                                         value={formData.phone}
                                         onChange={(e) =>
                                             setFormData({ ...formData, phone: e.target.value })
@@ -326,7 +326,7 @@ export default function EditUserPage() {
                 </div>
 
                 <div className="lg:col-span-5 space-y-6">
-                    <div className="p-5 md:p-6 bg-slate-50 border border-slate-100 space-y-4">
+                    <div className="p-3.5 md:p-4 bg-slate-50 border border-slate-100 space-y-4">
                         <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 border-l-4 border-l-brand-primary pl-4">
                             Thông tin bổ sung
                         </h3>

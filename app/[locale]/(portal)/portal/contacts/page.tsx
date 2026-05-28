@@ -245,12 +245,12 @@ export default function ContactsManagementPage() {
             </div>
 
             <div className="space-y-4 md:space-y-6 mt-0">
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3 md:p-4 bg-slate-50 border border-slate-100">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 py-2 px-3 md:px-4 bg-slate-50 border border-slate-100">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                             <input
                                 placeholder="TÌM THEO TÊN, EMAIL, SĐT, CHỦ ĐỀ..."
-                                className="w-full h-10 pl-12 pr-4 bg-white border border-slate-100 text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
+                                className="w-full h-8 pl-12 pr-4 bg-white border border-slate-100 text-[9px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
@@ -262,7 +262,7 @@ export default function ContactsManagementPage() {
                                     <Button
                                         variant="outline"
                                         className={cn(
-                                            'h-10 justify-start text-left font-black uppercase tracking-widest text-[10px] rounded-none border-slate-100 bg-white w-[200px] shrink-0',
+                                            'h-8 justify-start text-left font-black uppercase tracking-widest text-[9px] rounded-none border-slate-100 bg-white w-48 shrink-0',
                                             !dateRange && 'text-slate-400',
                                         )}
                                     >
@@ -298,7 +298,7 @@ export default function ContactsManagementPage() {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => setDateRange(undefined)}
-                                    className="h-10 w-10 shrink-0 rounded-none text-rose-500 hover:bg-rose-50"
+                                    className="h-8 w-8 shrink-0 rounded-none text-rose-500 hover:bg-rose-50"
                                 >
                                     <X className="h-4 w-4" />
                                 </Button>
@@ -307,7 +307,7 @@ export default function ContactsManagementPage() {
                             <Button
                                 variant="outline"
                                 onClick={handleExportExcel}
-                                className="h-10 px-4 rounded-none  bg-green-600 hover:bg-green-600 hover:text-white hover:opacity-80 text-[10px] font-black uppercase tracking-widest text-white   shrink-0 gap-2 hover:cursor-pointer"
+                                className="h-8 px-4 rounded-none  bg-green-600 hover:bg-green-600 hover:text-white hover:opacity-80 text-[9px] font-black uppercase tracking-widest text-white   shrink-0 gap-2 hover:cursor-pointer"
                             >
                                 <FileSpreadsheet className="h-4 w-4" />
                                 <span className="hidden sm:inline">Xuất Excel</span>

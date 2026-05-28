@@ -45,7 +45,7 @@ export default function Footer() {
                                 className="object-contain brightness-0 invert group-hover:scale-105 transition-transform"
                             />
                         </Link>
-                        <p className="text-xs text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+                        <p className="text-xs text-blue-100/90 font-bold uppercase tracking-widest leading-relaxed">
                             {t('slogan')}
                         </p>
                         <div className="flex gap-3">
@@ -56,7 +56,7 @@ export default function Footer() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     aria-label={label}
-                                    className="h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10 hover:bg-brand-accent hover:border-brand-accent transition-all"
+                                    className="h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10 rounded-sm hover:bg-white hover:text-brand-primary hover:border-white text-white transition-all duration-300"
                                 >
                                     {Icon ? (
                                         <Icon size={14} />
@@ -70,7 +70,7 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div className="space-y-4">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white border-b border-white/10 pb-2">
                             {t('navigationMenu')}
                         </h4>
                         <ul className="space-y-2">
@@ -85,11 +85,11 @@ export default function Footer() {
                                 <li key={item.label}>
                                     <Link
                                         href={item.href as any}
-                                        className="text-[11px] font-bold uppercase tracking-widest text-slate-400 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
+                                        className="text-[11px] font-bold uppercase tracking-widest text-blue-100/80 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
                                     >
                                         <ArrowRight
                                             size={10}
-                                            className="text-white group-hover:text-brand-accent transition-colors"
+                                            className="text-white group-hover:text-white transition-colors"
                                         />{' '}
                                         {item.label}
                                     </Link>
@@ -100,39 +100,39 @@ export default function Footer() {
 
                     {/* Contact Info */}
                     <div className="space-y-4">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-brand-accent border-b border-white/10 pb-2">
+                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white border-b border-white/10 pb-2">
                             {t('contactInfo')}
                         </h4>
                         <ul className="space-y-3">
                             <li className="flex gap-3 group">
                                 <MapPin
-                                    className="text-white shrink-0 group-hover:text-brand-accent transition-colors"
+                                    className="text-white shrink-0 group-hover:text-white transition-colors"
                                     size={16}
                                 />
-                                <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider leading-relaxed">
+                                <span className="text-[11px] text-blue-100/80 font-bold uppercase tracking-wider leading-relaxed">
                                     {tCompany('address')}
                                 </span>
                             </li>
                             <li className="flex gap-3 items-center group">
                                 <Phone
-                                    className="text-white shrink-0 group-hover:text-brand-accent transition-colors"
+                                    className="text-white shrink-0 group-hover:text-white transition-colors"
                                     size={16}
                                 />
                                 <a
                                     href={`tel:${COMPANY_INFO.hotlineRaw}`}
-                                    className="text-[11px] text-slate-400 font-black tracking-widest hover:text-white transition-colors"
+                                    className="text-[11px] text-blue-100/90 font-black tracking-widest hover:text-white transition-colors"
                                 >
                                     {COMPANY_INFO.hotline}
                                 </a>
                             </li>
                             <li className="flex gap-3 items-center group">
                                 <Mail
-                                    className="text-white shrink-0 group-hover:text-brand-accent transition-colors"
+                                    className="text-white shrink-0 group-hover:text-white transition-colors"
                                     size={16}
                                 />
                                 <a
                                     href={`mailto:${COMPANY_INFO.email}`}
-                                    className="text-[11px] text-slate-400 font-black tracking-widest uppercase hover:text-white transition-colors"
+                                    className="text-[11px] text-blue-100/90 font-black tracking-widest uppercase hover:text-white transition-colors"
                                 >
                                     {COMPANY_INFO.email}
                                 </a>
@@ -143,30 +143,30 @@ export default function Footer() {
 
                 <div className="pt-4 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                     <div className="space-y-1">
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em]">
+                        <p className="text-[10px] font-black text-blue-200/60 uppercase tracking-[0.15em]">
                             {COMPANY_INFO.copyright}
                         </p>
-                        <div className="flex items-center gap-1.5 justify-center md:justify-start text-[10px] font-bold text-slate-600 uppercase tracking-widest">
-                            <ShieldCheck size={12} className="text-brand-accent" />{' '}
+                        <div className="flex items-center gap-1.5 justify-center md:justify-start text-[10px] font-bold text-blue-200/70 uppercase tracking-widest">
+                            <ShieldCheck size={12} className="text-white/80" />{' '}
                             {t('securityWarning')}
                         </div>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6">
                         <Link
                             href="#"
-                            className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                            className="text-[10px] font-black uppercase tracking-widest text-blue-200/60 hover:text-white transition-colors"
                         >
                             {t('terms')}
                         </Link>
                         <Link
                             href="#"
-                            className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                            className="text-[10px] font-black uppercase tracking-widest text-blue-200/60 hover:text-white transition-colors"
                         >
                             {t('privacy')}
                         </Link>
                         <Link
                             href={PORTAL_ROUTES.dashboard as any}
-                            className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors"
+                            className="text-[10px] font-black uppercase tracking-widest text-blue-200/60 hover:text-white transition-colors"
                         >
                             {t('admin')}
                         </Link>

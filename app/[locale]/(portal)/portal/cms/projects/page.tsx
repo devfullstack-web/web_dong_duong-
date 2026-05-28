@@ -223,12 +223,12 @@ export default function ProjectsManagementPage() {
 
             <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
                 {/* Table Filters  */}
-                <div className="p-4 md:p-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 md:gap-5 items-center justify-between bg-white">
+                <div className="py-2.5 px-4 md:px-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 items-center justify-between bg-white">
                     <div className="relative w-full xl:w-1/2 group">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
                         <input
                             placeholder="TÌM KIẾM THEO TÊN DỰ ÁN, ĐỊA ĐIỂM HOẶC LOẠI HÌNH..."
-                            className="w-full pl-12 bg-slate-50 border-none text-[10px] font-bold  tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-10 rounded-none outline-none"
+                            className="w-full pl-12 bg-slate-50 border-none text-[9px] font-bold tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-8 rounded-none outline-none"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -240,7 +240,7 @@ export default function ProjectsManagementPage() {
                                 <Button
                                     variant="outline"
                                     className={cn(
-                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                        'w-full sm:w-48 justify-between text-left font-bold text-[9px] uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50',
                                         selectedStatus ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
                                     )}
                                 >
@@ -276,14 +276,14 @@ export default function ProjectsManagementPage() {
                         </DropdownMenu>
 
                         {/* Date Range Picker */}
-                        <div className="grid gap-2 w-full sm:w-[300px]">
+                        <div className="grid gap-2 w-full sm:w-75">
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
                                         id="date"
                                         variant={'outline'}
                                         className={cn(
-                                            'w-full justify-start text-left font-bold text-[10px] hover:cursor-pointer uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                            'w-full justify-start text-left font-bold text-[9px] hover:cursor-pointer uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50',
                                             !date && 'text-slate-400',
                                         )}
                                     >
@@ -333,7 +333,7 @@ export default function ProjectsManagementPage() {
 
                         <Button
                             variant="outline"
-                            className="text-[10px] font-black uppercase tracking-widest px-6 h-10 border-slate-100 rounded-none hover:bg-slate-50 w-full sm:w-auto"
+                            className="text-[9px] font-black uppercase tracking-widest px-4 h-8 border-slate-100 rounded-none hover:bg-slate-50 w-full sm:w-auto"
                         >
                             <ArrowUpDown className="mr-2 size-4 text-slate-400" /> Sắp xếp
                         </Button>

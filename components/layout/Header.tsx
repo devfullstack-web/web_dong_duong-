@@ -206,9 +206,10 @@ export default function Header() {
                                                 <>
                                                     <NavigationMenuTrigger
                                                         className={cn(
-                                                            'h-9 xl:h-10 px-2 xl:px-4 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest bg-transparent hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors',
-                                                            pathname === link.href &&
-                                                                'text-brand-primary',
+                                                            'h-9 xl:h-10 px-2 xl:px-4 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest bg-transparent hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[state=open]:bg-transparent! data-[active]:bg-transparent! hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors relative after:absolute after:bottom-0 after:left-2 after:right-6 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
+                                                            pathname === link.href || (link.href === '#' && (link.submenu || link.featured)?.some(sub => pathname === sub.href))
+                                                                ? 'text-brand-primary after:scale-x-100'
+                                                                : 'text-foreground after:scale-x-0 hover:after:scale-x-100',
                                                         )}
                                                     >
                                                         {link.label}
@@ -234,14 +235,15 @@ export default function Header() {
                                                 <NavigationMenuLink
                                                     asChild
                                                     active={pathname === link.href}
+                                                    className="bg-transparent! hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[active=true]:bg-transparent! data-[active=true]:text-brand-primary"
                                                 >
                                                     <Link
                                                         href={link.href}
                                                         className={cn(
-                                                            'group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-1.5 xl:py-2 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none',
+                                                            'group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-1.5 xl:py-2 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none relative after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
                                                             pathname === link.href
-                                                                ? 'text-brand-primary'
-                                                                : 'text-foreground',
+                                                                ? 'text-brand-primary after:scale-x-100'
+                                                                : 'text-foreground after:scale-x-0 hover:after:scale-x-100',
                                                         )}
                                                     >
                                                         {link.label}

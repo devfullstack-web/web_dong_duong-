@@ -200,7 +200,7 @@ export default function EditProjectPage() {
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-20">
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
+                    <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
                         <div className="space-y-3">
                             <Label
                                 htmlFor="name"
@@ -210,7 +210,7 @@ export default function EditProjectPage() {
                             </Label>
                             <Input
                                 id="name"
-                                className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
+                                className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
                                 value={formData.name}
                                 onChange={(e) => {
                                     const name = e.target.value;
@@ -243,7 +243,7 @@ export default function EditProjectPage() {
                                 </span>
                                 <Input
                                     id="slug"
-                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
+                                    className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
                                     value={formData.slug}
                                     onChange={(e) =>
                                         setFormData({ ...formData, slug: e.target.value })
@@ -279,7 +279,7 @@ export default function EditProjectPage() {
                             <Input
                                 id="client_name"
                                 placeholder="Ví dụ: Tập đoàn ABC"
-                                className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
+                                className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
                                 value={formData.client_name}
                                 onChange={(e) =>
                                     setFormData({ ...formData, client_name: e.target.value })
@@ -298,7 +298,7 @@ export default function EditProjectPage() {
                                             id="date"
                                             variant={'outline'}
                                             className={cn(
-                                                'h-11 w-full sm:w-[350px] justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
+                                                'h-9 w-full sm:w-[350px] justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
                                                 !formData.start_date && 'text-slate-300',
                                             )}
                                         >
@@ -385,7 +385,7 @@ export default function EditProjectPage() {
                         description="Đánh dấu dự án đã hoàn thành và bàn giao."
                     />
 
-                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
+                    <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Phân loại dự án
                         </h3>
@@ -402,7 +402,7 @@ export default function EditProjectPage() {
                                     setFormData({ ...formData, category_id: value })
                                 }
                             >
-                                <SelectTrigger className="h-11 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
+                                <SelectTrigger className="h-9 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
                                     <SelectValue placeholder="Chọn danh mục" />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-none border-slate-100">
@@ -420,7 +420,7 @@ export default function EditProjectPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
+                    <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                             Hình ảnh dự án
                         </h3>

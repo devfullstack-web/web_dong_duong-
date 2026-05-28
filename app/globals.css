@@ -48,7 +48,7 @@
 
 :root {
   /* Brand hex colors - Unified with TopBar */
-  --brand-primary: #004395;
+  --brand-primary: #2069c5;
   --brand-secondary: #001a3d;
   /* Derived dark shade of primary */
   --brand-accent: #fbbf24;
@@ -58,8 +58,8 @@
   --background: oklch(1 0 0);
   --foreground: oklch(0.12 0 0);
 
-  --primary: oklch(0.25 0.05 250);
-  /* Darker professional primary */
+  --primary: oklch(0.48 0.15 250);
+  /* Unified with brand-primary #2069c5 */
   --primary-foreground: oklch(1 0 0);
 
   --secondary: oklch(0.98 0 0);
@@ -79,7 +79,7 @@
 
   --border: oklch(0.94 0 0);
   --input: oklch(0.94 0 0);
-  --ring: oklch(0.35 0.15 250);
+  --ring: oklch(0.48 0.15 250);
 
   --radius: 0rem;
 
@@ -90,7 +90,7 @@
   --sidebar-accent: hsl(240 4.8% 95.9%);
   --sidebar-accent-foreground: hsl(240 5.9% 10%);
   --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar-ring: hsl(213 72% 45%);
 }
 
 .dark {

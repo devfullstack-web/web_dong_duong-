@@ -418,7 +418,7 @@ export default function AddNewsPage() {
                     className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20"
                 >
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
+                        <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
                             <div className="space-y-3">
                                 <Label
                                     htmlFor="title"
@@ -429,7 +429,7 @@ export default function AddNewsPage() {
                                 <Input
                                     id="title"
                                     placeholder="Nhập tiêu đề bài viết..."
-                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
+                                    className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
                                     value={formData.title}
                                     onChange={(e) => handleTitleChange(e.target.value)}
                                     required
@@ -449,7 +449,7 @@ export default function AddNewsPage() {
                                     </span>
                                     <Input
                                         id="slug"
-                                        className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
+                                        className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none pl-6 focus-visible:ring-brand-primary/20"
                                         value={formData.slug}
                                         onChange={(e) =>
                                             setFormData({ ...formData, slug: e.target.value })
@@ -509,7 +509,7 @@ export default function AddNewsPage() {
                             description="Cho phép bài viết hiển thị công khai trên website."
                         />
 
-                        <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
+                        <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                                 Phân loại & Thời gian
                             </h3>
@@ -527,7 +527,7 @@ export default function AddNewsPage() {
                                         setFormData({ ...formData, category_id: value })
                                     }
                                 >
-                                    <SelectTrigger className="h-11 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
+                                    <SelectTrigger className="h-9 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
                                         <SelectValue placeholder="Chọn danh mục" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-none border-slate-100">
@@ -553,7 +553,7 @@ export default function AddNewsPage() {
                                         <Button
                                             variant={'outline'}
                                             className={cn(
-                                                'h-11 w-full justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
+                                                'h-9 w-full justify-start text-left font-bold bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20',
                                                 !formData.published_at && 'text-slate-300',
                                             )}
                                         >
@@ -583,7 +583,7 @@ export default function AddNewsPage() {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-none border border-slate-100 p-5 md:p-6 space-y-5">
+                        <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 border-l-4 border-brand-primary pl-4">
                                 Hình ảnh bài viết
                             </h3>
