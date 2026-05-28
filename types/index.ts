@@ -1,3 +1,5 @@
+import type { LocalizedText } from './i18n';
+
 export interface NewsArticle {
     id: string;
     slug: string;
@@ -22,8 +24,10 @@ export interface Product {
     id: string;
     slug: string;
     name: string;
+    name_localized?: LocalizedText | null;
     category_id: string;
     category?: string;
+    category_localized?: LocalizedText | null;
     status: 'active' | 'inactive';
     price: string;
     stock: string;

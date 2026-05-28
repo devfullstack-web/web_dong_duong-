@@ -45,6 +45,20 @@ import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getLocalizedValue } from '@/types/i18n';
+
+const PRODUCT_STATUS_FILTERS: { value: Product['status']; label: string }[] = [
+    { value: 'active', label: 'Đang bán' },
+    { value: 'inactive', label: 'Ngừng kinh doanh' },
+];
+
+function getProductDisplayName(product: Product) {
+    return getLocalizedValue(product.name_localized, 'vi') || product.name;
+}
+
+function getProductCategoryName(product: Product) {
+    return getLocalizedValue(product.category_localized, 'vi') || product.category || 'Chưa phân loại';
+}
 
 function ProductImage({ src, alt }: { src?: string | null; alt: string }) {
     const [imgSrc, setImgSrc] = useState(src);
@@ -92,6 +106,7 @@ export default function ProductsManagementPage() {
 
     // Category filter state
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
+    const [selectedStatus, setSelectedStatus] = useState<Product['status'] | ''>('');
 
     // Fetch product categories
     const { data: categoriesData } = useQuery<{ data: { id: string; name: string }[] }>({
@@ -103,10 +118,10 @@ export default function ProductsManagementPage() {
     });
     const categoryList = categoriesData?.data || [];
 
-    // Reset to page 1 when category changes
+    // Reset to page 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [selectedCategoryId]);
+    }, [selectedCategoryId, selectedStatus]);
 
     // Reset to page 1 when search changes
     useEffect(() => {
@@ -120,7 +135,14 @@ export default function ProductsManagementPage() {
     }>({
         queryKey: [
             'admin-products',
-            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange: date, categoryId: selectedCategoryId },
+            {
+                page: currentPage,
+                limit: pageSize,
+                search: debouncedSearch,
+                dateRange: date,
+                categoryId: selectedCategoryId,
+                status: selectedStatus,
+            },
         ],
         queryFn: async () => {
             const res = await $api.get(API_ROUTES.PRODUCTS, {
@@ -131,6 +153,7 @@ export default function ProductsManagementPage() {
                     startDate: date?.from?.toISOString(),
                     endDate: date?.to?.toISOString(),
                     categoryId: selectedCategoryId || undefined,
+                    status: selectedStatus || undefined,
                 },
             });
             if (res.data.success !== false) {
@@ -158,11 +181,11 @@ export default function ProductsManagementPage() {
             headers.join(','),
             ...productsList.map(product => {
                 const id = `"${product.id.replace(/"/g, '""')}"`;
-                const name = `"${product.name.replace(/"/g, '""')}"`;
+                const name = `"${getProductDisplayName(product).replace(/"/g, '""')}"`;
                 const sku = `"${product.sku.replace(/"/g, '""')}"`;
                 const price = product.price;
                 const stock = product.stock;
-                const category = `"${(product.category || 'Chưa phân loại').replace(/"/g, '""')}"`;
+                const category = `"${getProductCategoryName(product).replace(/"/g, '""')}"`;
                 const status = product.status === 'active' ? '"Đang bán"' : '"Ngừng kinh doanh"';
                 
                 return [id, name, sku, price, stock, category, status].join(',');
@@ -321,6 +344,47 @@ export default function ProductsManagementPage() {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
+                        {/* Status Filter */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                        selectedStatus ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
+                                    )}
+                                >
+                                    <span className="truncate">
+                                        {selectedStatus
+                                            ? PRODUCT_STATUS_FILTERS.find((item) => item.value === selectedStatus)?.label
+                                            : 'Lọc trạng thái'}
+                                    </span>
+                                    <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-48 rounded-none border border-slate-100 p-1">
+                                <DropdownMenuItem
+                                    className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
+                                    onClick={() => setSelectedStatus('')}
+                                >
+                                    Tất cả trạng thái
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-slate-50" />
+                                {PRODUCT_STATUS_FILTERS.map((status) => (
+                                    <DropdownMenuItem
+                                        key={status.value}
+                                        className={cn(
+                                            'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
+                                            selectedStatus === status.value && 'text-brand-primary bg-brand-primary/5',
+                                        )}
+                                        onClick={() => setSelectedStatus(status.value)}
+                                    >
+                                        {status.label}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         {/* Date Range Picker */}
                         <div className="grid gap-2 w-full sm:w-75">
                             <Popover>
@@ -418,11 +482,11 @@ export default function ProductsManagementPage() {
                                         <td className="px-4 py-3 md:py-3.5">
                                             <div className="flex items-center gap-3 md:gap-4">
                                                 <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
-                                                    <ProductImage src={product.image_url} alt={product.name} />
+                                                    <ProductImage src={product.image_url} alt={getProductDisplayName(product)} />
                                                 </div>
                                                 <div className="max-w-87.5">
                                                     <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-0.5">
-                                                        {product.name}
+                                                        {getProductDisplayName(product)}
                                                     </div>
                                                     <div className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
                                                         Sài Gòn Valve Official
@@ -450,7 +514,7 @@ export default function ProductsManagementPage() {
                                         </td>
                                         <td className="px-4 py-3 md:py-3.5 hidden md:table-cell">
                                             <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight">
-                                                {product.category || 'Chưa phân loại'}
+                                                {getProductCategoryName(product)}
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 md:py-3.5">
