@@ -17,6 +17,7 @@ import {
     Loader2,
     Layout,
     X,
+    ChevronDown,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -44,6 +45,11 @@ import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+const PROJECT_STATUS_FILTERS: { value: Project['status']; label: string }[] = [
+    { value: 'ongoing', label: 'Đang triển khai' },
+    { value: 'completed', label: 'Đã hoàn thành' },
+];
 
 function ProjectImage({ src, alt }: { src?: string | null; alt: string }) {
     const [imgSrc, setImgSrc] = useState(src);
@@ -88,11 +94,12 @@ export default function ProjectsManagementPage() {
 
     // Date Filter state
     const [date, setDate] = useState<DateRange | undefined>();
+    const [selectedStatus, setSelectedStatus] = useState<Project['status'] | ''>('');
 
-    // Reset to page 1 when search changes
+    // Reset to page 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [debouncedSearch]);
+    }, [debouncedSearch, selectedStatus]);
 
     // Fetch projects using react-query
     const { data: projectsData, isLoading } = useQuery<{
@@ -101,7 +108,7 @@ export default function ProjectsManagementPage() {
     }>({
         queryKey: [
             'admin-projects',
-            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange: date },
+            { page: currentPage, limit: pageSize, search: debouncedSearch, dateRange: date, status: selectedStatus },
         ],
         queryFn: async () => {
             const res = await $api.get(API_ROUTES.PROJECTS, {
@@ -111,6 +118,7 @@ export default function ProjectsManagementPage() {
                     search: debouncedSearch || undefined,
                     startDate: date?.from?.toISOString(),
                     endDate: date?.to?.toISOString(),
+                    status: selectedStatus || undefined,
                 },
             });
             if (res.data.success !== false) {
@@ -226,6 +234,47 @@ export default function ProjectsManagementPage() {
                         />
                     </div>
                     <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
+                        {/* Status Filter */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        'w-full sm:w-48 justify-between text-left font-bold text-[10px] uppercase tracking-widest h-10 border-slate-100 rounded-none bg-slate-50/50',
+                                        selectedStatus ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
+                                    )}
+                                >
+                                    <span className="truncate">
+                                        {selectedStatus
+                                            ? PROJECT_STATUS_FILTERS.find((item) => item.value === selectedStatus)?.label
+                                            : 'Lọc trạng thái'}
+                                    </span>
+                                    <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-48 rounded-none border border-slate-100 p-1">
+                                <DropdownMenuItem
+                                    className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
+                                    onClick={() => setSelectedStatus('')}
+                                >
+                                    Tất cả trạng thái
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator className="bg-slate-50" />
+                                {PROJECT_STATUS_FILTERS.map((status) => (
+                                    <DropdownMenuItem
+                                        key={status.value}
+                                        className={cn(
+                                            'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
+                                            selectedStatus === status.value && 'text-brand-primary bg-brand-primary/5',
+                                        )}
+                                        onClick={() => setSelectedStatus(status.value)}
+                                    >
+                                        {status.label}
+                                    </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         {/* Date Range Picker */}
                         <div className="grid gap-2 w-full sm:w-[300px]">
                             <Popover>

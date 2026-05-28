@@ -8,6 +8,15 @@ import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import { notFound } from 'next/navigation';
 import { COMPANY_INFO } from '@/constants/site-info';
+import { Bai_Jamjuree } from 'next/font/google';
+
+const baiJamjuree = Bai_Jamjuree({
+    subsets: ['vietnamese', 'latin'],
+    weight: ['200', '300', '400', '500', '600', '700'],
+    style: ['normal', 'italic'],
+    display: 'swap',
+    variable: '--font-bai-jamjuree',
+});
 
 export const viewport: Viewport = {
     width: 'device-width',
@@ -100,7 +109,7 @@ export default async function RootLayout({
     const messages = await getMessages({ locale });
 
     return (
-        <html lang={locale} suppressHydrationWarning>
+        <html lang={locale} suppressHydrationWarning className={baiJamjuree.variable}>
             <body
                 suppressHydrationWarning
                 className="antialiased font-sans bg-background text-foreground"
