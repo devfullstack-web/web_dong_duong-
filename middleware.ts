@@ -54,15 +54,15 @@ function fixRedirectPort(response: NextResponse): NextResponse {
 }
 
 function safeRedirect(path: string, request: NextRequest): NextResponse {
-    const host = request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? '';
-    const hostname = host.split(':')[0];
+    const configuredBaseUrl = process.env.APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL;
 
-    if (isLocalHostname(hostname)) {
-        return NextResponse.redirect(new URL(path, request.url));
+    if (configuredBaseUrl) {
+        try {
+            return NextResponse.redirect(new URL(path, configuredBaseUrl));
+        } catch {}
     }
 
-    const proto = request.headers.get('x-forwarded-proto') ?? 'https';
-    return NextResponse.redirect(new URL(path, `${proto}://${hostname}`));
+    return NextResponse.redirect(new URL(path, request.nextUrl.origin));
 }
 
 const apiUnauthorized = (reason: string) =>

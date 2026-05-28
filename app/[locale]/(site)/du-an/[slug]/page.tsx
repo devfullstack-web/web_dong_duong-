@@ -7,6 +7,7 @@ import { eq, and, isNull, ne, desc } from 'drizzle-orm';
 import { stripHtml } from '@/utils/strip-html';
 import { COMPANY_INFO } from '@/constants/site-info';
 import ProjectDetailClient from './_components/ProjectDetailClient';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -31,7 +32,12 @@ const getProject = cache(async (slug: string) => {
         .leftJoin(categories, eq(projects.category_id, categories.id))
         .where(and(eq(projects.slug, slug), isNull(projects.deleted_at)));
 
-    return project || null;
+    return project
+        ? {
+              ...project,
+              description: sanitizeRichText(project.description),
+          }
+        : null;
 });
 
 async function getRelatedProjects(slug: string) {

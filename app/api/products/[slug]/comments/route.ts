@@ -4,6 +4,8 @@ import { eq, isNull, and, desc } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { verifyAuth, isAdmin } from '@/middlewares/middleware';
 import { PORTAL_ROUTES } from '@/constants/routes';
+import { checkRateLimit } from '@/utils/rate-limiter';
+import { sanitizePlainText } from '@/utils/sanitize';
 
 // GET /api/products/[slug]/comments - List approved comments for a specific product
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
@@ -56,10 +58,25 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
     try {
         const { slug } = await params;
         const body = await request.json();
-        const { guest_name, guest_email, content } = body;
+        const guest_name = sanitizePlainText(body.guest_name, 255);
+        const guest_email = sanitizePlainText(body.guest_email, 255).toLowerCase();
+        const content = sanitizePlainText(body.content, 2000);
 
         if (!guest_name || !guest_email || !content) {
             return apiError('Missing required fields', 400);
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guest_email)) {
+            return apiError('Email không hợp lệ', 400);
+        }
+
+        const ip =
+            request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+            request.headers.get('x-real-ip') ||
+            'unknown';
+        const rateLimit = checkRateLimit(`comment:${ip}:${guest_email}`, 5, 60 * 60 * 1000);
+        if (rateLimit.isLimited) {
+            return apiError('Bạn gửi bình luận quá thường xuyên. Vui lòng thử lại sau.', 429);
         }
 
         // 1. Find product by slug or ID

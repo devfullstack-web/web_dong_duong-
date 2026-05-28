@@ -1,11 +1,12 @@
 import { db } from '@/db';
 import { users } from '@/db/schemas';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { login, generateTokens } from '@/services/auth';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { validateBody } from '@/middlewares/middleware';
 import { loginSchema } from '@/validations/auth.schema';
+import { checkRateLimit } from '@/utils/rate-limiter';
 
 export async function POST(request: Request) {
     try {
@@ -16,10 +17,28 @@ export async function POST(request: Request) {
         }
 
         const { username, password } = dataOrError;
+        const ip =
+            request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+            request.headers.get('x-real-ip') ||
+            'unknown';
+        const ipLimit = checkRateLimit(`login:ip:${ip}`, 20, 15 * 60 * 1000);
+        const accountLimit = checkRateLimit(
+            `login:account:${ip}:${username.toLowerCase()}`,
+            5,
+            15 * 60 * 1000,
+        );
 
-        const [user] = await db.select().from(users).where(eq(users.username, username));
+        if (ipLimit.isLimited || accountLimit.isLimited) {
+            return apiError('Quá nhiều lần đăng nhập thất bại. Vui lòng thử lại sau.', 429);
+        }
 
-        if (!user) {
+        const [user] = await db
+            .select()
+            .from(users)
+            .where(and(eq(users.username, username), isNull(users.deleted_at)))
+            .limit(1);
+
+        if (!user || !user.is_active || user.is_locked) {
             return apiError('Tên đăng nhập hoặc mật khẩu không đúng', 401);
         }
 

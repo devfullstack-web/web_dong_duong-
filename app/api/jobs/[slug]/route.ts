@@ -1,9 +1,10 @@
 import { db } from "@/db";
 import { jobPostings } from "@/db/schemas";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
-import { withAuth } from "@/middlewares/middleware";
+import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
+import { sanitizeRichText } from "@/utils/sanitize";
 
 // GET /api/jobs/[slug] - Get a single job by slug or ID
 export async function GET(
@@ -12,19 +13,31 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+    const session = await verifyAuth(request as any);
+    const canViewPrivate =
+      session && hasPermission(session.user, PERMISSIONS.RECRUITMENT_VIEW);
     
     // Check if slug is a UUID to fetch by ID instead
     const isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
     
     const [job] = await db.select().from(jobPostings).where(
-      isId ? eq(jobPostings.id, slug) : eq(jobPostings.slug, slug)
+      and(
+        isId ? eq(jobPostings.id, slug) : eq(jobPostings.slug, slug),
+        ...(canViewPrivate ? [] : [eq(jobPostings.status, 'open')]),
+        isNull(jobPostings.deleted_at)
+      )
     );
 
     if (!job) {
       return apiError("Job not found", 404);
     }
 
-    return apiResponse(job);
+    return apiResponse({
+      ...job,
+      description: sanitizeRichText(job.description),
+      requirements: job.requirements ? sanitizeRichText(job.requirements) : null,
+      benefits: job.benefits ? sanitizeRichText(job.benefits) : null,
+    });
   } catch (error) {
     console.error("Error fetching job:", error);
     return apiError("Internal Server Error", 500);
@@ -37,11 +50,31 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const { slug: id } = await params;
     const body = await request.json();
     
-    // Prepare updates
-    const updates: any = { ...body };
-    if (updates.id) delete updates.id;
-    if (updates.created_at) delete updates.created_at;
+    const updates: any = {};
+    const allowedFields = [
+      'title',
+      'slug',
+      'description',
+      'requirements',
+      'benefits',
+      'location',
+      'employment_type',
+      'salary_range',
+      'experience_level',
+      'department',
+      'status',
+      'deadline',
+    ];
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) updates[field] = body[field];
+    }
     updates.updated_at = new Date();
+    if (updates.description !== undefined) updates.description = sanitizeRichText(updates.description);
+    if (updates.requirements !== undefined) updates.requirements = sanitizeRichText(updates.requirements);
+    if (updates.benefits !== undefined) updates.benefits = sanitizeRichText(updates.benefits);
+    if (updates.status !== undefined && !['open', 'closed'].includes(updates.status)) {
+      return apiError("Invalid status", 400);
+    }
     
     // Handle deadline conversion
     if (updates.deadline) {

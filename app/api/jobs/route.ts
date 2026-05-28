@@ -2,8 +2,9 @@ import { db } from '@/db';
 import { jobPostings } from '@/db/schemas';
 import { eq, desc, ilike, and, SQL, isNull } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
-import { withAuth, withHybridAuth, hasPermission, isAdmin } from '@/middlewares/middleware';
+import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 // GET /api/jobs - List all job postings (Public/Protected Hybrid)
 export const GET = withHybridAuth(
@@ -19,8 +20,7 @@ export const GET = withHybridAuth(
             // Authorization protection
             const isAuthorized =
                 session &&
-                (hasPermission(session.user, PERMISSIONS.RECRUITMENT_VIEW) ||
-                    isAdmin(session.user));
+                hasPermission(session.user, PERMISSIONS.RECRUITMENT_VIEW);
             if (!isAuthorized) {
                 status = 'open';
                 includeDeleted = false;
@@ -103,9 +103,9 @@ export const POST = withAuth(
                 .values({
                     title,
                     slug,
-                    description,
-                    requirements: requirements || null,
-                    benefits: benefits || null,
+                    description: sanitizeRichText(description),
+                    requirements: requirements ? sanitizeRichText(requirements) : null,
+                    benefits: benefits ? sanitizeRichText(benefits) : null,
                     location: location || null,
                     employment_type: employment_type || 'full_time',
                     salary_range: salary_range || null,

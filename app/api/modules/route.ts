@@ -55,11 +55,11 @@ export const GET = withAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.ROLES_VIEW] },
+    { requiredPermissions: [PERMISSIONS.MODULES_VIEW] },
 );
 
 export const POST = withAuth(
-    async (request) => {
+    async (request, session) => {
         try {
             const body = await request.json();
             const { name, code, icon, route, order } = body;
@@ -94,7 +94,7 @@ export const POST = withAuth(
 
             // Audit Log
             auditService.logAction({
-                userId: (request as any).session?.user?.id,
+                userId: session.user.id,
                 action: AUDIT_ACTIONS.CREATE,
                 module: AUDIT_MODULES.MODULES,
                 targetId: newModule.id,
@@ -108,5 +108,5 @@ export const POST = withAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.ROLES_VIEW] },
+    { requiredPermissions: [PERMISSIONS.MODULES_CREATE] },
 );

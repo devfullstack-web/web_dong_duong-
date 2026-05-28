@@ -23,7 +23,7 @@ export const GET = withAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.ROLES_VIEW] },
+    { requiredPermissions: [PERMISSIONS.MODULES_VIEW] },
 );
 
 export const PATCH = withAuth(
@@ -83,7 +83,7 @@ export const PATCH = withAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.ROLES_VIEW] },
+    { requiredPermissions: [PERMISSIONS.MODULES_UPDATE] },
 );
 
 export const DELETE = withAuth(
@@ -122,5 +122,5 @@ export const DELETE = withAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.ROLES_VIEW] },
+    { requiredPermissions: [PERMISSIONS.MODULES_DELETE] },
 );

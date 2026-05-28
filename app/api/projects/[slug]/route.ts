@@ -1,9 +1,10 @@
 import { db } from "@/db";
 import { projects, categories } from "@/db/schemas";
-import { eq, or } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
+import { sanitizeRichText } from "@/utils/sanitize";
 
 // UUID regex pattern
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -38,15 +39,18 @@ export async function GET(
     .innerJoin(categories, eq(projects.category_id, categories.id));
 
     // Query by ID or slug based on the parameter format
-    const [project] = isUUID 
-      ? await query.where(eq(projects.id, slug))
-      : await query.where(eq(projects.slug, slug));
+    const [project] = isUUID
+      ? await query.where(and(eq(projects.id, slug), isNull(projects.deleted_at)))
+      : await query.where(and(eq(projects.slug, slug), isNull(projects.deleted_at)));
 
     if (!project) {
       return apiError("Project not found", 404);
     }
 
-    return apiResponse(project);
+    return apiResponse({
+      ...project,
+      description: sanitizeRichText(project.description),
+    });
   } catch (error) {
     console.error("Error fetching project:", error);
     return apiError("Internal Server Error", 500);
@@ -65,14 +69,29 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     // Determine if it's a UUID (ID) or a slug
     const isUUID = UUID_REGEX.test(slug);
     
-    // Prepare updates
-    const updates: any = { ...body };
-    if (updates.id) delete updates.id;
-    if (updates.category) delete updates.category; // Remove joined field
-    if (updates.created_at) delete updates.created_at;
+    const updates: any = {};
+    const allowedFields = [
+      'name',
+      'slug',
+      'description',
+      'client_name',
+      'start_date',
+      'end_date',
+      'category_id',
+      'status',
+      'image_url',
+      'gallery',
+    ];
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) updates[field] = body[field];
+    }
     updates.updated_at = new Date();
+    if (updates.description !== undefined) updates.description = sanitizeRichText(updates.description);
     if (updates.start_date) updates.start_date = new Date(updates.start_date);
     if (updates.end_date) updates.end_date = new Date(updates.end_date);
+    if (updates.status !== undefined && !['ongoing', 'completed'].includes(updates.status)) {
+      return apiError("Invalid status", 400);
+    }
 
     const whereCondition = isUUID ? eq(projects.id, slug) : eq(projects.slug, slug);
 

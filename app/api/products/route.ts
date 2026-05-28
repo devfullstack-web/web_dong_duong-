@@ -6,15 +6,14 @@ import { calculateOffset, createPaginationMeta } from '@/utils/pagination';
 import { createProductSchema, productFilterSchema } from '@/validations/product.schema';
 import {
     validateQuery,
-    validateBody,
     withAuth,
     withHybridAuth,
     hasPermission,
-    isAdmin,
 } from '@/middlewares/middleware';
 import { ZodError } from 'zod';
 import { PERMISSIONS } from '@/constants/rbac';
 import type { LocalizedText, LocalizedArray } from '@/types/i18n';
+import { sanitizeLocalizedRichText, sanitizeRichText, sanitizeStringArray } from '@/utils/sanitize';
 
 // GET /api/products - List products with pagination (Public/Protected Hybrid)
 export const GET = withHybridAuth(
@@ -43,7 +42,7 @@ export const GET = withHybridAuth(
             // Authorization protection
             const isAuthorized =
                 session &&
-                (hasPermission(session.user, PERMISSIONS.PRODUCTS_VIEW) || isAdmin(session.user));
+                hasPermission(session.user, PERMISSIONS.PRODUCTS_VIEW);
             if (!isAuthorized) {
                 status = 'active';
                 includeDeleted = false;
@@ -134,7 +133,16 @@ export const GET = withHybridAuth(
                 query = query.where(and(...conditions));
             }
 
-            const results = await query;
+            const results = (await query).map((product) => ({
+                ...product,
+                description_localized: sanitizeLocalizedRichText(product.description_localized),
+                features: sanitizeStringArray(product.features),
+                features_localized: {
+                    ...(product.features_localized || {}),
+                    vi: sanitizeStringArray(product.features_localized?.vi),
+                    en: sanitizeStringArray(product.features_localized?.en),
+                },
+            }));
 
             return apiResponse(results, {
                 meta: createPaginationMeta(page, limit, Number(total)),
@@ -172,6 +180,7 @@ export const POST = withAuth(
             }
 
             if (rawBody.description_localized) {
+                rawBody.description_localized = sanitizeLocalizedRichText(rawBody.description_localized);
                 localizedFields.description_localized = rawBody.description_localized;
                 if (!rawBody.description && rawBody.description_localized.vi) {
                     rawBody.description = rawBody.description_localized.vi;
@@ -186,6 +195,11 @@ export const POST = withAuth(
             }
 
             if (rawBody.features_localized) {
+                rawBody.features_localized = {
+                    ...rawBody.features_localized,
+                    vi: sanitizeStringArray(rawBody.features_localized.vi),
+                    en: sanitizeStringArray(rawBody.features_localized.en),
+                };
                 localizedFields.features_localized = rawBody.features_localized;
                 if (!rawBody.features && rawBody.features_localized.vi) {
                     rawBody.features = rawBody.features_localized.vi;
@@ -204,6 +218,13 @@ export const POST = withAuth(
             }
 
             const dataOrError = parseResult.data;
+            dataOrError.description = sanitizeRichText(dataOrError.description);
+            if (dataOrError.tech_summary) {
+                dataOrError.tech_summary = sanitizeRichText(dataOrError.tech_summary);
+            }
+            if (dataOrError.features) {
+                dataOrError.features = sanitizeStringArray(dataOrError.features) as string[];
+            }
 
             // Auto-generate SKU if not provided
             if (!dataOrError.sku) {

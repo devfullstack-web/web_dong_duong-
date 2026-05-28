@@ -3,11 +3,12 @@ import { newsArticles, categories, authors } from '@/db/schemas';
 import { eq, desc, sql, and, or, ilike, gte, lte, isNull } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
-import { withAuth, withHybridAuth, hasPermission, isAdmin } from '@/middlewares/middleware';
+import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { ARTICLE, PAGINATION } from '@/constants/app';
 import { auditService } from '@/services/audit-service';
 import { AUDIT_ACTIONS, AUDIT_MODULES } from '@/constants/audit';
+import { sanitizePlainText, sanitizeRichText } from '@/utils/sanitize';
 
 // GET /api/news - List news articles with pagination
 export const GET = withHybridAuth(
@@ -24,7 +25,7 @@ export const GET = withHybridAuth(
             // Authorization protection: Force published/not-deleted if not authorized
             const isAuthorized =
                 session &&
-                (hasPermission(session.user, PERMISSIONS.BLOG_VIEW) || isAdmin(session.user));
+                hasPermission(session.user, PERMISSIONS.BLOG_VIEW);
             if (!isAuthorized) {
                 status = 'published';
                 includeDeleted = false;
@@ -115,6 +116,8 @@ export const GET = withHybridAuth(
 
                 return {
                     ...article,
+                    summary: sanitizePlainText(article.summary, 1000),
+                    content: sanitizeRichText(article.content),
                     readTime: `${readTimeMinutes} ${ARTICLE.READ_TIME_SUFFIX}`,
                     category: article.category || ARTICLE.DEFAULT_CATEGORY,
                     author: article.author || ARTICLE.DEFAULT_AUTHOR,
@@ -160,8 +163,8 @@ export const POST = withAuth(
                 .values({
                     title,
                     slug,
-                    summary,
-                    content,
+                    summary: sanitizePlainText(summary, 1000),
+                    content: sanitizeRichText(content),
                     category_id,
                     author_id,
                     status: status || 'draft',

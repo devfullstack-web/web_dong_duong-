@@ -265,6 +265,18 @@ interface RichTextEditorProps {
   className?: string;
 }
 
+const isSafeEditorUrl = (
+  value: string,
+  allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:'],
+) => {
+  try {
+    const url = new URL(value, window.location.origin);
+    return allowedProtocols.includes(url.protocol);
+  } catch {
+    return false;
+  }
+};
+
 const ToolbarButton = ({ 
   onClick, 
   isActive, 
@@ -367,6 +379,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
+    if (!isSafeEditorUrl(url)) return;
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   };
 
@@ -383,7 +396,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
 
   const addYoutube = () => {
     const url = window.prompt("Dán link Youtube:");
-    if (url) {
+    if (url && isSafeEditorUrl(url, ['http:', 'https:'])) {
       editor.commands.setYoutubeVideo({
         src: url,
       });

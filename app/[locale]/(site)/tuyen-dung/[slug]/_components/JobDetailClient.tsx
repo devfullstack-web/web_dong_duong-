@@ -28,6 +28,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { motion } from 'motion/react';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
     full_time: 'Toàn thời gian',
@@ -190,7 +191,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                     </div>
                                     <div
                                         className="prose prose-slate max-w-none prose-p:text-slate-600 prose-li:text-slate-600 leading-relaxed"
-                                        dangerouslySetInnerHTML={{ __html: job.description }}
+                                        dangerouslySetInnerHTML={{ __html: sanitizeRichText(job.description) }}
                                     />
                                 </div>
 
@@ -205,7 +206,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                         </div>
                                         <div
                                             className="prose prose-slate max-w-none prose-p:text-slate-600 prose-li:text-slate-600 leading-relaxed"
-                                            dangerouslySetInnerHTML={{ __html: job.requirements }}
+                                            dangerouslySetInnerHTML={{ __html: sanitizeRichText(job.requirements) }}
                                         />
                                     </div>
                                 )}
@@ -221,7 +222,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                         </div>
                                         <div
                                             className="prose prose-slate max-w-none prose-p:text-slate-600 prose-li:text-slate-600 leading-relaxed"
-                                            dangerouslySetInnerHTML={{ __html: job.benefits }}
+                                            dangerouslySetInnerHTML={{ __html: sanitizeRichText(job.benefits) }}
                                         />
                                     </div>
                                 )}

@@ -1,6 +1,5 @@
 import { db } from "@/db";
 import { authors } from "@/db/schemas";
-import { eq } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
@@ -37,4 +36,4 @@ export const POST = withAuth(async (request: NextRequest) => {
     console.error("Error creating author:", error);
     return apiError("Internal Server Error", 500);
   }
-}, { requiredPermissions: [PERMISSIONS.MEDIA_VIEW] });
+}, { requiredPermissions: [PERMISSIONS.BLOG_CREATE] });

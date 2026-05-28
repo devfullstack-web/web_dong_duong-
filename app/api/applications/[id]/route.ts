@@ -3,8 +3,12 @@ import { jobApplications, jobPostings } from "@/db/schemas";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { eq } from "drizzle-orm";
 import { NextRequest } from "next/server";
-import { withAuth, UserSession } from "@/middlewares/middleware";
+import { withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
+import { unlink } from "fs/promises";
+import { resolveCvPath } from "@/utils/private-files";
+
+const APPLICATION_STATUSES = new Set(['pending', 'reviewed', 'interviewed', 'rejected', 'accepted']);
 
 // GET /api/applications/[id] - View application details
 export const GET = withAuth(async (_request: NextRequest, _session, { params }) => {
@@ -31,12 +35,15 @@ export const GET = withAuth(async (_request: NextRequest, _session, { params }) 
 
     if (!application) return apiError("Không tìm thấy hồ sơ ứng tuyển", 404);
 
-    return apiResponse(application);
+    return apiResponse({
+      ...application,
+      cv_url: `/api/applications/${application.id}/cv`,
+    });
   } catch (error) {
     console.error("Error fetching application:", error);
     return apiError("Internal Server Error", 500);
   }
-}, { requiredPermissions: [PERMISSIONS.RECRUITMENT_VIEW] });
+}, { requiredPermissions: [PERMISSIONS.APPLICATIONS_VIEW] });
 
 // PATCH /api/applications/[id] - Update application status
 export const PATCH = withAuth(async (request: NextRequest, session, { params }) => {
@@ -44,7 +51,9 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
     const { id } = await params;
     const { status } = await request.json();
 
-    if (!status) return apiError("Trạng thái là bắt buộc", 400);
+    if (!status || !APPLICATION_STATUSES.has(status)) {
+      return apiError("Trạng thái không hợp lệ", 400);
+    }
 
     const [updated] = await db
       .update(jobApplications)
@@ -62,7 +71,7 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
     console.error("Error updating application:", error);
     return apiError("Internal Server Error", 500);
   }
-}, { requiredPermissions: [PERMISSIONS.RECRUITMENT_UPDATE] });
+}, { requiredPermissions: [PERMISSIONS.APPLICATIONS_UPDATE] });
 
 // DELETE /api/applications/[id] - Delete an application
 export const DELETE = withAuth(async (request: NextRequest, session, { params }) => {
@@ -76,9 +85,17 @@ export const DELETE = withAuth(async (request: NextRequest, session, { params })
 
     if (!deleted) return apiError("Không tìm thấy hồ sơ ứng tuyển", 404);
 
+    try {
+      await unlink(resolveCvPath(deleted.cv_url));
+    } catch (error) {
+      if ((error as { code?: string }).code !== 'ENOENT') {
+        console.error("Error deleting application CV:", error);
+      }
+    }
+
     return apiResponse({ message: "Đã xóa hồ sơ ứng tuyển thành công" });
   } catch (error) {
     console.error("Error deleting application:", error);
     return apiError("Internal Server Error", 500);
   }
-}, { requiredPermissions: [PERMISSIONS.RECRUITMENT_DELETE] });
+}, { requiredPermissions: [PERMISSIONS.APPLICATIONS_DELETE] });

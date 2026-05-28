@@ -3,6 +3,10 @@ import { decrypt } from '@/services/auth';
 import { ZodSchema, ZodError } from 'zod';
 import { apiError } from '@/utils/api-response';
 import { RBAC_ROLES } from '@/constants/rbac';
+import { db } from '@/db';
+import { users } from '@/db/schemas';
+import { and, eq, isNull } from 'drizzle-orm';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 export interface UserSession {
     user: {
@@ -24,6 +28,23 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
 
     try {
         const sessionData = await decrypt(session);
+        if (!sessionData?.user?.id) return null;
+
+        const [activeUser] = await db
+            .select({ id: users.id })
+            .from(users)
+            .where(
+                and(
+                    eq(users.id, sessionData.user.id),
+                    eq(users.is_active, true),
+                    eq(users.is_locked, false),
+                    isNull(users.deleted_at),
+                ),
+            )
+            .limit(1);
+
+        if (!activeUser) return null;
+
         return sessionData as UserSession;
     } catch {
         return null;
@@ -117,13 +138,7 @@ export function validateQuery<T>(
 }
 
 export function sanitizeHtml(html: string): string {
-    if (!html) return '';
-
-    return html
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .replace(/on\w+="[^"]*"/gi, '')
-        .replace(/on\w+='[^']*'/gi, '')
-        .replace(/javascript:/gi, '');
+    return sanitizeRichText(html);
 }
 
 export function isAdmin(user: UserSession['user']): boolean {
@@ -180,7 +195,7 @@ export function withAuth(
 
         if (options?.requiredPermissions && options.requiredPermissions.length > 0) {
             const hasAll = options.requiredPermissions.every((p) => hasPermission(session.user, p));
-            if (!hasAll && !isAdmin(session.user)) {
+            if (!hasAll) {
                 return apiError(
                     `Forbidden - Required permissions: ${options.requiredPermissions.join(', ')}`,
                     403,
@@ -237,7 +252,7 @@ export function withHybridAuth(
                     hasPermission(session.user, p),
                 );
 
-                if (!hasAll && !isAdmin(session.user)) {
+                if (!hasAll) {
                     if (isPortalRequest) {
                         return apiError(
                             `Forbidden - Required permissions: ${options.requiredPermissions.join(', ')}`,

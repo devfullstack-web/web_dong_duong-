@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/carousel';
 import { getLocalizedValue, getLocalizedArray } from '@/types/i18n';
 import type { Locale } from '@/types/i18n';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 interface ProductDetailClientProps {
     product: any;
@@ -272,7 +273,12 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                             prose-table:border prose-table:border-slate-100 prose-th:bg-slate-50 prose-th:text-[10px] prose-th:font-black prose-th:uppercase prose-th:p-3
                                             prose-td:p-3 prose-td:text-xs prose-td:font-medium
                                         "
-                                        dangerouslySetInnerHTML={{ __html: getLocalizedValue(product.description_localized, locale) || product.description }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: sanitizeRichText(
+                                                getLocalizedValue(product.description_localized, locale) ||
+                                                    product.description,
+                                            ),
+                                        }}
                                     />
                                 ) : (
                                     <p className="text-sm text-slate-400 italic">Đang cập nhật nội dung chi tiết...</p>

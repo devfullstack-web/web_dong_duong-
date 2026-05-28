@@ -6,6 +6,7 @@ import { newsArticles, authors, categories } from '@/db/schemas';
 import { eq, and, isNull, ne, desc } from 'drizzle-orm';
 import { COMPANY_INFO } from '@/constants/site-info';
 import NewsDetailClient from './_components/NewsDetailClient';
+import { sanitizePlainText, sanitizeRichText } from '@/utils/sanitize';
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -31,9 +32,21 @@ const getArticle = cache(async (slug: string) => {
         .from(newsArticles)
         .leftJoin(authors, eq(newsArticles.author_id, authors.id))
         .leftJoin(categories, eq(newsArticles.category_id, categories.id))
-        .where(and(eq(newsArticles.slug, slug), isNull(newsArticles.deleted_at)));
+        .where(
+            and(
+                eq(newsArticles.slug, slug),
+                eq(newsArticles.status, 'published'),
+                isNull(newsArticles.deleted_at),
+            ),
+        );
 
-    return article || null;
+    return article
+        ? {
+              ...article,
+              summary: sanitizePlainText(article.summary, 1000),
+              content: sanitizeRichText(article.content),
+          }
+        : null;
 });
 
 async function getRelatedArticles(slug: string) {
@@ -49,7 +62,13 @@ async function getRelatedArticles(slug: string) {
         })
         .from(newsArticles)
         .leftJoin(categories, eq(newsArticles.category_id, categories.id))
-        .where(and(ne(newsArticles.slug, slug), isNull(newsArticles.deleted_at)))
+        .where(
+            and(
+                ne(newsArticles.slug, slug),
+                eq(newsArticles.status, 'published'),
+                isNull(newsArticles.deleted_at),
+            ),
+        )
         .orderBy(desc(newsArticles.published_at))
         .limit(5);
 }

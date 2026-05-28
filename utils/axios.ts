@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { SITE_ROUTES, API_ROUTES } from '@/constants/routes';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
@@ -23,8 +22,6 @@ export const $publicApi = axios.create({
 // Helper function to clear auth and redirect to login
 const clearAuthAndRedirect = () => {
     if (typeof window !== 'undefined') {
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
         const pathname = window.location.pathname;
         // Check for portal path with or without locale prefix (e.g., /portal, /vi/portal, /en/portal)
         const isPortal = pathname.includes('/portal');
@@ -40,10 +37,6 @@ const clearAuthAndRedirect = () => {
 
 $api.interceptors.request.use(
     (config) => {
-        const token = Cookies.get('accessToken');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
         return config;
     },
     (error) => {

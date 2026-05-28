@@ -1,10 +1,11 @@
 import { db } from "@/db";
 import { newsArticles, categories, authors } from "@/db/schemas";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
-import { withAuth } from "@/middlewares/middleware";
+import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { ARTICLE } from "@/constants/app";
+import { sanitizePlainText, sanitizeRichText } from "@/utils/sanitize";
 
 // UUID regex pattern
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -17,8 +18,14 @@ export async function GET(
   try {
     const { slug } = await params;
     const isUUID = UUID_REGEX.test(slug);
+    const session = await verifyAuth(request as any);
+    const canViewPrivate =
+      session && hasPermission(session.user, PERMISSIONS.BLOG_VIEW);
     
-    const whereCondition = isUUID ? eq(newsArticles.id, slug) : eq(newsArticles.slug, slug);
+    const whereCondition = and(
+      isUUID ? eq(newsArticles.id, slug) : eq(newsArticles.slug, slug),
+      ...(canViewPrivate ? [] : [eq(newsArticles.status, 'published'), isNull(newsArticles.deleted_at)])
+    );
     
     const [article] = await db.select({
       id: newsArticles.id,
@@ -52,6 +59,8 @@ export async function GET(
 
     const transformedArticle = {
       ...article,
+      summary: sanitizePlainText(article.summary, 1000),
+      content: sanitizeRichText(article.content),
       readTime: `${readTimeMinutes} ${ARTICLE.READ_TIME_SUFFIX}`,
       category: article.category || ARTICLE.DEFAULT_CATEGORY,
       author: article.author || ARTICLE.DEFAULT_AUTHOR,
@@ -73,11 +82,29 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const isUUID = UUID_REGEX.test(slug);
     
     // Prepare updates
-    const updates: any = { ...body };
-    if (updates.id) delete updates.id;
-    if (updates.category) delete updates.category;
-    if (updates.author) delete updates.author;
-    if (updates.created_at) delete updates.created_at;
+    const updates: any = {};
+    const allowedFields = [
+      'title',
+      'slug',
+      'summary',
+      'content',
+      'category_id',
+      'author_id',
+      'status',
+      'published_at',
+      'image_url',
+      'gallery',
+    ];
+
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) updates[field] = body[field];
+    }
+
+    if (updates.summary !== undefined) updates.summary = sanitizePlainText(updates.summary, 1000);
+    if (updates.content !== undefined) updates.content = sanitizeRichText(updates.content);
+    if (updates.status !== undefined && !['draft', 'published'].includes(updates.status)) {
+      return apiError("Invalid status", 400);
+    }
     updates.updated_at = new Date();
     if (updates.published_at) updates.published_at = new Date(updates.published_at);
 

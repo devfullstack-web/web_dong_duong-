@@ -47,6 +47,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 interface Category {
     id: string;
@@ -315,9 +316,10 @@ export default function AddNewsPage() {
                                         <div
                                             className="prose prose-slate prose-lg max-w-none prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-primary hover:prose-a:text-brand-secondary prose-img:rounded-none"
                                             dangerouslySetInnerHTML={{
-                                                __html:
+                                                __html: sanitizeRichText(
                                                     formData.content ||
-                                                    `<p className="italic text-slate-400">Nội dung bài viết đang được soạn thảo...</p>`,
+                                                        `<p className="italic text-slate-400">Nội dung bài viết đang được soạn thảo...</p>`,
+                                                ),
                                             }}
                                         />
 

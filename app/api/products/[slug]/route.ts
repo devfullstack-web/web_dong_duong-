@@ -2,9 +2,10 @@ import { db } from "@/db";
 import { products } from "@/db/schemas";
 import { eq, isNull, and } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
-import { withAuth } from "@/middlewares/middleware";
+import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import type { LocalizedText, LocalizedArray } from "@/types/i18n";
+import { sanitizeLocalizedRichText, sanitizeRichText, sanitizeStringArray } from "@/utils/sanitize";
 
 // GET /api/products/[slug] - Get a single product by slug or ID (Public)
 export async function GET(
@@ -13,6 +14,9 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+    const session = await verifyAuth(request as any);
+    const canViewPrivate =
+      session && hasPermission(session.user, PERMISSIONS.PRODUCTS_VIEW);
 
     // Check if slug is a UUID to fetch by ID instead
     const isId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
@@ -20,6 +24,7 @@ export async function GET(
     const [product] = await db.select().from(products).where(
       and(
         isId ? eq(products.id, slug) : eq(products.slug, slug),
+        ...(canViewPrivate ? [] : [eq(products.status, 'active')]),
         isNull(products.deleted_at) // Exclude soft deleted
       )
     );
@@ -28,7 +33,19 @@ export async function GET(
       return apiError("Product not found", 404);
     }
 
-    return apiResponse(product);
+    return apiResponse({
+      ...product,
+      description: sanitizeRichText(product.description),
+      description_localized: sanitizeLocalizedRichText(product.description_localized),
+      features: sanitizeStringArray(product.features),
+      features_localized: product.features_localized
+        ? {
+            ...product.features_localized,
+            vi: sanitizeStringArray(product.features_localized.vi),
+            en: sanitizeStringArray(product.features_localized.en),
+          }
+        : product.features_localized,
+    });
   } catch (error) {
     return apiError("Internal Server Error", 500);
   }
@@ -41,10 +58,37 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const { slug: id } = await params;
     const body = await request.json();
 
-    // Prepare updates
-    const updates: Record<string, unknown> = { ...body };
-    if (updates.id) delete updates.id;
-    if (updates.created_at) delete updates.created_at;
+    const updates: Record<string, unknown> = {};
+    const allowedFields = [
+      'name',
+      'name_localized',
+      'slug',
+      'description',
+      'description_localized',
+      'price',
+      'sku',
+      'stock',
+      'category_id',
+      'status',
+      'image_url',
+      'is_featured',
+      'tech_specs',
+      'tech_specs_localized',
+      'features',
+      'features_localized',
+      'gallery',
+      'tech_summary',
+      'tech_summary_localized',
+      'catalog_url',
+      'warranty',
+      'origin',
+      'availability',
+      'delivery_info',
+    ];
+
+    for (const field of allowedFields) {
+      if (body[field] !== undefined) updates[field] = body[field];
+    }
     updates.updated_at = new Date();
 
     // Ensure price is string if provided
@@ -61,24 +105,46 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     }
 
     if (updates.description_localized) {
-      const descLocalized = updates.description_localized as LocalizedText;
+      const descLocalized = sanitizeLocalizedRichText(updates.description_localized as LocalizedText);
+      updates.description_localized = descLocalized;
       if (descLocalized.vi) {
         updates.description = descLocalized.vi;
       }
     }
 
+    if (updates.description !== undefined) {
+      updates.description = sanitizeRichText(updates.description);
+    }
+
     if (updates.tech_summary_localized) {
       const techSummaryLocalized = updates.tech_summary_localized as LocalizedText;
       if (techSummaryLocalized.vi) {
-        updates.tech_summary = techSummaryLocalized.vi;
+        updates.tech_summary = sanitizeRichText(techSummaryLocalized.vi);
       }
+    }
+
+    if (updates.tech_summary !== undefined) {
+      updates.tech_summary = sanitizeRichText(updates.tech_summary);
     }
 
     if (updates.features_localized) {
       const featuresLocalized = updates.features_localized as LocalizedArray;
+      updates.features_localized = {
+        ...featuresLocalized,
+        vi: sanitizeStringArray(featuresLocalized.vi),
+        en: sanitizeStringArray(featuresLocalized.en),
+      };
       if (featuresLocalized.vi) {
-        updates.features = featuresLocalized.vi;
+        updates.features = sanitizeStringArray(featuresLocalized.vi);
       }
+    }
+
+    if (updates.features !== undefined) {
+      updates.features = sanitizeStringArray(updates.features);
+    }
+
+    if (updates.status !== undefined && !['active', 'inactive'].includes(updates.status as string)) {
+      return apiError("Invalid status", 400);
     }
 
     if (updates.tech_specs_localized) {

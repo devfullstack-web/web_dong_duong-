@@ -3,9 +3,10 @@ import { projects, categories } from '@/db/schemas';
 import { eq, desc, sql, and, or, ilike, gte, lte, isNull } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
-import { withAuth, withHybridAuth, hasPermission, isAdmin } from '@/middlewares/middleware';
+import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { PAGINATION } from '@/constants/app';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 // GET /api/projects - List projects with pagination (Public/Protected Hybrid)
 export const GET = withHybridAuth(
@@ -22,7 +23,7 @@ export const GET = withHybridAuth(
             // Authorization protection
             const isAuthorized =
                 session &&
-                (hasPermission(session.user, PERMISSIONS.PROJECTS_VIEW) || isAdmin(session.user));
+                hasPermission(session.user, PERMISSIONS.PROJECTS_VIEW);
             if (!isAuthorized) {
                 includeDeleted = false;
             }
@@ -135,7 +136,7 @@ export const POST = withAuth(
                 .values({
                     name,
                     slug,
-                    description,
+                    description: sanitizeRichText(description),
                     client_name: client_name || null,
                     start_date: start_date ? new Date(start_date) : null,
                     end_date: end_date ? new Date(end_date) : null,

@@ -25,6 +25,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 interface ProjectDetailClientProps {
     project: any;
@@ -186,9 +187,10 @@ export default function ProjectDetailClient({
                                 <div
                                     className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-primary hover:prose-a:text-brand-secondary prose-img:rounded-none"
                                     dangerouslySetInnerHTML={{
-                                        __html:
+                                        __html: sanitizeRichText(
                                             project.description ||
-                                            '<p>Nội dung đang được cập nhật...</p>',
+                                                '<p>Nội dung đang được cập nhật...</p>',
+                                        ),
                                     }}
                                 />
 

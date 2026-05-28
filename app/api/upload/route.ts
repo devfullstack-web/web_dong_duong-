@@ -5,6 +5,7 @@ import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { UPLOAD } from '@/constants/app';
+import { createSafeFilename, validateUploadedFile } from '@/utils/file-upload';
 
 interface UploadedFile {
     filename: string;
@@ -109,24 +110,14 @@ export const POST = withAuth(
                 return apiError('No file uploaded', 400);
             }
 
-            // Validate file type
-            const isImage = file.type.startsWith('image/');
-            const isDoc = (UPLOAD.ALLOWED_DOC_TYPES as readonly string[]).includes(file.type);
-
-            if (!isImage && !isDoc) {
-                return apiError(
-                    'Định dạng file không hỗ trợ. Chỉ chấp nhận ảnh (JPG, PNG, WebP, GIF) và tài liệu (PDF, DOC, DOCX)',
-                    400,
-                );
-            }
-
-            // Validate file size
-            if (file.size > UPLOAD.MAX_FILE_SIZE) {
-                return apiError(`File size exceeds ${UPLOAD.MAX_FILE_SIZE_MB}MB limit`, 400);
-            }
+            const validation = await validateUploadedFile(file, {
+                allowedKinds: ['image', 'document'],
+                maxSize: UPLOAD.MAX_FILE_SIZE,
+            });
+            if (!validation.ok) return apiError(validation.error, 400);
 
             // Determine target directory with date-based organization
-            const category = isDoc ? 'cvs' : 'images';
+            const category = validation.kind === 'document' ? 'documents' : 'images';
             const now = new Date();
             const year = now.getFullYear().toString();
             const month = String(now.getMonth() + 1).padStart(2, '0'); // 01-12
@@ -143,10 +134,7 @@ export const POST = withAuth(
             await mkdir(uploadsDir, { recursive: true });
 
             // Generate unique filename
-            const timestamp = Date.now();
-            const randomSuffix = Math.random().toString(36).substring(2, 8);
-            const extension = file.name.split('.').pop() || (isImage ? 'jpg' : 'pdf');
-            const filename = `${timestamp}-${randomSuffix}.${extension}`;
+            const filename = createSafeFilename(validation.extension);
             const filepath = path.join(uploadsDir, filename);
 
             // Write file to disk
@@ -158,14 +146,10 @@ export const POST = withAuth(
             const publicUrl = `/uploads/${category}/${year}/${month}/${day}/${filename}`;
 
             return apiResponse({ url: publicUrl, filename }, { status: 201 });
-        } catch (error: any) {
+        } catch (error) {
             console.error('--- UPLOAD DEBUG START ---');
             console.error('Error uploading file:', error);
-            console.error('Error message:', error.message);
-            console.error('Error code:', error.code);
             console.error('Current working directory:', process.cwd());
-            // @ts-ignore - uploadsDir might be defined depending on where it fails
-            console.error('Target directory:', typeof uploadsDir !== 'undefined' ? uploadsDir : 'N/A');
             console.error('--- UPLOAD DEBUG END ---');
             return apiError('Failed to upload file. Check server logs for details.', 500);
         }
@@ -184,15 +168,26 @@ export const DELETE = withAuth(
                 return apiError('Filename is required', 400);
             }
 
-            // Prevent path traversal attacks
-            const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-            // Normalize filename back to OS-specific path if it contains forward slashes
-            const safeFilename = filename.split('/').join(path.sep);
-            const filepath = path.join(uploadsDir, safeFilename);
+            const uploadsDir = path.resolve(process.cwd(), 'public', 'uploads');
+            const filepath = path.resolve(uploadsDir, filename.split('/').join(path.sep));
+            const relativePath = path.relative(uploadsDir, filepath);
 
-            // Security check: Ensure the resolved path is inside the uploads directory
-            if (!filepath.startsWith(uploadsDir)) {
+            if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
                 return apiError('Invalid filename', 400);
+            }
+
+            const allowedExtensions = new Set([
+                '.jpg',
+                '.jpeg',
+                '.png',
+                '.webp',
+                '.gif',
+                '.pdf',
+                '.doc',
+                '.docx',
+            ]);
+            if (!allowedExtensions.has(path.extname(filepath).toLowerCase())) {
+                return apiError('Invalid file type', 400);
             }
 
             const { unlink } = await import('fs/promises');

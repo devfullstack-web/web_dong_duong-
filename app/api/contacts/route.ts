@@ -5,13 +5,13 @@ import { sendThankYouEmail } from '@/services/mail';
 import { desc, ilike, or, gte, lte, and, sql } from 'drizzle-orm';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
 import { withAuth } from '@/middlewares/middleware';
-import { NextRequest } from 'next/server';
 import { PERMISSIONS } from '@/constants/rbac';
 import { PORTAL_ROUTES } from '@/constants/routes';
 import { PAGINATION } from '@/constants/app';
-import { validateBody, sanitizeHtml } from '@/middlewares/middleware';
+import { validateBody } from '@/middlewares/middleware';
 import { contactSchema } from '@/validations/contact.schema';
 import { checkRateLimit } from '@/utils/rate-limiter';
+import { sanitizePlainText } from '@/utils/sanitize';
 
 export async function POST(request: Request) {
     try {
@@ -35,8 +35,10 @@ export async function POST(request: Request) {
         // Sanitize message to prevent XSS
         const sanitizedData = {
             ...dataOrError,
-            message: sanitizeHtml(dataOrError.message),
-            subject: dataOrError.subject ? sanitizeHtml(dataOrError.subject) : null,
+            name: sanitizePlainText(dataOrError.name, 255),
+            address: dataOrError.address ? sanitizePlainText(dataOrError.address, 500) : null,
+            message: sanitizePlainText(dataOrError.message, 5000),
+            subject: dataOrError.subject ? sanitizePlainText(dataOrError.subject, 255) : null,
         };
 
         const [newContact] = await db

@@ -4,6 +4,7 @@ import { apiResponse, apiError } from '@/utils/api-response';
 import { eq } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
+import { sanitizePlainText } from '@/utils/sanitize';
 
 // PATCH /api/portal/comments/[id] - Update comment (Approve/Reply)
 export const PATCH = withAuth(
@@ -20,11 +21,11 @@ export const PATCH = withAuth(
             }
 
             if (reply_content !== undefined) {
-                updates.reply_content = reply_content;
+                updates.reply_content = sanitizePlainText(reply_content, 2000);
                 updates.replied_at = new Date();
                 updates.replied_by_id = session.user.id;
                 // Automatically approve if replying? Usually yes.
-                if (reply_content.trim() !== '') {
+                if (updates.reply_content.trim() !== '') {
                     updates.is_approved = true;
                 }
             }

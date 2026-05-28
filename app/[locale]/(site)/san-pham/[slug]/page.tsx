@@ -7,6 +7,7 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { stripHtml } from '@/utils/strip-html';
 import { COMPANY_INFO } from '@/constants/site-info';
 import ProductDetailClient from './_components/ProductDetailClient';
+import { sanitizeLocalizedRichText, sanitizeRichText, sanitizeStringArray } from '@/utils/sanitize';
 
 type PageProps = {
     params: Promise<{ slug: string; locale: string }>;
@@ -45,9 +46,30 @@ const getProduct = cache(async (slug: string) => {
         })
         .from(products)
         .leftJoin(categories, eq(products.category_id, categories.id))
-        .where(and(eq(products.slug, slug), isNull(products.deleted_at)));
+        .where(
+            and(
+                eq(products.slug, slug),
+                eq(products.status, 'active'),
+                eq(categories.is_visible, true),
+                isNull(products.deleted_at),
+            ),
+        );
 
-    return product || null;
+    return product
+        ? {
+              ...product,
+              description: sanitizeRichText(product.description),
+              description_localized: sanitizeLocalizedRichText(product.description_localized),
+              features: sanitizeStringArray(product.features),
+              features_localized: product.features_localized
+                  ? {
+                        ...product.features_localized,
+                        vi: sanitizeStringArray(product.features_localized.vi),
+                        en: sanitizeStringArray(product.features_localized.en),
+                    }
+                  : product.features_localized,
+          }
+        : null;
 });
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

@@ -2,11 +2,21 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { roles, permissions, user_roles, modules } from '@/db/schemas';
-import { eq, inArray } from 'drizzle-orm';
+import { roles, permissions, user_roles, modules, users } from '@/db/schemas';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { AUTH } from '@/constants/app';
 
-const secretKey = process.env.JWT_SECRET || 'secret';
+function getJwtSecret(): string {
+    const secret = process.env.JWT_SECRET;
+
+    if (process.env.NODE_ENV === 'production' && (!secret || secret.length < 32)) {
+        throw new Error('JWT_SECRET must be set to at least 32 characters in production');
+    }
+
+    return secret || 'dev-only-change-me-minimum-32-characters';
+}
+
+const secretKey = getJwtSecret();
 const key = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: any, expireTime: string = AUTH.JWT_EXPIRY) {
@@ -29,6 +39,28 @@ export async function decrypt(input: string): Promise<any> {
 }
 
 export async function generateTokens(user: any) {
+    const [currentUser] = await db
+        .select({
+            id: users.id,
+            username: users.username,
+            full_name: users.full_name,
+            is_super: users.is_super,
+        })
+        .from(users)
+        .where(
+            and(
+                eq(users.id, user.id),
+                eq(users.is_active, true),
+                eq(users.is_locked, false),
+                isNull(users.deleted_at),
+            ),
+        )
+        .limit(1);
+
+    if (!currentUser) {
+        throw new Error('USER_INACTIVE_OR_LOCKED');
+    }
+
     const userRoles = await db
         .select({
             id: roles.id,
@@ -42,7 +74,7 @@ export async function generateTokens(user: any) {
 
     const roleIds = userRoles.map((r) => r.id);
     // is_super if EITHER user.is_super flag is true OR any role has is_super true
-    const isSuperUser = user.is_super || userRoles.some((r) => r.is_super);
+    const isSuperUser = currentUser.is_super || userRoles.some((r) => r.is_super);
 
     let userPermissions: string[] = [];
     if (roleIds.length > 0) {
@@ -69,7 +101,7 @@ export async function generateTokens(user: any) {
     }
 
     const sessionPayload = {
-        ...user,
+        ...currentUser,
         is_super: isSuperUser,
         roles: userRoles.map((r) => r.code),
         permissions: userPermissions,
@@ -82,13 +114,14 @@ export async function generateTokens(user: any) {
 
 export async function setAuthCookies(accessToken: string, refreshToken: string) {
     const cookieStore = await cookies();
+    const secure = process.env.NODE_ENV === 'production';
 
     cookieStore.set('accessToken', accessToken, {
-        httpOnly: false,
+        httpOnly: true,
         maxAge: 15 * 60,
         path: '/',
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure,
     });
 
     cookieStore.set('refreshToken', refreshToken, {
@@ -96,28 +129,58 @@ export async function setAuthCookies(accessToken: string, refreshToken: string) 
         maxAge: 7 * 24 * 60 * 60,
         path: '/',
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure,
     });
 }
 
 export async function login(user: any) {
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const session = await encrypt({ user, expires });
+    const secure = process.env.NODE_ENV === 'production';
 
-    (await cookies()).set('session', session, { expires, httpOnly: true });
+    (await cookies()).set('session', session, {
+        expires,
+        httpOnly: true,
+        sameSite: 'lax',
+        secure,
+        path: '/',
+    });
 }
 
 export async function logout() {
     const cookieStore = await cookies();
-    cookieStore.set('session', '', { expires: new Date(0) });
-    cookieStore.set('accessToken', '', { expires: new Date(0) });
-    cookieStore.set('refreshToken', '', { expires: new Date(0) });
+    const options = {
+        expires: new Date(0),
+        path: '/',
+        httpOnly: true,
+        sameSite: 'lax' as const,
+        secure: process.env.NODE_ENV === 'production',
+    };
+    cookieStore.set('session', '', options);
+    cookieStore.set('accessToken', '', options);
+    cookieStore.set('refreshToken', '', options);
 }
 
 export async function getSession() {
     const session = (await cookies()).get('session')?.value;
     if (!session) return null;
-    return await decrypt(session);
+    const sessionData = await decrypt(session);
+    if (!sessionData?.user?.id) return null;
+
+    const [activeUser] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(
+            and(
+                eq(users.id, sessionData.user.id),
+                eq(users.is_active, true),
+                eq(users.is_locked, false),
+                isNull(users.deleted_at),
+            ),
+        )
+        .limit(1);
+
+    return activeUser ? sessionData : null;
 }
 
 export async function updateSession(request: NextRequest) {
@@ -125,6 +188,7 @@ export async function updateSession(request: NextRequest) {
     if (!session) return;
 
     const parsed = await decrypt(session);
+    if (!parsed) return;
     parsed.expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const res = NextResponse.next();
     res.cookies.set({
@@ -132,6 +196,9 @@ export async function updateSession(request: NextRequest) {
         value: await encrypt(parsed),
         httpOnly: true,
         expires: parsed.expires,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
     });
     return res;
 }

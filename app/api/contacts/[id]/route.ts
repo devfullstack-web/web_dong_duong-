@@ -6,6 +6,8 @@ import { withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { NextRequest } from "next/server";
 
+const CONTACT_STATUSES = new Set(["new", "read", "replied", "archived", "pending", "processed", "spam"]);
+
 // PATCH /api/contacts/[id] - Update a contact submission
 export const PATCH = withAuth(async (request: NextRequest, session, { params }) => {
   try {
@@ -13,8 +15,8 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
     const body = await request.json();
     const { status } = body;
 
-    if (!status) {
-      return apiError("Status is required", 400);
+    if (!status || !CONTACT_STATUSES.has(status)) {
+      return apiError("Status is invalid", 400);
     }
 
     const [updatedContact] = await db

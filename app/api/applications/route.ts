@@ -3,7 +3,7 @@ import { jobApplications, jobPostings } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, ilike, or, and, sql, eq } from 'drizzle-orm';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
-import { sanitizeHtml, withAuth } from '@/middlewares/middleware';
+import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { PAGINATION } from '@/constants/app';
 import { PORTAL_ROUTES } from '@/constants/routes';
@@ -11,17 +11,41 @@ import { jobApplicationSchema } from '@/validations/application.schema';
 import { sendApplicationConfirmationEmail } from '@/services/mail';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import { UPLOAD } from '@/constants/app';
+import { checkRateLimit } from '@/utils/rate-limiter';
+import { createSafeFilename, validateUploadedFile } from '@/utils/file-upload';
+import { sanitizePlainText } from '@/utils/sanitize';
 
 // POST /api/applications - Submit a new job application (Public)
 export async function POST(request: Request) {
     try {
         const formData = await request.formData();
+        const ip =
+            request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+            request.headers.get('x-real-ip') ||
+            'unknown';
+        const rawEmail = String(formData.get('email') || '').trim().toLowerCase();
+        const rateLimit = checkRateLimit(
+            `application:${ip}:${rawEmail || 'anonymous'}`,
+            5,
+            60 * 60 * 1000,
+        );
+
+        if (rateLimit.isLimited) {
+            return apiError('Bạn đã gửi hồ sơ quá thường xuyên. Vui lòng thử lại sau.', 429);
+        }
 
         // Extract file
         const file = formData.get('file') as File | null;
         if (!file) {
             return apiError('Vui lòng đính kèm hồ sơ CV', 400);
         }
+
+        const fileValidation = await validateUploadedFile(file, {
+            allowedKinds: ['document'],
+            maxSize: UPLOAD.MAX_FILE_SIZE,
+        });
+        if (!fileValidation.ok) return apiError(fileValidation.error, 400);
 
         // Extract data
         const rawData = {
@@ -53,26 +77,23 @@ export async function POST(request: Request) {
 
         // 1. Handle CV File Saving
         const year = new Date().getFullYear().toString();
-        const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'cvs', year);
+        const uploadsDir = path.join(process.cwd(), 'storage', 'uploads', 'cvs', year);
         await mkdir(uploadsDir, { recursive: true });
 
-        const timestamp = Date.now();
-        const randomSuffix = Math.random().toString(36).substring(2, 8);
-        const extension = file.name.split('.').pop() || 'pdf';
-        const filename = `${timestamp}-${randomSuffix}.${extension}`;
+        const filename = createSafeFilename(fileValidation.extension);
         const filepath = path.join(uploadsDir, filename);
 
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
         await writeFile(filepath, buffer);
 
-        const cvUrl = `/uploads/cvs/${year}/${filename}`;
+        const cvUrl = `cvs/${year}/${filename}`;
 
         // 2. Save Application to DB
         const sanitizedData = {
             ...data,
             cv_url: cvUrl,
-            cover_letter: data.cover_letter ? sanitizeHtml(data.cover_letter) : null,
+            cover_letter: data.cover_letter ? sanitizePlainText(data.cover_letter, 5000) : null,
             status: 'pending',
         };
 
@@ -101,7 +122,15 @@ export async function POST(request: Request) {
             console.error('Error triggering post-application process:', error);
         }
 
-        return apiResponse({ application: newApplication }, { status: 201 });
+        return apiResponse(
+            {
+                application: {
+                    ...newApplication,
+                    cv_url: `/api/applications/${newApplication.id}/cv`,
+                },
+            },
+            { status: 201 },
+        );
     } catch (error) {
         console.error('Error saving job application:', error);
         return apiError('Internal Server Error', 500);
@@ -156,6 +185,7 @@ export const GET = withAuth(
                     full_name: jobApplications.full_name,
                     email: jobApplications.email,
                     phone: jobApplications.phone,
+                    cv_url: jobApplications.cv_url,
                     status: jobApplications.status,
                     created_at: jobApplications.created_at,
                 })
@@ -166,13 +196,18 @@ export const GET = withAuth(
                 .offset(offset);
 
             if (conditions.length > 0) {
-                // @ts-ignore
+                // @ts-expect-error - Drizzle dynamic conditions
                 query = query.where(and(...conditions));
             }
 
             const applications = await query;
 
-            return apiResponse(applications, {
+            const safeApplications = applications.map((application) => ({
+                ...application,
+                cv_url: `/api/applications/${application.id}/cv`,
+            }));
+
+            return apiResponse(safeApplications, {
                 meta: createPaginationMeta(page, limit, Number(total)),
             });
         } catch (error) {
@@ -180,5 +215,5 @@ export const GET = withAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.RECRUITMENT_VIEW] },
+    { requiredPermissions: [PERMISSIONS.APPLICATIONS_VIEW] },
 );

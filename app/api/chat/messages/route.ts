@@ -2,9 +2,11 @@ import { NextRequest } from 'next/server';
 import { db } from '@/db';
 import { chatMessages, chatSessions } from '@/db/schemas';
 import { eq, asc, sql, type SQL } from 'drizzle-orm';
-import { withHybridAuth, hasPermission } from '@/middlewares/middleware';
+import { withHybridAuth, hasPermission, type UserSession } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
+import { checkRateLimit } from '@/utils/rate-limiter';
+import { sanitizePlainText } from '@/utils/sanitize';
 
 const WELCOME_MESSAGE = `Xin chào! Cảm ơn bạn đã liên hệ với Sài Gòn Valve.
 
@@ -17,24 +19,40 @@ const WELCOME_MESSAGE = `Xin chào! Cảm ơn bạn đã liên hệ với Sài G
 
 Đội ngũ tư vấn sẽ phản hồi bạn trong thời gian sớm nhất. Xin cảm ơn!`;
 
+function canAccessChat(session: UserSession | null): boolean {
+    return (
+        !!session?.user &&
+        (hasPermission(session.user, PERMISSIONS.CHAT_VIEW) ||
+            hasPermission(session.user, PERMISSIONS.CHAT_MANAGEMENT_VIEW))
+    );
+}
+
+async function guestOwnsSession(sessionId: string, guestId: string): Promise<boolean> {
+    if (!guestId) return false;
+
+    const session = await db.query.chatSessions.findFirst({
+        where: eq(chatSessions.id, sessionId),
+        columns: {
+            id: true,
+            guest_id: true,
+            is_active: true,
+        },
+    });
+
+    return !!session && session.is_active && session.guest_id === guestId;
+}
+
 export const GET = withHybridAuth(async (req: NextRequest, session) => {
-    const referer = req.headers.get('referer') || '';
-    const isPortalRequest = referer.includes('/portal');
-
-    if (isPortalRequest && session?.user) {
-        const canViewChat =
-            hasPermission(session.user, PERMISSIONS.CHAT_VIEW) ||
-            hasPermission(session.user, PERMISSIONS.CHAT_MANAGEMENT_VIEW);
-        if (!canViewChat) {
-            return apiError('Forbidden - Required chat permission', 403);
-        }
-    }
-
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get('sessionId');
+    const guestId = sanitizePlainText(searchParams.get('guestId'), 255);
 
     if (!sessionId) {
         return apiError('sessionId is required', 400);
+    }
+
+    if (!canAccessChat(session) && !(await guestOwnsSession(sessionId, guestId))) {
+        return apiError('Forbidden - Invalid chat session owner', 403);
     }
 
     const messages = await db.query.chatMessages.findMany({
@@ -47,14 +65,14 @@ export const GET = withHybridAuth(async (req: NextRequest, session) => {
 
 export const POST = withHybridAuth(async (req: NextRequest, session) => {
     try {
-        const { sessionId, content, isFromWidget, replyToId } = await req.json();
+        const { sessionId, content, isFromWidget, replyToId, guestId } = await req.json();
 
         if (!sessionId || !content) {
             return apiError('sessionId and content are required', 400);
         }
 
         // Sanitize content
-        const sanitizedContent = content.trim().slice(0, 5000);
+        const sanitizedContent = sanitizePlainText(content, 5000);
         if (!sanitizedContent) {
             return apiError('Content cannot be empty', 400);
         }
@@ -62,21 +80,25 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
         let senderType: 'guest' | 'admin' = 'guest';
         let senderId: string | null = null;
 
-        if (!isFromWidget && session?.user) {
-            const referer = req.headers.get('referer') || '';
-            const isPortalRequest = referer.includes('/portal');
-
-            if (isPortalRequest) {
-                const canViewChat =
-                    hasPermission(session.user, PERMISSIONS.CHAT_VIEW) ||
-                    hasPermission(session.user, PERMISSIONS.CHAT_MANAGEMENT_VIEW);
-                if (!canViewChat) {
-                    return apiError('Forbidden - Required chat permission', 403);
-                }
-            }
-
+        if (!isFromWidget && session && canAccessChat(session)) {
             senderType = 'admin';
             senderId = session.user.id;
+        } else {
+            const sanitizedGuestId = sanitizePlainText(guestId, 255);
+            if (!(await guestOwnsSession(sessionId, sanitizedGuestId))) {
+                return apiError('Forbidden - Invalid chat session owner', 403);
+            }
+
+            const ip =
+                req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+                req.headers.get('x-real-ip') ||
+                'unknown';
+            const rateLimit = checkRateLimit(
+                `chat-message:${ip}:${sanitizedGuestId}`,
+                30,
+                60 * 1000,
+            );
+            if (rateLimit.isLimited) return apiError('Too many chat messages', 429);
         }
 
         // Save message

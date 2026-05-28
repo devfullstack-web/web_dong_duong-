@@ -13,6 +13,7 @@ import { sql } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth } from '@/middlewares/middleware';
 import { NextRequest } from 'next/server';
+import { PERMISSIONS } from '@/constants/rbac';
 
 // GET /api/stats - Dashboard statistics
 export const GET = withAuth(async (request: NextRequest) => {
@@ -269,4 +270,4 @@ export const GET = withAuth(async (request: NextRequest) => {
         console.error('Error fetching stats:', error);
         return apiError('Internal Server Error', 500);
     }
-}, {});
+}, { requiredPermissions: [PERMISSIONS.DASHBOARD_VIEW] });

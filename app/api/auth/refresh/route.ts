@@ -1,20 +1,18 @@
-import { generateTokens, decrypt } from "@/services/auth";
+import { generateTokens, decrypt, logout } from "@/services/auth";
 import { apiResponse, apiError } from "@/utils/api-response";
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
-    const body = await request.json().catch(() => ({}));
-    let refreshToken = body.refreshToken;
-
-    if (!refreshToken) {
-      const { cookies } = await import("next/headers");
-      refreshToken = (await cookies()).get("refreshToken")?.value;
-    }
+    const { cookies } = await import("next/headers");
+    const refreshToken = (await cookies()).get("refreshToken")?.value;
 
     if (!refreshToken) return apiError("Refresh token missing", 400);
 
     const payload = await decrypt(refreshToken);
-    if (!payload || !payload.user) return apiError("Invalid refresh token", 401);
+    if (!payload || !payload.user) {
+      await logout();
+      return apiError("Invalid refresh token", 401);
+    }
 
     const tokens = await generateTokens(payload.user);
     
@@ -24,9 +22,13 @@ export async function POST(request: Request) {
     // Cập nhật session cookie để đồng bộ is_super, roles, permissions mới nhất
     await login(tokens.sessionPayload);
 
-    return apiResponse({ user: payload.user });
+    return apiResponse({ user: tokens.sessionPayload });
   } catch (error) {
     console.error("Refresh Token Error:", error);
+    await logout();
+    if (error instanceof Error && error.message === 'USER_INACTIVE_OR_LOCKED') {
+      return apiError("Invalid refresh token", 401);
+    }
     return apiError("Internal server error", 500);
   }
 }

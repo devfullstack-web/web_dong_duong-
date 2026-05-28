@@ -7,6 +7,7 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { stripHtml } from '@/utils/strip-html';
 import { COMPANY_INFO } from '@/constants/site-info';
 import JobDetailClient from './_components/JobDetailClient';
+import { sanitizeRichText } from '@/utils/sanitize';
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -16,9 +17,22 @@ const getJob = cache(async (slug: string) => {
     const [job] = await db
         .select()
         .from(jobPostings)
-        .where(and(eq(jobPostings.slug, slug), isNull(jobPostings.deleted_at)));
+        .where(
+            and(
+                eq(jobPostings.slug, slug),
+                eq(jobPostings.status, 'open'),
+                isNull(jobPostings.deleted_at),
+            ),
+        );
 
-    return job || null;
+    return job
+        ? {
+              ...job,
+              description: sanitizeRichText(job.description),
+              requirements: job.requirements ? sanitizeRichText(job.requirements) : null,
+              benefits: job.benefits ? sanitizeRichText(job.benefits) : null,
+          }
+        : null;
 });
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
