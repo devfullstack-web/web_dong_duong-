@@ -29,6 +29,10 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+    DropdownMenuPortal,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,6 +50,23 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getLocalizedValue } from '@/types/i18n';
+
+interface CategoryNode {
+    id: string;
+    name: string;
+    children?: CategoryNode[];
+}
+
+function flattenCategories(nodes: CategoryNode[], level = 0): { id: string; name: string; level: number }[] {
+    const result: { id: string; name: string; level: number }[] = [];
+    for (const node of nodes) {
+        result.push({ id: node.id, name: node.name, level });
+        if (node.children && node.children.length > 0) {
+            result.push(...flattenCategories(node.children, level + 1));
+        }
+    }
+    return result;
+}
 
 const PRODUCT_STATUS_FILTERS: { value: Product['status']; label: string }[] = [
     { value: 'active', label: 'Đang bán' },
@@ -109,7 +130,7 @@ export default function ProductsManagementPage() {
     const [selectedStatus, setSelectedStatus] = useState<Product['status'] | ''>('');
 
     // Fetch product categories
-    const { data: categoriesData } = useQuery<{ data: { id: string; name: string }[] }>({
+    const { data: categoriesData } = useQuery<{ data: CategoryNode[] }>({
         queryKey: ['product-categories'],
         queryFn: async () => {
             const res = await $api.get(API_ROUTES.CATEGORIES, { params: { type: 'product' } });
@@ -117,6 +138,7 @@ export default function ProductsManagementPage() {
         },
     });
     const categoryList = categoriesData?.data || [];
+    const flatCategoryList = flattenCategories(categoryList);
 
     // Reset to page 1 when filters change
     useEffect(() => {
@@ -315,13 +337,13 @@ export default function ProductsManagementPage() {
                                 >
                                     <span className="truncate">
                                         {selectedCategoryId
-                                            ? categoryList.find((c) => c.id === selectedCategoryId)?.name
+                                            ? flatCategoryList.find((c) => c.id === selectedCategoryId)?.name
                                             : 'Lọc danh mục'}
                                     </span>
                                     <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-48 rounded-none border border-slate-100 p-1">
+                            <DropdownMenuContent align="start" className="w-48 rounded-none border border-slate-100 p-1 max-h-80 overflow-y-auto bg-white">
                                 <DropdownMenuItem
                                     className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
                                     onClick={() => setSelectedCategoryId('')}
@@ -329,18 +351,63 @@ export default function ProductsManagementPage() {
                                     Tất cả danh mục
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator className="bg-slate-50" />
-                                {categoryList.map((cat) => (
-                                    <DropdownMenuItem
-                                        key={cat.id}
-                                        className={cn(
-                                            'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
-                                            selectedCategoryId === cat.id && 'text-brand-primary bg-brand-primary/5',
-                                        )}
-                                        onClick={() => setSelectedCategoryId(cat.id)}
-                                    >
-                                        {cat.name}
-                                    </DropdownMenuItem>
-                                ))}
+                                {categoryList.map((cat) => {
+                                    const hasChildren = cat.children && cat.children.length > 0;
+
+                                    if (hasChildren) {
+                                        return (
+                                            <DropdownMenuSub key={cat.id}>
+                                                <DropdownMenuSubTrigger
+                                                    className={cn(
+                                                        'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer flex justify-between items-center',
+                                                        selectedCategoryId === cat.id && 'text-brand-primary bg-brand-primary/5',
+                                                    )}
+                                                >
+                                                    {cat.name}
+                                                </DropdownMenuSubTrigger>
+                                                <DropdownMenuPortal>
+                                                    <DropdownMenuSubContent className="rounded-none border border-slate-100 p-1 bg-white min-w-44 max-h-80 overflow-y-auto">
+                                                        <DropdownMenuItem
+                                                            className={cn(
+                                                                'text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer text-slate-500 hover:text-slate-900',
+                                                                selectedCategoryId === cat.id && 'text-brand-primary bg-brand-primary/5',
+                                                            )}
+                                                            onClick={() => setSelectedCategoryId(cat.id)}
+                                                        >
+                                                            Tất cả {cat.name}
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator className="bg-slate-50" />
+                                                        {cat.children.map((subCat) => (
+                                                            <DropdownMenuItem
+                                                                key={subCat.id}
+                                                                className={cn(
+                                                                    'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
+                                                                    selectedCategoryId === subCat.id && 'text-brand-primary bg-brand-primary/5',
+                                                                )}
+                                                                onClick={() => setSelectedCategoryId(subCat.id)}
+                                                            >
+                                                                {subCat.name}
+                                                            </DropdownMenuItem>
+                                                        ))}
+                                                    </DropdownMenuSubContent>
+                                                </DropdownMenuPortal>
+                                            </DropdownMenuSub>
+                                        );
+                                    }
+
+                                    return (
+                                        <DropdownMenuItem
+                                            key={cat.id}
+                                            className={cn(
+                                                'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
+                                                selectedCategoryId === cat.id && 'text-brand-primary bg-brand-primary/5',
+                                            )}
+                                            onClick={() => setSelectedCategoryId(cat.id)}
+                                        >
+                                            {cat.name}
+                                        </DropdownMenuItem>
+                                    );
+                                })}
                             </DropdownMenuContent>
                         </DropdownMenu>
 
