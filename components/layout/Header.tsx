@@ -187,11 +187,11 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           
           {/* Logo */}
-          <Link href={SITE_ROUTES.HOME} className="relative h-10 lg:h-10.5 xl:h-12 w-32 lg:w-34 xl:w-44 shrink-0 group flex items-center">
+          <Link href={SITE_ROUTES.HOME} className="relative h-11 lg:h-12 xl:h-14 w-36 lg:w-40 xl:w-48 shrink-0 group flex items-center">
             <img
               src="/images/logo/logo.png"
               alt={t('logoAlt')}
-              className="object-contain group-hover:scale-105 transition-transform h-8 lg:h-8.5 xl:h-12 w-auto"
+              className="object-contain group-hover:scale-105 transition-transform h-9 lg:h-10 xl:h-12.5 w-auto"
             />
           </Link>
 
@@ -206,9 +206,9 @@ export default function Header() {
                                                 <>
                                                     <NavigationMenuTrigger
                                                         className={cn(
-                                                            'h-9 xl:h-10 px-2 xl:px-4 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest bg-transparent hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[state=open]:bg-transparent! data-[active]:bg-transparent! hover:text-brand-primary active:bg-transparent data-[state=open]:text-brand-primary transition-colors relative after:absolute after:bottom-0 after:left-2 after:right-6 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
+                                                            'h-9 xl:h-10 px-2 xl:px-4 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest bg-transparent hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[state=open]:bg-transparent! data-[active]:bg-transparent! hover:text-brand-primary! active:bg-transparent data-[state=open]:text-brand-primary! transition-colors relative after:absolute after:bottom-0 after:left-2 after:right-6 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
                                                             pathname === link.href || (link.href === '#' && (link.submenu || link.featured)?.some(sub => pathname === sub.href))
-                                                                ? 'text-brand-primary after:scale-x-100'
+                                                                ? 'text-brand-primary! after:scale-x-100'
                                                                 : 'text-foreground after:scale-x-0 hover:after:scale-x-100',
                                                         )}
                                                     >
@@ -235,14 +235,14 @@ export default function Header() {
                                                 <NavigationMenuLink
                                                     asChild
                                                     active={pathname === link.href}
-                                                    className="bg-transparent! hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[active=true]:bg-transparent! data-[active=true]:text-brand-primary"
+                                                    className="bg-transparent! hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[active=true]:bg-transparent! data-[active=true]:text-brand-primary!"
                                                 >
                                                     <Link
                                                         href={link.href}
                                                         className={cn(
-                                                            'group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-1.5 xl:py-2 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest transition-colors hover:text-brand-primary focus:outline-none relative after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
+                                                            'group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-1.5 xl:py-2 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest transition-colors hover:text-brand-primary! focus:outline-none relative after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
                                                             pathname === link.href
-                                                                ? 'text-brand-primary after:scale-x-100'
+                                                                ? 'text-brand-primary! after:scale-x-100'
                                                                 : 'text-foreground after:scale-x-0 hover:after:scale-x-100',
                                                         )}
                                                     >
@@ -370,6 +370,7 @@ export default function Header() {
                             {NAV_LINKS.map((link) => {
                                 const hasSubmenu = "submenu" in link || "featured" in link;
                                 const isExpanded = !!expandedLinks[link.label];
+                                const isSubmenuActive = link.href === '#' && (link.submenu || link.featured)?.some(sub => pathname === sub.href);
                                 
                                 return (
                                     <div key={link.label} className="border-b border-slate-100/50 dark:border-white/5 pb-1.5 last:border-0 last:pb-0">
@@ -377,7 +378,12 @@ export default function Header() {
                                             {link.href === '#' ? (
                                                 <button
                                                     onClick={() => toggleExpand(link.label)}
-                                                    className="flex items-center justify-between w-full text-xs sm:text-sm font-bold uppercase tracking-wider text-left text-foreground hover:text-brand-primary transition-colors py-1.5"
+                                                    className={cn(
+                                                        "flex items-center justify-between w-full text-xs sm:text-sm font-bold uppercase tracking-wider text-left transition-colors py-1.5",
+                                                        isSubmenuActive
+                                                            ? "text-brand-primary!"
+                                                            : "text-foreground hover:text-brand-primary!"
+                                                    )}
                                                 >
                                                     <span>{link.label}</span>
                                                     <ChevronDown 
@@ -393,7 +399,12 @@ export default function Header() {
                                                     <Link 
                                                         href={link.href}
                                                         onClick={() => setMobileMenuOpen(false)}
-                                                        className="flex-1 text-xs sm:text-sm font-bold uppercase tracking-wider text-foreground hover:text-brand-primary transition-colors py-1.5"
+                                                        className={cn(
+                                                            "flex-1 text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors py-1.5",
+                                                            pathname === link.href
+                                                                ? "text-brand-primary!"
+                                                                : "text-foreground hover:text-brand-primary!"
+                                                        )}
                                                     >
                                                         {link.label}
                                                     </Link>
@@ -428,9 +439,20 @@ export default function Header() {
                                                     >
                                                         <div className="pl-4 mt-1 mb-1 py-0.5 grid grid-cols-1 gap-1.5 border-l border-brand-primary/20">
                                                             {(link.submenu || link.featured)?.map((item: any) => {
+                                                                const isSubActive = pathname === item.href;
                                                                 const subLinkContent = (
-                                                                    <span className="text-xs sm:text-xs font-semibold text-muted-foreground hover:text-brand-primary transition-colors flex items-center gap-1.5 py-0.5">
-                                                                        <span className="h-1 w-1 bg-brand-primary/40 rounded-full group-hover:bg-brand-primary" />
+                                                                    <span className={cn(
+                                                                        "text-xs sm:text-xs font-semibold transition-colors flex items-center gap-1.5 py-0.5",
+                                                                        isSubActive
+                                                                            ? "text-brand-primary!"
+                                                                            : "text-muted-foreground hover:text-brand-primary!"
+                                                                    )}>
+                                                                        <span className={cn(
+                                                                            "h-1 w-1 rounded-full transition-colors",
+                                                                            isSubActive 
+                                                                                ? "bg-brand-primary"
+                                                                                : "bg-brand-primary/40 group-hover:bg-brand-primary"
+                                                                        )} />
                                                                         {item.title}
                                                                     </span>
                                                                 );

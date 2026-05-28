@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
-import { LayoutGrid, List, ArrowRight, Shield, Info, ChevronDown } from 'lucide-react';
+import { LayoutGrid, List, ArrowRight, Shield, Info, ChevronDown, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
     Pagination,
@@ -58,6 +58,7 @@ export default function ProductArchive() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [expandedCategoryIds, setExpandedCategoryIds] = useState<string[]>([]);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [sortBy, setSortBy] = useState<'default' | 'name-asc' | 'name-desc'>('default');
 
     // Reset to page 1 when search or category changes
     useEffect(() => {
@@ -109,6 +110,25 @@ export default function ProductArchive() {
     const products = productsData?.data || [];
     const totalPages = productsData?.meta?.totalPages || 1;
     const total = productsData?.meta?.total || 0;
+
+    const sortedProducts = useMemo(() => {
+        const items = [...products];
+        if (sortBy === 'name-asc') {
+            return items.sort((a, b) => {
+                const nameA = getLocalizedValue(a.name_localized, locale) || a.name;
+                const nameB = getLocalizedValue(b.name_localized, locale) || b.name;
+                return nameA.localeCompare(nameB, locale);
+            });
+        }
+        if (sortBy === 'name-desc') {
+            return items.sort((a, b) => {
+                const nameA = getLocalizedValue(a.name_localized, locale) || a.name;
+                const nameB = getLocalizedValue(b.name_localized, locale) || b.name;
+                return nameB.localeCompare(nameA, locale);
+            });
+        }
+        return items;
+    }, [products, sortBy, locale]);
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -162,7 +182,34 @@ export default function ProductArchive() {
                     <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">
                         {/* Sidebar Filters */}
                         <aside className="lg:w-64 shrink-0">
-                            <div className="lg:sticky lg:top-32 space-y-6 lg:space-y-12">
+                            <div className="lg:sticky lg:top-32 space-y-6 lg:space-y-8">
+                                {/* Search Box */}
+                                <div className="space-y-3 pb-6 border-b border-slate-100">
+                                    <h4 className="text-xs font-black uppercase tracking-widest text-brand-secondary">
+                                        {locale === 'vi' ? 'Tìm kiếm sản phẩm' : 'Search Products'}
+                                    </h4>
+                                    <div className="relative group">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder={locale === 'vi' ? 'Nhập tên sản phẩm...' : 'Enter product name...'}
+                                            className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 focus:border-brand-primary focus:bg-white text-xs font-medium outline-none transition-all duration-300 rounded-none focus:ring-1 focus:ring-brand-primary"
+                                        />
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-primary transition-colors">
+                                            <Search size={14} />
+                                        </span>
+                                        {searchQuery && (
+                                            <button
+                                                onClick={() => setSearchQuery('')}
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
                                 <div className="space-y-4 lg:space-y-6">
                                     {/* Mobile Collapsible Category Selector Button */}
                                     <button
@@ -188,8 +235,16 @@ export default function ProductArchive() {
                                         "lg:block transition-all duration-300", 
                                         isMobileMenuOpen ? "block animate-fadeIn" : "hidden lg:block"
                                     )}>
-                                        <h4 className="hidden lg:flex items-center gap-3 text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4 mb-4">
-                                            {t('sidebar.categoryTitle')}
+                                        <h4 className="hidden lg:flex items-center justify-between text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4 mb-4">
+                                            <span>{t('sidebar.categoryTitle')}</span>
+                                            {selectedCategoryId && (
+                                                <button
+                                                    onClick={handleAllCategoriesClick}
+                                                    className="text-[9px] font-bold text-brand-primary lowercase hover:underline hover:cursor-pointer normal-case tracking-wide"
+                                                >
+                                                    {locale === 'vi' ? '[Bỏ lọc]' : '[Clear]'}
+                                                </button>
+                                            )}
                                         </h4>
                                         
                                         <div className="flex flex-col gap-1.5">
@@ -200,13 +255,14 @@ export default function ProductArchive() {
                                                     setIsMobileMenuOpen(false);
                                                 }}
                                                 className={cn(
-                                                    'w-full px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-none border-l-4',
+                                                    'w-full px-3 py-2 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between',
                                                     selectedCategoryId === null
-                                                        ? 'bg-brand-primary text-white border-brand-accent'
-                                                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-brand-primary border-transparent',
+                                                        ? 'text-brand-primary border-brand-primary bg-slate-50 font-black'
+                                                        : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
                                                 )}
                                             >
-                                                {t('sidebar.all')}
+                                                <span>{t('sidebar.all')}</span>
+                                                <span className="text-[9px] opacity-60 font-medium">({total})</span>
                                             </button>
                                             
                                             {categories
@@ -218,16 +274,17 @@ export default function ProductArchive() {
                                                         ) || [];
                                                     const hasChildren = visibleChildren.length > 0;
                                                     const isExpanded = expandedCategoryIds.includes(cat.id);
+                                                    const isCurrent = selectedCategoryId === cat.id;
 
                                                     return (
-                                                        <div key={cat.id} className="flex flex-col gap-1">
+                                                        <div key={cat.id} className="flex flex-col gap-0.5">
                                                             <button
                                                                 onClick={() => handleParentCategoryClick(cat)}
                                                                 className={cn(
-                                                                    'w-full px-4 py-3 text-left text-xs font-black uppercase tracking-widest transition-all hover:cursor-pointer rounded-none border-l-4 flex items-center justify-between gap-2',
-                                                                    selectedCategoryId === cat.id
-                                                                        ? 'bg-brand-primary text-white border-brand-accent'
-                                                                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-brand-primary border-transparent',
+                                                                    'w-full px-3 py-2 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between gap-2',
+                                                                    isCurrent
+                                                                        ? 'text-brand-primary border-brand-primary bg-slate-50 font-black'
+                                                                        : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
                                                                 )}
                                                             >
                                                                 <span>
@@ -238,17 +295,17 @@ export default function ProductArchive() {
                                                                 </span>
                                                                 {hasChildren && (
                                                                     <ChevronDown
-                                                                        size={14}
+                                                                        size={12}
                                                                         className={cn(
-                                                                            'shrink-0 transition-transform duration-200',
-                                                                            isExpanded && 'rotate-180',
+                                                                            'shrink-0 transition-transform duration-200 opacity-60',
+                                                                            isExpanded && 'rotate-180 opacity-100 text-brand-primary',
                                                                         )}
                                                                     />
                                                                 )}
                                                             </button>
                                                             
                                                             {hasChildren && isExpanded && (
-                                                                <div className="flex flex-col gap-1 pl-4 border-l border-slate-100 py-1">
+                                                                <div className="flex flex-col gap-0.5 pl-3 border-l border-slate-100/80 py-0.5 ml-3 my-0.5 animate-fadeIn">
                                                                     {visibleChildren.map((child) => (
                                                                         <button
                                                                             key={child.id}
@@ -257,10 +314,10 @@ export default function ProductArchive() {
                                                                                 setIsMobileMenuOpen(false);
                                                                             }}
                                                                             className={cn(
-                                                                                'w-full px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer rounded-none border-l-4',
+                                                                                'w-full px-3 py-1.5 text-left text-[9px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2',
                                                                                 selectedCategoryId === child.id
-                                                                                    ? 'bg-brand-secondary text-white border-brand-accent'
-                                                                                    : 'bg-slate-100/60 text-slate-600 hover:bg-slate-100 hover:text-brand-primary border-transparent',
+                                                                                    ? 'text-brand-secondary border-brand-secondary bg-slate-100/50 font-black'
+                                                                                    : 'text-slate-500 hover:text-brand-primary hover:bg-slate-50/30 border-transparent',
                                                                             )}
                                                                         >
                                                                             {getLocalizedValue(
@@ -290,7 +347,23 @@ export default function ProductArchive() {
                                         total: total,
                                     })}
                                 </div>
-                                <div className="flex items-center gap-6">
+                                <div className="flex items-center gap-4 md:gap-6">
+                                    {/* Sort Dropdown */}
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
+                                            {locale === 'vi' ? 'Sắp xếp:' : 'Sort by:'}
+                                        </span>
+                                        <select
+                                            value={sortBy}
+                                            onChange={(e) => setSortBy(e.target.value as any)}
+                                            className="bg-white border border-slate-200 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:border-brand-primary transition-colors rounded-none hover:cursor-pointer"
+                                        >
+                                            <option value="default">{locale === 'vi' ? 'Mặc định' : 'Default'}</option>
+                                            <option value="name-asc">{locale === 'vi' ? 'Tên: A - Z' : 'Name: A - Z'}</option>
+                                            <option value="name-desc">{locale === 'vi' ? 'Tên: Z - A' : 'Name: Z - A'}</option>
+                                        </select>
+                                    </div>
+
                                     <div className="flex border border-slate-100 ">
                                         <button
                                             onClick={() => setViewMode('grid')}
@@ -359,14 +432,14 @@ export default function ProductArchive() {
                                  ) : (
                                      products.length > 0 && (
                                          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                                             {products.map((product, i) => (
+                                             {sortedProducts.map((product, i) => (
                                                  <motion.div
                                                      key={product.id}
                                                      initial={{ opacity: 0, y: 15 }}
                                                      whileInView={{ opacity: 1, y: 0 }}
                                                      viewport={{ once: true }}
                                                      transition={{ delay: i * 0.03 }}
-                                                     className="group bg-white p-4 space-y-4 flex flex-col justify-between hover:z-10 hover:shadow-2xl hover:border-brand-accent transition-all duration-500 h-full border border-slate-100 rounded-none relative pt-6"
+                                                     className="group bg-white p-4 space-y-4 flex flex-col justify-between hover:z-10 hover:border-brand-accent transition-all duration-500 h-full border border-slate-100 rounded-none relative pt-6"
                                                  >
                                                      {/* Animated top accent bar */}
                                                      <div className="absolute top-0 left-0 w-full h-0.5 bg-brand-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
@@ -447,14 +520,14 @@ export default function ProductArchive() {
                                      </div>
                                  ) : (
                                      <div className="space-y-3">
-                                     {products.map((product, i) => (
+                                     {sortedProducts.map((product, i) => (
                                          <motion.div
                                              key={product.id}
                                              initial={{ opacity: 0, y: 15 }}
                                              whileInView={{ opacity: 1, y: 0 }}
                                              viewport={{ once: true }}
                                              transition={{ delay: i * 0.03 }}
-                                             className="group bg-white border border-slate-100 hover:shadow-2xl hover:border-brand-accent transition-all duration-500 rounded-none relative overflow-hidden"
+                                             className="group bg-white border border-slate-100 hover:border-brand-accent transition-all duration-500 rounded-none relative overflow-hidden"
                                          >
                                              {/* Animated top accent bar */}
                                              <div className="absolute top-0 left-0 w-full h-0.5 bg-brand-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
