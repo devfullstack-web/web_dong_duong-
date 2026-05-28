@@ -255,14 +255,14 @@ export default function ProductArchive() {
                                                     setIsMobileMenuOpen(false);
                                                 }}
                                                 className={cn(
-                                                    'w-full px-3 py-2 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between',
+                                                    'w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between',
                                                     selectedCategoryId === null
                                                         ? 'text-brand-primary border-brand-primary bg-slate-50 font-black'
                                                         : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
                                                 )}
                                             >
                                                 <span>{t('sidebar.all')}</span>
-                                                <span className="text-[9px] opacity-60 font-medium">({total})</span>
+                                                <span className="text-[10px] opacity-60 font-medium">({total})</span>
                                             </button>
                                             
                                             {categories
@@ -281,7 +281,7 @@ export default function ProductArchive() {
                                                             <button
                                                                 onClick={() => handleParentCategoryClick(cat)}
                                                                 className={cn(
-                                                                    'w-full px-3 py-2 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between gap-2',
+                                                                    'w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between gap-2',
                                                                     isCurrent
                                                                         ? 'text-brand-primary border-brand-primary bg-slate-50 font-black'
                                                                         : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
@@ -314,7 +314,7 @@ export default function ProductArchive() {
                                                                                 setIsMobileMenuOpen(false);
                                                                             }}
                                                                             className={cn(
-                                                                                'w-full px-3 py-1.5 text-left text-[9px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2',
+                                                                                'w-full px-3 py-1.5 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2',
                                                                                 selectedCategoryId === child.id
                                                                                     ? 'text-brand-secondary border-brand-secondary bg-slate-100/50 font-black'
                                                                                     : 'text-slate-500 hover:text-brand-primary hover:bg-slate-50/30 border-transparent',
