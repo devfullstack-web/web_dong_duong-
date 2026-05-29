@@ -16,8 +16,8 @@ import Link from 'next/link';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import $api from '@/utils/axios';
 import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { RadialChartGrid } from '@/components/portal/charts/RadialChartGrid';
 import { RadialChartShape } from '@/components/portal/charts/RadialChartShape';
 import { PieChartLabel } from '@/components/portal/charts/PieChartLabel';
@@ -29,6 +29,7 @@ import { Button } from '@/components/ui/button';
 import Loading from '@/components/shared/Loading';
 
 export default function DashboardPage() {
+    const t = useTranslations('Portal.Dashboard');
     const [date, setDate] = React.useState<DateRange | undefined>();
     const [contentType, setContentType] = React.useState('all');
 
@@ -47,7 +48,7 @@ export default function DashboardPage() {
     });
 
     const stats = statsData?.data;
-    const updateTime = format(new Date(), 'hh:mm a', { locale: vi });
+    const updateTime = format(new Date(), 'hh:mm a');
 
     // Data for Charts
     const distributionData = [
@@ -62,11 +63,11 @@ export default function DashboardPage() {
     ];
 
     const distributionConfig = {
-        visitors: { label: 'Số lượng' },
-        news: { label: 'Tin tức', color: 'var(--brand-primary)' },
-        projects: { label: 'Dự án', color: 'var(--brand-cyan)' },
-        products: { label: 'Sản phẩm', color: 'var(--brand-accent)' },
-        contacts: { label: 'Liên hệ', color: '#ef4444' },
+        visitors: { label: t('visitors') },
+        news: { label: t('news'), color: 'var(--brand-primary)' },
+        projects: { label: t('projects'), color: 'var(--brand-cyan)' },
+        products: { label: t('products'), color: 'var(--brand-accent)' },
+        contacts: { label: t('contacts'), color: '#ef4444' },
     };
 
     const activityData = React.useMemo(() => {
@@ -87,10 +88,10 @@ export default function DashboardPage() {
     }, [contentType]);
 
     const activityConfig = {
-        news: { label: 'Tin tức', color: 'var(--brand-primary)' },
-        projects: { label: 'Dự án', color: 'var(--brand-cyan)' },
-        products: { label: 'Sản phẩm', color: 'var(--brand-accent)' },
-        total: { label: 'Tổng số', color: 'var(--brand-primary)' },
+        news: { label: t('news'), color: 'var(--brand-primary)' },
+        projects: { label: t('projects'), color: 'var(--brand-cyan)' },
+        products: { label: t('products'), color: 'var(--brand-accent)' },
+        total: { label: t('total'), color: 'var(--brand-primary)' },
     };
 
     const totalContent =
@@ -103,7 +104,7 @@ export default function DashboardPage() {
 
     const statsConfig = [
         {
-            title: 'Bài viết tin tức',
+            title: t('newsArticles'),
             value: stats?.counts?.news || 0,
             icon: FileText,
             color: 'text-brand-primary',
@@ -111,7 +112,7 @@ export default function DashboardPage() {
             href: PORTAL_ROUTES.cms.news.list,
         },
         {
-            title: 'Dự án đã thực hiện',
+            title: t('completedProjects'),
             value: stats?.counts?.projects || 0,
             icon: Briefcase,
             color: 'text-brand-primary',
@@ -119,7 +120,7 @@ export default function DashboardPage() {
             href: PORTAL_ROUTES.cms.projects.list,
         },
         {
-            title: 'Sản phẩm catalog',
+            title: t('catalogProducts'),
             value: stats?.counts?.products || 0,
             icon: Box,
             color: 'text-brand-primary',
@@ -127,7 +128,7 @@ export default function DashboardPage() {
             href: PORTAL_ROUTES.cms.products.list,
         },
         {
-            title: 'Liên hệ mới',
+            title: t('newContacts'),
             value: stats?.counts?.contacts || 0,
             icon: Users,
             color: 'text-brand-primary',
@@ -139,7 +140,7 @@ export default function DashboardPage() {
     if (loading && !stats) {
         return (
             <div className="flex items-center justify-center min-h-100">
-                <Loading variant="section" size="md" text="Đang tải dữ liệu báo cáo..." />
+                <Loading variant="section" size="md" text={t('loading')} />
             </div>
         );
     }
@@ -148,20 +149,20 @@ export default function DashboardPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1.5 pl-4">
                     <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase italic text-[#002d6b] border-l-4 border-[#002d6b] pl-4 leading-none">
-                        Tổng quan
+                        {t('title')}
                     </h2>
                     <p className="text-slate-500 font-medium italic text-xs pl-4 leading-relaxed">
-                        Chào mừng trở lại. Đây là hoạt động của hệ thống.
+                        {t('subtitle')}
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Content Type Filter */}
                     <div className="flex items-center bg-slate-50 border border-slate-100 p-0.5 rounded-none">
                         {[
-                            { value: 'all', label: 'TẤT CẢ' },
-                            { value: 'news', label: 'TIN TỨC' },
-                            { value: 'projects', label: 'DỰ ÁN' },
-                            { value: 'products', label: 'SẢN PHẨM' },
+                            { value: 'all', label: t('all') },
+                            { value: 'news', label: t('newsCaps') },
+                            { value: 'projects', label: t('projectsCaps') },
+                            { value: 'products', label: t('productsCaps') },
                         ].map((item) => (
                             <button
                                 key={item.value}
@@ -203,7 +204,7 @@ export default function DashboardPage() {
                                             format(date.from, 'dd/MM/yy')
                                         )
                                     ) : (
-                                        <span>Lọc ngày tháng năm</span>
+                                        <span>{t('filterDate')}</span>
                                     )}
                                 </Button>
                             </PopoverTrigger>
@@ -233,7 +234,7 @@ export default function DashboardPage() {
                     <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-none border border-slate-100 h-10 shrink-0">
                         <Clock size={14} className="text-[#002d6b]" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-                            Cập nhật lúc: {updateTime}
+                            {t('updatedAt', { time: updateTime })}
                         </span>
                     </div>
                 </div>
@@ -266,44 +267,44 @@ export default function DashboardPage() {
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                 <AreaChartGradient
-                    title="Tăng trưởng hệ thống"
-                    description="Biểu đồ xu hướng cập nhật dữ liệu 6 tháng qua"
+                    title={t('charts.growthTitle')}
+                    description={t('charts.growthDesc')}
                     data={activityData}
                     config={activityConfig}
                     dataKeys={activeKeys}
                     xAxisKey="month"
-                    footerTitle="Tốc độ số hóa"
-                    footerDescription="Dữ liệu tổng hợp từ các module chính"
+                    footerTitle={t('charts.growthFooterTitle')}
+                    footerDescription={t('charts.growthFooterDesc')}
                     className="lg:col-span-2"
                 />
 
                 <RadialChartShape
-                    title="Tổng quy mô nội dung"
-                    description="Toàn bộ dữ liệu News, Projects & Products"
+                    title={t('charts.totalSizeTitle')}
+                    description={t('charts.totalSizeDesc')}
                     data={totalContentData}
-                    config={{ visitors: { label: 'Nội dung', color: 'var(--brand-primary)' } }}
+                    config={{ visitors: { label: t('content'), color: 'var(--brand-primary)' } }}
                     dataKey="visitors"
-                    label="Tài nguyên"
-                    footerTitle="Tăng trưởng 7.2%"
-                    footerDescription="Dựa trên tốc độ đăng bài 30 ngày qua"
+                    label={t('charts.resources')}
+                    footerTitle={t('charts.growthRate')}
+                    footerDescription={t('charts.growthRateDesc')}
                     className="lg:col-span-1"
                 />
 
                 <PieChartLabel
-                    title="Tỷ lệ phân bổ tài nguyên"
-                    description="So sánh khối lượng giữa các danh mục CMS"
+                    title={t('charts.distTitle')}
+                    description={t('charts.distDesc')}
                     data={distributionData}
                     config={distributionConfig}
                     dataKey="visitors"
                     nameKey="browser"
-                    footerTitle="Cơ cấu ổn định"
-                    footerDescription="Sản phẩm chiếm tỷ trọng cao nhất hiện tại"
+                    footerTitle={t('charts.distFooterTitle')}
+                    footerDescription={t('charts.distFooterDesc')}
                     className="lg:col-span-1"
                 />
 
                 <RadialChartGrid
-                    title="Chỉ số phản hồi"
-                    description="Liên hệ và tương tác khách hàng"
+                    title={t('charts.feedbackTitle')}
+                    description={t('charts.feedbackDesc')}
                     data={[
                         {
                             browser: 'contacts',
@@ -317,12 +318,12 @@ export default function DashboardPage() {
                         },
                     ]}
                     config={{
-                        visitors: { label: 'Lượt' },
-                        contacts: { label: 'Tổng liên hệ', color: 'var(--brand-accent)' },
-                        pending: { label: 'Chưa xử lý', color: '#ef4444' },
+                        visitors: { label: t('turns') },
+                        contacts: { label: t('totalContacts'), color: 'var(--brand-accent)' },
+                        pending: { label: t('pending'), color: '#ef4444' },
                     }}
-                    footerTitle="Hỗ trợ 24/7"
-                    footerDescription="Thời gian phản hồi trung bình: 15 phút"
+                    footerTitle={t('charts.support')}
+                    footerDescription={t('charts.supportDesc')}
                     className="lg:col-span-2"
                 />
             </div>

@@ -46,7 +46,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getLocalizedValue } from '@/types/i18n';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import * as React from 'react';
 
 interface CategoryNode {
@@ -66,17 +66,14 @@ function flattenCategories(nodes: CategoryNode[], level = 0): { id: string; name
     return result;
 }
 
-const PRODUCT_STATUS_FILTERS: { value: Product['status']; label: string }[] = [
-    { value: 'active', label: 'Đang bán' },
-    { value: 'inactive', label: 'Ngừng kinh doanh' },
-];
+const PRODUCT_STATUS_FILTERS: Product['status'][] = ['active', 'inactive'];
 
-function getProductDisplayName(product: Product) {
-    return getLocalizedValue(product.name_localized, 'vi') || product.name;
+function getProductDisplayName(product: Product, locale: string) {
+    return getLocalizedValue(product.name_localized, locale) || product.name;
 }
 
-function getProductCategoryName(product: Product) {
-    return getLocalizedValue(product.category_localized, 'vi') || product.category || 'Chưa phân loại';
+function getProductCategoryName(product: Product, locale: string) {
+    return getLocalizedValue(product.category_localized, locale) || product.category || '';
 }
 
 function ProductImage({ src, alt }: { src?: string | null; alt: string }) {
@@ -113,6 +110,7 @@ export default function ProductsManagementPage() {
     const queryClient = useQueryClient();
     const t = useTranslations('Portal.Products');
     const tc = useTranslations('Portal.Common');
+    const locale = useLocale();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -286,11 +284,11 @@ export default function ProductsManagementPage() {
                 return (
                     <div className="flex items-center gap-3 md:gap-4">
                         <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
-                            <ProductImage src={product.image_url} alt={getProductDisplayName(product)} />
+                            <ProductImage src={product.image_url} alt={getProductDisplayName(product, locale)} />
                         </div>
                         <div className="max-w-87.5">
                             <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-0.5">
-                                {getProductDisplayName(product)}
+                                {getProductDisplayName(product, locale)}
                             </div>
                             <div className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
                                 {t('companyName')} Official
@@ -305,9 +303,9 @@ export default function ProductsManagementPage() {
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title={t('category')} className="hidden md:flex" />
             ),
-            cell: ({ row }) => (
+             cell: ({ row }) => (
                 <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight hidden md:block">
-                    {getProductCategoryName(row.original)}
+                    {getProductCategoryName(row.original, locale) || t('uncategorized')}
                 </span>
             ),
         },
@@ -358,7 +356,7 @@ export default function ProductsManagementPage() {
                                                 className="text-slate-400 group-hover:text-brand-primary transition-colors"
                                             />
                                             <span className="text-[11px] font-bold uppercase tracking-tight text-slate-900">
-                                                Sửa thông tin
+                                                {tc('edit')}
                                             </span>
                                         </Link>
                                     </DropdownMenuItem>
@@ -376,7 +374,7 @@ export default function ProductsManagementPage() {
                                                 className="text-slate-400 group-hover:text-rose-600 transition-colors"
                                             />
                                             <span className="text-[11px] font-bold uppercase tracking-tight text-rose-600">
-                                                Xóa sản phẩm
+                                                {t('deleteProduct')}
                                             </span>
                                         </DropdownMenuItem>
                                     </>
@@ -387,17 +385,17 @@ export default function ProductsManagementPage() {
                 );
             },
         },
-    ], [hasPermission, getStatusBadge, t, tc]);
+    ], [hasPermission, getStatusBadge, t, tc, locale]);
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
                     <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
-                        Quản lý sản phẩm
+                        {t('title')}
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-2 text-sm">
-                        Danh mục van công nghiệp và thiết bị IoT của Sài Gòn Valve.
+                        {t('subtitle')}
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 md:gap-3">
@@ -407,7 +405,7 @@ export default function ProductsManagementPage() {
                                 variant="outline"
                                 className="text-[10px] font-black uppercase tracking-widest px-4 py-2.5 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none"
                             >
-                                Danh mục
+                                {t('categories')}
                             </Button>
                         </Link>
                     )}
@@ -416,12 +414,12 @@ export default function ProductsManagementPage() {
                         className="text-[10px] font-black uppercase tracking-widest px-4 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none hidden sm:flex"
                         onClick={handleExportExcel}
                     >
-                        Xuất Excel
+                        {tc('export')}
                     </Button>
                     {hasPermission(PERMISSIONS.PRODUCTS_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.products.add}>
                             <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 hover:cursor-pointer h-10 transition-all rounded-none">
-                                <Plus className="mr-2 size-4" /> Thêm sản phẩm
+                                <Plus className="mr-2 size-4" /> {t('addProduct')}
                             </Button>
                         </Link>
                     )}
@@ -432,13 +430,13 @@ export default function ProductsManagementPage() {
                 columns={columns}
                 data={productsList}
                 isLoading={isLoading}
-                loadingText="Đang tải danh sách sản phẩm..."
-                emptyText="Không tìm thấy sản phẩm nào phù hợp."
+                loadingText={t('loading')}
+                emptyText={t('empty')}
                 emptyIcon={<Package size={64} className="text-slate-100 mb-6" />}
                 toolbarProps={{
                     searchValue: searchTerm,
                     onSearchChange: setSearchTerm,
-                    searchPlaceholder: "TÌM KIẾM THEO TÊN, SKU HOẶC DANH MỤC...",
+                    searchPlaceholder: t('searchPlaceholder'),
                     filters: (
                         <>
                             {/* Category Filter */}
@@ -454,7 +452,7 @@ export default function ProductsManagementPage() {
                                         <span className="truncate">
                                             {selectedCategoryId
                                                 ? flatCategoryList.find((c) => c.id === selectedCategoryId)?.name
-                                                : 'Lọc danh mục'}
+                                                : t('filterCategory')}
                                         </span>
                                         <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
                                     </Button>
@@ -464,7 +462,7 @@ export default function ProductsManagementPage() {
                                         className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
                                         onClick={() => setSelectedCategoryId('')}
                                     >
-                                        Tất cả danh mục
+                                        {t('allCategories')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-50" />
                                     {categoryList.map((cat) => {
@@ -490,7 +488,7 @@ export default function ProductsManagementPage() {
                                                                 )}
                                                                 onClick={() => setSelectedCategoryId(cat.id)}
                                                             >
-                                                                Tất cả {cat.name}
+                                                                {t('allInCategory', { category: cat.name })}
                                                             </DropdownMenuItem>
                                                             <DropdownMenuSeparator className="bg-slate-50" />
                                                             {cat.children.map((subCat) => (
@@ -539,8 +537,8 @@ export default function ProductsManagementPage() {
                                     >
                                         <span className="truncate">
                                             {selectedStatus
-                                                ? PRODUCT_STATUS_FILTERS.find((item) => item.value === selectedStatus)?.label
-                                                : 'Lọc trạng thái'}
+                                                ? t(selectedStatus as never)
+                                                : t('filterStatus')}
                                         </span>
                                         <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
                                     </Button>
@@ -550,19 +548,19 @@ export default function ProductsManagementPage() {
                                         className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
                                         onClick={() => setSelectedStatus('')}
                                     >
-                                        Tất cả trạng thái
+                                        {t('allStatuses')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-50" />
                                     {PRODUCT_STATUS_FILTERS.map((status) => (
                                         <DropdownMenuItem
-                                            key={status.value}
+                                            key={status}
                                             className={cn(
                                                 'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
-                                                selectedStatus === status.value && 'text-brand-primary bg-brand-primary/5',
+                                                selectedStatus === status && 'text-brand-primary bg-brand-primary/5',
                                             )}
-                                            onClick={() => setSelectedStatus(status.value)}
+                                            onClick={() => setSelectedStatus(status)}
                                         >
-                                            {status.label}
+                                            {t(status as never)}
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuContent>
@@ -591,7 +589,7 @@ export default function ProductsManagementPage() {
                                                     format(date.from, 'dd/MM/yy')
                                                 )
                                             ) : (
-                                                <span>Lọc theo ngày</span>
+                                                <span>{t('filterDate')}</span>
                                             )}
                                         </Button>
                                     </PopoverTrigger>
@@ -616,7 +614,7 @@ export default function ProductsManagementPage() {
                                                     className="text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50 hover:cursor-pointer"
                                                     onClick={() => setDate(undefined)}
                                                 >
-                                                    <X className="mr-2 size-3" /> Xóa lọc
+                                                    <X className="mr-2 size-3" /> {t('clearFilter')}
                                                 </Button>
                                             </div>
                                         )}
@@ -635,7 +633,7 @@ export default function ProductsManagementPage() {
                         setPageSize(size);
                         setCurrentPage(1);
                     },
-                    itemLabel: "sản phẩm"
+                    itemLabel: t('itemLabel')
                 }}
             />
 
@@ -643,10 +641,10 @@ export default function ProductsManagementPage() {
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 onConfirm={handleDeleteConfirm}
-                title="Xóa sản phẩm"
-                description="Sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác."
+                title={t('deleteTitle')}
+                description={t('deleteConfirm')}
                 itemName={itemToDelete?.name}
-                itemLabel="Sản phẩm"
+                itemLabel={t('itemLabelCap')}
                 loading={deleteMutation.isPending}
             />
         </div>
