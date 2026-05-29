@@ -43,6 +43,7 @@ import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 const NEWS_STATUS_FILTERS: { value: NewsArticle['status']; label: string }[] = [
@@ -82,6 +83,8 @@ function NewsImage({ src, alt }: { src?: string | null; alt: string }) {
 export default function NewsManagementPage() {
     const { can: hasPermission } = usePermissions();
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.News');
+    const tc = useTranslations('Portal.Common');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -139,14 +142,14 @@ export default function NewsManagementPage() {
             await $api.delete(`${API_ROUTES.NEWS}/${id}`);
         },
         onSuccess: () => {
-            toast.success('Đã xóa bài viết thành công');
+            toast.success(t('deleteSuccess'));
             queryClient.invalidateQueries({ queryKey: ['admin-news'] });
             queryClient.invalidateQueries({ queryKey: ['news'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },
         onError: () => {
-            toast.error('Lỗi khi xóa bài viết');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -165,19 +168,19 @@ export default function NewsManagementPage() {
             case 'published':
                 return (
                     <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
-                        <CheckCircle size={10} /> Công khai
+                        <CheckCircle size={10} /> {t('published')}
                     </Badge>
                 );
             case 'draft':
                 return (
                     <Badge className="bg-slate-50 text-slate-500 border-slate-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
-                        <Clock size={10} /> Bản nháp
+                        <Clock size={10} /> {t('draft')}
                     </Badge>
                 );
             default:
                 return null;
         }
-    }, []);
+    }, [t]);
 
     const formatDate = React.useCallback((dateStr?: string) => {
         if (!dateStr) return 'Chưa đăng';
@@ -193,7 +196,7 @@ export default function NewsManagementPage() {
         {
             accessorKey: 'title',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Bài viết" />
+                <DataTableColumnHeader column={column} title={t('article')} />
             ),
             cell: ({ row }) => {
                 const news = row.original;
@@ -220,7 +223,7 @@ export default function NewsManagementPage() {
         {
             accessorKey: 'author',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Tác giả" className="hidden md:flex" />
+                <DataTableColumnHeader column={column} title={t('author')} className="hidden md:flex" />
             ),
             cell: ({ row }) => {
                 const news = row.original;
@@ -239,7 +242,7 @@ export default function NewsManagementPage() {
         {
             accessorKey: 'published_at',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Ngày đăng" className="hidden sm:flex" />
+                <DataTableColumnHeader column={column} title={t('date')} className="hidden sm:flex" />
             ),
             cell: ({ row }) => (
                 <div className="flex items-center gap-2 text-[11px] font-black text-slate-600 uppercase tracking-tight hidden sm:flex">
@@ -254,7 +257,7 @@ export default function NewsManagementPage() {
         {
             accessorKey: 'status',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Trạng thái" />
+                <DataTableColumnHeader column={column} title={tc('status')} />
             ),
             cell: ({ row }) => getStatusBadge(row.original.status),
         },
@@ -262,7 +265,7 @@ export default function NewsManagementPage() {
             id: 'actions',
             header: () => (
                 <div className="text-right uppercase text-[10px] font-black tracking-widest text-slate-400">
-                    Thao tác
+                    {tc('actions')}
                 </div>
             ),
             cell: ({ row }) => {
@@ -327,7 +330,7 @@ export default function NewsManagementPage() {
                 );
             },
         },
-    ], [hasPermission, formatDate, getStatusBadge]);
+    ], [hasPermission, formatDate, getStatusBadge, t, tc]);
 
     return (
         <div className="space-y-6">

@@ -15,9 +15,11 @@ import { PORTAL_ROUTES } from '@/constants/routes';
 import { RouteGuard } from '@/components/portal/route-guard';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
     const initialize = useAuthStore((state) => state.initialize);
+    const t = useTranslations('Portal.Layout');
 
     useEffect(() => {
         initialize();
@@ -38,13 +40,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                                         href={PORTAL_ROUTES.dashboard}
                                         className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary transition-colors"
                                     >
-                                        Hệ thống
+                                        {t('system')}
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="text-slate-300" />
                                 <BreadcrumbItem>
                                     <BreadcrumbPage className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">
-                                        Bảng điều khiển
+                                        {t('dashboard')}
                                     </BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
@@ -55,7 +57,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                         <div className="hidden md:flex relative group">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
                             <input
-                                placeholder="Tìm kiếm nhanh..."
+                                placeholder={t('searchPlaceholder')}
                                 className="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-none text-xs font-bold text-slate-900 w-64 focus:ring-1 focus:ring-brand-primary/20 transition-all"
                             />
                         </div>

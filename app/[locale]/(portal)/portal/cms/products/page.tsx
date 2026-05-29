@@ -46,6 +46,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getLocalizedValue } from '@/types/i18n';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 interface CategoryNode {
@@ -110,6 +111,8 @@ function ProductImage({ src, alt }: { src?: string | null; alt: string }) {
 export default function ProductsManagementPage() {
     const { can: hasPermission } = usePermissions();
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.Products');
+    const tc = useTranslations('Portal.Common');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -205,7 +208,8 @@ export default function ProductsManagementPage() {
                 const price = product.price;
                 const stock = product.stock;
                 const category = `"${getProductCategoryName(product).replace(/"/g, '""')}"`;
-                const status = product.status === 'active' ? '"Đang bán"' : '"Ngừng kinh doanh"';
+                const statusLabel = product.status === 'active' ? t('active') : t('inactive');
+                const status = `"${statusLabel}"`;
                 
                 return [id, name, sku, price, stock, category, status].join(',');
             })
@@ -221,7 +225,7 @@ export default function ProductsManagementPage() {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.success('Đã xuất dữ liệu Excel thành công');
+        toast.success(t('exportSuccess'));
     };
 
     // Delete mutation
@@ -230,14 +234,14 @@ export default function ProductsManagementPage() {
             await $api.delete(`${API_ROUTES.PRODUCTS}/${id}`);
         },
         onSuccess: () => {
-            toast.success('Đã xóa sản phẩm thành công');
+            toast.success(t('deleteSuccess'));
             queryClient.invalidateQueries({ queryKey: ['admin-products'] });
             queryClient.invalidateQueries({ queryKey: ['products'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },
         onError: () => {
-            toast.error('Lỗi khi xóa sản phẩm');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -256,26 +260,26 @@ export default function ProductsManagementPage() {
             case 'active':
                 return (
                     <Badge className="bg-emerald-100/80 hover:bg-emerald-100/80 text-emerald-700 border border-emerald-200 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-none flex items-center gap-1.5 w-fit">
-                        <CheckCircle2 size={10} /> Đang bán
+                        <CheckCircle2 size={10} /> {t('active')}
                     </Badge>
                 );
             case 'inactive':
                 return (
                     <Badge className="bg-slate-100 hover:bg-slate-100 text-slate-600 border border-slate-200 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-none flex items-center gap-1.5 w-fit">
-                        <XCircle size={10} /> Ngừng kinh doanh
+                        <XCircle size={10} /> {t('inactive')}
                     </Badge>
                 );
             default:
                 return null;
         }
-    }, []);
+    }, [t]);
 
     // Define table columns
     const columns = React.useMemo<ColumnDef<Product>[]>(() => [
         {
             accessorKey: 'name',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Sản phẩm" />
+                <DataTableColumnHeader column={column} title={t('product')} />
             ),
             cell: ({ row }) => {
                 const product = row.original;
@@ -289,7 +293,7 @@ export default function ProductsManagementPage() {
                                 {getProductDisplayName(product)}
                             </div>
                             <div className="text-[9px] font-black text-slate-300 uppercase tracking-widest">
-                                Sài Gòn Valve Official
+                                {t('companyName')} Official
                             </div>
                         </div>
                     </div>
@@ -299,7 +303,7 @@ export default function ProductsManagementPage() {
         {
             accessorKey: 'category',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Danh mục" className="hidden md:flex" />
+                <DataTableColumnHeader column={column} title={t('category')} className="hidden md:flex" />
             ),
             cell: ({ row }) => (
                 <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight hidden md:block">
@@ -310,7 +314,7 @@ export default function ProductsManagementPage() {
         {
             accessorKey: 'status',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Trạng thái" />
+                <DataTableColumnHeader column={column} title={tc('status')} />
             ),
             cell: ({ row }) => getStatusBadge(row.original.status),
         },
@@ -318,7 +322,7 @@ export default function ProductsManagementPage() {
             id: 'actions',
             header: () => (
                 <div className="text-right uppercase text-[10px] font-black tracking-widest text-slate-400">
-                    Thao tác
+                    {tc('actions')}
                 </div>
             ),
             cell: ({ row }) => {
@@ -383,7 +387,7 @@ export default function ProductsManagementPage() {
                 );
             },
         },
-    ], [hasPermission, getStatusBadge]);
+    ], [hasPermission, getStatusBadge, t, tc]);
 
     return (
         <div className="space-y-6">

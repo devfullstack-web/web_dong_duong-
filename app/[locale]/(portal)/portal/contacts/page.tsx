@@ -38,8 +38,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useDebounce } from '@/hooks/use-debounce';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
@@ -47,6 +45,7 @@ import { API_ROUTES } from '@/constants/routes';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 interface Contact {
@@ -97,6 +96,8 @@ const STATUS_CONFIG = {
 
 export default function ContactsManagementPage() {
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.Contacts');
+    const tc = useTranslations('Portal.Common');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
 
@@ -158,12 +159,12 @@ export default function ContactsManagementPage() {
             await $api.patch(`${API_ROUTES.CONTACTS}/${id}`, { status });
         },
         onSuccess: () => {
-            toast.success('Đã cập nhật trạng thái');
+            toast.success(t('updateStatusSuccess'));
             queryClient.invalidateQueries({ queryKey: ['admin-contacts'] });
             queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
         },
         onError: () => {
-            toast.error('Cập nhật thất bại');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -173,14 +174,14 @@ export default function ContactsManagementPage() {
             await $api.delete(`${API_ROUTES.CONTACTS}/${id}`);
         },
         onSuccess: () => {
-            toast.success('Đã xóa liên hệ');
+            toast.success(t('deleteSuccess'));
             queryClient.invalidateQueries({ queryKey: ['admin-contacts'] });
             queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },
         onError: () => {
-            toast.error('Xóa liên hệ thất bại');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -211,16 +212,16 @@ export default function ContactsManagementPage() {
             link.click();
             link.remove();
             window.URL.revokeObjectURL(url);
-            toast.success('Đã xuất file Excel thành công');
+            toast.success(t('exportSuccess'));
         } catch (error) {
             console.error('Export failed:', error);
-            toast.error('Không thể xuất file Excel');
+            toast.error(t('exportError') || 'Cannot export data');
         }
     };
 
     const formatDate = (dateStr: string) => {
         try {
-            return format(new Date(dateStr), 'HH:mm, dd/MM/yyyy', { locale: vi });
+            return format(new Date(dateStr), 'HH:mm, dd/MM/yyyy');
         } catch {
             return dateStr;
         }
@@ -231,7 +232,7 @@ export default function ContactsManagementPage() {
         {
             accessorKey: 'name',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Khách hàng" />
+                <DataTableColumnHeader column={column} title={t('name')} />
             ),
             cell: ({ row }) => {
                 const contact = row.original;
@@ -252,18 +253,18 @@ export default function ContactsManagementPage() {
         {
             accessorKey: 'subject',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Chủ đề" className="hidden lg:flex" />
+                <DataTableColumnHeader column={column} title={t('subject')} className="hidden lg:flex" />
             ),
             cell: ({ row }) => (
                 <span className="text-[10px] font-black text-[#002d6b] uppercase truncate max-w-50 flex items-center gap-2 hidden lg:flex">
-                    <Building size={12} /> {row.original.subject || 'Không có chủ đề'}
+                    <Building size={12} /> {row.original.subject || 'N/A'}
                 </span>
             ),
         },
         {
             accessorKey: 'email',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Thông tin liên hệ" className="hidden md:flex" />
+                <DataTableColumnHeader column={column} title={t('info')} className="hidden md:flex" />
             ),
             cell: ({ row }) => {
                 const contact = row.original;
@@ -286,7 +287,7 @@ export default function ContactsManagementPage() {
         {
             accessorKey: 'created_at',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Ngày gửi" className="hidden sm:flex" />
+                <DataTableColumnHeader column={column} title={t('date')} className="hidden sm:flex" />
             ),
             cell: ({ row }) => (
                 <span className="text-[10px] font-bold text-slate-500 italic hidden sm:block">
@@ -297,7 +298,7 @@ export default function ContactsManagementPage() {
         {
             accessorKey: 'status',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Trạng thái" />
+                <DataTableColumnHeader column={column} title={tc('status')} />
             ),
             cell: ({ row }) => (
                 <Badge
@@ -306,7 +307,7 @@ export default function ContactsManagementPage() {
                         STATUS_CONFIG[row.original.status as keyof typeof STATUS_CONFIG]?.color,
                     )}
                 >
-                    {STATUS_CONFIG[row.original.status as keyof typeof STATUS_CONFIG]?.label}
+                    {t(`status.${row.original.status}` as never)}
                 </Badge>
             ),
         },
@@ -314,7 +315,7 @@ export default function ContactsManagementPage() {
             id: 'actions',
             header: () => (
                 <div className="text-right uppercase text-[9px] font-black tracking-widest text-slate-400">
-                    Thao tác
+                    {tc('actions')}
                 </div>
             ),
             cell: ({ row }) => {
@@ -348,32 +349,32 @@ export default function ContactsManagementPage() {
                                     className="rounded-none border-slate-100 shadow-sm w-56 p-2 bg-white"
                                 >
                                     <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
-                                        Quản trị trạng thái
+                                        {t('adminStatus')}
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator className="bg-slate-50" />
                                     <DropdownMenuItem
                                         className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
                                         onClick={() => handleUpdateStatus(contact.id, 'read')}
                                     >
-                                        <Clock size={14} className="text-amber-500" /> Đã đọc
+                                        <Clock size={14} className="text-amber-500" /> {t('status.read')}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
                                         onClick={() => handleUpdateStatus(contact.id, 'replied')}
                                     >
-                                        <CheckCircle2 size={14} className="text-emerald-500" /> Đã trả lời
+                                        <CheckCircle2 size={14} className="text-emerald-500" /> {t('status.replied')}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
                                         onClick={() => handleUpdateStatus(contact.id, 'archived')}
                                     >
-                                        <Building size={14} className="text-slate-500" /> Lưu trữ
+                                        <Building size={14} className="text-slate-500" /> {t('status.archived')}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
                                         onClick={() => handleUpdateStatus(contact.id, 'spam')}
                                     >
-                                        <AlertCircle size={14} className="text-rose-500" /> Spam
+                                        <AlertCircle size={14} className="text-rose-500" /> {t('status.spam')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-50" />
                                     <DropdownMenuItem
@@ -383,7 +384,7 @@ export default function ContactsManagementPage() {
                                             setDeleteDialogOpen(true);
                                         }}
                                     >
-                                        <Trash2 size={14} /> Xóa vĩnh viễn
+                                        <Trash2 size={14} /> {tc('delete')}
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -392,22 +393,22 @@ export default function ContactsManagementPage() {
                 );
             },
         },
-    ], [handleUpdateStatus]);
+    ], [handleUpdateStatus, t, tc]);
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
                 <div className="space-y-1">
                     <h2 className="text-xl md:text-2xl font-black tracking-tight uppercase text-slate-900 border-l-4 border-[#002d6b] pl-3 leading-none">
-                        Quản lý Liên hệ
+                        {t('title')}
                     </h2>
                     <p className="text-xs text-slate-500 font-medium">
-                        Danh sách thông tin liên hệ và yêu cầu từ khách hàng.
+                        {t('subtitle')}
                     </p>
                 </div>
                 <div className="hidden md:flex items-center gap-3">
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-                        Tổng liên hệ: <span className="text-[#002d6b]">{totalItems}</span>
+                        {t('totalContacts')}: <span className="text-[#002d6b]">{totalItems}</span>
                     </span>
                 </div>
             </div>
@@ -416,13 +417,13 @@ export default function ContactsManagementPage() {
                 columns={columns}
                 data={contacts}
                 isLoading={isLoading}
-                loadingText="Đang tải danh sách liên hệ..."
-                emptyText="Không có yêu cầu liên hệ nào."
+                loadingText={t('loading')}
+                emptyText={t('empty')}
                 emptyIcon={<MessageSquare size={64} className="text-slate-100 mb-6" />}
                 toolbarProps={{
                     searchValue: searchTerm,
                     onSearchChange: setSearchTerm,
-                    searchPlaceholder: "TÌM THEO TÊN, EMAIL, SĐT, CHỦ ĐỀ...",
+                    searchPlaceholder: t('searchPlaceholder'),
                     filters: (
                         <div className="flex items-center gap-2">
                             <Popover>
@@ -445,7 +446,7 @@ export default function ContactsManagementPage() {
                                                 format(dateRange.from, 'dd/MM/yy')
                                             )
                                         ) : (
-                                            'Lọc theo ngày'
+                                            t('filterDate')
                                         )}
                                     </Button>
                                 </PopoverTrigger>
@@ -478,7 +479,7 @@ export default function ContactsManagementPage() {
                                 className="h-8 px-4 rounded-none bg-green-600 hover:bg-green-600 hover:text-white hover:opacity-80 text-[9px] font-black uppercase tracking-widest text-white shrink-0 gap-2 hover:cursor-pointer"
                             >
                                 <FileSpreadsheet className="h-4 w-4" />
-                                <span className="hidden sm:inline">Xuất Excel</span>
+                                <span className="hidden sm:inline">{tc('export')}</span>
                             </Button>
                         </div>
                     )
@@ -492,7 +493,7 @@ export default function ContactsManagementPage() {
                         setPageSize(size);
                         setCurrentPage(1);
                     },
-                    itemLabel: "liên hệ"
+                    itemLabel: t('itemLabel')
                 }}
             />
 
@@ -502,7 +503,7 @@ export default function ContactsManagementPage() {
                     <SheetHeader className="p-5 md:p-10 bg-[#002d6b] text-white">
                         <div className="flex items-center gap-2 mb-2 md:mb-4">
                             <span className="px-2 py-0.5 bg-[#fbbf24] text-[#002d6b] text-[8px] font-black uppercase tracking-widest">
-                                Inquiry Ticket
+                                {t('ticket')}
                             </span>
                         </div>
                         <SheetTitle className="text-xl md:text-3xl font-black uppercase tracking-tighter italic text-white flex items-center gap-3 md:gap-4">
@@ -510,8 +511,7 @@ export default function ContactsManagementPage() {
                             {selectedContact?.subject || selectedContact?.name}
                         </SheetTitle>
                         <SheetDescription className="text-white/60 font-medium italic text-sm">
-                            Thông tin liên hệ chi tiết được hệ thống ghi nhận từ Cổng thông tin
-                            khách hàng.
+                            {t('ticketDesc')}
                         </SheetDescription>
                     </SheetHeader>
 
@@ -520,7 +520,7 @@ export default function ContactsManagementPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
                                 <div className="space-y-1.5">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
-                                        Khách hàng
+                                        {t('name')}
                                     </span>
                                     <p className="text-sm font-black text-slate-900 uppercase">
                                         {selectedContact.name}
@@ -528,19 +528,18 @@ export default function ContactsManagementPage() {
                                 </div>
                                 <div className="space-y-1.5 text-right">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
-                                        Ngày gửi
+                                        {t('date')}
                                     </span>
                                     <p className="text-[10px] font-bold text-slate-500">
                                         {format(
                                             new Date(selectedContact.created_at),
-                                            'HH:mm - dd/MM/yyyy',
-                                            { locale: vi },
+                                            'HH:mm - dd/MM/yyyy'
                                         )}
                                     </p>
                                 </div>
                                 <div className="space-y-1.5">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
-                                        Email liên hệ
+                                        {t('email')}
                                     </span>
                                     <p className="text-sm font-black text-blue-600 lowercase">
                                         {selectedContact.email}
@@ -548,10 +547,10 @@ export default function ContactsManagementPage() {
                                 </div>
                                 <div className="space-y-1.5 text-right">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
-                                        Số điện thoại
+                                        {t('phone')}
                                     </span>
                                     <p className="text-sm font-black text-slate-900">
-                                        {selectedContact.phone || 'Chưa cung cấp'}
+                                        {selectedContact.phone || t('notProvided')}
                                     </p>
                                 </div>
                             </div>
@@ -559,7 +558,7 @@ export default function ContactsManagementPage() {
                             {selectedContact.address && (
                                 <div className="space-y-1.5">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
-                                        Địa chỉ
+                                        {t('address')}
                                     </span>
                                     <p className="text-sm text-slate-700">
                                         {selectedContact.address}
@@ -569,7 +568,7 @@ export default function ContactsManagementPage() {
 
                             <div className="space-y-4">
                                 <span className="text-[10px] font-black uppercase text-[#002d6b] tracking-[0.2em] flex items-center gap-2">
-                                    Nội dung yêu cầu chi tiết:
+                                    {t('messageDetail')}
                                 </span>
                                 <div className="bg-slate-50 p-8 border border-slate-100 italic text-sm text-slate-600 leading-relaxed border-l-8 border-l-[#fbbf24]">
                                     &quot;{selectedContact.message}&quot;
@@ -579,7 +578,7 @@ export default function ContactsManagementPage() {
                             <div className="space-y-4 pt-6 md:pt-10 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="space-y-1">
                                     <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest">
-                                        Trạng thái hiện tại
+                                        {t('currentStatus')}
                                     </span>
                                     <div className="flex items-center gap-3">
                                         <Badge
@@ -590,11 +589,7 @@ export default function ContactsManagementPage() {
                                                 ]?.color,
                                             )}
                                         >
-                                            {
-                                                STATUS_CONFIG[
-                                                    selectedContact.status as keyof typeof STATUS_CONFIG
-                                                ]?.label
-                                            }
+                                            {t(`status.${selectedContact.status}` as never)}
                                         </Badge>
                                     </div>
                                 </div>
@@ -607,7 +602,7 @@ export default function ContactsManagementPage() {
                                                 setIsSheetOpen(false);
                                             }}
                                         >
-                                            Đánh dấu đã trả lời
+                                            {t('markAsReplied')}
                                         </Button>
                                     )}
                                     {selectedContact.status !== 'spam' && (
@@ -619,7 +614,7 @@ export default function ContactsManagementPage() {
                                                 setIsSheetOpen(false);
                                             }}
                                         >
-                                            Đánh dấu Spam
+                                            {t('markAsSpam')}
                                         </Button>
                                     )}
                                 </div>
@@ -635,6 +630,9 @@ export default function ContactsManagementPage() {
                 onConfirm={handleDelete}
                 loading={deleteMutation.isPending}
                 itemName={itemToDelete?.name || ''}
+                title={t('deleteTitle')}
+                description={t('deleteConfirm')}
+                itemLabel={t('itemLabelCap')}
             />
         </div>
     );

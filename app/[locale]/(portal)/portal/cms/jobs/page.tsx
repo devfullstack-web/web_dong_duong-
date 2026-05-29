@@ -39,6 +39,7 @@ import { PERMISSIONS } from '@/constants/rbac';
 import { cn } from '@/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 interface JobPosting {
@@ -55,13 +56,6 @@ interface JobPosting {
     deadline: string | null;
     created_at: string;
 }
-
-const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
-    full_time: 'Toàn thời gian',
-    part_time: 'Bán thời gian',
-    contract: 'Hợp đồng',
-    internship: 'Thực tập',
-};
 
 const STATUS_CONFIG = {
     open: {
@@ -81,6 +75,9 @@ const STATUS_CONFIG = {
 export default function JobsManagementPage() {
     const { can: hasPermission } = usePermissions();
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.Jobs');
+    const tc = useTranslations('Portal.Common');
+    const tCareers = useTranslations('Careers');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -122,14 +119,14 @@ export default function JobsManagementPage() {
             await $api.delete(`${API_ROUTES.JOBS}/${id}`);
         },
         onSuccess: () => {
-            toast.success('Đã xóa tin tuyển dụng');
+            toast.success(t('deleteSuccess'));
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },
         onError: () => {
-            toast.error('Không thể xóa tin tuyển dụng');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -152,7 +149,7 @@ export default function JobsManagementPage() {
         {
             accessorKey: 'title',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Vị trí & Phòng ban" />
+                <DataTableColumnHeader column={column} title={t('position')} />
             ),
             cell: ({ row }) => {
                 const job = row.original;
@@ -173,7 +170,7 @@ export default function JobsManagementPage() {
         {
             accessorKey: 'location',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Địa điểm & Loại hình" className="hidden md:flex" />
+                <DataTableColumnHeader column={column} title={t('type')} className="hidden md:flex" />
             ),
             cell: ({ row }) => {
                 const job = row.original;
@@ -181,11 +178,11 @@ export default function JobsManagementPage() {
                     <div className="flex flex-col gap-1.5 text-xs font-bold text-slate-600 hidden md:block">
                         <div className="flex items-center gap-2">
                             <MapPin size={12} className="text-slate-300" />
-                            {job.location || 'Chưa xác định'}
+                            {job.location || 'N/A'}
                         </div>
                         <div className="flex items-center gap-2">
                             <ClockIcon size={12} className="text-slate-300" />
-                            {EMPLOYMENT_TYPE_LABELS[job.employment_type] || job.employment_type}
+                            {tCareers(`employmentTypes.${job.employment_type}` as never) || job.employment_type}
                         </div>
                     </div>
                 );
@@ -194,7 +191,7 @@ export default function JobsManagementPage() {
         {
             accessorKey: 'status',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Trạng thái" />
+                <DataTableColumnHeader column={column} title={tc('status')} />
             ),
             cell: ({ row }) => (
                 <Badge
@@ -203,14 +200,14 @@ export default function JobsManagementPage() {
                         STATUS_CONFIG[row.original.status as keyof typeof STATUS_CONFIG]?.color,
                     )}
                 >
-                    {STATUS_CONFIG[row.original.status as keyof typeof STATUS_CONFIG]?.label}
+                    {t(row.original.status === 'open' ? 'active' : 'inactive')}
                 </Badge>
             ),
         },
         {
             accessorKey: 'deadline',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Hạn nộp" className="hidden sm:flex" />
+                <DataTableColumnHeader column={column} title={t('deadline')} className="hidden sm:flex" />
             ),
             cell: ({ row }) => {
                 const job = row.original;
@@ -232,7 +229,7 @@ export default function JobsManagementPage() {
             id: 'actions',
             header: () => (
                 <div className="text-right uppercase text-[9px] font-black tracking-widest text-slate-400">
-                    Thao tác
+                    {tc('actions')}
                 </div>
             ),
             cell: ({ row }) => {
@@ -300,7 +297,7 @@ export default function JobsManagementPage() {
                 );
             },
         },
-    ], [hasPermission]);
+    ], [hasPermission, t, tCareers, tc]);
 
     return (
         <div className="space-y-6">

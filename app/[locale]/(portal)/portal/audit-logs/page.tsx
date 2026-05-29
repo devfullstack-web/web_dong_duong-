@@ -20,6 +20,7 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { useQuery } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 interface AuditLog {
@@ -39,6 +40,8 @@ interface AuditLog {
 }
 
 export default function AuditLogsPage() {
+    const t = useTranslations('Portal.AuditLogs');
+    const tc = useTranslations('Portal.Common');
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
     const [page, setPage] = useState(1);
@@ -90,36 +93,36 @@ export default function AuditLogsPage() {
     const logs = logsData?.data || [];
     const totalItems = logsData?.meta?.total || 0;
 
-    const getActionBadge = (action: string) => {
+    const getActionBadge = React.useCallback((action: string) => {
         switch (action) {
             case 'CREATE':
                 return (
                     <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 uppercase text-[8px] font-black tracking-widest px-2 py-0.5 rounded-none w-fit">
-                        Tạo mới
+                        {t('actionTypes.CREATE')}
                     </Badge>
                 );
             case 'UPDATE':
                 return (
                     <Badge className="bg-blue-50 text-blue-600 border-blue-100 uppercase text-[8px] font-black tracking-widest px-2 py-0.5 rounded-none w-fit">
-                        Cập nhật
+                        {t('actionTypes.UPDATE')}
                     </Badge>
                 );
             case 'DELETE':
                 return (
                     <Badge className="bg-rose-50 text-rose-600 border-rose-100 uppercase text-[8px] font-black tracking-widest px-2 py-0.5 rounded-none w-fit">
-                        Xóa
+                        {t('actionTypes.DELETE')}
                     </Badge>
                 );
             case 'LOGIN':
                 return (
                     <Badge className="bg-indigo-50 text-indigo-600 border-indigo-100 uppercase text-[8px] font-black tracking-widest px-2 py-0.5 rounded-none w-fit">
-                        Đăng nhập
+                        {t('actionTypes.LOGIN')}
                     </Badge>
                 );
             case 'AUTH_FAILURE':
                 return (
                     <Badge className="bg-orange-50 text-orange-600 border-orange-100 uppercase text-[8px] font-black tracking-widest px-2 py-0.5 rounded-none w-fit">
-                        Lỗi Auth
+                        {t('actionTypes.AUTH_FAILURE')}
                     </Badge>
                 );
             default:
@@ -129,7 +132,7 @@ export default function AuditLogsPage() {
                     </Badge>
                 );
         }
-    };
+    }, [t]);
 
     const formatDate = (dateStr: string) => {
         try {
@@ -144,7 +147,7 @@ export default function AuditLogsPage() {
         {
             accessorKey: 'createdAt',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Thời gian / IP" />
+                <DataTableColumnHeader column={column} title={t('time')} />
             ),
             cell: ({ row }) => {
                 const log = row.original;
@@ -164,7 +167,7 @@ export default function AuditLogsPage() {
         {
             accessorKey: 'user',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Quản trị viên" className="hidden sm:flex" />
+                <DataTableColumnHeader column={column} title={t('user')} className="hidden sm:flex" />
             ),
             cell: ({ row }) => {
                 const log = row.original;
@@ -188,7 +191,7 @@ export default function AuditLogsPage() {
         {
             accessorKey: 'action',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Hành động" />
+                <DataTableColumnHeader column={column} title={t('action')} />
             ),
             cell: ({ row }) => {
                 const log = row.original;
@@ -205,7 +208,7 @@ export default function AuditLogsPage() {
         {
             accessorKey: 'description',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Nội dung thay đổi" className="hidden lg:flex" />
+                <DataTableColumnHeader column={column} title={t('description')} className="hidden lg:flex" />
             ),
             cell: ({ row }) => (
                 <p className="text-xs font-medium text-slate-600 max-w-xs truncate italic hidden lg:block">
@@ -217,7 +220,7 @@ export default function AuditLogsPage() {
             id: 'actions',
             header: () => (
                 <div className="text-right uppercase text-[9px] font-black tracking-widest text-slate-400">
-                    Chi tiết
+                    {tc('actions')}
                 </div>
             ),
             cell: ({ row }) => (
@@ -233,7 +236,7 @@ export default function AuditLogsPage() {
                 </div>
             ),
         },
-    ], []);
+    ], [t, tc, getActionBadge]);
 
     return (
         <div className="space-y-6">

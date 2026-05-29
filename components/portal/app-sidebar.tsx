@@ -22,6 +22,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -41,6 +42,7 @@ const DynamicIcon = memo(function DynamicIcon({ name, className }: { name: strin
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
     const router = useRouter();
+    const t = useTranslations('Portal.Sidebar');
     const { user, can } = usePermissions();
     const [isMounted, setIsMounted] = useState(false);
 
@@ -52,12 +54,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         try {
             await $api.post(API_ROUTES.AUTH.LOGOUT);
             useAuthStore.getState().logout();
-            toast.success('Đã đăng xuất');
+            toast.success(t('logoutSuccess'));
             router.push('/login');
             router.refresh();
         } catch (error) {
             console.error('Logout failed', error);
-            toast.error('Lỗi khi đăng xuất');
+            toast.error(t('logoutError'));
         }
     };
 
@@ -120,7 +122,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             />
                         </div>
                         <span className="text-[11px] font-black tracking-tighter leading-none text-white whitespace-nowrap uppercase">
-                            SÀI GÒN VALVE
+                            {t('companyName')}
                         </span>
                     </div>
                     <div className="hidden group-data-[collapsible=icon]:flex h-8 w-8 items-center justify-center rounded-none bg-white p-1 shrink-0">
@@ -155,7 +157,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 >
                                     <SidebarMenuButton
                                         asChild
-                                        tooltip={item.name}
+                                        tooltip={t(item.code.toLowerCase() as never)}
                                         className={cn(
                                             'text-[10px] font-black px-4 transition-none! uppercase tracking-widest rounded-none h-auto group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center relative',
                                             active
@@ -177,7 +179,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                                 />
                                             </div>
                                             <span className="truncate group-data-[collapsible=icon]:hidden">
-                                                {item.name}
+                                                {t(item.code.toLowerCase() as never)}
                                             </span>
                                         </Link>
                                     </SidebarMenuButton>
@@ -239,7 +241,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         >
                             <DropdownMenuLabel className="px-5 py-3 bg-black/40 ">
                                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/40">
-                                    Tài khoản
+                                    {t('account')}
                                 </p>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator className="bg-white/5 m-0" />
@@ -253,7 +255,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 >
                                     <User className="size-4 text-[#fbbf24] mr-3" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">
-                                        Hồ sơ
+                                        {t('profile')}
                                     </span>
                                 </Link>
                             </DropdownMenuItem>
@@ -264,7 +266,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             >
                                 <LogOut className="size-4 mr-3" />
                                 <span className="text-[10px] font-black uppercase tracking-widest">
-                                    Đăng xuất
+                                    {t('logout')}
                                 </span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>

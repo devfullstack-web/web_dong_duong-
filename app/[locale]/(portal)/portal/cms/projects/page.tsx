@@ -41,12 +41,10 @@ import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
-const PROJECT_STATUS_FILTERS: { value: Project['status']; label: string }[] = [
-    { value: 'ongoing', label: 'Đang triển khai' },
-    { value: 'completed', label: 'Đã hoàn thành' },
-];
+const PROJECT_STATUS_FILTERS: Project['status'][] = ['ongoing', 'completed'];
 
 function ProjectImage({ src, alt }: { src?: string | null; alt: string }) {
     const [imgSrc, setImgSrc] = useState(src);
@@ -80,6 +78,8 @@ function ProjectImage({ src, alt }: { src?: string | null; alt: string }) {
 export default function ProjectsManagementPage() {
     const { can: hasPermission } = usePermissions();
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.Projects');
+    const tc = useTranslations('Portal.Common');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -137,14 +137,14 @@ export default function ProjectsManagementPage() {
             await $api.delete(`${API_ROUTES.PROJECTS}/${id}`);
         },
         onSuccess: () => {
-            toast.success('Đã xóa dự án thành công');
+            toast.success(t('deleteSuccess'));
             queryClient.invalidateQueries({ queryKey: ['admin-projects'] });
             queryClient.invalidateQueries({ queryKey: ['projects'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },
         onError: () => {
-            toast.error('Lỗi khi xóa dự án');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -163,19 +163,19 @@ export default function ProjectsManagementPage() {
             case 'completed':
                 return (
                     <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
-                        <CheckCircle size={10} /> Đã hoàn thành
+                        <CheckCircle size={10} /> {t('completed')}
                     </Badge>
                 );
             case 'ongoing':
                 return (
                     <Badge className="bg-blue-50 text-blue-600 border-blue-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
-                        <Clock size={10} /> Đang triển khai
+                        <Clock size={10} /> {t('ongoing')}
                     </Badge>
                 );
             default:
                 return null;
         }
-    }, []);
+    }, [t]);
 
     const formatDate = React.useCallback((dateStr?: string) => {
         if (!dateStr) return 'N/A';
@@ -191,7 +191,7 @@ export default function ProjectsManagementPage() {
         {
             accessorKey: 'name',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Dự án" />
+                <DataTableColumnHeader column={column} title={t('project')} />
             ),
             cell: ({ row }) => {
                 const project = row.original;
@@ -208,7 +208,7 @@ export default function ProjectsManagementPage() {
                                 variant="outline"
                                 className="text-[9px] font-bold text-slate-400 border-slate-200 uppercase tracking-widest px-2 py-0 rounded-none"
                             >
-                                {project.category || 'Chưa phân loại'}
+                                {project.category || t('uncategorized')}
                             </Badge>
                         </div>
                     </div>
@@ -218,7 +218,7 @@ export default function ProjectsManagementPage() {
         {
             accessorKey: 'client_name',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Chủ đầu tư" className="hidden md:flex" />
+                <DataTableColumnHeader column={column} title={t('client') || 'Client'} className="hidden md:flex" />
             ),
             cell: ({ row }) => (
                 <div className="text-[11px] font-black text-slate-600 uppercase tracking-tight hidden md:block">
@@ -229,7 +229,7 @@ export default function ProjectsManagementPage() {
         {
             accessorKey: 'start_date',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Thời gian" className="hidden sm:flex" />
+                <DataTableColumnHeader column={column} title={t('date')} className="hidden sm:flex" />
             ),
             cell: ({ row }) => {
                 const project = row.original;
@@ -244,7 +244,7 @@ export default function ProjectsManagementPage() {
                         </div>
                         {project.status === 'completed' && (
                             <span className="text-[9px] text-slate-400">
-                                Đến: {formatDate(project.end_date)}
+                                {t('to') || 'To'}: {formatDate(project.end_date)}
                             </span>
                         )}
                     </div>
@@ -254,7 +254,7 @@ export default function ProjectsManagementPage() {
         {
             accessorKey: 'status',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Trạng thái" />
+                <DataTableColumnHeader column={column} title={tc('status')} />
             ),
             cell: ({ row }) => getStatusBadge(row.original.status),
         },
@@ -262,7 +262,7 @@ export default function ProjectsManagementPage() {
             id: 'actions',
             header: () => (
                 <div className="text-right uppercase text-[10px] font-black tracking-widest text-slate-400">
-                    Thao tác
+                    {tc('actions')}
                 </div>
             ),
             cell: ({ row }) => {
@@ -283,7 +283,7 @@ export default function ProjectsManagementPage() {
                                 className="w-48 p-1 rounded-none border border-slate-100 bg-white"
                             >
                                 <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
-                                    Tùy chọn dự án
+                                    {t('options')}
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator className="bg-slate-50" />
 
@@ -298,7 +298,7 @@ export default function ProjectsManagementPage() {
                                                 className="text-slate-400 group-hover:text-brand-primary transition-colors"
                                             />
                                             <span className="text-xs font-bold uppercase tracking-tight text-slate-900">
-                                                Sửa thông tin
+                                                {tc('edit')}
                                             </span>
                                         </Link>
                                     </DropdownMenuItem>
@@ -316,7 +316,7 @@ export default function ProjectsManagementPage() {
                                                 className="text-slate-400 group-hover:text-rose-600 transition-colors"
                                             />
                                             <span className="text-xs font-bold uppercase tracking-tight text-rose-600">
-                                                Xóa dự án
+                                                {t('deleteProject')}
                                             </span>
                                         </DropdownMenuItem>
                                     </>
@@ -327,17 +327,17 @@ export default function ProjectsManagementPage() {
                 );
             },
         },
-    ], [hasPermission, formatDate, getStatusBadge]);
+    ], [hasPermission, formatDate, getStatusBadge, t, tc]);
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
                     <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
-                        Quản lý dự án
+                        {t('title')}
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-2 text-xs">
-                        Danh sách các dự án và công trình trọng điểm đã thực hiện.
+                        {t('subtitle')}
                     </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2 md:gap-3">
@@ -347,14 +347,14 @@ export default function ProjectsManagementPage() {
                                 variant="outline"
                                 className="text-[10px] font-black uppercase tracking-widest px-4 md:px-5 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none"
                             >
-                                Danh mục
+                                {t('categories')}
                             </Button>
                         </Link>
                     )}
                     {hasPermission(PERMISSIONS.PROJECTS_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.projects.add}>
                             <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 hover:cursor-pointer h-10 transition-all rounded-none">
-                                <Plus className="mr-2 size-4" /> Thêm dự án mới
+                                <Plus className="mr-2 size-4" /> {t('add')}
                             </Button>
                         </Link>
                     )}
@@ -365,13 +365,13 @@ export default function ProjectsManagementPage() {
                 columns={columns}
                 data={projectsList}
                 isLoading={isLoading}
-                loadingText="Đang tải danh sách dự án..."
-                emptyText="Không tìm thấy dự án nào phù hợp."
+                loadingText={t('loading')}
+                emptyText={t('empty')}
                 emptyIcon={<Layout size={64} className="text-slate-100 mb-6" />}
                 toolbarProps={{
                     searchValue: searchTerm,
                     onSearchChange: setSearchTerm,
-                    searchPlaceholder: "TÌM KIẾM THEO TÊN DỰ ÁN, ĐỊA ĐIỂM HOẶC LOẠI HÌNH...",
+                    searchPlaceholder: t('searchPlaceholder'),
                     filters: (
                         <>
                             {/* Status Filter */}
@@ -386,8 +386,8 @@ export default function ProjectsManagementPage() {
                                     >
                                         <span className="truncate">
                                             {selectedStatus
-                                                ? PROJECT_STATUS_FILTERS.find((item) => item.value === selectedStatus)?.label
-                                                : 'Lọc trạng thái'}
+                                                ? t(selectedStatus as never)
+                                                : t('filterStatus')}
                                         </span>
                                         <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
                                     </Button>
@@ -397,19 +397,19 @@ export default function ProjectsManagementPage() {
                                         className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
                                         onClick={() => setSelectedStatus('')}
                                     >
-                                        Tất cả trạng thái
+                                        {t('allStatuses')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-50" />
                                     {PROJECT_STATUS_FILTERS.map((status) => (
                                         <DropdownMenuItem
-                                            key={status.value}
+                                            key={status}
                                             className={cn(
                                                 'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
-                                                selectedStatus === status.value && 'text-brand-primary bg-brand-primary/5',
+                                                selectedStatus === status && 'text-brand-primary bg-brand-primary/5',
                                             )}
-                                            onClick={() => setSelectedStatus(status.value)}
+                                            onClick={() => setSelectedStatus(status)}
                                         >
-                                            {status.label}
+                                            {t(status as never)}
                                         </DropdownMenuItem>
                                     ))}
                                 </DropdownMenuContent>
@@ -438,7 +438,7 @@ export default function ProjectsManagementPage() {
                                                     format(date.from, 'dd/MM/yy')
                                                 )
                                             ) : (
-                                                <span>Lọc theo ngày</span>
+                                                <span>{t('filterDate')}</span>
                                             )}
                                         </Button>
                                     </PopoverTrigger>
@@ -463,7 +463,7 @@ export default function ProjectsManagementPage() {
                                                     className="text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50 hover:cursor-pointer"
                                                     onClick={() => setDate(undefined)}
                                                 >
-                                                    <X className="mr-2 size-3" /> Xóa lọc
+                                                    <X className="mr-2 size-3" /> {t('clearFilter')}
                                                 </Button>
                                             </div>
                                         )}
@@ -482,7 +482,7 @@ export default function ProjectsManagementPage() {
                         setPageSize(size);
                         setCurrentPage(1);
                     },
-                    itemLabel: "dự án"
+                    itemLabel: t('itemLabel')
                 }}
             />
 
@@ -491,10 +491,10 @@ export default function ProjectsManagementPage() {
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 onConfirm={handleDeleteConfirm}
-                title="Xóa dự án"
-                description="Dự án sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác."
+                title={t('deleteTitle')}
+                description={t('deleteConfirm')}
                 itemName={itemToDelete?.name}
-                itemLabel="Dự án"
+                itemLabel={t('itemLabelCap')}
                 loading={deleteMutation.isPending}
             />
         </div>

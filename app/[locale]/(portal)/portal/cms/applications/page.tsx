@@ -38,6 +38,7 @@ import { vi } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 interface JobApplication {
@@ -91,6 +92,8 @@ const STATUS_CONFIG: Record<
 
 export default function ApplicationsManagementPage() {
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.Applications');
+    const tc = useTranslations('Portal.Common');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -133,14 +136,14 @@ export default function ApplicationsManagementPage() {
             await $api.delete(`${API_ROUTES.APPLICATIONS}/${id}`);
         },
         onSuccess: () => {
-            toast.success('Đã xóa hồ sơ ứng viên');
+            toast.success(t('deleteSuccess'));
             queryClient.invalidateQueries({ queryKey: ['applications'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },
         onError: () => {
-            toast.error('Không thể xóa hồ sơ ứng viên');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -150,12 +153,12 @@ export default function ApplicationsManagementPage() {
             await $api.patch(`${API_ROUTES.APPLICATIONS}/${id}`, { status });
         },
         onSuccess: () => {
-            toast.success('Đã cập nhật trạng thái hồ sơ');
+            toast.success(t('updateStatusSuccess'));
             queryClient.invalidateQueries({ queryKey: ['applications'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
         },
         onError: () => {
-            toast.error('Không thể cập nhật trạng thái');
+            toast.error(tc('general') || 'Failed');
         },
     });
 
@@ -168,8 +171,8 @@ export default function ApplicationsManagementPage() {
         updateStatusMutation.mutate({ id, status });
     }, [updateStatusMutation]);
 
-    const getStatusBadge = (status: string) => {
-        const config = STATUS_CONFIG[status] || {
+    const getStatusBadge = React.useCallback((status: string) => {
+        const config = STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || {
             label: status,
             color: 'bg-slate-500/10 text-slate-500',
             icon: AlertCircle,
@@ -183,10 +186,10 @@ export default function ApplicationsManagementPage() {
                 )}
             >
                 <Icon size={10} />
-                {config.label}
+                {t(`status.${status}` as never) || config.label}
             </Badge>
         );
-    };
+    }, [t]);
 
     const formatDate = (dateStr: string) => {
         try {
@@ -201,7 +204,7 @@ export default function ApplicationsManagementPage() {
         {
             accessorKey: 'full_name',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Ứng viên" />
+                <DataTableColumnHeader column={column} title={t('candidate')} />
             ),
             cell: ({ row }) => (
                 <p className="text-sm font-black text-slate-900 uppercase tracking-tight">
@@ -212,7 +215,7 @@ export default function ApplicationsManagementPage() {
         {
             accessorKey: 'job_title',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Vị trí ứng tuyển" />
+                <DataTableColumnHeader column={column} title={t('job')} />
             ),
             cell: ({ row }) => (
                 <p className="text-[10px] font-black text-brand-primary uppercase truncate max-w-[200px] flex items-center gap-2">
@@ -223,7 +226,7 @@ export default function ApplicationsManagementPage() {
         {
             accessorKey: 'email',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Thông tin liên hệ" />
+                <DataTableColumnHeader column={column} title={t('info') || 'Info'} />
             ),
             cell: ({ row }) => {
                 const app = row.original;
@@ -244,7 +247,7 @@ export default function ApplicationsManagementPage() {
         {
             accessorKey: 'created_at',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Ngày nộp" />
+                <DataTableColumnHeader column={column} title={t('date')} />
             ),
             cell: ({ row }) => (
                 <span className="text-[10px] font-bold text-slate-500 italic">
@@ -255,7 +258,7 @@ export default function ApplicationsManagementPage() {
         {
             accessorKey: 'status',
             header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="Trạng thái" />
+                <DataTableColumnHeader column={column} title={tc('status')} />
             ),
             cell: ({ row }) => getStatusBadge(row.original.status),
         },
@@ -263,7 +266,7 @@ export default function ApplicationsManagementPage() {
             id: 'actions',
             header: () => (
                 <div className="text-right uppercase text-[9px] font-black tracking-widest text-slate-400">
-                    Thao tác
+                    {tc('actions')}
                 </div>
             ),
             cell: ({ row }) => {
@@ -346,7 +349,7 @@ export default function ApplicationsManagementPage() {
                 );
             },
         },
-    ], [router, handleUpdateStatus]);
+    ], [router, handleUpdateStatus, getStatusBadge, t, tc]);
 
     return (
         <div className="space-y-6">
