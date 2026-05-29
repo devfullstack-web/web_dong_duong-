@@ -4,7 +4,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import $api from '@/utils/axios';
-import { Save, ArrowLeft, Loader2 } from 'lucide-react';
+import { Save, ArrowLeft, Loader2,ChevronDown } from 'lucide-react';
 import { generateSlug } from '@/utils/slug';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,13 +17,18 @@ import {
     type LocalizedFeatures,
     type LocalizedTechSpecs,
 } from '@/components/portal/LocalizedLists';
+
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { StatusFormSection } from '@/components/portal/status-form-section';
 import { ImageUploader } from '@/components/portal/ImageUploader';
@@ -32,6 +37,7 @@ import { toast } from 'sonner';
 import { createEmptyLocalizedText, getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText } from '@/types/i18n';
 import { useQueryClient } from '@tanstack/react-query';
+import { cn } from '@/lib/utils';
 
 interface Category {
     id: string;
@@ -390,27 +396,85 @@ export default function AddProductPage() {
                             >
                                 Danh mục *
                             </Label>
-                            <Select
-                                value={formData.category_id}
-                                onValueChange={(value) =>
-                                    setFormData({ ...formData, category_id: value })
-                                }
-                            >
-                                <SelectTrigger className="h-9 bg-slate-50 border-none rounded-none text-sm font-bold shadow-none focus:ring-1 focus:ring-brand-primary/20">
-                                    <SelectValue placeholder="Chọn danh mục" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-none border-slate-100">
-                                    {flattenCategories(categories).map((cat) => (
-                                        <SelectItem
-                                            key={cat.id}
-                                            value={cat.id}
-                                            className="text-sm font-bold rounded-none"
-                                        >
-                                            {cat._level > 0 ? '—'.repeat(cat._level) + ' ' : ''}{getLocalizedValue(cat.name_localized, 'vi') || cat.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="w-full justify-between text-left font-bold text-sm h-9 bg-slate-50 border-none rounded-none shadow-none focus:ring-1 focus:ring-brand-primary/20 text-slate-900"
+                                    >
+                                        <span className="truncate">
+                                            {formData.category_id
+                                                ? (flattenCategories(categories).find((c) => c.id === formData.category_id)?.name || 'Chọn danh mục')
+                                                : 'Chọn danh mục'}
+                                        </span>
+                                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="w-60 rounded-none border border-slate-100 p-1 max-h-80 overflow-y-auto bg-white">
+                                    {categories.map((cat) => {
+                                        const hasChildren = cat.children && cat.children.length > 0;
+                                        const catName = getLocalizedValue(cat.name_localized, 'vi') || cat.name;
+
+                                        if (hasChildren) {
+                                            return (
+                                                <DropdownMenuSub key={cat.id}>
+                                                    <DropdownMenuSubTrigger
+                                                        className={cn(
+                                                            "text-xs font-bold uppercase tracking-wide rounded-none px-3 py-2 cursor-pointer flex justify-between items-center hover:bg-slate-50",
+                                                            formData.category_id === cat.id && "text-brand-primary bg-brand-primary/5"
+                                                        )}
+                                                    >
+                                                        {catName}
+                                                    </DropdownMenuSubTrigger>
+                                                    <DropdownMenuPortal>
+                                                        <DropdownMenuSubContent className="rounded-none border border-slate-100 p-1 bg-white min-w-48 max-h-80 overflow-y-auto">
+                                                            <DropdownMenuItem
+                                                                className={cn(
+                                                                    "text-xs font-bold uppercase tracking-wide rounded-none px-3 py-2 cursor-pointer text-slate-500 hover:text-slate-900",
+                                                                    formData.category_id === cat.id && "text-brand-primary bg-brand-primary/5"
+                                                                )}
+                                                                onClick={() => setFormData({ ...formData, category_id: cat.id })}
+                                                            >
+                                                                Tất cả {catName}
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator className="bg-slate-50" />
+                                                            {cat.children!.map((subCat) => {
+                                                                const subCatName = getLocalizedValue(subCat.name_localized, 'vi') || subCat.name;
+                                                                return (
+                                                                    <DropdownMenuItem
+                                                                        key={subCat.id}
+                                                                        className={cn(
+                                                                            "text-xs font-bold uppercase tracking-wide rounded-none px-3 py-2 cursor-pointer",
+                                                                            formData.category_id === subCat.id && "text-brand-primary bg-brand-primary/5"
+                                                                        )}
+                                                                        onClick={() => setFormData({ ...formData, category_id: subCat.id })}
+                                                                    >
+                                                                        {subCatName}
+                                                                    </DropdownMenuItem>
+                                                                );
+                                                            })}
+                                                        </DropdownMenuSubContent>
+                                                    </DropdownMenuPortal>
+                                                </DropdownMenuSub>
+                                            );
+                                        }
+
+                                        return (
+                                            <DropdownMenuItem
+                                                key={cat.id}
+                                                className={cn(
+                                                    "text-xs font-bold uppercase tracking-wide rounded-none px-3 py-2 cursor-pointer",
+                                                    formData.category_id === cat.id && "text-brand-primary bg-brand-primary/5"
+                                                )}
+                                                onClick={() => setFormData({ ...formData, category_id: cat.id })}
+                                            >
+                                                {catName}
+                                            </DropdownMenuItem>
+                                        );
+                                    })}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
 
