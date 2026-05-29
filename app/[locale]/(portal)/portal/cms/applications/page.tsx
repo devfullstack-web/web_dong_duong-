@@ -5,7 +5,7 @@ import {
     Search,
     MoreHorizontal,
     Trash2,
-    Loader2,
+
     Users,
     FileDown,
     Mail,
@@ -31,6 +31,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Loading from '@/components/shared/Loading';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { TablePagination } from '@/components/portal/table-pagination';
 import { API_ROUTES, PORTAL_ROUTES } from '@/constants/routes';
@@ -227,8 +228,8 @@ export default function ApplicationsManagementPage() {
                         {/* Table */}
                         <div className="bg-white overflow-hidden shadow-sm">
                             {isLoading ? (
-                                <div className="flex items-center justify-center h-64">
-                                    <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+                                <div className="relative h-64">
+                                    <Loading variant="section" size="md" text="Đang tải hồ sơ ứng viên..." />
                                 </div>
                             ) : applications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-64 text-slate-400">

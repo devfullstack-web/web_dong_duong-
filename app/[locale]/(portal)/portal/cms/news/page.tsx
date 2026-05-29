@@ -8,7 +8,6 @@ import {
     MoreHorizontal,
     Edit2,
     Trash2,
-    Loader2,
     Newspaper,
     Calendar as CalendarIcon,
     X,
@@ -29,6 +28,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Loading from '@/components/shared/Loading';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { TablePagination } from '@/components/portal/table-pagination';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
@@ -334,7 +334,7 @@ export default function NewsManagementPage() {
                 {/* Table Content */}
                 {isLoading ? (
                     <div className="flex items-center justify-center h-[400px]">
-                        <Loader2 size={40} className="animate-spin text-brand-primary opacity-20" />
+                        <Loading variant="section" size="lg" text="Đang tải danh sách tin tức..." />
                     </div>
                 ) : newsList.length > 0 ? (
                     <div className="overflow-x-auto">

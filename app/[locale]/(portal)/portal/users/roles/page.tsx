@@ -8,13 +8,14 @@ import {
     ShieldCheck,
     Edit2,
     Trash2,
-    Loader2,
+
     Lock,
 } from 'lucide-react';
 import * as React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Loading from '@/components/shared/Loading';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { toast } from 'sonner';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
@@ -115,7 +116,7 @@ export default function RolesManagementPage() {
                 {/* Table Content */}
                 {isLoading ? (
                     <div className="flex items-center justify-center h-[400px]">
-                        <Loader2 size={40} className="animate-spin text-brand-primary opacity-20" />
+                        <Loading variant="section" size="lg" text="Đang tải danh sách vai trò..." />
                     </div>
                 ) : filteredRoles.length > 0 ? (
                     <div className="overflow-x-auto">

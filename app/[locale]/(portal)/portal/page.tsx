@@ -9,7 +9,6 @@ import {
     Users,
     ArrowUpRight,
     Clock,
-    Loader2,
     Calendar as CalendarIcon,
     X,
 } from 'lucide-react';
@@ -27,6 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { Button } from '@/components/ui/button';
+import Loading from '@/components/shared/Loading';
 
 export default function DashboardPage() {
     const [date, setDate] = React.useState<DateRange | undefined>();
@@ -139,7 +139,7 @@ export default function DashboardPage() {
     if (loading && !stats) {
         return (
             <div className="flex items-center justify-center min-h-100">
-                <Loader2 className="h-10 w-10 animate-spin text-brand-primary opacity-20" />
+                <Loading variant="section" size="md" text="Đang tải dữ liệu báo cáo..." />
             </div>
         );
     }

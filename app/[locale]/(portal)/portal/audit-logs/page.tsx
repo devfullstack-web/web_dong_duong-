@@ -5,6 +5,7 @@ import { Search, User, Activity, Info, ShieldAlert, Clock, Eye } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import Loading from '@/components/shared/Loading';
 import {
     Select,
     SelectContent,
@@ -262,14 +263,13 @@ export default function AuditLogsPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {isLoading ? (
-                                Array.from({ length: 5 }).map((_, i) => (
-                                    <tr key={i} className="animate-pulse">
-                                        <td
-                                            colSpan={5}
-                                            className="px-8 py-6 h-16 bg-slate-50/20"
-                                        ></td>
-                                    </tr>
-                                ))
+                                <tr>
+                                    <td colSpan={5} className="p-0 border-none">
+                                        <div className="relative h-64">
+                                            <Loading variant="section" size="md" text="Đang tải nhật ký hệ thống..." />
+                                        </div>
+                                    </td>
+                                </tr>
                             ) : logs.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="px-8 py-20 text-center">
