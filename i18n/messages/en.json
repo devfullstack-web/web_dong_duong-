@@ -597,7 +597,8 @@
       "active": "Active",
       "inactive": "Inactive",
       "deleteSuccess": "Product deleted successfully",
-      "exportSuccess": "Data exported to Excel successfully"
+      "exportSuccess": "Data exported to Excel successfully",
+      "companyName": "Saigon Valve"
     },
     "News": {
       "title": "News Management",

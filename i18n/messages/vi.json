@@ -598,7 +598,8 @@
             "active": "Đang bán",
             "inactive": "Ngừng kinh doanh",
             "deleteSuccess": "Đã xóa sản phẩm thành công",
-            "exportSuccess": "Đã xuất dữ liệu Excel thành công"
+            "exportSuccess": "Đã xuất dữ liệu Excel thành công",
+            "companyName": "Sài Gòn Valve"
         },
         "News": {
             "title": "Quản lý Tin tức",
