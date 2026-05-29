@@ -7,6 +7,10 @@ import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { checkRateLimit } from '@/utils/rate-limiter';
 import { sanitizePlainText } from '@/utils/sanitize';
+import {
+    CHAT_MESSAGE_SENDER_TYPE,
+    type ChatMessageSenderType,
+} from '@/constants/content';
 
 const WELCOME_MESSAGE = `Xin chào! Cảm ơn bạn đã liên hệ với Sài Gòn Valve.
 
@@ -77,11 +81,11 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
             return apiError('Content cannot be empty', 400);
         }
 
-        let senderType: 'guest' | 'admin' = 'guest';
+        let senderType: ChatMessageSenderType = CHAT_MESSAGE_SENDER_TYPE.GUEST;
         let senderId: string | null = null;
 
         if (!isFromWidget && session && canAccessChat(session)) {
-            senderType = 'admin';
+            senderType = CHAT_MESSAGE_SENDER_TYPE.ADMIN;
             senderId = session.user.id;
         } else {
             const sanitizedGuestId = sanitizePlainText(guestId, 255);
@@ -129,7 +133,7 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
             updated_at: new Date(),
         };
 
-        if (senderType === 'guest') {
+        if (senderType === CHAT_MESSAGE_SENDER_TYPE.GUEST) {
             // Increment unread count for admin
             sessionUpdateData.unread_count = sql`${chatSessions.unread_count} + 1`;
         }
@@ -140,12 +144,12 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
             .where(eq(chatSessions.id, sessionId));
 
         // Auto-reply with welcome message after the first guest message in session
-        if (senderType === 'guest') {
+        if (senderType === CHAT_MESSAGE_SENDER_TYPE.GUEST) {
             const guestMsgCount = await db
                 .select({ count: sql<number>`count(*)` })
                 .from(chatMessages)
                 .where(
-                    sql`${chatMessages.session_id} = ${sessionId} AND ${chatMessages.sender_type} = 'guest'`,
+                    sql`${chatMessages.session_id} = ${sessionId} AND ${chatMessages.sender_type} = ${CHAT_MESSAGE_SENDER_TYPE.GUEST}`,
             );
 
             if (Number(guestMsgCount[0]?.count) === 1) {
@@ -154,7 +158,7 @@ export const POST = withHybridAuth(async (req: NextRequest, session) => {
                     .values({
                         session_id: sessionId,
                         content: WELCOME_MESSAGE,
-                        sender_type: 'system',
+                        sender_type: CHAT_MESSAGE_SENDER_TYPE.SYSTEM,
                         sender_id: null,
                     })
                     .returning();

@@ -7,6 +7,7 @@ import { eq, and, isNull, ne, desc } from 'drizzle-orm';
 import { COMPANY_INFO } from '@/constants/site-info';
 import NewsDetailClient from './_components/NewsDetailClient';
 import { sanitizePlainText, sanitizeRichText } from '@/utils/sanitize';
+import { NEWS_STATUS } from '@/constants/content';
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -35,7 +36,7 @@ const getArticle = cache(async (slug: string) => {
         .where(
             and(
                 eq(newsArticles.slug, slug),
-                eq(newsArticles.status, 'published'),
+                eq(newsArticles.status, NEWS_STATUS.PUBLISHED),
                 isNull(newsArticles.deleted_at),
             ),
         );
@@ -65,7 +66,7 @@ async function getRelatedArticles(slug: string) {
         .where(
             and(
                 ne(newsArticles.slug, slug),
-                eq(newsArticles.status, 'published'),
+                eq(newsArticles.status, NEWS_STATUS.PUBLISHED),
                 isNull(newsArticles.deleted_at),
             ),
         )

@@ -5,6 +5,7 @@ import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { sanitizeRichText } from "@/utils/sanitize";
+import { PROJECT_STATUS_VALUES, isConstantValue } from "@/constants/content";
 
 // UUID regex pattern
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -89,7 +90,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     if (updates.description !== undefined) updates.description = sanitizeRichText(updates.description);
     if (updates.start_date) updates.start_date = new Date(updates.start_date);
     if (updates.end_date) updates.end_date = new Date(updates.end_date);
-    if (updates.status !== undefined && !['ongoing', 'completed'].includes(updates.status)) {
+    if (updates.status !== undefined && !isConstantValue(PROJECT_STATUS_VALUES, updates.status)) {
       return apiError("Invalid status", 400);
     }
 

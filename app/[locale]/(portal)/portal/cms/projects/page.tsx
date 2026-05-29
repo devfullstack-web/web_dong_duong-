@@ -43,8 +43,12 @@ import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
 import { useTranslations } from 'next-intl';
 import * as React from 'react';
+import { PROJECT_STATUS } from '@/constants/content';
 
-const PROJECT_STATUS_FILTERS: Project['status'][] = ['ongoing', 'completed'];
+const PROJECT_STATUS_FILTERS: Project['status'][] = [
+    PROJECT_STATUS.ONGOING,
+    PROJECT_STATUS.COMPLETED,
+];
 
 function ProjectImage({ src, alt }: { src?: string | null; alt: string }) {
     const [imgSrc, setImgSrc] = useState(src);
@@ -160,13 +164,13 @@ export default function ProjectsManagementPage() {
 
     const getStatusBadge = React.useCallback((status: Project['status']) => {
         switch (status) {
-            case 'completed':
+            case PROJECT_STATUS.COMPLETED:
                 return (
                     <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
                         <CheckCircle size={10} /> {t('completed')}
                     </Badge>
                 );
-            case 'ongoing':
+            case PROJECT_STATUS.ONGOING:
                 return (
                     <Badge className="bg-blue-50 text-blue-600 border-blue-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
                         <Clock size={10} /> {t('ongoing')}
@@ -242,7 +246,7 @@ export default function ProjectsManagementPage() {
                             />
                             <span>{formatDate(project.start_date)}</span>
                         </div>
-                        {project.status === 'completed' && (
+                        {project.status === PROJECT_STATUS.COMPLETED && (
                             <span className="text-[9px] text-slate-400">
                                 {t('to') || 'To'}: {formatDate(project.end_date)}
                             </span>

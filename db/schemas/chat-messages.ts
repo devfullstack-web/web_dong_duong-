@@ -1,5 +1,6 @@
 import { boolean, index, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { chatSessions } from './chat-sessions';
+import type { ChatMessageSenderType } from '@/constants/content';
 
 export const chatMessages = pgTable(
     'chat_messages',
@@ -8,7 +9,7 @@ export const chatMessages = pgTable(
         session_id: uuid('session_id')
             .references(() => chatSessions.id, { onDelete: 'cascade' })
             .notNull(),
-        sender_type: varchar('sender_type', { length: 20 }).notNull(), // 'guest', 'admin', or 'system'
+        sender_type: varchar('sender_type', { length: 20 }).$type<ChatMessageSenderType>().notNull(),
         sender_id: uuid('sender_id'),
         content: text('content').notNull(),
         reply_to_id: uuid('reply_to_id'),

@@ -45,10 +45,11 @@ import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
 import { useTranslations } from 'next-intl';
 import * as React from 'react';
+import { NEWS_STATUS } from '@/constants/content';
 
 const NEWS_STATUS_FILTERS: { value: NewsArticle['status']; label: string }[] = [
-    { value: 'published', label: 'Công khai' },
-    { value: 'draft', label: 'Bản nháp' },
+    { value: NEWS_STATUS.PUBLISHED, label: 'Công khai' },
+    { value: NEWS_STATUS.DRAFT, label: 'Bản nháp' },
 ];
 
 function NewsImage({ src, alt }: { src?: string | null; alt: string }) {
@@ -165,13 +166,13 @@ export default function NewsManagementPage() {
 
     const getStatusBadge = React.useCallback((status: NewsArticle['status']) => {
         switch (status) {
-            case 'published':
+            case NEWS_STATUS.PUBLISHED:
                 return (
                     <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
                         <CheckCircle size={10} /> {t('published')}
                     </Badge>
                 );
-            case 'draft':
+            case NEWS_STATUS.DRAFT:
                 return (
                     <Badge className="bg-slate-50 text-slate-500 border-slate-100 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-none flex items-center gap-2">
                         <Clock size={10} /> {t('draft')}

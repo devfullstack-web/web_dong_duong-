@@ -14,6 +14,7 @@ import { ZodError } from 'zod';
 import { PERMISSIONS } from '@/constants/rbac';
 import type { LocalizedText, LocalizedArray } from '@/types/i18n';
 import { sanitizeLocalizedRichText, sanitizeRichText, sanitizeStringArray } from '@/utils/sanitize';
+import { PRODUCT_STATUS } from '@/constants/content';
 
 // GET /api/products - List products with pagination (Public/Protected Hybrid)
 export const GET = withHybridAuth(
@@ -44,7 +45,7 @@ export const GET = withHybridAuth(
                 session &&
                 hasPermission(session.user, PERMISSIONS.PRODUCTS_VIEW);
             if (!isAuthorized) {
-                status = 'active';
+                status = PRODUCT_STATUS.ACTIVE;
                 includeDeleted = false;
             }
 
@@ -152,7 +153,7 @@ export const GET = withHybridAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.PRODUCTS_VIEW], publicStatuses: ['active'] },
+    { requiredPermissions: [PERMISSIONS.PRODUCTS_VIEW], publicStatuses: [PRODUCT_STATUS.ACTIVE] },
 );
 
 // POST /api/products - Create a new product

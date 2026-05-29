@@ -9,13 +9,14 @@ import { ARTICLE, PAGINATION } from '@/constants/app';
 import { auditService } from '@/services/audit-service';
 import { AUDIT_ACTIONS, AUDIT_MODULES } from '@/constants/audit';
 import { sanitizePlainText, sanitizeRichText } from '@/utils/sanitize';
+import { NEWS_STATUS, type NewsStatus } from '@/constants/content';
 
 // GET /api/news - List news articles with pagination
 export const GET = withHybridAuth(
     async (request, session) => {
         try {
             const { searchParams } = new URL(request.url);
-            let status = searchParams.get('status') as 'draft' | 'published' | null;
+            let status = searchParams.get('status') as NewsStatus | null;
             const categoryId = searchParams.get('categoryId');
             const search = searchParams.get('search');
             const startDate = searchParams.get('startDate');
@@ -27,7 +28,7 @@ export const GET = withHybridAuth(
                 session &&
                 hasPermission(session.user, PERMISSIONS.BLOG_VIEW);
             if (!isAuthorized) {
-                status = 'published';
+                status = NEWS_STATUS.PUBLISHED;
                 includeDeleted = false;
             }
 
@@ -133,7 +134,7 @@ export const GET = withHybridAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.BLOG_VIEW], publicStatuses: ['published'] },
+    { requiredPermissions: [PERMISSIONS.BLOG_VIEW], publicStatuses: [NEWS_STATUS.PUBLISHED] },
 );
 
 // POST /api/news - Create a new article
@@ -167,7 +168,7 @@ export const POST = withAuth(
                     content: sanitizeRichText(content),
                     category_id,
                     author_id,
-                    status: status || 'draft',
+                    status: status || NEWS_STATUS.DRAFT,
                     image_url: image_url || null,
                     gallery: gallery || [],
                     published_at: published_at ? new Date(published_at) : null,

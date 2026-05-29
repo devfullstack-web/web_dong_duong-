@@ -1,7 +1,6 @@
 import { db } from '@/db';
 import { notifications } from '@/db/schemas';
-
-export type NotificationType = 'comment' | 'contact' | 'application';
+import type { NotificationType } from '@/constants/content';
 
 interface CreateNotificationParams {
     type: NotificationType;

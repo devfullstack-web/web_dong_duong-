@@ -5,8 +5,7 @@ import { eq } from "drizzle-orm";
 import { withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { NextRequest } from "next/server";
-
-const CONTACT_STATUSES = new Set(["new", "read", "replied", "archived", "pending", "processed", "spam"]);
+import { CONTACT_STATUS_VALUES, isConstantValue } from "@/constants/content";
 
 // PATCH /api/contacts/[id] - Update a contact submission
 export const PATCH = withAuth(async (request: NextRequest, session, { params }) => {
@@ -15,7 +14,7 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
     const body = await request.json();
     const { status } = body;
 
-    if (!status || !CONTACT_STATUSES.has(status)) {
+    if (!isConstantValue(CONTACT_STATUS_VALUES, status)) {
       return apiError("Status is invalid", 400);
     }
 

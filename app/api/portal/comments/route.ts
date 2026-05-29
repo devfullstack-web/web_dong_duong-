@@ -5,6 +5,7 @@ import { desc, ilike, or, and, isNull, sql, eq } from 'drizzle-orm';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
+import { PRODUCT_COMMENT_STATUS } from '@/constants/content';
 
 // GET /api/portal/comments - List all comments for admin management
 export const GET = withAuth(
@@ -12,7 +13,7 @@ export const GET = withAuth(
         try {
             const { searchParams } = new URL(request.url);
             const search = searchParams.get('search');
-            const status = searchParams.get('status'); // approved, pending
+            const status = searchParams.get('status');
 
             const { page, limit } = parsePaginationParams(searchParams, { limit: 10 });
             const offset = calculateOffset(page, limit);
@@ -30,9 +31,9 @@ export const GET = withAuth(
                 }
             }
 
-            if (status === 'approved') {
+            if (status === PRODUCT_COMMENT_STATUS.APPROVED) {
                 conditions.push(eq(productComments.is_approved, true));
-            } else if (status === 'pending') {
+            } else if (status === PRODUCT_COMMENT_STATUS.PENDING) {
                 conditions.push(eq(productComments.is_approved, false));
             }
 

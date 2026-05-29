@@ -12,6 +12,7 @@ import { SiteEmptyState } from '@/components/site/SiteEmptyState';
 import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
 import { SitePagination } from '@/components/site/SitePagination';
 import { formatViDate } from '@/utils/client-format';
+import { NEWS_STATUS } from '@/constants/content';
 
 interface NewsArticle {
     id: string;
@@ -37,7 +38,7 @@ export default function NewsPage() {
         endpoint: API_ROUTES.NEWS,
         queryKey: ['news'],
         pageSize: ITEMS_PER_PAGE,
-        params: { status: 'published' },
+        params: { status: NEWS_STATUS.PUBLISHED },
     });
 
     if (isLoading && news.length === 0) {

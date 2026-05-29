@@ -2,6 +2,7 @@ import { index, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-o
 import { statusEnum } from './enums';
 import { authors } from './authors';
 import { categories } from './categories';
+import { NEWS_STATUS } from '@/constants/content';
 
 export const newsArticles = pgTable(
     'news_articles',
@@ -15,7 +16,7 @@ export const newsArticles = pgTable(
             .references(() => categories.id, { onDelete: 'restrict' })
             .notNull(),
         author_id: uuid('author_id').references(() => authors.id, { onDelete: 'set null' }),
-        status: statusEnum('status').default('draft').notNull(),
+        status: statusEnum('status').default(NEWS_STATUS.DRAFT).notNull(),
         image_url: varchar('image_url', { length: 255 }),
         gallery: jsonb('gallery'), // Array of image URLs
         published_at: timestamp('published_at'),

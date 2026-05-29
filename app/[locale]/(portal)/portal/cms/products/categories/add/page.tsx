@@ -10,6 +10,7 @@ import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE } from '@/constants/content';
 
 export default function AddProductCategoryPage() {
     const router = useRouter();
@@ -19,12 +20,12 @@ export default function AddProductCategoryPage() {
         mutationFn: async (data: CategoryFormData) => {
             await $api.post(API_ROUTES.CATEGORIES, {
                 ...data,
-                type: 'product',
+                type: CATEGORY_TYPE.PRODUCT,
             });
         },
         onSuccess: () => {
             toast.success('Thêm danh mục sản phẩm thành công');
-            queryClient.invalidateQueries({ queryKey: ['categories', 'product'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', CATEGORY_TYPE.PRODUCT] });
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.products.categories.list);
         },
@@ -63,7 +64,7 @@ export default function AddProductCategoryPage() {
 
             <div className=" mx-auto">
                 <CategoryForm
-                    type="product"
+                    type={CATEGORY_TYPE.PRODUCT}
                     onSubmit={handleFormSubmit}
                     backUrl={PORTAL_ROUTES.cms.products.categories.list}
                 />

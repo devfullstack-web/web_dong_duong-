@@ -13,6 +13,7 @@ import { createEmptyLocalizedText, toLocalizedText, getLocalizedValue } from "@/
 import type { LocalizedText, Locale } from "@/types/i18n";
 import $api from "@/utils/axios";
 import { API_ROUTES } from "@/constants/routes";
+import { CATEGORY_TYPE, type CategoryType } from "@/constants/content";
 
 export interface CategoryFormData {
   name_localized: LocalizedText;
@@ -33,7 +34,7 @@ interface ParentCategory {
 interface CategoryFormProps {
   initialData?: Partial<CategoryFormData & { name?: string }>;
   onSubmit: (data: CategoryFormData) => void;
-  type: "news" | "project" | "product";
+  type: CategoryType;
   isEditing?: boolean;
   backUrl: string;
   editingId?: string; // ID of the category being edited (to exclude from parent list)
@@ -74,7 +75,7 @@ export function CategoryForm({
   // Fetch UUID của category_type tương ứng từ API
   React.useEffect(() => {
     if (initialData?.category_type_id) return; // đang edit, đã có sẵn
-    $api.get(`/category-types?name=${type}`)
+    $api.get(`${API_ROUTES.CATEGORY_TYPES}?name=${type}`)
       .then((res) => {
         const found = res.data?.data?.[0];
         if (found?.id) {
@@ -104,15 +105,15 @@ export function CategoryForm({
   };
 
   const typeLabels = {
-    news: "tin tức",
-    project: "dự án",
-    product: "sản phẩm",
+    [CATEGORY_TYPE.NEWS]: "tin tức",
+    [CATEGORY_TYPE.PROJECT]: "dự án",
+    [CATEGORY_TYPE.PRODUCT]: "sản phẩm",
   };
 
   const typeLabelsEn = {
-    news: "news",
-    project: "project",
-    product: "product",
+    [CATEGORY_TYPE.NEWS]: "news",
+    [CATEGORY_TYPE.PROJECT]: "project",
+    [CATEGORY_TYPE.PRODUCT]: "product",
   };
 
   return (

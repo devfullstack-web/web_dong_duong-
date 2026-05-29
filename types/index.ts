@@ -1,4 +1,12 @@
 import type { LocalizedText } from './i18n';
+import type {
+    ChatMessageSenderType,
+    ChatSessionStatus as ChatSessionStatusValue,
+    ContactStatus,
+    NewsStatus,
+    ProductStatus,
+    ProjectStatus,
+} from '@/constants/content';
 
 export interface NewsArticle {
     id: string;
@@ -16,7 +24,7 @@ export interface NewsArticle {
     category?: string;
     author_id: string;
     author?: string;
-    status: 'draft' | 'published';
+    status: NewsStatus;
     featured?: boolean; // For highlighted news on site
 }
 
@@ -28,7 +36,7 @@ export interface Product {
     category_id: string;
     category?: string;
     category_localized?: LocalizedText | null;
-    status: 'active' | 'inactive';
+    status: ProductStatus;
     price: string;
     stock: string;
     image?: string;
@@ -58,7 +66,7 @@ export interface Project {
     category?: string;
     image?: string;
     image_url: string;
-    status: 'ongoing' | 'completed';
+    status: ProjectStatus;
 }
 
 export interface Contact {
@@ -68,7 +76,7 @@ export interface Contact {
     phone: string;
     address: string;
     message: string;
-    status: 'new' | 'read' | 'replied' | 'archived';
+    status: ContactStatus;
     created_at: string;
 }
 
@@ -132,7 +140,7 @@ export interface Role {
 
 // ─── Chat ────────────────────────────────────────────────────────────
 
-export type ChatSessionStatus = 'active' | 'resolved' | 'spam';
+export type ChatSessionStatus = ChatSessionStatusValue;
 
 export interface ChatSession {
     id: string;
@@ -156,7 +164,7 @@ export interface ChatMessage {
     id: string;
     session_id: string;
     content: string;
-    sender_type: 'guest' | 'admin' | 'system';
+    sender_type: ChatMessageSenderType;
     sender_id: string | null;
     reply_to_id: string | null;
     is_deleted: boolean;

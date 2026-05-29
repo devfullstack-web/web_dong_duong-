@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE } from '@/constants/content';
 
 export default function EditNewsCategoryPage() {
     const params = useParams();
@@ -40,11 +41,14 @@ export default function EditNewsCategoryPage() {
 
     const updateMutation = useMutation({
         mutationFn: async (data: CategoryFormData) => {
-            await $api.patch(`${API_ROUTES.CATEGORIES}/${categoryId}`, { ...data, type: 'news' });
+            await $api.patch(`${API_ROUTES.CATEGORIES}/${categoryId}`, {
+                ...data,
+                type: CATEGORY_TYPE.NEWS,
+            });
         },
         onSuccess: () => {
             toast.success('Cập nhật danh mục thành công');
-            queryClient.invalidateQueries({ queryKey: ['categories', 'news'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', CATEGORY_TYPE.NEWS] });
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.news.categories.list);
         },
@@ -103,7 +107,7 @@ export default function EditNewsCategoryPage() {
 
             <div className="w-full">
                 <CategoryForm
-                    type="news"
+                    type={CATEGORY_TYPE.NEWS}
                     isEditing={true}
                     initialData={category}
                     onSubmit={handleFormSubmit}

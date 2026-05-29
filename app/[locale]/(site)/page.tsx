@@ -3,6 +3,7 @@ import Hero from '@/components/home/Hero';
 import { db } from '@/db';
 import { products, newsArticles } from '@/db/schemas';
 import { eq, desc, and, isNull } from 'drizzle-orm';
+import { NEWS_STATUS, PRODUCT_STATUS } from '@/constants/content';
 
 // Revalidate homepage data every 60 seconds (ISR)
 export const revalidate = 60;
@@ -37,7 +38,7 @@ async function getFeaturedProducts() {
             .where(
                 and(
                     eq(products.is_featured, true),
-                    eq(products.status, 'active'),
+                    eq(products.status, PRODUCT_STATUS.ACTIVE),
                     isNull(products.deleted_at),
                 ),
             )
@@ -63,7 +64,7 @@ async function getLatestNews() {
                 category_id: newsArticles.category_id,
             })
             .from(newsArticles)
-            .where(and(eq(newsArticles.status, 'published'), isNull(newsArticles.deleted_at)))
+            .where(and(eq(newsArticles.status, NEWS_STATUS.PUBLISHED), isNull(newsArticles.deleted_at)))
             .orderBy(desc(newsArticles.published_at))
             .limit(3);
         return result;

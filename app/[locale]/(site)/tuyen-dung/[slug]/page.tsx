@@ -8,6 +8,7 @@ import { stripHtml } from '@/utils/strip-html';
 import { COMPANY_INFO } from '@/constants/site-info';
 import JobDetailClient from './_components/JobDetailClient';
 import { sanitizeRichText } from '@/utils/sanitize';
+import { JOB_STATUS } from '@/constants/content';
 
 type PageProps = {
     params: Promise<{ slug: string }>;
@@ -20,7 +21,7 @@ const getJob = cache(async (slug: string) => {
         .where(
             and(
                 eq(jobPostings.slug, slug),
-                eq(jobPostings.status, 'open'),
+                eq(jobPostings.status, JOB_STATUS.OPEN),
                 isNull(jobPostings.deleted_at),
             ),
         );

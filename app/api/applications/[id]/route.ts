@@ -7,8 +7,7 @@ import { withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { unlink } from "fs/promises";
 import { resolveCvPath } from "@/utils/private-files";
-
-const APPLICATION_STATUSES = new Set(['pending', 'reviewed', 'interviewed', 'rejected', 'accepted']);
+import { APPLICATION_STATUS_VALUES, isConstantValue } from "@/constants/content";
 
 // GET /api/applications/[id] - View application details
 export const GET = withAuth(async (_request: NextRequest, _session, { params }) => {
@@ -51,7 +50,7 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
     const { id } = await params;
     const { status } = await request.json();
 
-    if (!status || !APPLICATION_STATUSES.has(status)) {
+    if (!isConstantValue(APPLICATION_STATUS_VALUES, status)) {
       return apiError("Trạng thái không hợp lệ", 400);
     }
 

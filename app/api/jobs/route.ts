@@ -5,6 +5,7 @@ import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { sanitizeRichText } from '@/utils/sanitize';
+import { EMPLOYMENT_TYPE, JOB_STATUS, type JobStatus } from '@/constants/content';
 
 // GET /api/jobs - List all job postings (Public/Protected Hybrid)
 export const GET = withHybridAuth(
@@ -22,7 +23,7 @@ export const GET = withHybridAuth(
                 session &&
                 hasPermission(session.user, PERMISSIONS.RECRUITMENT_VIEW);
             if (!isAuthorized) {
-                status = 'open';
+                status = JOB_STATUS.OPEN;
                 includeDeleted = false;
             }
 
@@ -36,7 +37,7 @@ export const GET = withHybridAuth(
                 conditions.push(isNull(jobPostings.deleted_at));
             }
             if (status) {
-                conditions.push(eq(jobPostings.status, status as 'open' | 'closed'));
+                conditions.push(eq(jobPostings.status, status as JobStatus));
             }
             if (search) {
                 conditions.push(ilike(jobPostings.title, `%${search}%`));
@@ -71,7 +72,7 @@ export const GET = withHybridAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.RECRUITMENT_VIEW], publicStatuses: ['open'] },
+    { requiredPermissions: [PERMISSIONS.RECRUITMENT_VIEW], publicStatuses: [JOB_STATUS.OPEN] },
 );
 
 // POST /api/jobs - Create a new job posting
@@ -107,11 +108,11 @@ export const POST = withAuth(
                     requirements: requirements ? sanitizeRichText(requirements) : null,
                     benefits: benefits ? sanitizeRichText(benefits) : null,
                     location: location || null,
-                    employment_type: employment_type || 'full_time',
+                    employment_type: employment_type || EMPLOYMENT_TYPE.FULL_TIME,
                     salary_range: salary_range || null,
                     experience_level: experience_level || null,
                     department: department || null,
-                    status: status || 'open',
+                    status: status || JOB_STATUS.OPEN,
                     deadline: deadline ? new Date(deadline) : null,
                 })
                 .returning();

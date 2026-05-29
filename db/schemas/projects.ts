@@ -1,6 +1,7 @@
 import { index, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { projectStatusEnum } from './enums';
 import { categories } from './categories';
+import { PROJECT_STATUS } from '@/constants/content';
 
 export const projects = pgTable(
     'projects',
@@ -15,7 +16,7 @@ export const projects = pgTable(
         category_id: uuid('category_id')
             .references(() => categories.id, { onDelete: 'restrict' })
             .notNull(),
-        status: projectStatusEnum('status').default('ongoing').notNull(),
+        status: projectStatusEnum('status').default(PROJECT_STATUS.ONGOING).notNull(),
         image_url: varchar('image_url', { length: 255 }),
         gallery: jsonb('gallery'), // Array of image URLs
         created_at: timestamp('created_at').defaultNow().notNull(),

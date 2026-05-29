@@ -1,5 +1,6 @@
 import { COMPANY_INFO } from './site-info';
 import { getOptionalEnv } from '@/utils/env';
+import { AUTH_ROLE_CODES } from './rbac';
 
 export const COMPANY = {
   NAME: COMPANY_INFO.name,
@@ -46,7 +47,7 @@ export const AUTH = {
   JWT_EXPIRY: "24h",
   BCRYPT_SALT_ROUNDS: 10,
   SESSION_COOKIE_NAME: "session",
-  DEFAULT_ROLE: "admin",
+  DEFAULT_ROLE: AUTH_ROLE_CODES.ADMIN,
 } as const;
 
 

@@ -6,6 +6,7 @@ import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
 import { PERMISSIONS } from "@/constants/rbac";
 import type { LocalizedText } from "@/types/i18n";
+import { CATEGORY_TYPE } from "@/constants/content";
 
 // GET /api/categories/[id] - Get a single category
 export async function GET(
@@ -121,15 +122,15 @@ export const DELETE = withAuth(async (request: NextRequest, session, { params })
 
     // Chỉ check bảng tương ứng với loại danh mục, bỏ qua records đã soft delete
     let isInUse = false;
-    if (category.typeName === 'news') {
+    if (category.typeName === CATEGORY_TYPE.NEWS) {
       const [usage] = await db.select({ id: newsArticles.id }).from(newsArticles)
         .where(and(eq(newsArticles.category_id, id), isNull(newsArticles.deleted_at))).limit(1);
       isInUse = !!usage;
-    } else if (category.typeName === 'product') {
+    } else if (category.typeName === CATEGORY_TYPE.PRODUCT) {
       const [usage] = await db.select({ id: products.id }).from(products)
         .where(and(eq(products.category_id, id), isNull(products.deleted_at))).limit(1);
       isInUse = !!usage;
-    } else if (category.typeName === 'project') {
+    } else if (category.typeName === CATEGORY_TYPE.PROJECT) {
       const [usage] = await db.select({ id: projects.id }).from(projects)
         .where(and(eq(projects.category_id, id), isNull(projects.deleted_at))).limit(1);
       isInUse = !!usage;
@@ -148,11 +149,11 @@ export const DELETE = withAuth(async (request: NextRequest, session, { params })
         .set({ parent_id: cat?.parent_id || null })
         .where(eq(categories.parent_id, id));
 
-      if (category.typeName === 'news') {
+      if (category.typeName === CATEGORY_TYPE.NEWS) {
         await tx.delete(newsArticles).where(and(eq(newsArticles.category_id, id), isNotNull(newsArticles.deleted_at)));
-      } else if (category.typeName === 'product') {
+      } else if (category.typeName === CATEGORY_TYPE.PRODUCT) {
         await tx.delete(products).where(and(eq(products.category_id, id), isNotNull(products.deleted_at)));
-      } else if (category.typeName === 'project') {
+      } else if (category.typeName === CATEGORY_TYPE.PROJECT) {
         await tx.delete(projects).where(and(eq(projects.category_id, id), isNotNull(projects.deleted_at)));
       }
 

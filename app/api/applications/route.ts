@@ -15,6 +15,7 @@ import { UPLOAD } from '@/constants/app';
 import { checkRateLimit } from '@/utils/rate-limiter';
 import { createSafeFilename, validateUploadedFile } from '@/utils/file-upload';
 import { sanitizePlainText } from '@/utils/sanitize';
+import { APPLICATION_STATUS, JOB_STATUS } from '@/constants/content';
 
 // POST /api/applications - Submit a new job application (Public)
 export async function POST(request: Request) {
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
             return apiError('Công việc không tồn tại', 404);
         }
 
-        if (job.status !== 'open') {
+        if (job.status !== JOB_STATUS.OPEN) {
             return apiError('Vị trí này đã tạm dừng tuyển dụng', 400);
         }
 
@@ -94,7 +95,7 @@ export async function POST(request: Request) {
             ...data,
             cv_url: cvUrl,
             cover_letter: data.cover_letter ? sanitizePlainText(data.cover_letter, 5000) : null,
-            status: 'pending',
+            status: APPLICATION_STATUS.PENDING,
         };
 
         const [newApplication] = await db.insert(jobApplications).values(sanitizedData).returning();

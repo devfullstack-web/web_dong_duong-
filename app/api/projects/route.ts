@@ -7,6 +7,7 @@ import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middlewar
 import { PERMISSIONS } from '@/constants/rbac';
 import { PAGINATION } from '@/constants/app';
 import { sanitizeRichText } from '@/utils/sanitize';
+import { PROJECT_STATUS, type ProjectStatus } from '@/constants/content';
 
 // GET /api/projects - List projects with pagination (Public/Protected Hybrid)
 export const GET = withHybridAuth(
@@ -14,7 +15,7 @@ export const GET = withHybridAuth(
         try {
             const { searchParams } = new URL(request.url);
             const categoryId = searchParams.get('categoryId');
-            const status = searchParams.get('status') as 'ongoing' | 'completed' | null;
+            const status = searchParams.get('status') as ProjectStatus | null;
             const search = searchParams.get('search');
             const startDate = searchParams.get('startDate');
             const endDate = searchParams.get('endDate');
@@ -106,7 +107,10 @@ export const GET = withHybridAuth(
             return apiError('Internal Server Error', 500);
         }
     },
-    { requiredPermissions: [PERMISSIONS.PROJECTS_VIEW], publicStatuses: ['ongoing', 'completed'] },
+    {
+        requiredPermissions: [PERMISSIONS.PROJECTS_VIEW],
+        publicStatuses: [PROJECT_STATUS.ONGOING, PROJECT_STATUS.COMPLETED],
+    },
 );
 
 // POST /api/projects - Create a new project
@@ -141,7 +145,7 @@ export const POST = withAuth(
                     start_date: start_date ? new Date(start_date) : null,
                     end_date: end_date ? new Date(end_date) : null,
                     category_id,
-                    status: status || 'ongoing',
+                    status: status || PROJECT_STATUS.ONGOING,
                     image_url: image_url || null,
                     gallery: gallery || [],
                 })

@@ -2,12 +2,13 @@ import { db } from "@/db";
 import { categoryTypes } from "@/db/schemas";
 import { eq } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
+import type { CategoryType } from "@/constants/content";
 
 // GET /api/category-types - List all category types, optionally filter by ?name=product
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const name = searchParams.get("name");
+        const name = searchParams.get("name") as CategoryType | null;
 
         let results;
         if (name) {

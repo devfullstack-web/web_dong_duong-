@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PRODUCT_STATUS, PRODUCT_STATUS_VALUES } from '@/constants/content';
 
 /**
  * Product Validation Schemas
@@ -39,9 +40,9 @@ export const productSchema = z.object({
   category_id: z.string()
     .uuid("Category ID phải là UUID hợp lệ"),
   
-  status: z.enum(['active', 'inactive'], {
+  status: z.enum(PRODUCT_STATUS_VALUES, {
     message: "Trạng thái phải là 'active' hoặc 'inactive'"
-  }).default('active'),
+  }).default(PRODUCT_STATUS.ACTIVE),
   
   image_url: z.string()
     .max(255, "Đường dẫn không được quá 255 ký tự")
@@ -87,7 +88,7 @@ export const updateProductSchema = productSchema.partial().extend({
 // Schema for query filters
 export const productFilterSchema = z.object({
   categoryId: z.string().uuid().optional(),
-  status: z.enum(['active', 'inactive']).optional(),
+  status: z.enum(PRODUCT_STATUS_VALUES).optional(),
   isFeatured: z.string().transform(val => val === 'true').optional(),
   search: z.string().max(255).optional(),
   startDate: z.string().datetime().optional(),

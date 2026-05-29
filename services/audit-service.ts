@@ -1,15 +1,7 @@
 import { db } from '@/db';
 import { auditLogs } from '@/db/schemas';
 import { NextRequest } from 'next/server';
-
-export type AuditAction =
-    | 'CREATE'
-    | 'UPDATE'
-    | 'DELETE'
-    | 'LOGIN'
-    | 'LOGOUT'
-    | 'AUTH_FAILURE'
-    | 'UPLOAD';
+import type { AuditAction } from '@/constants/audit';
 
 export interface LogActionParams {
     userId?: string;

@@ -49,6 +49,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
 import { sanitizeRichText } from '@/utils/sanitize';
+import { CATEGORY_TYPE, NEWS_STATUS, type NewsStatus } from '@/constants/content';
 
 interface NewsArticle {
     id: string;
@@ -58,7 +59,7 @@ interface NewsArticle {
     content: string;
     category_id: string;
     author_id: string;
-    status: string;
+    status: NewsStatus;
     image_url: string | null;
     gallery: string[] | null;
     published_at: string | null;
@@ -87,7 +88,7 @@ export default function EditNewsPage() {
         content: '',
         category_id: '',
         author_id: '',
-        status: 'draft' as 'draft' | 'published',
+        status: NEWS_STATUS.DRAFT as NewsStatus,
         image_url: '',
         gallery: [] as string[],
         published_at: undefined as Date | undefined,
@@ -102,7 +103,7 @@ export default function EditNewsPage() {
                 // Fetch article, categories and authors in parallel
                 const [articleRes, catRes, authorRes] = await Promise.all([
                     $api.get(`${API_ROUTES.NEWS}/${newsId}`),
-                    $api.get(`${API_ROUTES.CATEGORIES}?type=news`),
+                    $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.NEWS}`),
                     $api.get(`${API_ROUTES.AUTHORS}`),
                 ]);
 
@@ -116,7 +117,7 @@ export default function EditNewsPage() {
                         content: a.content || '',
                         category_id: a.category_id || '',
                         author_id: a.author_id || authorRes.data.data?.[0]?.id || '',
-                        status: a.status || 'draft',
+                        status: a.status || NEWS_STATUS.DRAFT,
                         image_url: a.image_url || '',
                         gallery: Array.isArray(a.gallery) ? a.gallery : [],
                         published_at: a.published_at ? new Date(a.published_at) : undefined,
@@ -566,11 +567,11 @@ export default function EditNewsPage() {
 
                     <div className="space-y-8">
                         <StatusFormSection
-                            isActive={formData.status === 'published'}
+                            isActive={formData.status === NEWS_STATUS.PUBLISHED}
                             onActiveChange={(isActive) =>
                                 setFormData({
                                     ...formData,
-                                    status: isActive ? 'published' : 'draft',
+                                    status: isActive ? NEWS_STATUS.PUBLISHED : NEWS_STATUS.DRAFT,
                                 })
                             }
                             label="Trạng thái xuất bản"

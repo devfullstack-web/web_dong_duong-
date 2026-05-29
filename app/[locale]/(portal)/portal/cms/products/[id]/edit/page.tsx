@@ -32,6 +32,7 @@ import { toast } from 'sonner';
 import { createEmptyLocalizedText, toLocalizedText, getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText } from '@/types/i18n';
 import { useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE, PRODUCT_STATUS, type ProductStatus } from '@/constants/content';
 
 interface Category {
     id: string;
@@ -69,7 +70,7 @@ export default function EditProductPage() {
         price: '0',
         stock: '0',
         category_id: '',
-        status: 'active' as 'active' | 'inactive',
+        status: PRODUCT_STATUS.ACTIVE as ProductStatus,
         image: '',
         is_featured: false,
         origin: '',
@@ -92,7 +93,7 @@ export default function EditProductPage() {
             try {
                 // Fetch categories and product in parallel
                 const [categoriesRes, productRes] = await Promise.all([
-                    $api.get(`${API_ROUTES.CATEGORIES}?type=product`),
+                    $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.PRODUCT}`),
                     $api.get(`${API_ROUTES.PRODUCTS}/${productId}`),
                 ]);
 
@@ -108,7 +109,7 @@ export default function EditProductPage() {
                         price: product.price || '0',
                         stock: product.stock?.toString() || '0',
                         category_id: product.category_id || '',
-                        status: product.status || 'active',
+                        status: product.status || PRODUCT_STATUS.ACTIVE,
                         image: product.image_url || '',
                         is_featured: product.is_featured || false,
                         origin: product.origin || '',
@@ -469,9 +470,12 @@ export default function EditProductPage() {
 
                 <div className="space-y-5">
                     <StatusFormSection
-                        isActive={formData.status === 'active'}
+                        isActive={formData.status === PRODUCT_STATUS.ACTIVE}
                         onActiveChange={(isActive) =>
-                            setFormData({ ...formData, status: isActive ? 'active' : 'inactive' })
+                            setFormData({
+                                ...formData,
+                                status: isActive ? PRODUCT_STATUS.ACTIVE : PRODUCT_STATUS.INACTIVE,
+                            })
                         }
                         label="Trạng thái kinh doanh"
                         description="Cho phép sản phẩm hiển thị trên các danh mục bán hàng."

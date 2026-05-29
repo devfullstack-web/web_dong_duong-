@@ -28,6 +28,7 @@ import { generateSlug } from '@/utils/slug';
 import { Calendar as CalendarIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE, PROJECT_STATUS, type ProjectStatus } from '@/constants/content';
 
 interface Category {
     id: string;
@@ -48,7 +49,7 @@ export default function AddProjectPage() {
         start_date: undefined as Date | undefined,
         end_date: undefined as Date | undefined,
         category_id: '',
-        status: 'ongoing' as 'ongoing' | 'completed',
+        status: PROJECT_STATUS.ONGOING as ProjectStatus,
         image: '',
         gallery: [] as string[],
     });
@@ -56,7 +57,7 @@ export default function AddProjectPage() {
     React.useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=project`);
+                const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.PROJECT}`);
                 setCategories(res.data.data || []);
             } catch (error) {
                 console.error('Failed to fetch categories', error);
@@ -320,9 +321,12 @@ export default function AddProjectPage() {
 
                 <div className="space-y-6">
                     <StatusFormSection
-                        isActive={formData.status === 'completed'}
+                        isActive={formData.status === PROJECT_STATUS.COMPLETED}
                         onActiveChange={(isActive) =>
-                            setFormData({ ...formData, status: isActive ? 'completed' : 'ongoing' })
+                            setFormData({
+                                ...formData,
+                                status: isActive ? PROJECT_STATUS.COMPLETED : PROJECT_STATUS.ONGOING,
+                            })
                         }
                         label="Trạng thái hoàn thành"
                         description="Đánh dấu dự án đã hoàn thành và bàn giao."

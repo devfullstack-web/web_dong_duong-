@@ -48,6 +48,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
 import { useTranslations, useLocale } from 'next-intl';
 import * as React from 'react';
+import { CATEGORY_TYPE, PRODUCT_STATUS } from '@/constants/content';
 
 interface CategoryNode {
     id: string;
@@ -66,7 +67,10 @@ function flattenCategories(nodes: CategoryNode[], level = 0): { id: string; name
     return result;
 }
 
-const PRODUCT_STATUS_FILTERS: Product['status'][] = ['active', 'inactive'];
+const PRODUCT_STATUS_FILTERS: Product['status'][] = [
+    PRODUCT_STATUS.ACTIVE,
+    PRODUCT_STATUS.INACTIVE,
+];
 
 function getProductDisplayName(product: Product, locale: string) {
     return getLocalizedValue(product.name_localized, locale) || product.name;
@@ -125,13 +129,17 @@ export default function ProductsManagementPage() {
 
     // Category filter state
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
-    const [selectedStatus, setSelectedStatus] = useState<Product['status'] | ''>('active');
+    const [selectedStatus, setSelectedStatus] = useState<Product['status'] | ''>(
+        PRODUCT_STATUS.ACTIVE,
+    );
 
     // Fetch product categories
     const { data: categoriesData } = useQuery<{ data: CategoryNode[] }>({
         queryKey: ['product-categories'],
         queryFn: async () => {
-            const res = await $api.get(API_ROUTES.CATEGORIES, { params: { type: 'product' } });
+            const res = await $api.get(API_ROUTES.CATEGORIES, {
+                params: { type: CATEGORY_TYPE.PRODUCT },
+            });
             return { data: res.data.data || [] };
         },
     });
@@ -206,7 +214,8 @@ export default function ProductsManagementPage() {
                 const price = product.price;
                 const stock = product.stock;
                 const category = `"${getProductCategoryName(product).replace(/"/g, '""')}"`;
-                const statusLabel = product.status === 'active' ? t('active') : t('inactive');
+                const statusLabel =
+                    product.status === PRODUCT_STATUS.ACTIVE ? t('active') : t('inactive');
                 const status = `"${statusLabel}"`;
                 
                 return [id, name, sku, price, stock, category, status].join(',');
@@ -255,13 +264,13 @@ export default function ProductsManagementPage() {
 
     const getStatusBadge = React.useCallback((status: Product['status']) => {
         switch (status) {
-            case 'active':
+            case PRODUCT_STATUS.ACTIVE:
                 return (
                     <Badge className="bg-emerald-100/80 hover:bg-emerald-100/80 text-emerald-700 border border-emerald-200 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-none flex items-center gap-1.5 w-fit">
                         <CheckCircle2 size={10} /> {t('active')}
                     </Badge>
                 );
-            case 'inactive':
+            case PRODUCT_STATUS.INACTIVE:
                 return (
                     <Badge className="bg-slate-100 hover:bg-slate-100 text-slate-600 border border-slate-200 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-none flex items-center gap-1.5 w-fit">
                         <XCircle size={10} /> {t('inactive')}

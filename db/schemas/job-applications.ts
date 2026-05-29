@@ -1,5 +1,6 @@
 import { index, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { jobPostings } from './job-postings';
+import { APPLICATION_STATUS, type ApplicationStatus } from '@/constants/content';
 
 export const jobApplications = pgTable(
     'job_applications',
@@ -13,7 +14,10 @@ export const jobApplications = pgTable(
         phone: varchar('phone', { length: 50 }).notNull(),
         cv_url: text('cv_url').notNull(), // URL to uploaded CV file
         cover_letter: text('cover_letter'),
-        status: varchar('status', { length: 50 }).default('pending').notNull(), // pending, reviewed, interviewed, rejected, accepted
+        status: varchar('status', { length: 50 })
+            .$type<ApplicationStatus>()
+            .default(APPLICATION_STATUS.PENDING)
+            .notNull(),
         created_at: timestamp('created_at').defaultNow().notNull(),
         updated_at: timestamp('updated_at').defaultNow().notNull(),
     },

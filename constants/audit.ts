@@ -9,7 +9,11 @@ export const AUDIT_ACTIONS = {
     LOGIN: 'LOGIN',
     LOGOUT: 'LOGOUT',
     AUTH_FAILURE: 'AUTH_FAILURE',
+    UPLOAD: 'UPLOAD',
+    CLEANUP: 'CLEANUP',
 } as const;
+
+export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];
 
 export const AUDIT_MODULES = {
     AUTH: 'AUTH',

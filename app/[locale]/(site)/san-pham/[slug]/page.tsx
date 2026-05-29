@@ -8,6 +8,7 @@ import { stripHtml } from '@/utils/strip-html';
 import { COMPANY_INFO } from '@/constants/site-info';
 import ProductDetailClient from './_components/ProductDetailClient';
 import { sanitizeLocalizedRichText, sanitizeRichText, sanitizeStringArray } from '@/utils/sanitize';
+import { PRODUCT_STATUS } from '@/constants/content';
 
 type PageProps = {
     params: Promise<{ slug: string; locale: string }>;
@@ -49,7 +50,7 @@ const getProduct = cache(async (slug: string) => {
         .where(
             and(
                 eq(products.slug, slug),
-                eq(products.status, 'active'),
+                eq(products.status, PRODUCT_STATUS.ACTIVE),
                 eq(categories.is_visible, true),
                 isNull(products.deleted_at),
             ),

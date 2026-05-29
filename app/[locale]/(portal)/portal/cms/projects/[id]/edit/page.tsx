@@ -28,6 +28,7 @@ import { Calendar as CalendarIcon, X } from 'lucide-react';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE, PROJECT_STATUS, type ProjectStatus } from '@/constants/content';
 
 interface Project {
     id: string;
@@ -38,7 +39,7 @@ interface Project {
     start_date: string | null;
     end_date: string | null;
     category_id: string;
-    status: string;
+    status: ProjectStatus;
     image_url: string | null;
     gallery: string[] | null;
 }
@@ -62,7 +63,7 @@ export default function EditProjectPage() {
         start_date: undefined as Date | undefined,
         end_date: undefined as Date | undefined,
         category_id: '',
-        status: 'ongoing',
+        status: PROJECT_STATUS.ONGOING as ProjectStatus,
         image: '',
         gallery: [] as string[],
     });
@@ -83,14 +84,14 @@ export default function EditProjectPage() {
                         start_date: p.start_date ? new Date(p.start_date) : undefined,
                         end_date: p.end_date ? new Date(p.end_date) : undefined,
                         category_id: p.category_id || '',
-                        status: p.status || 'ongoing',
+                        status: p.status || PROJECT_STATUS.ONGOING,
                         image: p.image_url || '',
                         gallery: p.gallery || [],
                     });
                 }
 
                 // Fetch categories
-                const catRes = await $api.get(`${API_ROUTES.CATEGORIES}?type=project`);
+                const catRes = await $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.PROJECT}`);
                 if (catRes.data.success) {
                     setCategories(catRes.data.data || []);
                 }
@@ -376,9 +377,12 @@ export default function EditProjectPage() {
 
                 <div className="space-y-6">
                     <StatusFormSection
-                        isActive={formData.status === 'completed'}
+                        isActive={formData.status === PROJECT_STATUS.COMPLETED}
                         onActiveChange={(isActive) =>
-                            setFormData({ ...formData, status: isActive ? 'completed' : 'ongoing' })
+                            setFormData({
+                                ...formData,
+                                status: isActive ? PROJECT_STATUS.COMPLETED : PROJECT_STATUS.ONGOING,
+                            })
                         }
                         label="Trạng thái hoàn thành"
                         description="Đánh dấu dự án đã hoàn thành và bàn giao."

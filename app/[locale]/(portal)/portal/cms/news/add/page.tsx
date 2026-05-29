@@ -48,6 +48,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
 import { sanitizeRichText } from '@/utils/sanitize';
+import { CATEGORY_TYPE, NEWS_STATUS, type NewsStatus } from '@/constants/content';
 
 interface Category {
     id: string;
@@ -67,7 +68,7 @@ export default function AddNewsPage() {
         content: '',
         category_id: '',
         author_id: '',
-        status: 'draft' as 'draft' | 'published',
+        status: NEWS_STATUS.DRAFT as NewsStatus,
         image_url: '',
         gallery: [] as string[],
         published_at: undefined as Date | undefined,
@@ -80,7 +81,7 @@ export default function AddNewsPage() {
         const fetchData = async () => {
             try {
                 const [catsRes, authorsRes] = await Promise.all([
-                    $api.get(`${API_ROUTES.CATEGORIES}?type=news`),
+                    $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.NEWS}`),
                     $api.get(API_ROUTES.AUTHORS),
                 ]);
 
@@ -500,11 +501,11 @@ export default function AddNewsPage() {
 
                     <div className="space-y-8">
                         <StatusFormSection
-                            isActive={formData.status === 'published'}
+                            isActive={formData.status === NEWS_STATUS.PUBLISHED}
                             onActiveChange={(isActive) =>
                                 setFormData({
                                     ...formData,
-                                    status: isActive ? 'published' : 'draft',
+                                    status: isActive ? NEWS_STATUS.PUBLISHED : NEWS_STATUS.DRAFT,
                                 })
                             }
                             label="Trạng thái xuất bản"

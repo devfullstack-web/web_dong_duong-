@@ -29,12 +29,13 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { sanitizeRichText } from '@/utils/sanitize';
+import { EMPLOYMENT_TYPE, JOB_STATUS, type EmploymentType, type JobStatus } from '@/constants/content';
 
-const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
-    full_time: 'Toàn thời gian',
-    part_time: 'Bán thời gian',
-    contract: 'Hợp đồng',
-    internship: 'Thực tập',
+const EMPLOYMENT_TYPE_LABELS: Record<EmploymentType, string> = {
+    [EMPLOYMENT_TYPE.FULL_TIME]: 'Toàn thời gian',
+    [EMPLOYMENT_TYPE.PART_TIME]: 'Bán thời gian',
+    [EMPLOYMENT_TYPE.CONTRACT]: 'Hợp đồng',
+    [EMPLOYMENT_TYPE.INTERNSHIP]: 'Thực tập',
 };
 
 interface JobDetailClientProps {
@@ -46,11 +47,11 @@ interface JobDetailClientProps {
         requirements: string | null;
         benefits: string | null;
         location: string | null;
-        employment_type: string;
+        employment_type: EmploymentType;
         salary_range: string | null;
         experience_level: string | null;
         department: string | null;
-        status: 'open' | 'closed';
+        status: JobStatus;
         deadline: Date | null;
         created_at: Date;
     };
@@ -97,7 +98,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                             <span className="text-[10px] font-bold uppercase tracking-widest text-white border border-white/20 px-3 py-1.5 rounded-full bg-white/5">
                                 {EMPLOYMENT_TYPE_LABELS[job.employment_type]}
                             </span>
-                            {job.status === 'closed' && (
+                            {job.status === JOB_STATUS.CLOSED && (
                                 <span className="text-[10px] font-bold uppercase tracking-widest text-white bg-red-500 px-3 py-1.5 rounded-full">
                                     Đã đóng
                                 </span>

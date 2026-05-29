@@ -1,5 +1,6 @@
 import { boolean, index, integer, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 import { chatSessionStatusEnum } from './enums';
+import { CHAT_SESSION_STATUS } from '@/constants/content';
 
 export const chatSessions = pgTable(
     'chat_sessions',
@@ -9,7 +10,7 @@ export const chatSessions = pgTable(
         guest_name: varchar('guest_name', { length: 255 }),
         guest_email: varchar('guest_email', { length: 255 }),
         guest_phone: varchar('guest_phone', { length: 50 }),
-        status: chatSessionStatusEnum('status').default('active').notNull(),
+        status: chatSessionStatusEnum('status').default(CHAT_SESSION_STATUS.ACTIVE).notNull(),
         last_message_at: timestamp('last_message_at').defaultNow().notNull(),
         last_message_preview: text('last_message_preview'),
         unread_count: integer('unread_count').default(0).notNull(),

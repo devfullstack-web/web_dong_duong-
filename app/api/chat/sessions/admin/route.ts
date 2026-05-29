@@ -5,6 +5,11 @@ import { desc, eq, sql, and } from 'drizzle-orm';
 import { withAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
+import {
+    CHAT_MESSAGE_SENDER_TYPE,
+    CHAT_SESSION_STATUS_VALUES,
+    isConstantValue,
+} from '@/constants/content';
 
 export const GET = withAuth(async (req: NextRequest, session) => {
     const canViewChat =
@@ -17,7 +22,7 @@ export const GET = withAuth(async (req: NextRequest, session) => {
 
     try {
         const { searchParams } = new URL(req.url);
-        const status = searchParams.get('status'); // 'active' | 'resolved' | 'spam' | null (all)
+        const status = searchParams.get('status');
         const search = searchParams.get('search');
 
         // Only get sessions that have at least one guest message (not system-only)
@@ -25,12 +30,12 @@ export const GET = withAuth(async (req: NextRequest, session) => {
             sql`EXISTS (
                 SELECT 1 FROM chat_messages cm 
                 WHERE cm.session_id = chat_sessions.id 
-                AND cm.sender_type = 'guest'
+                AND cm.sender_type = ${CHAT_MESSAGE_SENDER_TYPE.GUEST}
             )`,
         ];
 
-        if (status) {
-            conditions.push(eq(chatSessions.status, status as 'active' | 'resolved' | 'spam'));
+        if (isConstantValue(CHAT_SESSION_STATUS_VALUES, status)) {
+            conditions.push(eq(chatSessions.status, status));
         }
 
         if (search) {

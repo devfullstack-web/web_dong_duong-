@@ -11,6 +11,7 @@ import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
 import { SiteEmptyState } from '@/components/site/SiteEmptyState';
 import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
 import { SitePagination } from '@/components/site/SitePagination';
+import { EMPLOYMENT_TYPE, JOB_STATUS, type JobStatus } from '@/constants/content';
 
 interface JobPosting {
     id: string;
@@ -22,7 +23,7 @@ interface JobPosting {
     salary_range: string | null;
     experience_level: string | null;
     department: string | null;
-    status: 'open' | 'closed';
+    status: JobStatus;
     deadline: string | null;
     created_at: string;
 }
@@ -42,7 +43,7 @@ export default function RecruitmentHub() {
         endpoint: API_ROUTES.JOBS,
         queryKey: ['jobs'],
         pageSize: ITEMS_PER_PAGE,
-        params: { status: 'open' },
+        params: { status: JOB_STATUS.OPEN },
         scrollTargetRef: jobsListRef,
     });
 
@@ -90,7 +91,7 @@ export default function RecruitmentHub() {
                                                 <div className="flex items-center gap-1.5">
                                                     <Briefcase size={12} />
                                                     {t(
-                                                        `employmentTypes.${job.employment_type?.toLowerCase() || 'full_time'}`,
+                                                        `employmentTypes.${job.employment_type?.toLowerCase() || EMPLOYMENT_TYPE.FULL_TIME}`,
                                                     )}
                                                 </div>
                                             </div>

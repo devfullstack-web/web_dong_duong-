@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { LocalizedText } from '@/types/i18n';
 import { getLocalizedValue } from '@/types/i18n';
+import { CATEGORY_TYPE } from '@/constants/content';
 
 interface Category {
     id: string;
@@ -94,9 +95,9 @@ export default function NewsCategoriesPage() {
     const [itemToDelete, setItemToDelete] = useState<Category | null>(null);
 
     const { data: categoriesData, isLoading } = useQuery<{ data: Category[] }>({
-        queryKey: ['categories', 'news'],
+        queryKey: ['categories', CATEGORY_TYPE.NEWS],
         queryFn: async () => {
-            const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=news`);
+            const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.NEWS}`);
             return res.data;
         },
     });
@@ -109,7 +110,7 @@ export default function NewsCategoriesPage() {
         },
         onSuccess: () => {
             toast.success('Đã xóa danh mục thành công');
-            queryClient.invalidateQueries({ queryKey: ['categories', 'news'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', CATEGORY_TYPE.NEWS] });
             setDeleteDialogOpen(false);
             setItemToDelete(null);
         },

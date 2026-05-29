@@ -10,6 +10,7 @@ import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE } from '@/constants/content';
 
 export default function AddProjectCategoryPage() {
     const router = useRouter();
@@ -17,11 +18,11 @@ export default function AddProjectCategoryPage() {
 
     const createMutation = useMutation({
         mutationFn: async (data: CategoryFormData) => {
-            await $api.post(API_ROUTES.CATEGORIES, { ...data, type: 'project' });
+            await $api.post(API_ROUTES.CATEGORIES, { ...data, type: CATEGORY_TYPE.PROJECT });
         },
         onSuccess: () => {
             toast.success('Thêm danh mục dự án thành công');
-            queryClient.invalidateQueries({ queryKey: ['categories', 'project'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', CATEGORY_TYPE.PROJECT] });
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.projects.categories.list);
         },
@@ -60,7 +61,7 @@ export default function AddProjectCategoryPage() {
 
             <div className="max-w-6xl mx-auto">
                 <CategoryForm
-                    type="project"
+                    type={CATEGORY_TYPE.PROJECT}
                     onSubmit={handleFormSubmit}
                     backUrl={PORTAL_ROUTES.cms.projects.categories.list}
                 />

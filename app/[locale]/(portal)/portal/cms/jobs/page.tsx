@@ -41,6 +41,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
 import { useTranslations } from 'next-intl';
 import * as React from 'react';
+import { JOB_STATUS, type EmploymentType, type JobStatus } from '@/constants/content';
 
 interface JobPosting {
     id: string;
@@ -48,23 +49,23 @@ interface JobPosting {
     slug: string;
     description: string;
     location: string | null;
-    employment_type: string;
+    employment_type: EmploymentType;
     salary_range: string | null;
     experience_level: string | null;
     department: string | null;
-    status: 'open' | 'closed';
+    status: JobStatus;
     deadline: string | null;
     created_at: string;
 }
 
 const STATUS_CONFIG = {
-    open: {
+    [JOB_STATUS.OPEN]: {
         label: 'Đang tuyển',
         color: 'bg-emerald-500/10 text-emerald-600',
         chartColor: '#10b981',
         icon: CheckCircle2,
     },
-    closed: {
+    [JOB_STATUS.CLOSED]: {
         label: 'Đã đóng',
         color: 'bg-slate-500/10 text-slate-500',
         chartColor: '#64748b',
@@ -200,7 +201,7 @@ export default function JobsManagementPage() {
                         STATUS_CONFIG[row.original.status as keyof typeof STATUS_CONFIG]?.color,
                     )}
                 >
-                    {t(row.original.status === 'open' ? 'active' : 'inactive')}
+                    {t(row.original.status === JOB_STATUS.OPEN ? 'active' : 'inactive')}
                 </Badge>
             ),
         },

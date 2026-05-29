@@ -6,6 +6,7 @@ import { NextRequest } from "next/server";
 import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { sanitizeRichText } from "@/utils/sanitize";
+import { JOB_STATUS, JOB_STATUS_VALUES, isConstantValue } from "@/constants/content";
 
 // GET /api/jobs/[slug] - Get a single job by slug or ID
 export async function GET(
@@ -24,7 +25,7 @@ export async function GET(
     const [job] = await db.select().from(jobPostings).where(
       and(
         isId ? eq(jobPostings.id, slug) : eq(jobPostings.slug, slug),
-        ...(canViewPrivate ? [] : [eq(jobPostings.status, 'open')]),
+        ...(canViewPrivate ? [] : [eq(jobPostings.status, JOB_STATUS.OPEN)]),
         isNull(jobPostings.deleted_at)
       )
     );
@@ -73,7 +74,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     if (updates.description !== undefined) updates.description = sanitizeRichText(updates.description);
     if (updates.requirements !== undefined) updates.requirements = sanitizeRichText(updates.requirements);
     if (updates.benefits !== undefined) updates.benefits = sanitizeRichText(updates.benefits);
-    if (updates.status !== undefined && !['open', 'closed'].includes(updates.status)) {
+    if (updates.status !== undefined && !isConstantValue(JOB_STATUS_VALUES, updates.status)) {
       return apiError("Invalid status", 400);
     }
     

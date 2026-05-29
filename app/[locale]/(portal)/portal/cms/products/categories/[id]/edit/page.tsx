@@ -10,6 +10,7 @@ import { CategoryForm, CategoryFormData } from '@/components/portal/category-for
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE } from '@/constants/content';
 
 export default function EditProductCategoryPage() {
     const params = useParams();
@@ -45,7 +46,7 @@ export default function EditProductCategoryPage() {
         },
         onSuccess: () => {
             toast.success('Cập nhật danh mục thành công');
-            queryClient.invalidateQueries({ queryKey: ['categories', 'product'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', CATEGORY_TYPE.PRODUCT] });
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.products.categories.list);
         },
@@ -108,7 +109,7 @@ export default function EditProductCategoryPage() {
 
             <div className="w-full">
                 <CategoryForm
-                    type="product"
+                    type={CATEGORY_TYPE.PRODUCT}
                     isEditing={true}
                     initialData={category}
                     onSubmit={handleFormSubmit}

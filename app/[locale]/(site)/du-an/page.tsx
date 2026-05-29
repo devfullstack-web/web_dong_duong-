@@ -12,6 +12,7 @@ import { SiteEmptyState } from '@/components/site/SiteEmptyState';
 import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
 import { SitePagination } from '@/components/site/SitePagination';
 import { getYear } from '@/utils/client-format';
+import type { ProjectStatus } from '@/constants/content';
 
 interface Project {
     id: string;
@@ -21,7 +22,7 @@ interface Project {
     image_url: string | null;
     start_date: string | null;
     client_name: string | null;
-    status: string;
+    status: ProjectStatus;
 }
 
 const ITEMS_PER_PAGE = 12;

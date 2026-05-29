@@ -13,6 +13,7 @@ import {
 import type { LocalizedArray, LocalizedText } from '@/types/i18n';
 import { productStatusEnum } from './enums';
 import { categories } from './categories';
+import { PRODUCT_STATUS } from '@/constants/content';
 
 export const products = pgTable(
     'products',
@@ -29,7 +30,7 @@ export const products = pgTable(
         category_id: uuid('category_id')
             .references(() => categories.id, { onDelete: 'restrict' })
             .notNull(),
-        status: productStatusEnum('status').default('active').notNull(),
+        status: productStatusEnum('status').default(PRODUCT_STATUS.ACTIVE).notNull(),
         image_url: varchar('image_url', { length: 255 }),
 
         // New Enhanced Fields

@@ -26,6 +26,7 @@ import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { StatusFormSection } from '@/components/portal/status-form-section';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { EMPLOYMENT_TYPE, JOB_STATUS, type EmploymentType, type JobStatus } from '@/constants/content';
 
 export default function AddJobPage() {
     const router = useRouter();
@@ -39,11 +40,11 @@ export default function AddJobPage() {
         requirements: '',
         benefits: '',
         location: '',
-        employment_type: 'full_time',
+        employment_type: EMPLOYMENT_TYPE.FULL_TIME as EmploymentType,
         salary_range: '',
         experience_level: '',
         department: '',
-        status: 'open' as 'open' | 'closed',
+        status: JOB_STATUS.OPEN as JobStatus,
         deadline: undefined as Date | undefined,
     });
 
@@ -207,9 +208,12 @@ export default function AddJobPage() {
                 {/* Sidebar */}
                 <div className="space-y-6">
                     <StatusFormSection
-                        isActive={formData.status === 'open'}
+                        isActive={formData.status === JOB_STATUS.OPEN}
                         onActiveChange={(isActive) =>
-                            setFormData({ ...formData, status: isActive ? 'open' : 'closed' })
+                            setFormData({
+                                ...formData,
+                                status: isActive ? JOB_STATUS.OPEN : JOB_STATUS.CLOSED,
+                            })
                         }
                         label="Trạng thái tuyển dụng"
                         description="Tin tuyển dụng đang tuyển sẽ hiển thị trên website."
@@ -264,17 +268,28 @@ export default function AddJobPage() {
                                 <Select
                                     value={formData.employment_type}
                                     onValueChange={(value) =>
-                                        setFormData({ ...formData, employment_type: value })
+                                        setFormData({
+                                            ...formData,
+                                            employment_type: value as EmploymentType,
+                                        })
                                     }
                                 >
                                     <SelectTrigger className="h-11 bg-slate-50 border-none rounded-none text-sm font-bold">
                                         <SelectValue placeholder="Chọn loại hình" />
                                     </SelectTrigger>
                                     <SelectContent className="rounded-none">
-                                        <SelectItem value="full_time">Toàn thời gian</SelectItem>
-                                        <SelectItem value="part_time">Bán thời gian</SelectItem>
-                                        <SelectItem value="contract">Hợp đồng</SelectItem>
-                                        <SelectItem value="internship">Thực tập</SelectItem>
+                                        <SelectItem value={EMPLOYMENT_TYPE.FULL_TIME}>
+                                            Toàn thời gian
+                                        </SelectItem>
+                                        <SelectItem value={EMPLOYMENT_TYPE.PART_TIME}>
+                                            Bán thời gian
+                                        </SelectItem>
+                                        <SelectItem value={EMPLOYMENT_TYPE.CONTRACT}>
+                                            Hợp đồng
+                                        </SelectItem>
+                                        <SelectItem value={EMPLOYMENT_TYPE.INTERNSHIP}>
+                                            Thực tập
+                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

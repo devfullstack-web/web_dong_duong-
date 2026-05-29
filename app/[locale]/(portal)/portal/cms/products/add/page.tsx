@@ -39,6 +39,7 @@ import { createEmptyLocalizedText, getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText } from '@/types/i18n';
 import { useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
+import { CATEGORY_TYPE, PRODUCT_STATUS, type ProductStatus } from '@/constants/content';
 
 interface Category {
     id: string;
@@ -73,7 +74,7 @@ export default function AddProductPage() {
         sku: '',
         stock: '0',
         category_id: '',
-        status: 'active' as 'active' | 'inactive',
+        status: PRODUCT_STATUS.ACTIVE as ProductStatus,
         image: '',
         is_featured: false,
         origin: '',
@@ -93,7 +94,7 @@ export default function AddProductPage() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=product`);
+                const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.PRODUCT}`);
                 setCategories(res.data.data || []);
             } catch (error) {
                 console.error('Failed to fetch categories', error);
@@ -378,9 +379,12 @@ export default function AddProductPage() {
 
                 <div className="space-y-5">
                     <StatusFormSection
-                        isActive={formData.status === 'active'}
+                        isActive={formData.status === PRODUCT_STATUS.ACTIVE}
                         onActiveChange={(isActive) =>
-                            setFormData({ ...formData, status: isActive ? 'active' : 'inactive' })
+                            setFormData({
+                                ...formData,
+                                status: isActive ? PRODUCT_STATUS.ACTIVE : PRODUCT_STATUS.INACTIVE,
+                            })
                         }
                         label="Trạng thái hiển thị"
                         description="Cho phép sản phẩm hiển thị trên website catalog."

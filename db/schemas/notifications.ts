@@ -1,10 +1,11 @@
 import { boolean, index, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import type { NotificationType } from '@/constants/content';
 
 export const notifications = pgTable(
     'notifications',
     {
         id: uuid('id').primaryKey().defaultRandom(),
-        type: varchar('type', { length: 50 }).notNull(), // 'comment', 'contact', 'application'
+        type: varchar('type', { length: 50 }).$type<NotificationType>().notNull(),
         title: varchar('title', { length: 255 }).notNull(),
         content: text('content').notNull(),
         link: varchar('link', { length: 255 }),

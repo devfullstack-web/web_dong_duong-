@@ -6,12 +6,13 @@ import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
 import { PERMISSIONS } from "@/constants/rbac";
 import type { LocalizedText } from "@/types/i18n";
+import type { CategoryType } from "@/constants/content";
 
 // GET /api/categories - List all categories (flat with hierarchy info)
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get("type"); // e.g., 'news', 'product', 'project'
+    const type = searchParams.get("type") as CategoryType | null;
 
     const query = db.select({
       id: categories.id,

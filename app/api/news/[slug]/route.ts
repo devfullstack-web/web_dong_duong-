@@ -7,6 +7,7 @@ import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { ARTICLE } from "@/constants/app";
 import { sanitizePlainText, sanitizeRichText } from "@/utils/sanitize";
+import { NEWS_STATUS, NEWS_STATUS_VALUES, isConstantValue } from "@/constants/content";
 
 // UUID regex pattern
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -25,7 +26,7 @@ export async function GET(
     
     const whereCondition = and(
       isUUID ? eq(newsArticles.id, slug) : eq(newsArticles.slug, slug),
-      ...(canViewPrivate ? [] : [eq(newsArticles.status, 'published'), isNull(newsArticles.deleted_at)])
+      ...(canViewPrivate ? [] : [eq(newsArticles.status, NEWS_STATUS.PUBLISHED), isNull(newsArticles.deleted_at)])
     );
     
     const [article] = await db.select({
@@ -111,7 +112,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
 
     if (
       updates.status !== undefined &&
-      (typeof updates.status !== 'string' || !['draft', 'published'].includes(updates.status))
+      !isConstantValue(NEWS_STATUS_VALUES, updates.status)
     ) {
       return apiError("Invalid status", 400);
     }

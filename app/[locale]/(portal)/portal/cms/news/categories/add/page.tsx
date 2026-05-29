@@ -10,6 +10,7 @@ import $api from '@/utils/axios';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE } from '@/constants/content';
 
 export default function AddNewsCategoryPage() {
     const router = useRouter();
@@ -17,11 +18,11 @@ export default function AddNewsCategoryPage() {
 
     const createMutation = useMutation({
         mutationFn: async (data: CategoryFormData) => {
-            await $api.post(API_ROUTES.CATEGORIES, { ...data, type: 'news' });
+            await $api.post(API_ROUTES.CATEGORIES, { ...data, type: CATEGORY_TYPE.NEWS });
         },
         onSuccess: () => {
             toast.success('Thêm danh mục tin tức thành công');
-            queryClient.invalidateQueries({ queryKey: ['categories', 'news'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', CATEGORY_TYPE.NEWS] });
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.news.categories.list);
         },
@@ -60,7 +61,7 @@ export default function AddNewsCategoryPage() {
 
             <div className="max-w-6xl mx-auto">
                 <CategoryForm
-                    type="news"
+                    type={CATEGORY_TYPE.NEWS}
                     onSubmit={handleFormSubmit}
                     backUrl={PORTAL_ROUTES.cms.news.categories.list}
                 />

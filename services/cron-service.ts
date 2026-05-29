@@ -2,6 +2,7 @@ import { db } from '@/db';
 import { auditLogs } from '@/db/schemas';
 import { lt, sql } from 'drizzle-orm';
 import { getRequiredPositiveIntegerEnv } from '@/utils/env';
+import { AUDIT_ACTIONS, AUDIT_MODULES } from '@/constants/audit';
 
 const AUDIT_LOG_RETENTION_DAYS = getRequiredPositiveIntegerEnv(
     process.env.AUDIT_LOG_RETENTION_DAYS,
@@ -23,8 +24,8 @@ class CronService {
 
             if (deletedCount > 0) {
                 await db.insert(auditLogs).values({
-                    action: 'CLEANUP',
-                    module: 'AUDIT_LOGS',
+                    action: AUDIT_ACTIONS.CLEANUP,
+                    module: AUDIT_MODULES.AUDIT_LOGS,
                     description: `Tự động xóa ${deletedCount} bản ghi audit log cũ hơn ${AUDIT_LOG_RETENTION_DAYS} ngày`,
                     changes: {
                         deletedCount,

@@ -16,6 +16,7 @@ import { getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText, Locale } from '@/types/i18n';
 import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
 import { SitePagination } from '@/components/site/SitePagination';
+import { CATEGORY_TYPE, PRODUCT_STATUS } from '@/constants/content';
 
 interface Product {
     id: string;
@@ -55,7 +56,7 @@ export default function ProductArchive() {
 
     const productParams = useMemo(
         () => ({
-            status: 'active',
+            status: PRODUCT_STATUS.ACTIVE,
             search: debouncedSearch || undefined,
             categoryId: selectedCategoryId || undefined,
         }),
@@ -84,9 +85,9 @@ export default function ProductArchive() {
 
     // Fetch categories using react-query
     const { data: categories = [] } = useQuery<Category[]>({
-        queryKey: ['categories', 'product'],
+        queryKey: ['categories', CATEGORY_TYPE.PRODUCT],
         queryFn: async () => {
-            const response = await $api.get(`${API_ROUTES.CATEGORIES}?type=product`);
+            const response = await $api.get(`${API_ROUTES.CATEGORIES}?type=${CATEGORY_TYPE.PRODUCT}`);
             if (response.data.success) {
                 return response.data.data || [];
             }

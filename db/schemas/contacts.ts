@@ -1,4 +1,5 @@
 import { index, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { CONTACT_STATUS, type ContactStatus } from '@/constants/content';
 
 export const contacts = pgTable(
     'contacts',
@@ -10,7 +11,10 @@ export const contacts = pgTable(
         address: text('address'),
         subject: varchar('subject', { length: 255 }),
         message: text('message').notNull(),
-        status: varchar('status', { length: 50 }).default('new').notNull(), // new, read, replied, archived
+        status: varchar('status', { length: 50 })
+            .$type<ContactStatus>()
+            .default(CONTACT_STATUS.NEW)
+            .notNull(),
         created_at: timestamp('created_at').defaultNow().notNull(),
         updated_at: timestamp('updated_at').defaultNow().notNull(),
     },

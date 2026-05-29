@@ -5,6 +5,20 @@ export const RBAC_ROLES = {
     VIEWER: 'VIEWER',
 } as const;
 
+export const AUTH_ROLE_CODES = {
+    ADMIN: 'admin',
+    EDITOR: 'editor',
+    VIEWER: 'viewer',
+} as const;
+
+export const AUTH_ROLE_CODE_VALUES = [
+    AUTH_ROLE_CODES.ADMIN,
+    AUTH_ROLE_CODES.EDITOR,
+    AUTH_ROLE_CODES.VIEWER,
+] as const;
+
+export type AuthRoleCode = (typeof AUTH_ROLE_CODE_VALUES)[number];
+
 /**
  * Single Source of Truth — tất cả module codes trong hệ thống.
  * Khi thêm module mới: thêm vào đây + seed lại DB + cập nhật SIDEBAR_ITEMS.

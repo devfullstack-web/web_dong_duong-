@@ -7,6 +7,7 @@ import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import type { LocalizedText, LocalizedArray } from "@/types/i18n";
 import { sanitizeLocalizedRichText, sanitizeRichText, sanitizeStringArray } from "@/utils/sanitize";
+import { PRODUCT_STATUS, PRODUCT_STATUS_VALUES, isConstantValue } from "@/constants/content";
 
 // GET /api/products/[slug] - Get a single product by slug or ID (Public)
 export async function GET(
@@ -25,7 +26,7 @@ export async function GET(
     const [product] = await db.select().from(products).where(
       and(
         isId ? eq(products.id, slug) : eq(products.slug, slug),
-        ...(canViewPrivate ? [] : [eq(products.status, 'active')]),
+        ...(canViewPrivate ? [] : [eq(products.status, PRODUCT_STATUS.ACTIVE)]),
         isNull(products.deleted_at) // Exclude soft deleted
       )
     );
@@ -144,7 +145,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
       updates.features = sanitizeStringArray(updates.features);
     }
 
-    if (updates.status !== undefined && !['active', 'inactive'].includes(updates.status as string)) {
+    if (updates.status !== undefined && !isConstantValue(PRODUCT_STATUS_VALUES, updates.status)) {
       return apiError("Invalid status", 400);
     }
 

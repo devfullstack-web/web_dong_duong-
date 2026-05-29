@@ -6,6 +6,11 @@ import { withAuth, withHybridAuth, hasPermission, type UserSession } from '@/mid
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { sanitizePlainText } from '@/utils/sanitize';
+import {
+    CHAT_SESSION_STATUS_VALUES,
+    isConstantValue,
+    type ChatSessionStatus,
+} from '@/constants/content';
 
 type ChatSessionPatchBody = {
     adminLastSeen?: boolean;
@@ -55,8 +60,8 @@ export const PATCH = withHybridAuth(async (req: NextRequest, session, context) =
         if (body.guestLastSeen) {
             updateData.guest_last_seen_at = new Date();
         }
-        if (isChatAdmin && body.status && ['active', 'resolved', 'spam'].includes(body.status)) {
-            updateData.status = body.status as 'active' | 'resolved' | 'spam';
+        if (isChatAdmin && isConstantValue(CHAT_SESSION_STATUS_VALUES, body.status)) {
+            updateData.status = body.status as ChatSessionStatus;
         }
         if (body.guest_name !== undefined) updateData.guest_name = sanitizePlainText(body.guest_name, 255);
         if (body.guest_email !== undefined) updateData.guest_email = sanitizePlainText(body.guest_email, 255);

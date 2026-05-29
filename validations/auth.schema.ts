@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AUTH_ROLE_CODES, AUTH_ROLE_CODE_VALUES } from '@/constants/rbac';
 
 /**
  * User & Auth Validation Schemas
@@ -34,9 +35,9 @@ export const userSchema = z.object({
     .nullable()
     .optional(),
   
-  role: z.enum(['admin', 'editor', 'viewer'], {
+  role: z.enum(AUTH_ROLE_CODE_VALUES, {
     message: "Role phải là 'admin', 'editor' hoặc 'viewer'"
-  }).default('admin'),
+  }).default(AUTH_ROLE_CODES.ADMIN),
 });
 
 export const createUserSchema = userSchema;

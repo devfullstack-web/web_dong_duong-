@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { NEWS_STATUS, NEWS_STATUS_VALUES } from '@/constants/content';
 
 /**
  * News Article Validation Schemas
@@ -33,9 +34,9 @@ export const newsArticleSchema = z.object({
     .nullable()
     .optional(),
   
-  status: z.enum(['draft', 'published'], {
+  status: z.enum(NEWS_STATUS_VALUES, {
     message: "Trạng thái phải là 'draft' hoặc 'published'"
-  }).default('draft'),
+  }).default(NEWS_STATUS.DRAFT),
   
   image_url: z.string()
     .url("URL hình ảnh không hợp lệ")
@@ -60,7 +61,7 @@ export const updateNewsArticleSchema = newsArticleSchema.partial().extend({
 });
 
 export const newsFilterSchema = z.object({
-  status: z.enum(['draft', 'published']).optional(),
+  status: z.enum(NEWS_STATUS_VALUES).optional(),
   categoryId: z.string().uuid().optional(),
   search: z.string().max(255).optional(),
   startDate: z.string().datetime().optional(),

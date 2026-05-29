@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CATEGORY_TYPE } from '@/constants/content';
 
 export default function EditProjectCategoryPage() {
     const params = useParams();
@@ -40,11 +41,14 @@ export default function EditProjectCategoryPage() {
 
     const updateMutation = useMutation({
         mutationFn: async (data: CategoryFormData) => {
-            await $api.patch(`${API_ROUTES.CATEGORIES}/${categoryId}`, { ...data, type: 'project' });
+            await $api.patch(`${API_ROUTES.CATEGORIES}/${categoryId}`, {
+                ...data,
+                type: CATEGORY_TYPE.PROJECT,
+            });
         },
         onSuccess: () => {
             toast.success('Cập nhật danh mục thành công');
-            queryClient.invalidateQueries({ queryKey: ['categories', 'project'] });
+            queryClient.invalidateQueries({ queryKey: ['categories', CATEGORY_TYPE.PROJECT] });
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.projects.categories.list);
         },
@@ -103,7 +107,7 @@ export default function EditProjectCategoryPage() {
 
             <div className="max-w-6xl mx-auto">
                 <CategoryForm
-                    type="project"
+                    type={CATEGORY_TYPE.PROJECT}
                     isEditing={true}
                     initialData={category}
                     onSubmit={handleFormSubmit}

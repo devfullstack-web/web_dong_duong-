@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CONTACT_STATUS_VALUES } from '@/constants/content';
 
 /**
  * Contact Form Validation Schema
@@ -35,8 +36,8 @@ export const contactSchema = z.object({
 
 export const updateContactStatusSchema = z.object({
     id: z.string().uuid('Contact ID phải là UUID hợp lệ'),
-    status: z.enum(['new', 'read', 'replied', 'archived'], {
-        message: "Status phải là 'new', 'read', 'replied' hoặc 'archived'",
+    status: z.enum(CONTACT_STATUS_VALUES, {
+        message: 'Status không hợp lệ',
     }),
 });
 

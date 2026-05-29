@@ -1,13 +1,16 @@
 import { pgEnum } from 'drizzle-orm/pg-core';
+import {
+    CHAT_SESSION_STATUS_VALUES,
+    EMPLOYMENT_TYPE_VALUES,
+    JOB_STATUS_VALUES,
+    NEWS_STATUS_VALUES,
+    PRODUCT_STATUS_VALUES,
+    PROJECT_STATUS_VALUES,
+} from '@/constants/content';
 
-export const statusEnum = pgEnum('status', ['draft', 'published']);
-export const productStatusEnum = pgEnum('product_status', ['active', 'inactive']);
-export const projectStatusEnum = pgEnum('project_status', ['ongoing', 'completed']);
-export const jobStatusEnum = pgEnum('job_status', ['open', 'closed']);
-export const employmentTypeEnum = pgEnum('employment_type', [
-    'full_time',
-    'part_time',
-    'contract',
-    'internship',
-]);
-export const chatSessionStatusEnum = pgEnum('chat_session_status', ['active', 'resolved', 'spam']);
+export const statusEnum = pgEnum('status', NEWS_STATUS_VALUES);
+export const productStatusEnum = pgEnum('product_status', PRODUCT_STATUS_VALUES);
+export const projectStatusEnum = pgEnum('project_status', PROJECT_STATUS_VALUES);
+export const jobStatusEnum = pgEnum('job_status', JOB_STATUS_VALUES);
+export const employmentTypeEnum = pgEnum('employment_type', EMPLOYMENT_TYPE_VALUES);
+export const chatSessionStatusEnum = pgEnum('chat_session_status', CHAT_SESSION_STATUS_VALUES);

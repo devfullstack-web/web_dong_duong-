@@ -12,6 +12,7 @@ import { validateBody } from '@/middlewares/middleware';
 import { contactSchema } from '@/validations/contact.schema';
 import { checkRateLimit } from '@/utils/rate-limiter';
 import { sanitizePlainText } from '@/utils/sanitize';
+import { CONTACT_STATUS } from '@/constants/content';
 
 export async function POST(request: Request) {
     try {
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
             .insert(contacts)
             .values({
                 ...sanitizedData,
-                status: 'new',
+                status: CONTACT_STATUS.NEW,
             })
             .returning();
 

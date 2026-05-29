@@ -98,6 +98,7 @@ export const API_ROUTES = {
     PROJECTS: '/projects',
     CONTACTS: '/contacts',
     CATEGORIES: '/categories',
+    CATEGORY_TYPES: '/category-types',
     USERS: '/users',
     AUTHORS: '/authors',
     MEDIA: '/media',

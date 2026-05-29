@@ -26,6 +26,7 @@ import {
     BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { sanitizeRichText } from '@/utils/sanitize';
+import { PROJECT_STATUS } from '@/constants/content';
 
 interface ProjectDetailClientProps {
     project: Record<string, unknown>;
@@ -266,9 +267,9 @@ export default function ProjectDetailClient({
                                             Trạng thái
                                         </span>
                                         <span
-                                            className={`text-xs font-bold ${project.status === 'completed' ? 'text-green-600' : 'text-amber-600'}`}
+                                            className={`text-xs font-bold ${project.status === PROJECT_STATUS.COMPLETED ? 'text-green-600' : 'text-amber-600'}`}
                                         >
-                                            {project.status === 'completed'
+                                            {project.status === PROJECT_STATUS.COMPLETED
                                                 ? 'Đã hoàn thành'
                                                 : 'Đang triển khai'}
                                         </span>
