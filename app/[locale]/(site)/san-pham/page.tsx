@@ -7,14 +7,6 @@ import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { LayoutGrid, List, ArrowRight, Shield, Info, ChevronDown, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
 import { PageBanner } from '@/components/site/PageBanner';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
@@ -22,6 +14,8 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { useQuery } from '@tanstack/react-query';
 import { getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText, Locale } from '@/types/i18n';
+import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
+import { SitePagination } from '@/components/site/SitePagination';
 
 interface Product {
     id: string;
@@ -54,45 +48,39 @@ export default function ProductArchive() {
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearch = useDebounce(searchQuery, 500);
-    const [currentPage, setCurrentPage] = useState(1);
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
     const [expandedCategoryIds, setExpandedCategoryIds] = useState<string[]>([]);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [sortBy, setSortBy] = useState<'default' | 'name-asc' | 'name-desc'>('default');
 
+    const productParams = useMemo(
+        () => ({
+            status: 'active',
+            search: debouncedSearch || undefined,
+            categoryId: selectedCategoryId || undefined,
+        }),
+        [debouncedSearch, selectedCategoryId],
+    );
+
+    const {
+        items: products,
+        isLoading: productsLoading,
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        total,
+        handlePageChange,
+    } = usePaginatedApiQuery<Product>({
+        endpoint: API_ROUTES.PRODUCTS,
+        queryKey: ['products', productParams],
+        pageSize: ITEMS_PER_PAGE,
+        params: productParams,
+    });
+
     // Reset to page 1 when search or category changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [debouncedSearch, selectedCategoryId]);
-
-    // Fetch products using react-query
-    const { data: productsData, isLoading: productsLoading } = useQuery<{
-        data: Product[];
-        meta: { total: number; totalPages: number };
-    }>({
-        queryKey: [
-            'products',
-            { page: currentPage, search: debouncedSearch, categoryId: selectedCategoryId },
-        ],
-        queryFn: async () => {
-            const response = await $api.get(API_ROUTES.PRODUCTS, {
-                params: {
-                    status: 'active',
-                    page: currentPage,
-                    limit: ITEMS_PER_PAGE,
-                    search: debouncedSearch || undefined,
-                    categoryId: selectedCategoryId || undefined,
-                },
-            });
-            if (response.data.success) {
-                return {
-                    data: response.data.data || [],
-                    meta: response.data.meta || { total: 0, totalPages: 1 },
-                };
-            }
-            throw new Error('Failed to fetch products');
-        },
-    });
+    }, [debouncedSearch, selectedCategoryId, setCurrentPage]);
 
     // Fetch categories using react-query
     const { data: categories = [] } = useQuery<Category[]>({
@@ -106,10 +94,6 @@ export default function ProductArchive() {
         },
         staleTime: 5 * 60 * 1000, // Categories don't change often
     });
-
-    const products = useMemo(() => productsData?.data || [], [productsData]);
-    const totalPages = productsData?.meta?.totalPages || 1;
-    const total = productsData?.meta?.total || 0;
 
     const sortedProducts = useMemo(() => {
         const items = [...products];
@@ -165,11 +149,6 @@ export default function ProductArchive() {
         setExpandedCategoryIds((prevExpanded) =>
             prevExpanded.includes(parentId) ? prevExpanded : [...prevExpanded, parentId],
         );
-    };
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
@@ -590,64 +569,14 @@ export default function ProductArchive() {
                             )}
 
                             {/* Pagination */}
-                            {totalPages > 1 && (
-                                <div className="pt-12">
-                                    <Pagination>
-                                        <PaginationContent>
-                                            <PaginationItem>
-                                                <PaginationPrevious
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (currentPage > 1)
-                                                            handlePageChange(currentPage - 1);
-                                                    }}
-                                                    className={cn(
-                                                        'text-[9px] font-black uppercase tracking-widest',
-                                                        currentPage === 1 &&
-                                                            'pointer-events-none opacity-50',
-                                                    )}
-                                                />
-                                            </PaginationItem>
-
-                                            {Array.from(
-                                                { length: totalPages },
-                                                (_, i) => i + 1,
-                                            ).map((page) => (
-                                                <PaginationItem key={page}>
-                                                    <PaginationLink
-                                                        href="#"
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            handlePageChange(page);
-                                                        }}
-                                                        isActive={currentPage === page}
-                                                        className="text-[11px] font-black"
-                                                    >
-                                                        {page}
-                                                    </PaginationLink>
-                                                </PaginationItem>
-                                            ))}
-
-                                            <PaginationItem>
-                                                <PaginationNext
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (currentPage < totalPages)
-                                                            handlePageChange(currentPage + 1);
-                                                    }}
-                                                    className={cn(
-                                                        'text-[9px] font-black uppercase tracking-widest',
-                                                        currentPage === totalPages &&
-                                                            'pointer-events-none opacity-50',
-                                                    )}
-                                                />
-                                            </PaginationItem>
-                                        </PaginationContent>
-                                    </Pagination>
-                                </div>
-                            )}
+                            <SitePagination
+                                numbered
+                                className="pt-12"
+                                linkClassName="text-[9px] font-black"
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
 
                         </div>
                     </div>

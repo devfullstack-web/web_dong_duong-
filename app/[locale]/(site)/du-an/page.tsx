@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
@@ -8,16 +7,11 @@ import { motion } from 'motion/react';
 import { MapPin, FolderOpen } from 'lucide-react';
 import { PageBanner } from '@/components/site/PageBanner';
 import { API_ROUTES } from '@/constants/routes';
-import $api from '@/utils/axios';
-import { cn } from '@/lib/utils';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
-import { useQuery } from '@tanstack/react-query';
+import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
+import { SiteEmptyState } from '@/components/site/SiteEmptyState';
+import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
+import { SitePagination } from '@/components/site/SitePagination';
+import { getYear } from '@/utils/client-format';
 
 interface Project {
     id: string;
@@ -34,44 +28,20 @@ const ITEMS_PER_PAGE = 12;
 
 export default function ProjectsPage() {
     const t = useTranslations('Projects');
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const { data: projectsData, isLoading } = useQuery<{
-        data: Project[];
-        meta: { total: number; totalPages: number };
-    }>({
-        queryKey: ['projects', { page: currentPage }],
-        queryFn: async () => {
-            const response = await $api.get(API_ROUTES.PROJECTS, {
-                params: {
-                    page: currentPage,
-                    limit: ITEMS_PER_PAGE,
-                },
-            });
-            if (response.data.success) {
-                return {
-                    data: response.data.data || [],
-                    meta: response.data.meta || { total: 0, totalPages: 1 },
-                };
-            }
-            throw new Error('Failed to fetch projects');
-        },
+    const {
+        items: projects,
+        isLoading,
+        currentPage,
+        totalPages,
+        handlePageChange,
+    } = usePaginatedApiQuery<Project>({
+        endpoint: API_ROUTES.PROJECTS,
+        queryKey: ['projects'],
+        pageSize: ITEMS_PER_PAGE,
     });
 
-    const projects = projectsData?.data || [];
-    const totalPages = projectsData?.meta?.totalPages || 1;
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     if (isLoading && projects.length === 0) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-white">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
-            </div>
-        );
+        return <SiteLoadingScreen />;
     }
 
     return (
@@ -82,12 +52,7 @@ export default function ProjectsPage() {
             <section className="py-12 bg-white">
                 <div className="container mx-auto px-4 lg:px-8">
                     {projects.length === 0 ? (
-                        <div className="text-center py-20 border border-dashed border-slate-200 rounded-lg">
-                            <FolderOpen size={48} className="mx-auto mb-4 text-slate-200" />
-                            <h3 className="text-sm font-black text-slate-400 uppercase">
-                                {t('empty.title')}
-                            </h3>
-                        </div>
+                        <SiteEmptyState icon={FolderOpen} title={t('empty.title')} />
                     ) : (
                         <>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -121,11 +86,7 @@ export default function ProjectsPage() {
                                                 <span>
                                                     {project.category || t('grid.defaultCategory')}
                                                 </span>
-                                                <span>
-                                                    {project.start_date
-                                                        ? new Date(project.start_date).getFullYear()
-                                                        : ''}
-                                                </span>
+                                                <span>{getYear(project.start_date)}</span>
                                             </div>
                                             <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
                                                 <LocalizedLink href={`/du-an/${project.slug}`}>
@@ -142,49 +103,12 @@ export default function ProjectsPage() {
                             </div>
 
                             {/* Simple Pagination */}
-                            {totalPages > 1 && (
-                                <div className="pt-12 flex justify-center">
-                                    <Pagination>
-                                        <PaginationContent>
-                                            <PaginationItem>
-                                                <PaginationPrevious
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (currentPage > 1)
-                                                            handlePageChange(currentPage - 1);
-                                                    }}
-                                                    className={cn(
-                                                        'text-[10px] font-bold uppercase tracking-widest',
-                                                        currentPage === 1 &&
-                                                            'opacity-30 pointer-events-none',
-                                                    )}
-                                                />
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <span className="text-[10px] font-black px-4">
-                                                    {currentPage} / {totalPages}
-                                                </span>
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <PaginationNext
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (currentPage < totalPages)
-                                                            handlePageChange(currentPage + 1);
-                                                    }}
-                                                    className={cn(
-                                                        'text-[10px] font-bold uppercase tracking-widest',
-                                                        currentPage === totalPages &&
-                                                            'opacity-30 pointer-events-none',
-                                                    )}
-                                                />
-                                            </PaginationItem>
-                                        </PaginationContent>
-                                    </Pagination>
-                                </div>
-                            )}
+                            <SitePagination
+                                className="pt-12"
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
                         </>
                     )}
                 </div>

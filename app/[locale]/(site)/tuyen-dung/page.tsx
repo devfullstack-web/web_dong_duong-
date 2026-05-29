@@ -1,22 +1,16 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { MapPin, Briefcase, Users, ArrowRight } from 'lucide-react';
 import { PageBanner } from '@/components/site/PageBanner';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
-import { cn } from '@/lib/utils';
-import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
-import { useQuery } from '@tanstack/react-query';
+import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
+import { SiteEmptyState } from '@/components/site/SiteEmptyState';
+import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
+import { SitePagination } from '@/components/site/SitePagination';
 
 interface JobPosting {
     id: string;
@@ -37,48 +31,23 @@ const ITEMS_PER_PAGE = 12;
 
 export default function RecruitmentHub() {
     const t = useTranslations('Careers');
-    const [currentPage, setCurrentPage] = useState(1);
     const jobsListRef = useRef<HTMLDivElement>(null);
-
-    const { data: jobsData, isLoading } = useQuery<{
-        data: JobPosting[];
-        meta: { total: number; totalPages: number };
-    }>({
-        queryKey: ['jobs', { page: currentPage }],
-        queryFn: async () => {
-            const response = await $api.get(API_ROUTES.JOBS, {
-                params: {
-                    status: 'open',
-                    page: currentPage,
-                    limit: ITEMS_PER_PAGE,
-                },
-            });
-            if (response.data.success) {
-                return {
-                    data: response.data.data || [],
-                    meta: response.data.meta || { total: 0, totalPages: 1 },
-                };
-            }
-            throw new Error('Failed to fetch jobs');
-        },
+    const {
+        items: jobs,
+        isLoading,
+        currentPage,
+        totalPages,
+        handlePageChange,
+    } = usePaginatedApiQuery<JobPosting>({
+        endpoint: API_ROUTES.JOBS,
+        queryKey: ['jobs'],
+        pageSize: ITEMS_PER_PAGE,
+        params: { status: 'open' },
+        scrollTargetRef: jobsListRef,
     });
 
-    const jobs = jobsData?.data || [];
-    const totalPages = jobsData?.meta?.totalPages || 1;
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        if (jobsListRef.current) {
-            jobsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    };
-
     if (isLoading && jobs.length === 0) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-white">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
-            </div>
-        );
+        return <SiteLoadingScreen />;
     }
 
     return (
@@ -89,12 +58,7 @@ export default function RecruitmentHub() {
             <section className="py-16 bg-white" ref={jobsListRef}>
                 <div className="container mx-auto px-4 lg:px-8">
                     {jobs.length === 0 ? (
-                        <div className="text-center py-20 border border-dashed border-slate-200 rounded-lg">
-                            <Users size={48} className="mx-auto mb-4 text-slate-200" />
-                            <h3 className="text-sm font-black text-slate-400 uppercase">
-                                {t('empty.title')}
-                            </h3>
-                        </div>
+                        <SiteEmptyState icon={Users} title={t('empty.title')} />
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {jobs.map((job, i) => (
@@ -141,49 +105,12 @@ export default function RecruitmentHub() {
                     )}
 
                     {/* Pagination */}
-                    {totalPages > 1 && (
-                        <div className="mt-12 flex justify-center">
-                            <Pagination>
-                                <PaginationContent>
-                                    <PaginationItem>
-                                        <PaginationPrevious
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage > 1)
-                                                    handlePageChange(currentPage - 1);
-                                            }}
-                                            className={cn(
-                                                'text-[10px] font-bold uppercase tracking-widest',
-                                                currentPage === 1 &&
-                                                    'opacity-30 pointer-events-none',
-                                            )}
-                                        />
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <span className="text-[10px] font-black px-4">
-                                            {currentPage} / {totalPages}
-                                        </span>
-                                    </PaginationItem>
-                                    <PaginationItem>
-                                        <PaginationNext
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (currentPage < totalPages)
-                                                    handlePageChange(currentPage + 1);
-                                            }}
-                                            className={cn(
-                                                'text-[10px] font-bold uppercase tracking-widest',
-                                                currentPage === totalPages &&
-                                                    'opacity-30 pointer-events-none',
-                                            )}
-                                        />
-                                    </PaginationItem>
-                                </PaginationContent>
-                            </Pagination>
-                        </div>
-                    )}
+                    <SitePagination
+                        className="mt-12"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
                 </div>
             </section>
         </div>

@@ -1,64 +1,22 @@
 'use client';
 
-import { useState } from 'react';
 import { Phone, Mail, MapPin, Send, Facebook, Linkedin, Youtube, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { toast } from 'sonner';
 import { PageBanner } from '@/components/site/PageBanner';
-import $api from '@/utils/axios';
-import { API_ROUTES } from '@/constants/routes';
 import { COMPANY_INFO } from '@/constants/site-info';
+import { useContactForm } from '@/hooks/use-contact-form';
 
 export default function ContactPage() {
     const t = useTranslations('Contact');
     const tc = useTranslations('ContactForm');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        email: '',
-        address: '',
-        message: '',
+    const { formData, isSubmitting, handleChange, handleSubmit } = useContactForm({
+        requiredFields: ['name', 'phone', 'email', 'address', 'message'],
+        messages: {
+            required: tc('errors.required'),
+            success: tc('success'),
+            generalError: tc('errors.general'),
+        },
     });
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        if (
-            !formData.name ||
-            !formData.phone ||
-            !formData.email ||
-            !formData.address ||
-            !formData.message
-        ) {
-            toast.error(tc('errors.required'));
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
-            await $api.post(API_ROUTES.CONTACTS, formData);
-            toast.success(tc('success'));
-            setFormData({
-                name: '',
-                phone: '',
-                email: '',
-                address: '',
-                message: '',
-            });
-        } catch (error: unknown) {
-            console.error(error);
-            const message = error.response?.data?.message || tc('errors.general');
-            toast.error(message);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
 
     return (
         <div className="flex flex-col min-h-screen bg-white">

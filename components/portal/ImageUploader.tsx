@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { formatFileSize, IMAGE_ACCEPT, validateImageFile } from '@/utils/client-media';
 
 interface UploadedImage {
     filename: string;
@@ -140,16 +141,9 @@ export function ImageUploader({
     const handleFileSelect = (file: File) => {
         if (!file) return;
 
-        // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        if (!allowedTypes.includes(file.type)) {
-            toast.error('Định dạng không hợp lệ. Chỉ chấp nhận: JPEG, PNG, WebP, GIF');
-            return;
-        }
-
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error('Kích thước file vượt quá 5MB');
+        const validation = validateImageFile(file, 5);
+        if (!validation.ok) {
+            toast.error(validation.message);
             return;
         }
 
@@ -212,12 +206,6 @@ export function ImageUploader({
     const openDialogFor = (type: 'main' | 'gallery') => {
         setSelectingFor(type);
         setIsDialogOpen(true);
-    };
-
-    const formatFileSize = (bytes: number) => {
-        if (bytes < 1024) return bytes + ' B';
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     };
 
     return (
@@ -469,7 +457,7 @@ export function ImageUploader({
                                     <input
                                         ref={fileInputRef}
                                         type="file"
-                                        accept="image/jpeg,image/png,image/webp,image/gif"
+                                        accept={IMAGE_ACCEPT}
                                         className="hidden"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];

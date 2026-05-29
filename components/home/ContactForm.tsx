@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
     Phone,
     Mail,
@@ -8,49 +7,20 @@ import {
     Send,
     Loader2,
 } from 'lucide-react';
-import { toast } from 'sonner';
-import $api from '@/utils/axios';
-import { API_ROUTES } from '@/constants/routes';
 import { COMPANY_INFO } from '@/constants/site-info';
 import { useTranslations } from 'next-intl';
+import { useContactForm } from '@/hooks/use-contact-form';
 
 export default function ContactForm() {
     const t = useTranslations('ContactForm');
     const tCompany = useTranslations('Company');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [formData, setFormData] = useState({
-        name: '',
-        phone: '',
-        email: '',
-        address: '',
-        message: '',
+    const { formData, isSubmitting, handleChange, handleSubmit } = useContactForm({
+        messages: {
+            required: t('errors.required'),
+            success: t('success'),
+            generalError: t('errors.general'),
+        },
     });
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!formData.name || !formData.phone || !formData.email || !formData.message) {
-            toast.error(t('errors.required'));
-            return;
-        }
-
-        setIsSubmitting(true);
-        try {
-            await $api.post(API_ROUTES.CONTACTS, formData);
-            toast.success(t('success'));
-            setFormData({ name: '', phone: '', email: '', address: '', message: '' });
-        } catch (error: unknown) {
-            const axiosError = error as { response?: { data?: { message?: string } } };
-            const message = axiosError.response?.data?.message || t('errors.general');
-            toast.error(message);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
 
     return (
         <section className="bg-white py-12 lg:py-16">

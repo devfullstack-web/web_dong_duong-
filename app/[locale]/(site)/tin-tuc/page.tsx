@@ -1,23 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { Newspaper, Calendar } from 'lucide-react';
 import { PageBanner } from '@/components/site/PageBanner';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
-import { cn } from '@/lib/utils';
-import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
-import { useQuery } from '@tanstack/react-query';
+import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
+import { SiteEmptyState } from '@/components/site/SiteEmptyState';
+import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
+import { SitePagination } from '@/components/site/SitePagination';
+import { formatViDate } from '@/utils/client-format';
 
 interface NewsArticle {
     id: string;
@@ -33,45 +27,21 @@ const ITEMS_PER_PAGE = 12;
 
 export default function NewsPage() {
     const t = useTranslations('News');
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const { data: newsData, isLoading } = useQuery<{
-        data: NewsArticle[];
-        meta: { total: number; totalPages: number };
-    }>({
-        queryKey: ['news', { page: currentPage }],
-        queryFn: async () => {
-            const response = await $api.get(API_ROUTES.NEWS, {
-                params: {
-                    status: 'published',
-                    page: currentPage,
-                    limit: ITEMS_PER_PAGE,
-                },
-            });
-            if (response.data.success) {
-                return {
-                    data: response.data.data || [],
-                    meta: response.data.meta || { total: 0, totalPages: 1 },
-                };
-            }
-            throw new Error('Failed to fetch news');
-        },
+    const {
+        items: news,
+        isLoading,
+        currentPage,
+        totalPages,
+        handlePageChange,
+    } = usePaginatedApiQuery<NewsArticle>({
+        endpoint: API_ROUTES.NEWS,
+        queryKey: ['news'],
+        pageSize: ITEMS_PER_PAGE,
+        params: { status: 'published' },
     });
 
-    const news = newsData?.data || [];
-    const totalPages = newsData?.meta?.totalPages || 1;
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     if (isLoading && news.length === 0) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-white">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
-            </div>
-        );
+        return <SiteLoadingScreen />;
     }
 
     return (
@@ -82,12 +52,7 @@ export default function NewsPage() {
             <section className="py-12 bg-white">
                 <div className="container mx-auto px-4 lg:px-8">
                     {news.length === 0 ? (
-                        <div className="text-center py-20 border border-dashed border-slate-200 rounded-lg">
-                            <Newspaper size={48} className="mx-auto mb-4 text-slate-200" />
-                            <h3 className="text-sm font-black text-slate-400 uppercase">
-                                {t('empty.title')}
-                            </h3>
-                        </div>
+                        <SiteEmptyState icon={Newspaper} title={t('empty.title')} />
                     ) : (
                         <>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -120,13 +85,7 @@ export default function NewsPage() {
                                                 </span>
                                                 <div className="flex items-center gap-1">
                                                     <Calendar size={8} />
-                                                    <span>
-                                                        {article.published_at
-                                                            ? new Date(
-                                                                  article.published_at,
-                                                              ).toLocaleDateString('vi-VN')
-                                                            : ''}
-                                                    </span>
+                                                    <span>{formatViDate(article.published_at)}</span>
                                                 </div>
                                             </div>
                                             <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
@@ -143,49 +102,12 @@ export default function NewsPage() {
                             </div>
 
                             {/* Simple Pagination */}
-                            {totalPages > 1 && (
-                                <div className="pt-12 flex justify-center">
-                                    <Pagination>
-                                        <PaginationContent>
-                                            <PaginationItem>
-                                                <PaginationPrevious
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (currentPage > 1)
-                                                            handlePageChange(currentPage - 1);
-                                                    }}
-                                                    className={cn(
-                                                        'text-[10px] font-bold uppercase tracking-widest',
-                                                        currentPage === 1 &&
-                                                            'opacity-30 pointer-events-none',
-                                                    )}
-                                                />
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <span className="text-[10px] font-black px-4">
-                                                    {currentPage} / {totalPages}
-                                                </span>
-                                            </PaginationItem>
-                                            <PaginationItem>
-                                                <PaginationNext
-                                                    href="#"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (currentPage < totalPages)
-                                                            handlePageChange(currentPage + 1);
-                                                    }}
-                                                    className={cn(
-                                                        'text-[10px] font-bold uppercase tracking-widest',
-                                                        currentPage === totalPages &&
-                                                            'opacity-30 pointer-events-none',
-                                                    )}
-                                                />
-                                            </PaginationItem>
-                                        </PaginationContent>
-                                    </Pagination>
-                                </div>
-                            )}
+                            <SitePagination
+                                className="pt-12"
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                            />
                         </>
                     )}
                 </div>
