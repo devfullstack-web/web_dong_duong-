@@ -96,13 +96,15 @@ export default function Solutions() {
                         {t('digitalEcosystem')}
                     </span>
                 </div>
-                
+
                 <h2 className="text-4xl sm:text-5xl font-black text-white tracking-[0.15em] mb-4 text-shadow uppercase leading-none">
                     {t('title')}
                 </h2>
-                
+
                 <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-white/70 uppercase tracking-widest">
-                    <span className="hover:text-white transition-colors cursor-pointer">{t('breadcrumbHome')}</span>
+                    <span className="hover:text-white transition-colors cursor-pointer">
+                        {t('breadcrumbHome')}
+                    </span>
                     <span>/</span>
                     <span className="text-brand-accent font-black">{t('breadcrumbSolutions')}</span>
                 </div>
@@ -120,38 +122,44 @@ export default function Solutions() {
                             className={cn(
                                 'relative overflow-hidden group cursor-pointer h-full flex-1 min-w-0 transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]',
                                 'border-r border-white/10 last:border-r-0 rounded-none',
-                                'lg:group-hover/container:flex-[0.6] lg:group-hover/container:opacity-50 lg:group-hover/container:hover:flex-[2.6] lg:group-hover/container:hover:opacity-100'
+                                'lg:group-hover/container:flex-[0.6] lg:group-hover/container:opacity-50 lg:group-hover/container:hover:flex-[2.6] lg:group-hover/container:hover:opacity-100',
                             )}
                         >
                             {/* Background Image Area with robust error states and visual blueprints */}
                             <div className="absolute inset-0 z-0 bg-[#001633]">
                                 {/* High-tech Blueprint Grid Pattern (appears if image is missing/loading) */}
                                 <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px]" />
-                                
+
                                 <Image
                                     src={hasError ? '/images/hero-poster.jpg' : item.image}
                                     alt={item.brand}
                                     fill
                                     sizes="40vw"
-                                    onError={() => setImageErrors(prev => ({ ...prev, [item.id]: true }))}
+                                    onError={() =>
+                                        setImageErrors((prev) => ({ ...prev, [item.id]: true }))
+                                    }
                                     className="object-cover transition-transform duration-1000 ease-out scale-100 group-hover:scale-105"
                                 />
-                                
+
                                 {/* Solid, clean bottom gradient bar for normal state texts */}
                                 <div className="absolute inset-0 bg-slate-950/20 transition-opacity duration-500 group-hover:opacity-5" />
                                 <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent transition-opacity duration-500" />
                             </div>
 
                             {/* Top Accent Line */}
-                            <div className={cn(
-                                "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-accent to-transparent transition-transform duration-700 origin-left scale-x-0 group-hover:scale-x-100"
-                            )} />
+                            <div
+                                className={cn(
+                                    'absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand-accent to-transparent transition-transform duration-700 origin-left scale-x-0 group-hover:scale-x-100',
+                                )}
+                            />
 
                             {/* Floating Icon at top-right in minimal state */}
-                            <div className={cn(
-                                "absolute top-8 right-8 w-12 h-12 rounded-none border border-white/20 flex items-center justify-center bg-slate-950/60 shadow-lg z-10 transition-all duration-500 group-hover:opacity-0 group-hover:translate-y-[-10px]",
-                                item.color
-                            )}>
+                            <div
+                                className={cn(
+                                    'absolute top-8 right-8 w-12 h-12 rounded-none border border-white/20 flex items-center justify-center bg-slate-950/60 shadow-lg z-10 transition-all duration-500 group-hover:opacity-0 group-hover:translate-y-[-10px]',
+                                    item.color,
+                                )}
+                            >
                                 <Icon size={24} />
                             </div>
 
@@ -184,10 +192,13 @@ export default function Solutions() {
                                     </div>
 
                                     {/* Glowing Icon */}
-                                    <div className={cn(
-                                        "w-14 h-14 rounded-none border border-white/10 flex items-center justify-center transition-all duration-500 bg-brand-primary",
-                                        item.color, item.borderGlow
-                                    )}>
+                                    <div
+                                        className={cn(
+                                            'w-14 h-14 rounded-none border border-white/10 flex items-center justify-center transition-all duration-500 bg-brand-primary',
+                                            item.color,
+                                            item.borderGlow,
+                                        )}
+                                    >
                                         <Icon size={28} className="animate-pulse" />
                                     </div>
                                 </div>
@@ -226,18 +237,20 @@ export default function Solutions() {
                             <div className="relative aspect-16/9 w-full overflow-hidden bg-[#001633]">
                                 {/* Blueprint pattern */}
                                 <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:25px_25px]" />
-                                
+
                                 <Image
                                     src={hasError ? '/images/hero-poster.jpg' : item.image}
                                     alt={item.brand}
                                     fill
                                     sizes="(max-width: 768px) 100vw, 50vw"
-                                    onError={() => setImageErrors(prev => ({ ...prev, [item.id]: true }))}
+                                    onError={() =>
+                                        setImageErrors((prev) => ({ ...prev, [item.id]: true }))
+                                    }
                                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                                 />
                                 <div className="absolute inset-0 bg-slate-950/20" />
                                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950/80 to-transparent" />
-                                
+
                                 {/* Absolute Badges on Image */}
                                 <div className="absolute top-4 left-4">
                                     <span className="text-[9px] font-black text-brand-accent tracking-[0.3em] uppercase bg-slate-950/80 px-2.5 py-1 border border-brand-accent/20 rounded-none">
@@ -246,10 +259,12 @@ export default function Solutions() {
                                 </div>
 
                                 <div className="absolute top-4 right-4">
-                                    <div className={cn(
-                                        "w-9 h-9 rounded-none border border-white/10 flex items-center justify-center bg-slate-950/60 shadow-sm",
-                                        item.color
-                                    )}>
+                                    <div
+                                        className={cn(
+                                            'w-9 h-9 rounded-none border border-white/10 flex items-center justify-center bg-slate-950/60 shadow-sm',
+                                            item.color,
+                                        )}
+                                    >
                                         <Icon size={18} />
                                     </div>
                                 </div>
@@ -279,7 +294,10 @@ export default function Solutions() {
                                         className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-brand-accent hover:text-white transition-colors"
                                     >
                                         <span>{commonT('viewDetails')}</span>
-                                        <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                                        <ArrowRight
+                                            size={12}
+                                            className="group-hover:translate-x-1 transition-transform"
+                                        />
                                     </Link>
                                 </div>
                             </div>
