@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { MoveRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
@@ -10,50 +9,7 @@ import { Link } from '@/i18n/routing';
 export default function Hero() {
     const t = useTranslations('Hero');
     const tc = useTranslations('Common');
-    const [current, setCurrent] = React.useState(0);
-    const [, setDirection] = React.useState(0);
 
-    const SLIDES_CONTENT = React.useMemo(
-        () => [
-            {
-                type: 'video',
-                src: '/videos/hero-background.mp4',
-                title: t('slide1.title'),
-                highlight: t('slide1.highlight'),
-                titleSuffix: t('slide1.titleSuffix'),
-                desc: t('slide1.description'),
-                accent: t('slide1.accent'),
-            },
-            {
-                type: 'image',
-                src: '/uploads/images/2026/03/14/diagram-scada.png',
-                title: t('slide2.title'),
-                highlight: t('slide2.highlight'),
-                titleSuffix: t('slide2.titleSuffix'),
-                desc: t('slide2.description'),
-                accent: t('slide2.accent'),
-            },
-            {
-                type: 'image',
-                src: '/uploads/images/2026/03/14/scada2.png',
-                title: t('slide3.title'),
-                highlight: t('slide3.highlight'),
-                titleSuffix: t('slide3.titleSuffix'),
-                desc: t('slide3.description'),
-                accent: t('slide3.accent'),
-            },
-            {
-                type: 'image',
-                src: '/uploads/images/2026/03/14/scada4.png',
-                title: t('slide3.title'),
-                highlight: t('slide3.highlight'),
-                titleSuffix: t('slide3.titleSuffix'),
-                desc: t('slide3.description'),
-                accent: t('slide3.accent'),
-            },
-        ],
-        [t],
-    );
     const HERO_COPY = React.useMemo(
         () => ({
             title: t('fixed.title'),
@@ -62,14 +18,6 @@ export default function Hero() {
         }),
         [t],
     );
-
-    React.useEffect(() => {
-        const timer = setInterval(() => {
-            setDirection(1);
-            setCurrent((prev) => (prev + 1) % SLIDES_CONTENT.length);
-        }, 7000);
-        return () => clearInterval(timer);
-    }, [SLIDES_CONTENT.length]);
 
     return (
         <section className="relative h-[62svh] min-h-[440px] max-h-[560px] w-full overflow-hidden sm:h-[66svh] sm:min-h-[500px] sm:max-h-[620px] lg:h-[85vh] lg:min-h-[600px] lg:max-h-none">
@@ -86,45 +34,11 @@ export default function Hero() {
                 />
             </div>
 
-            {/* Slide-Specific Overlays */}
-            <div className="absolute inset-0 z-10">
-                <AnimatePresence initial={false}>
-                    {SLIDES_CONTENT[current].type === 'image' && (
-                        <motion.div
-                            key={`image-overlay-${current}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 1, ease: 'easeInOut' }}
-                            className="absolute inset-0 hidden overflow-hidden lg:block"
-                        >
-                            <div className="absolute inset-0">
-                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,#1e293b_0%,transparent_70%)] opacity-20" />
-                                <div className="absolute inset-0 bg-size-[60px_60px] bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)]" />
-
-                                <div className="absolute inset-0 flex items-center justify-end px-24 py-32">
-                                    <div className="relative flex h-full w-[45%] items-center justify-end">
-                                        <Image
-                                            src={SLIDES_CONTENT[current].src}
-                                            alt={SLIDES_CONTENT[current].title}
-                                            fill
-                                            priority={current === 0}
-                                            sizes="45vw"
-                                            className="object-contain object-right"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-
             <div className="container relative z-10 mx-auto h-full px-4 lg:px-8">
-                <div className="flex h-full flex-col items-center justify-center pb-10 pt-20 sm:pb-12 sm:pt-24 lg:items-start lg:pb-0 lg:pt-16">
-                    <div className="max-w-4xl w-full space-y-6 sm:space-y-8">
+                <div className="flex h-full flex-col items-center justify-center pb-10 pt-20 sm:pb-12 sm:pt-24 lg:pb-0 lg:pt-16">
+                    <div className="max-w-4xl w-full space-y-6 sm:space-y-8 text-center">
                         <div className="space-y-6">
-                            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white tracking-tight leading-[1.1] uppercase text-center lg:text-left">
+                            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-5xl font-black text-white tracking-tight leading-[1.1] uppercase text-center">
                                 {HERO_COPY.title} <br />
                                 <span className="text-brand-accent">
                                     {HERO_COPY.highlight}
@@ -135,7 +49,7 @@ export default function Hero() {
                                 </span>
                             </h1>
 
-                            <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-4">
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                                 <Link
                                     href="#technology-overview"
                                     className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary w-full sm:w-auto"
@@ -157,30 +71,6 @@ export default function Hero() {
                     </div>
                 </div>
             </div>
-
-            {/* Scroll Indicator */}
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5 }}
-                className="absolute bottom-12 left-4 lg:left-12 z-20 flex-col items-start gap-4 hidden md:flex"
-            >
-                <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.3em]">
-                        0{current + 1} / 0{SLIDES_CONTENT.length}
-                    </span>
-                    <div className="w-24 h-px bg-white/20">
-                        <motion.div
-                            className="h-full bg-brand-accent shadow-[0_0_8px_rgba(251,191,36,0.5)]"
-                            initial={{ width: 0 }}
-                            animate={{
-                                width: `${((current + 1) / SLIDES_CONTENT.length) * 100}%`,
-                            }}
-                            transition={{ duration: 0.5 }}
-                        />
-                    </div>
-                </div>
-            </motion.div>
         </section>
     );
 }
