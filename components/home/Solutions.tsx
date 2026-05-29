@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { SITE_ROUTES } from '@/constants/routes';
 import { Link } from '@/i18n/routing';
@@ -11,7 +11,6 @@ import { Droplet, Sprout, Waves, CloudRain, Building2, ArrowRight } from 'lucide
 export default function Solutions() {
     const t = useTranslations('Solutions');
     const commonT = useTranslations('Common');
-    const activeLocale = useLocale();
     const [imageErrors, setImageErrors] = React.useState<Record<string, boolean>>({});
 
     const SOLUTIONS_CONTENT = [

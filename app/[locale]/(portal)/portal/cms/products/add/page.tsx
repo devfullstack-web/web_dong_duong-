@@ -30,7 +30,7 @@ import { ImageUploader } from '@/components/portal/ImageUploader';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { createEmptyLocalizedText, getLocalizedValue } from '@/types/i18n';
-import type { LocalizedText, LocalizedText as LocalizedArray } from '@/types/i18n';
+import type { LocalizedText } from '@/types/i18n';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface Category {

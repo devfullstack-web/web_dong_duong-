@@ -27,7 +27,6 @@ import { generateSlug } from '@/utils/slug';
 import { Calendar as CalendarIcon, X } from 'lucide-react';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
-import { DateRange } from 'react-day-picker';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface Project {
@@ -53,7 +52,7 @@ export default function EditProjectPage() {
     const [loading, setLoading] = React.useState(true);
     const [saving, setSaving] = React.useState(false);
     const [project, setProject] = React.useState<Project | null>(null);
-    const [categories, setCategories] = React.useState<any[]>([]);
+    const [categories, setCategories] = React.useState<Record<string, unknown>[]>([]);
 
     const [formData, setFormData] = React.useState({
         name: '',

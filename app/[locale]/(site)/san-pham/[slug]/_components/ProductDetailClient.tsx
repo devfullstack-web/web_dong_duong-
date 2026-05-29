@@ -28,7 +28,7 @@ import type { Locale } from '@/types/i18n';
 import { sanitizeRichText } from '@/utils/sanitize';
 
 interface ProductDetailClientProps {
-    product: any;
+    product: Record<string, unknown>;
     slug: string;
 }
 
@@ -69,7 +69,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                             </tr>
                         </thead>
                         <tbody>
-                            {product.tech_specs.map((row: any, i: number) => (
+                            {product.tech_specs.map((row: Record<string, unknown>, i: number) => (
                                 <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
                                     {headers.map((h, j) => (
                                         <td key={j} className="px-4 py-3 text-xs font-bold text-slate-800">

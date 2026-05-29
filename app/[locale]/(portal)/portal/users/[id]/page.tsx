@@ -62,7 +62,7 @@ export default function EditUserPage() {
                     fullName: user.fullName || user.full_name || '',
                     email: user.email || '',
                     phone: user.phone || '',
-                    roleIds: user.roles?.map((r: any) => r.id) || [],
+                    roleIds: user.roles?.map((r: { id: string }) => r.id) || [],
                 });
             } catch (error) {
                 console.error(error);
@@ -85,16 +85,17 @@ export default function EditUserPage() {
 
         setIsSubmitting(true);
         try {
-            const updatePayload: any = { ...formData };
+            const updatePayload: Record<string, unknown> = { ...formData };
             if (!updatePayload.password) delete updatePayload.password;
 
             await $api.patch(`${API_ROUTES.USERS}/${userId}`, updatePayload);
             toast.success('Cập nhật tài khoản thành công');
             router.push(PORTAL_ROUTES.users.list);
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            const message = error.response?.data?.error || 'Lỗi khi cập nhật tài khoản';
+            const axiosErr = error as { response?: { data?: { error?: string } } };
+            const message = axiosErr.response?.data?.error || 'Lỗi khi cập nhật tài khoản';
             toast.error(message);
         } finally {
             setIsSubmitting(false);

@@ -28,7 +28,7 @@ export default function AddProductCategoryPage() {
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.products.categories.list);
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error(error);
             toast.error('Lỗi khi thêm danh mục');
         },

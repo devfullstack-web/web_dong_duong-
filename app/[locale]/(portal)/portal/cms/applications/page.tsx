@@ -31,7 +31,6 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { TablePagination } from '@/components/portal/table-pagination';
 import { API_ROUTES, PORTAL_ROUTES } from '@/constants/routes';
@@ -57,7 +56,7 @@ interface JobApplication {
 
 const STATUS_CONFIG: Record<
     string,
-    { label: string; color: string; icon: any; chartColor: string }
+    { label: string; color: string; icon: React.ComponentType<{ size?: number; className?: string }>; chartColor: string }
 > = {
     pending: {
         label: 'Chờ duyệt',
@@ -126,18 +125,8 @@ export default function ApplicationsManagementPage() {
         },
     });
 
-    // Query for stats
-    const { data: statsData } = useQuery<{ data: any }>({
-        queryKey: ['stats'],
-        queryFn: async () => {
-            const res = await $api.get(API_ROUTES.STATS);
-            return res.data;
-        },
-    });
-
     const applications = applicationsData?.data || [];
     const totalItems = applicationsData?.meta?.total || 0;
-    const stats = statsData?.data;
 
     // Delete mutation
     const deleteMutation = useMutation({

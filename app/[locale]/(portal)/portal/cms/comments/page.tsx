@@ -66,7 +66,6 @@ interface Comment {
 export default function CommentsManagementPage() {
     const [comments, setComments] = useState<Comment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [stats, setStats] = useState<any>(null);
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [search, setSearch] = useState('');
@@ -103,18 +102,8 @@ export default function CommentsManagementPage() {
         }
     }, [page, search, status]);
 
-    const fetchStats = async () => {
-        try {
-            const res = await $api.get(API_ROUTES.STATS);
-            setStats(res.data.data);
-        } catch (error) {
-            console.error('Failed to fetch comment stats', error);
-        }
-    };
-
     useEffect(() => {
         fetchComments();
-        fetchStats();
     }, [fetchComments]);
 
     const handleApprove = async (id: string, currentStatus: boolean) => {
@@ -125,9 +114,8 @@ export default function CommentsManagementPage() {
             if (response.data.success) {
                 toast.success(currentStatus ? 'Đã ẩn bình luận' : 'Đã duyệt bình luận');
                 fetchComments();
-                fetchStats();
             }
-        } catch (error) {
+        } catch {
             toast.error('Thao tác thất bại');
         }
     };
@@ -143,9 +131,8 @@ export default function CommentsManagementPage() {
             if (response.data.success) {
                 toast.success('Đã xóa bình luận');
                 fetchComments();
-                fetchStats();
             }
-        } catch (error) {
+        } catch {
             toast.error('Xóa thất bại');
         } finally {
             setCommentToDelete(null);
@@ -165,9 +152,8 @@ export default function CommentsManagementPage() {
                 setReplyingTo(null);
                 setReplyContent('');
                 fetchComments();
-                fetchStats();
             }
-        } catch (error) {
+        } catch {
             toast.error('Không thể gửi phản hồi');
         } finally {
             setIsSubmittingReply(false);
@@ -326,7 +312,7 @@ export default function CommentsManagementPage() {
 
                                                         {/* Content */}
                                                         <div className="bg-slate-50/50 border-l-4 border-l-[#002d6b] p-4 text-sm text-slate-700 leading-relaxed italic">
-                                                            "{comment.content}"
+                                                            &quot;{comment.content}&quot;
                                                         </div>
 
                                                         {/* Reply */}
@@ -479,7 +465,7 @@ export default function CommentsManagementPage() {
                                 Câu hỏi từ {replyingTo?.guest_name}:
                             </div>
                             <div className="bg-slate-50 p-4 rounded-none border border-slate-100 text-sm text-slate-600 italic leading-relaxed border-l-4 border-l-[#fbbf24]">
-                                "{replyingTo?.content}"
+                                &quot;{replyingTo?.content}&quot;
                             </div>
                         </div>
 

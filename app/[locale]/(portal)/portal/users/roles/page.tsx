@@ -5,7 +5,6 @@ import $api from '@/utils/axios';
 import {
     Plus,
     Search,
-    MoreHorizontal,
     ShieldCheck,
     Edit2,
     Trash2,
@@ -14,14 +13,6 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 import Link from 'next/link';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';

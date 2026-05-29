@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 interface AreaChartGradientProps {
     title?: string;
     description?: string;
-    data: any[];
+    data: Record<string, unknown>[];
     config: ChartConfig;
     dataKeys: string[]; // Array of keys to display as areas
     xAxisKey?: string;
@@ -106,7 +106,7 @@ export function AreaChartGradient({
                                 </linearGradient>
                             ))}
                         </defs>
-                        {dataKeys.map((key, index) => (
+                        {dataKeys.map((key) => (
                             <Area
                                 key={key}
                                 dataKey={key}

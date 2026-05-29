@@ -54,7 +54,7 @@ function fixRedirectPort(response: NextResponse): NextResponse {
 }
 
 function safeRedirect(path: string, request: NextRequest): NextResponse {
-    const configuredBaseUrl = process.env.APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL;
+    const configuredBaseUrl = process.env.APP_URL;
 
     if (configuredBaseUrl) {
         try {

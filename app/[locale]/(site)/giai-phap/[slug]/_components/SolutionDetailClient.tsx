@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function SolutionDetailClient({ data }: { data: any }) {
+export default function SolutionDetailClient({ data }: { data: Record<string, unknown> }) {
     return (
         <div className="flex flex-col min-h-screen bg-white text-slate-900 antialiased">
             {/* Header / Hero Strip */}
@@ -74,7 +74,7 @@ export default function SolutionDetailClient({ data }: { data: any }) {
                         </p>
 
                         <div className="space-y-6">
-                            {data.core.items.map((item: any, idx: number) => (
+                            {((data.core as Record<string, unknown>).items as unknown as Array<{title: string; desc: string}>).map((item: {title: string; desc: string}, idx: number) => (
                                 <div key={idx} className="space-y-2">
                                     <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
                                         <strong className="font-extrabold text-slate-900 uppercase tracking-tight">
@@ -112,7 +112,7 @@ export default function SolutionDetailClient({ data }: { data: any }) {
                         </p>
 
                         <div className="space-y-6">
-                            {data.benefits.items.map((item: any, idx: number) => (
+                            {((data.benefits as Record<string, unknown>).items as unknown as Array<{title: string; desc: string}>).map((item: {title: string; desc: string}, idx: number) => (
                                 <div key={idx} className="space-y-1">
                                     <p className="text-base sm:text-lg text-slate-700 leading-relaxed text-justify font-medium">
                                         <strong className="font-extrabold text-slate-900 uppercase tracking-tight">

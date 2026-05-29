@@ -74,7 +74,7 @@ export default function AddNewsPage() {
     });
 
     const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
-    const [recentArticles, setRecentArticles] = useState<any[]>([]);
+    const [recentArticles, setRecentArticles] = useState<Record<string, unknown>[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -133,7 +133,7 @@ export default function AddNewsPage() {
             queryClient.invalidateQueries({ queryKey: ['news'] });
             toast.success('Đã tạo bài viết thành công!');
             router.push(PORTAL_ROUTES.cms.news.list);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
             const message = error.response?.data?.error || error.message || 'Lỗi khi tạo bài viết';
             toast.error(message);
@@ -175,7 +175,7 @@ export default function AddNewsPage() {
  
                     <Tabs
                         value={viewMode}
-                        onValueChange={(v) => setViewMode(v as any)}
+                        onValueChange={(v) => setViewMode(v as "edit" | "preview")}
                         className="bg-slate-100 p-1 rounded-none border border-slate-200"
                     >
                         <TabsList className="bg-transparent h-10 gap-1 rounded-none shadow-none p-0">
@@ -363,7 +363,7 @@ export default function AddNewsPage() {
                                                 Danh mục
                                             </h3>
                                             <div className="flex flex-col border-t border-slate-100">
-                                                {categories.map((cat: any) => (
+                                                {categories.map((cat: Record<string, unknown>) => (
                                                     <div
                                                         key={cat.id}
                                                         className="group flex items-center justify-between py-4 border-b border-slate-100 hover:pl-2 transition-all cursor-default"
@@ -386,7 +386,7 @@ export default function AddNewsPage() {
                                                 Tin mới nhất
                                             </h3>
                                             <div className="space-y-6">
-                                                {recentArticles.map((ra: any) => (
+                                                {recentArticles.map((ra: Record<string, unknown>) => (
                                                     <div
                                                         key={ra.id}
                                                         className="group block space-y-2 cursor-default"

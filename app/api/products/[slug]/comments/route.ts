@@ -2,16 +2,15 @@ import { db } from '@/db';
 import { products, productComments } from '@/db/schemas';
 import { eq, isNull, and, desc } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
+import { NextRequest } from 'next/server';
 import { verifyAuth, isAdmin } from '@/middlewares/middleware';
 import { PORTAL_ROUTES } from '@/constants/routes';
 import { checkRateLimit } from '@/utils/rate-limiter';
 import { sanitizePlainText } from '@/utils/sanitize';
-
-// GET /api/products/[slug]/comments - List approved comments for a specific product
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {
     try {
         const { slug } = await params;
-        const session = await verifyAuth(request as any);
+        const session = await verifyAuth(request as unknown as NextRequest);
         const userIsAdmin = session ? isAdmin(session.user) : false;
 
         // 1. Find product by slug or ID

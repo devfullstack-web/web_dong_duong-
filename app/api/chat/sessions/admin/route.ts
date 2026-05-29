@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/db';
-import { chatSessions, chatMessages } from '@/db/schemas';
-import { desc, eq, sql, gt, and, ne } from 'drizzle-orm';
+import { chatSessions } from '@/db/schemas';
+import { desc, eq, sql, and } from 'drizzle-orm';
 import { withAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { apiResponse, apiError } from '@/utils/api-response';

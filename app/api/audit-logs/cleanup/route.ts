@@ -1,6 +1,7 @@
 import { cronService } from '@/services/cron-service';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
+import { getRequiredEnv } from '@/utils/env';
 
 // GET - Get cleanup statistics
 export const GET = withAuth(async (request, session) => {
@@ -15,7 +16,7 @@ export const GET = withAuth(async (request, session) => {
         return apiResponse({
             ...stats,
             nextCleanupSchedule: 'Hàng ngày lúc 02:00 AM',
-            cronExpression: process.env.AUDIT_CLEANUP_CRON || '0 2 * * *',
+            cronExpression: getRequiredEnv(process.env.AUDIT_CLEANUP_CRON, 'AUDIT_CLEANUP_CRON'),
         });
     } catch (error) {
         console.error('Error fetching cleanup stats:', error);

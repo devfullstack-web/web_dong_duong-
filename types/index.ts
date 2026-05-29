@@ -35,8 +35,8 @@ export interface Product {
     image_url: string;
     sku: string;
     is_featured?: boolean;
-    tech_specs?: any;
-    features?: any;
+    tech_specs?: Record<string, unknown>;
+    features?: string[];
     gallery?: string[];
     tech_summary?: string;
     catalog_url?: string;

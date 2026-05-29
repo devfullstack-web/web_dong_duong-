@@ -33,7 +33,7 @@ export default function AddUserPage() {
     });
     const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
     const [, setIsLoadingRoles] = useState(true);
-    const [selectedRoleDetails, setSelectedRoleDetails] = useState<any>(null);
+    const [selectedRoleDetails, setSelectedRoleDetails] = useState<Record<string, unknown> | null>(null);
     const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 
     useEffect(() => {
@@ -81,9 +81,10 @@ export default function AddUserPage() {
             toast.success('Tạo tài khoản thành công');
             router.push(PORTAL_ROUTES.users.list);
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            const message = error.response?.data?.error || 'Lỗi khi tạo tài khoản';
+            const axiosErr = error as { response?: { data?: { error?: string } } };
+            const message = axiosErr.response?.data?.error || 'Lỗi khi tạo tài khoản';
             toast.error(message);
         } finally {
             setIsSubmitting(false);
@@ -266,7 +267,7 @@ export default function AddUserPage() {
                                             ) : (
                                                 <div className="divide-y divide-slate-50">
                                                     {selectedRoleDetails?.permissions?.map(
-                                                        (p: any) => (
+                                                        (p: { id: string; module?: { name: string }; canView: boolean; canCreate: boolean; canUpdate: boolean; canDelete: boolean }) => (
                                                             <div
                                                                 key={p.id}
                                                                 className="grid grid-cols-2 py-3 px-4 items-center group hover:bg-slate-50/30 transition-colors"

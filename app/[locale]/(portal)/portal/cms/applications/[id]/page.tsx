@@ -17,7 +17,7 @@ import {
     ExternalLink,
     ChevronRight,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -41,7 +41,7 @@ interface JobApplication {
     created_at: string;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ size?: number; className?: string }> }> = {
     pending: { label: 'Chờ duyệt', color: 'bg-amber-500/10 text-amber-600', icon: Clock },
     reviewed: { label: 'Đã xem', color: 'bg-blue-500/10 text-blue-600', icon: Eye },
     interviewed: { label: 'Phỏng vấn', color: 'bg-purple-500/10 text-purple-600', icon: Users },
@@ -62,7 +62,7 @@ export default function ApplicationDetailPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    const fetchApplication = async () => {
+    const fetchApplication = useCallback(async () => {
         setIsLoading(true);
         try {
             const res = await $api.get(`${API_ROUTES.APPLICATIONS}/${id}`);
@@ -74,11 +74,11 @@ export default function ApplicationDetailPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [id, router]);
 
     useEffect(() => {
         if (id) fetchApplication();
-    }, [id]);
+    }, [id, fetchApplication]);
 
     const handleUpdateStatus = async (status: string) => {
         if (!application) return;

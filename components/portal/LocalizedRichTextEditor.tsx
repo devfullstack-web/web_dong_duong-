@@ -28,7 +28,7 @@ export function LocalizedRichTextEditor({
     placeholder,
 }: LocalizedRichTextEditorProps) {
     return (
-        <div className="space-y-3">
+        <div id={id} className="space-y-3">
             <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
                 {label} {required && '*'}
             </Label>

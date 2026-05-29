@@ -184,7 +184,7 @@ export const GET = withAuth(async (request: NextRequest) => {
             .from(contacts)
             .groupBy(contacts.status);
 
-        const contactStats = contactStatsRows.reduce((acc: any, row: any) => {
+        const contactStats = contactStatsRows.reduce((acc: Record<string, number>, row: { status: string; count: unknown }) => {
             acc[row.status] = Number(row.count);
             return acc;
         }, {});
@@ -198,7 +198,7 @@ export const GET = withAuth(async (request: NextRequest) => {
             .from(jobApplications)
             .groupBy(jobApplications.status);
 
-        const applicationStats = applicationStatsRows.reduce((acc: any, row: any) => {
+        const applicationStats = applicationStatsRows.reduce((acc: Record<string, number>, row: { status: string; count: unknown }) => {
             acc[row.status] = Number(row.count);
             return acc;
         }, {});
@@ -213,7 +213,7 @@ export const GET = withAuth(async (request: NextRequest) => {
             .where(sql`deleted_at IS NULL`)
             .groupBy(productComments.is_approved);
 
-        const commentStats = commentStatsRows.reduce((acc: any, row: any) => {
+        const commentStats = commentStatsRows.reduce((acc: Record<string, number>, row: { is_approved: boolean | null; count: unknown }) => {
             acc[row.is_approved ? 'approved' : 'pending'] = Number(row.count);
             return acc;
         }, {});
@@ -228,7 +228,7 @@ export const GET = withAuth(async (request: NextRequest) => {
             .where(sql`deleted_at IS NULL`)
             .groupBy(jobPostings.status);
 
-        const jobStats = jobStatsRows.reduce((acc: any, row: any) => {
+        const jobStats = jobStatsRows.reduce((acc: Record<string, number>, row: { status: string; count: unknown }) => {
             acc[row.status] = Number(row.count);
             return acc;
         }, {});
@@ -242,7 +242,7 @@ export const GET = withAuth(async (request: NextRequest) => {
             GROUP BY r.name
         `);
 
-        const userStats = userRolesRows.rows.reduce((acc: any, row: any) => {
+        const userStats = userRolesRows.rows.reduce((acc: Record<string, number>, row: { role_name: string; count: unknown }) => {
             acc[row.role_name] = Number(row.count);
             return acc;
         }, {});

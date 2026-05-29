@@ -84,7 +84,7 @@ export default function Footer() {
                             ].map((item) => (
                                 <li key={item.label}>
                                     <Link
-                                        href={item.href as any}
+                                        href={item.href as "/" | "/gioi-thieu" | "/san-pham" | "/du-an" | "/tin-tuc" | "/lien-he"}
                                         className="text-[11px] font-bold uppercase tracking-widest text-blue-100/80 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
                                     >
                                         <ArrowRight
@@ -165,7 +165,7 @@ export default function Footer() {
                             {t('privacy')}
                         </Link>
                         <Link
-                            href={PORTAL_ROUTES.dashboard as any}
+                            href={PORTAL_ROUTES.dashboard as string}
                             className="text-[10px] font-black uppercase tracking-widest text-blue-200/60 hover:text-white transition-colors"
                         >
                             {t('admin')}

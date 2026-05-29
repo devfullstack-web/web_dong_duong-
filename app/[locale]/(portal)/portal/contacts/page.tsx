@@ -148,15 +148,6 @@ export default function ContactsManagementPage() {
         },
     });
 
-    // Fetch stats using react-query
-    const { data: stats } = useQuery<any>({
-        queryKey: ['admin-stats'],
-        queryFn: async () => {
-            const res = await $api.get(API_ROUTES.STATS);
-            return res.data.data;
-        },
-    });
-
     const contacts = contactsData?.data || [];
     const totalItems = contactsData?.meta?.total || 0;
 
@@ -625,7 +616,7 @@ export default function ContactsManagementPage() {
                                     Nội dung yêu cầu chi tiết:
                                 </span>
                                 <div className="bg-slate-50 p-8 border border-slate-100 italic text-sm text-slate-600 leading-relaxed border-l-8 border-l-[#fbbf24]">
-                                    "{selectedContact.message}"
+                                    &quot;{selectedContact.message}&quot;
                                 </div>
                             </div>
 

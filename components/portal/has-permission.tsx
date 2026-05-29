@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useAuth } from "@/hooks/use-auth";
+import { usePermissions } from "@/hooks/use-permissions";
 
 interface HasPermissionProps {
   permission: string;
@@ -13,11 +13,11 @@ interface HasPermissionProps {
  * A declarative component to conditionally render children based on user permissions.
  */
 export function HasPermission({ permission, children, fallback = null }: HasPermissionProps) {
-  const { hasPermission, isLoading } = useAuth();
+  const { can, isLoading } = usePermissions();
 
   if (isLoading) return null;
 
-  if (hasPermission(permission)) {
+  if (can(permission)) {
     return <>{children}</>;
   }
 

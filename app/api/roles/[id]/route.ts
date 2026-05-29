@@ -124,9 +124,9 @@ export const PATCH = withAuth(
             });
 
             return apiResponse(updatedRole);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error updating role:', error);
-            if (error.message === 'Role not found') return apiError('Role not found', 404);
+            if (error instanceof Error && error.message === 'Role not found') return apiError('Role not found', 404);
             return apiError('Internal Server Error', 500);
         }
     },

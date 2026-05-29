@@ -139,7 +139,7 @@ export const GET = withAuth(
                 .offset(offset);
 
             if (conditions.length > 0) {
-                // @ts-ignore - Drizzle type issue with dynamic conditions
+                // @ts-expect-error - Drizzle type issue with dynamic conditions
                 query = query.where(and(...conditions));
             }
 

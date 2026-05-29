@@ -1,10 +1,11 @@
 import { COMPANY_INFO } from './site-info';
+import { getOptionalEnv } from '@/utils/env';
 
 export const COMPANY = {
   NAME: COMPANY_INFO.name,
   SHORT_NAME: COMPANY_INFO.shortName,
-  EMAIL: process.env.ADMIN_EMAIL || COMPANY_INFO.email,
-  WEBSITE: process.env.APP_URL || COMPANY_INFO.website,
+  EMAIL: getOptionalEnv(process.env.ADMIN_EMAIL),
+  WEBSITE: getOptionalEnv(process.env.APP_URL),
 } as const;
 
 

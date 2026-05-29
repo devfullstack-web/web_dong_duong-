@@ -64,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 .from(jobPostings)
                 .where(isNull(jobPostings.deleted_at)),
         ]);
-    } catch (error) {
+    } catch {
         console.warn('[sitemap] Database unavailable, returning static sitemap only');
     }
 

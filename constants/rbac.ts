@@ -38,7 +38,10 @@ export const PERMISSION_ACTIONS = {
     DELETE: 'DELETE',
 } as const;
 
-export const PERMISSIONS: Record<string, string> = new Proxy({} as any, {
+export type PermissionAction = (typeof PERMISSION_ACTIONS)[keyof typeof PERMISSION_ACTIONS];
+export type PermissionCode = `${string}:${PermissionAction}`;
+
+export const PERMISSIONS: Record<string, PermissionCode> = new Proxy({} as Record<string, PermissionCode>, {
     get: (_target, prop: string) => {
         if (typeof prop !== 'string' || prop === '$$typeof' || prop === 'toJSON') {
             return undefined;
@@ -48,12 +51,12 @@ export const PERMISSIONS: Record<string, string> = new Proxy({} as any, {
         // Example: RECRUITMENT_VIEW -> ["RECRUITMENT", "VIEW"]
         // Important: Action should be one of PERMISSION_ACTIONS
         const lastUnderscoreIndex = prop.lastIndexOf('_');
-        if (lastUnderscoreIndex === -1) return prop;
+        if (lastUnderscoreIndex === -1) return prop as PermissionCode;
 
         const moduleCode = prop.substring(0, lastUnderscoreIndex);
         const action = prop.substring(lastUnderscoreIndex + 1);
 
-        return `${moduleCode}:${action}`;
+        return `${moduleCode}:${action}` as PermissionCode;
     },
 });
 
@@ -65,6 +68,6 @@ export const PROTECTED_MODULES: string[] = [
     MODULE_CODES.MODULES,
 ];
 
-export function buildPermission(module: string, action: string): string {
+export function buildPermission(module: string, action: PermissionAction): PermissionCode {
     return `${module}:${action}`;
 }

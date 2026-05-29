@@ -273,7 +273,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                     </p>
                                 </div>
 
-                                <ApplyForm jobId={job.id} jobTitle={job.title} />
+                                <ApplyForm jobId={job.id} />
 
                                 <div className="pt-4 border-t border-slate-50 text-center">
                                     <p className="text-[11px] text-slate-400 font-medium">
@@ -347,7 +347,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
     );
 }
 
-function ApplyForm({ jobId, jobTitle }: { jobId: string; jobTitle: string }) {
+function ApplyForm({ jobId }: { jobId: string }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         full_name: '',

@@ -1,20 +1,20 @@
 import { SignJWT, jwtVerify } from 'jose';
+import type { JWTPayload } from 'jose';
 import { AUTH } from '@/constants/app';
-
-function getJwtSecret(): string {
-    const secret = process.env.JWT_SECRET;
-
-    if (process.env.NODE_ENV === 'production' && (!secret || secret.length < 32)) {
-        throw new Error('JWT_SECRET must be set to at least 32 characters in production');
-    }
-
-    return secret || 'dev-only-change-me-minimum-32-characters';
-}
+import { getJwtSecret } from '@/services/jwt-secret';
 
 const secretKey = getJwtSecret();
 const key = new TextEncoder().encode(secretKey);
 
-export async function encrypt(payload: any, expireTime: string = AUTH.JWT_EXPIRY) {
+type AuthSessionPayload = JWTPayload & {
+    user?: {
+        id?: string;
+        [key: string]: unknown;
+    };
+    expires?: Date | string;
+};
+
+export async function encrypt(payload: JWTPayload, expireTime: string = AUTH.JWT_EXPIRY) {
     return await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -22,13 +22,13 @@ export async function encrypt(payload: any, expireTime: string = AUTH.JWT_EXPIRY
         .sign(key);
 }
 
-export async function decrypt(input: string): Promise<any> {
+export async function decrypt(input: string): Promise<AuthSessionPayload | null> {
     try {
-        const { payload } = await jwtVerify(input, key, {
+        const { payload } = await jwtVerify<AuthSessionPayload>(input, key, {
             algorithms: ['HS256'],
         });
         return payload;
-    } catch (error) {
+    } catch {
         return null;
     }
 }

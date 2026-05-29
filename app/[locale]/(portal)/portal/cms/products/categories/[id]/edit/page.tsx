@@ -26,7 +26,7 @@ export default function EditProductCategoryPage() {
             try {
                 const res = await $api.get(`${API_ROUTES.CATEGORIES}/${categoryId}`);
                 setCategory(res.data.data);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Failed to fetch category', err);
                 toast.error('Không tìm thấy danh mục hoặc lỗi máy chủ.');
             } finally {
@@ -49,7 +49,7 @@ export default function EditProductCategoryPage() {
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.products.categories.list);
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
             console.error('Failed to update category', err);
             toast.error(err.response?.data?.error || 'Lỗi khi cập nhật danh mục');
         },

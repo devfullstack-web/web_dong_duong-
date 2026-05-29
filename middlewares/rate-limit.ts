@@ -153,10 +153,10 @@ export const RATE_LIMITS = {
  * Wrapper for rate-limited API route handlers
  */
 export function withRateLimit(
-    handler: (request: NextRequest, context?: any) => Promise<Response>,
+    handler: (request: NextRequest, context?: { params: Promise<Record<string, string>> }) => Promise<Response>,
     config: RateLimitConfig,
 ) {
-    return async (request: NextRequest, context?: any) => {
+    return async (request: NextRequest, context?: { params: Promise<Record<string, string>> }) => {
         const rateLimitError = checkRateLimit(request, config);
         if (rateLimitError) {
             return rateLimitError;

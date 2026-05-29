@@ -72,7 +72,7 @@ export default function NotificationsPage() {
         },
     });
 
-    const notifications = notificationsData?.data || [];
+    const notifications = React.useMemo(() => notificationsData?.data || [], [notificationsData]);
     const unreadCount = notificationsData?.meta?.unreadCount || 0;
     const totalItems = notificationsData?.meta?.total || notifications.length;
 

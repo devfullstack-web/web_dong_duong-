@@ -10,7 +10,6 @@ import {
     Save,
     Loader2,
     Eye,
-    X,
     User,
     CalendarDays,
     Clock,
@@ -46,7 +45,7 @@ import { generateSlug } from '@/utils/slug';
 import { toast } from 'sonner';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
 import { sanitizeRichText } from '@/utils/sanitize';
@@ -65,6 +64,11 @@ interface NewsArticle {
     published_at: string | null;
 }
 
+interface Category {
+    id: string;
+    name: string;
+}
+
 export default function EditNewsPage() {
     const params = useParams();
     const router = useRouter();
@@ -74,7 +78,7 @@ export default function EditNewsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [article, setArticle] = useState<NewsArticle | null>(null);
-    const [categories, setCategories] = useState<any[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -90,7 +94,7 @@ export default function EditNewsPage() {
     });
 
     const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
-    const [recentArticles, setRecentArticles] = useState<any[]>([]);
+    const [recentArticles, setRecentArticles] = useState<NewsArticle[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -130,12 +134,13 @@ export default function EditNewsPage() {
                 }
 
                 // If no author_id set, try to use the first one from author list
-                if (
-                    authorRes.data.success &&
-                    authorRes.data.data?.length > 0 &&
-                    !formData.author_id
-                ) {
-                    setFormData((prev) => ({ ...prev, author_id: authorRes.data.data[0].id }));
+                if (authorRes.data.success && authorRes.data.data?.length > 0) {
+                    setFormData((prev) => {
+                        if (!prev.author_id) {
+                            return { ...prev, author_id: authorRes.data.data[0].id };
+                        }
+                        return prev;
+                    });
                 }
             } catch (error) {
                 console.error('Error fetching article:', error);
@@ -238,7 +243,7 @@ export default function EditNewsPage() {
  
                     <Tabs
                         value={viewMode}
-                        onValueChange={(v) => setViewMode(v as any)}
+                        onValueChange={(v) => setViewMode(v as 'edit' | 'preview')}
                         className="bg-slate-100 p-1 rounded-none border border-slate-200"
                     >
                         <TabsList className="bg-transparent h-10 gap-1 rounded-none shadow-none p-0 ">
@@ -425,7 +430,7 @@ export default function EditNewsPage() {
                                                 Danh mục
                                             </h3>
                                             <div className="flex flex-col border-t border-slate-100">
-                                                {categories.map((cat: any) => (
+                                                {categories.map((cat) => (
                                                     <div
                                                         key={cat.id}
                                                         className="group flex items-center justify-between py-4 border-b border-slate-100 hover:pl-2 transition-all cursor-default"
@@ -449,7 +454,7 @@ export default function EditNewsPage() {
                                                 Tin mới nhất
                                             </h3>
                                             <div className="space-y-6">
-                                                {recentArticles.map((ra: any) => (
+                                                {recentArticles.map((ra) => (
                                                     <div
                                                         key={ra.id}
                                                         className="group block space-y-2 cursor-default"
@@ -457,7 +462,7 @@ export default function EditNewsPage() {
                                                         <div className="text-[10px] font-black text-brand-primary/60 uppercase tracking-widest">
                                                             {ra.published_at
                                                                 ? format(
-                                                                      ra.published_at,
+                                                                      new Date(ra.published_at),
                                                                       'dd/MM/yyyy',
                                                                       { locale: vi },
                                                                   )

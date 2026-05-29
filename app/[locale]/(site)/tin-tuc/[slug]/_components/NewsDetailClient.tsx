@@ -1,6 +1,5 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -30,9 +29,9 @@ import {
 import { sanitizeRichText } from '@/utils/sanitize';
 
 interface NewsDetailClientProps {
-    article: any;
-    relatedArticles: any[];
-    recentArticles: any[];
+    article: Record<string, unknown>;
+    relatedArticles: Record<string, unknown>[];
+    recentArticles: Record<string, unknown>[];
 }
 
 export default function NewsDetailClient({

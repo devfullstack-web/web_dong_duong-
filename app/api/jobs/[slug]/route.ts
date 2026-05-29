@@ -2,6 +2,7 @@ import { db } from "@/db";
 import { jobPostings } from "@/db/schemas";
 import { and, eq, isNull } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
+import { NextRequest } from "next/server";
 import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
 import { sanitizeRichText } from "@/utils/sanitize";
@@ -13,7 +14,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const session = await verifyAuth(request as any);
+    const session = await verifyAuth(request as unknown as NextRequest);
     const canViewPrivate =
       session && hasPermission(session.user, PERMISSIONS.RECRUITMENT_VIEW);
     
@@ -50,7 +51,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const { slug: id } = await params;
     const body = await request.json();
     
-    const updates: any = {};
+    const updates: Record<string, unknown> = {};
     const allowedFields = [
       'title',
       'slug',
@@ -91,9 +92,10 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     }
 
     return apiResponse(updatedJob);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating job:", error);
-    if (error.code === "23505") {
+    const pgError = error as { code?: string };
+    if (pgError.code === "23505") {
       return apiError("A job with this slug already exists", 400);
     }
     return apiError("Internal Server Error", 500);

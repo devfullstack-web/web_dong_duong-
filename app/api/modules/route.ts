@@ -29,7 +29,7 @@ export const GET = withAuth(
             // Count total
             const countQuery = db.select({ count: sql<number>`count(*)` }).from(modules);
             if (conditions.length > 0) {
-                countQuery.where(and(...(conditions as any[])));
+                countQuery.where(and(...(conditions as Parameters<typeof and>)));
             }
             const [{ count: total }] = await countQuery;
 

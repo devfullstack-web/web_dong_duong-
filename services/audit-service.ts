@@ -18,8 +18,8 @@ export interface LogActionParams {
     targetId?: string;
     description?: string;
     changes?: {
-        old?: any;
-        new?: any;
+        old?: Record<string, unknown>;
+        new?: Record<string, unknown>;
     };
     request?: NextRequest | Request;
 }

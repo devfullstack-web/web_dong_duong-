@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import {
     Search,
     Send,
@@ -85,6 +85,7 @@ export default function ChatAdminPage() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
     const [filterTab, setFilterTab] = useState<FilterTab>('all');
     const [isLoadingSessions, setIsLoadingSessions] = useState(true);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
@@ -95,13 +96,21 @@ export default function ChatAdminPage() {
     const [isDeletingSession, setIsDeletingSession] = useState(false);
     const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
 
+    // Debounce search query
+    useEffect(() => {
+        const t = setTimeout(() => {
+            setDebouncedSearchQuery(searchQuery);
+        }, 400);
+        return () => clearTimeout(t);
+    }, [searchQuery]);
+
     // ─── Fetch sessions ─────────────────────────────────
-    const fetchSessions = async () => {
+    const fetchSessions = useCallback(async () => {
         setIsLoadingSessions(true);
         try {
             const params = new URLSearchParams();
             if (filterTab !== 'all') params.set('status', filterTab);
-            if (searchQuery.trim()) params.set('search', searchQuery.trim());
+            if (debouncedSearchQuery.trim()) params.set('search', debouncedSearchQuery.trim());
 
             const res = await $api.get(`${API_ROUTES.CHAT.SESSIONS}/admin?${params}`);
             setSessions(res.data.data || []);
@@ -110,17 +119,44 @@ export default function ChatAdminPage() {
         } finally {
             setIsLoadingSessions(false);
         }
-    };
+    }, [filterTab, debouncedSearchQuery]);
 
     useEffect(() => {
         fetchSessions();
-    }, [filterTab]);
+    }, [fetchSessions]);
 
-    // Debounced search
-    useEffect(() => {
-        const t = setTimeout(() => fetchSessions(), 400);
-        return () => clearTimeout(t);
-    }, [searchQuery]);
+    const handleMarkSeen = useCallback(async (sessionId: string) => {
+        try {
+            const res = await $api.patch(`${API_ROUTES.CHAT.SESSIONS}/${sessionId}`, {
+                adminLastSeen: true,
+            });
+            // Update local session state
+            const updated = res.data.data;
+            if (updated) {
+                setSessions((prev) =>
+                    prev.map((s) =>
+                        s.id === sessionId
+                            ? {
+                                  ...s,
+                                  unread_count: 0,
+                                  admin_last_seen_at: updated.admin_last_seen_at,
+                              }
+                            : s,
+                    ),
+                );
+                setSelectedSession((prev) => {
+                    if (prev?.id === sessionId) {
+                        return {
+                            ...prev,
+                            unread_count: 0,
+                            admin_last_seen_at: updated.admin_last_seen_at,
+                        };
+                    }
+                    return prev;
+                });
+            }
+        } catch {}
+    }, []);
 
     // ─── Fetch messages ─────────────────────────────────
     useEffect(() => {
@@ -142,41 +178,7 @@ export default function ChatAdminPage() {
         };
 
         fetchMessages();
-    }, [selectedSession?.id]);
-
-    const handleMarkSeen = async (sessionId: string) => {
-        try {
-            const res = await $api.patch(`${API_ROUTES.CHAT.SESSIONS}/${sessionId}`, {
-                adminLastSeen: true,
-            });
-            // Update local session state
-            const updated = res.data.data;
-            if (updated) {
-                setSessions((prev) =>
-                    prev.map((s) =>
-                        s.id === sessionId
-                            ? {
-                                  ...s,
-                                  unread_count: 0,
-                                  admin_last_seen_at: updated.admin_last_seen_at,
-                              }
-                            : s,
-                    ),
-                );
-                if (selectedSession?.id === sessionId) {
-                    setSelectedSession((prev) =>
-                        prev
-                            ? {
-                                  ...prev,
-                                  unread_count: 0,
-                                  admin_last_seen_at: updated.admin_last_seen_at,
-                              }
-                            : prev,
-                    );
-                }
-            }
-        } catch {}
-    };
+    }, [selectedSession, handleMarkSeen]);
 
     // Scroll to bottom
     useEffect(() => {

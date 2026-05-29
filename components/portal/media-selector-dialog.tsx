@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Upload, Loader2, ImageIcon, FolderOpen, X, Check } from 'lucide-react';
+import { Upload, Loader2, ImageIcon, FolderOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import $api from '@/utils/axios';

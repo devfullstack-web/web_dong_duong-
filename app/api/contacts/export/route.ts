@@ -51,7 +51,7 @@ export const GET = withAuth(
             let query = db.select().from(contacts).orderBy(desc(contacts.created_at));
 
             if (conditions.length > 0) {
-                // @ts-ignore - Drizzle type issue with dynamic conditions
+                // @ts-expect-error - Drizzle type issue with dynamic conditions
                 query = query.where(and(...conditions));
             }
 

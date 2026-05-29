@@ -12,7 +12,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -103,6 +102,7 @@ export function ImageUploader({
         return () => {
             if (previewUrl) URL.revokeObjectURL(previewUrl);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isDialogOpen, previewUrl, selectingFor, value, gallery]);
 
     const handleUpload = async () => {

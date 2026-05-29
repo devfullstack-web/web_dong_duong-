@@ -1,7 +1,13 @@
 import axios from 'axios';
+import type { InternalAxiosRequestConfig } from 'axios';
 import { SITE_ROUTES, API_ROUTES } from '@/constants/routes';
+import { getRequiredEnv } from '@/utils/env';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
+const BASE_URL = getRequiredEnv(process.env.NEXT_PUBLIC_API_URL, 'NEXT_PUBLIC_API_URL');
+
+type RetriableRequestConfig = InternalAxiosRequestConfig & {
+    _retry?: boolean;
+};
 
 const $api = axios.create({
     baseURL: BASE_URL,
@@ -10,8 +16,6 @@ const $api = axios.create({
     },
 });
 
-// Public API instance - no auth headers, no refresh logic
-// Use this for public endpoints like chat widget
 export const $publicApi = axios.create({
     baseURL: BASE_URL,
     headers: {
@@ -19,15 +23,12 @@ export const $publicApi = axios.create({
     },
 });
 
-// Helper function to clear auth and redirect to login
 const clearAuthAndRedirect = () => {
     if (typeof window !== 'undefined') {
         const pathname = window.location.pathname;
-        // Check for portal path with or without locale prefix (e.g., /portal, /vi/portal, /en/portal)
         const isPortal = pathname.includes('/portal');
         const isLoginPage = pathname.includes('/login');
         if (isPortal && !isLoginPage) {
-            // Extract locale from pathname (e.g., /vi/portal -> vi)
             const localeMatch = pathname.match(/^\/(vi|en)\//);
             const locale = localeMatch ? localeMatch[1] : 'vi';
             window.location.href = `/${locale}${SITE_ROUTES.LOGIN}`;
@@ -35,18 +36,8 @@ const clearAuthAndRedirect = () => {
     }
 };
 
-$api.interceptors.request.use(
-    (config) => {
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    },
-);
-
 $api.interceptors.response.use(
     (response) => {
-        // Check for auth errors in successful HTTP responses
         if (response.data?.success === false) {
             const errorMsg = response.data?.error?.toLowerCase() || '';
             if (
@@ -61,13 +52,11 @@ $api.interceptors.response.use(
         return response;
     },
     async (error) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config as RetriableRequestConfig | undefined;
 
-        // Handle 401 Unauthorized
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            // Don't retry refresh for login/refresh endpoints
             if (
                 originalRequest.url?.includes(API_ROUTES.AUTH.LOGIN) ||
                 originalRequest.url?.includes(API_ROUTES.AUTH.REFRESH)
@@ -84,18 +73,15 @@ $api.interceptors.response.use(
                 if (refreshRes.data.success) {
                     return $api(originalRequest);
                 } else {
-                    // Refresh failed (e.g., refresh token missing or expired)
                     clearAuthAndRedirect();
                     return Promise.reject(new Error(refreshRes.data.error || 'Session expired'));
                 }
-            } catch (refreshError: any) {
-                // Refresh request failed (400, 401, network error, etc.)
+            } catch (refreshError: unknown) {
                 clearAuthAndRedirect();
                 return Promise.reject(refreshError);
             }
         }
 
-        // Handle 400 Bad Request with auth-related errors
         if (error.response?.status === 400) {
             const errorMsg = error.response?.data?.error?.toLowerCase() || '';
             if (
@@ -107,7 +93,6 @@ $api.interceptors.response.use(
             }
         }
 
-        // Handle 403 Forbidden
         if (error.response?.status === 403) {
             clearAuthAndRedirect();
         }

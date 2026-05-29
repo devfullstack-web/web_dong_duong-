@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import $api from '@/utils/axios';
-import { ArrowLeft, Save, Shield, Loader2, Check, Circle } from 'lucide-react';
+import { ArrowLeft, Save, Shield, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
-import { Permission, Role } from '@/types';
+import { Role } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface RoleFormProps {
@@ -24,7 +24,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isLoadingMatrix, setIsLoadingMatrix] = React.useState(true);
-    const [matrix, setMatrix] = React.useState<any[]>([]);
+    const [matrix, setMatrix] = React.useState<Record<string, unknown>[]>([]);
 
     const [formData, setFormData] = React.useState({
         name: initialData?.name || '',
@@ -32,7 +32,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
         description: initialData?.description || '',
     });
 
-    const fetchMatrix = async () => {
+    const fetchMatrix = React.useCallback(async () => {
         setIsLoadingMatrix(true);
         try {
             const url = initialData?.id
@@ -46,11 +46,11 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
         } finally {
             setIsLoadingMatrix(false);
         }
-    };
+    }, [initialData?.id]);
 
     React.useEffect(() => {
         fetchMatrix();
-    }, [initialData?.id]);
+    }, [fetchMatrix]);
 
     const togglePermission = (moduleId: string, field: string) => {
         setMatrix((prev) =>
@@ -154,9 +154,10 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
 
             router.push(PORTAL_ROUTES.users.roles.list);
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            const message = error.response?.data?.error || 'Lỗi khi lưu vai trò';
+            const err = error as { response?: { data?: { error?: string } } };
+            const message = err.response?.data?.error || 'Lỗi khi lưu vai trò';
             toast.error(message);
         } finally {
             setIsSubmitting(false);

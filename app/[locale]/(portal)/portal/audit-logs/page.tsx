@@ -28,7 +28,7 @@ export default function AuditLogsPage() {
     const [pageSize, setPageSize] = useState(10);
     const [moduleFilter, setModuleFilter] = useState('all');
     const [actionFilter, setActionFilter] = useState('all');
-    const [selectedLog, setSelectedLog] = useState<any>(null);
+    const [selectedLog, setSelectedLog] = useState<Record<string, unknown> | null>(null);
 
     // Reset to page 1 when search changes
     useEffect(() => {
@@ -37,7 +37,7 @@ export default function AuditLogsPage() {
 
     // Fetch logs using react-query
     const { data: logsData, isLoading } = useQuery<{
-        data: any[];
+        data: Record<string, unknown>[];
         meta: { total: number };
     }>({
         queryKey: [
@@ -436,7 +436,7 @@ export default function AuditLogsPage() {
                                     Mô tả hành động
                                 </label>
                                 <div className="bg-amber-50/50 border border-amber-100 p-4 text-sm font-medium text-slate-700 italic">
-                                    "{selectedLog.description}"
+                                    &quot;{selectedLog.description}&quot;
                                 </div>
                             </div>
 

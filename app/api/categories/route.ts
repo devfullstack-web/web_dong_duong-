@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type"); // e.g., 'news', 'product', 'project'
 
-    let query = db.select({
+    const query = db.select({
       id: categories.id,
       name: categories.name,
       name_localized: categories.name_localized,
@@ -54,9 +54,13 @@ interface FlatCategory {
   is_visible: boolean;
 }
 
+interface CategoryNode extends FlatCategory {
+  children: CategoryNode[];
+}
+
 function buildCategoryTree(flatList: FlatCategory[]) {
-  const map = new Map<string, FlatCategory & { children: any[] }>();
-  const roots: (FlatCategory & { children: any[] })[] = [];
+  const map = new Map<string, CategoryNode>();
+  const roots: CategoryNode[] = [];
 
   // Create map with children array
   for (const item of flatList) {

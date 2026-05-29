@@ -75,7 +75,7 @@ export default function AddJobPage() {
             queryClient.invalidateQueries({ queryKey: ['admin-jobs'] });
             toast.success('Đã tạo tin tuyển dụng thành công');
             router.push(PORTAL_ROUTES.cms.jobs.list);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
             const message =
                 error.response?.data?.error || error.message || 'Lỗi khi tạo tin tuyển dụng';

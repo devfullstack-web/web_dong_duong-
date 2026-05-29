@@ -10,7 +10,6 @@ import {
     ArrowUpRight,
     Clock,
     Loader2,
-    Mail,
     Calendar as CalendarIcon,
     X,
 } from 'lucide-react';
@@ -33,7 +32,7 @@ export default function DashboardPage() {
     const [date, setDate] = React.useState<DateRange | undefined>();
     const [contentType, setContentType] = React.useState('all');
 
-    const { data: statsData, isLoading: loading } = useQuery<{ data: any }>({
+    const { data: statsData, isLoading: loading } = useQuery<{ data: Record<string, unknown> }>({
         queryKey: ['stats', { startDate: date?.from, endDate: date?.to }],
         queryFn: async () => {
             const res = await $api.get(API_ROUTES.STATS, {
@@ -71,7 +70,7 @@ export default function DashboardPage() {
     };
 
     const activityData = React.useMemo(() => {
-        return stats?.trends?.map((t: any) => ({
+        return stats?.trends?.map((t: Record<string, unknown>) => ({
             month: t.month.toUpperCase(),
             news: t.news,
             projects: t.projects,

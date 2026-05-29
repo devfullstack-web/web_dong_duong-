@@ -5,7 +5,6 @@ import { desc, ilike, or, and, isNull, sql, eq } from 'drizzle-orm';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
-import { PAGINATION } from '@/constants/app';
 
 // GET /api/portal/comments - List all comments for admin management
 export const GET = withAuth(
@@ -40,7 +39,7 @@ export const GET = withAuth(
             // Count total
             const countQuery = db.select({ count: sql<number>`count(*)` }).from(productComments);
             if (conditions.length > 0) {
-                // @ts-ignore
+                // @ts-expect-error - Drizzle dynamic conditions
                 countQuery.where(and(...conditions));
             }
             const [{ count: total }] = await countQuery;

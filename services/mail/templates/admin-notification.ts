@@ -1,4 +1,4 @@
-import { MAIL_BRAND, MAIL_ASSETS } from "../constants";
+import { MAIL_BRAND } from "../constants";
 import { getBaseLayout } from "./layout";
 
 interface ContactData {

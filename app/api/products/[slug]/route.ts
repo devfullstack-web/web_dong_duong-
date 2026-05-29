@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { products } from "@/db/schemas";
 import { eq, isNull, and } from "drizzle-orm";
+import type { NextRequest } from "next/server";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
@@ -9,12 +10,12 @@ import { sanitizeLocalizedRichText, sanitizeRichText, sanitizeStringArray } from
 
 // GET /api/products/[slug] - Get a single product by slug or ID (Public)
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const { slug } = await params;
-    const session = await verifyAuth(request as any);
+    const session = await verifyAuth(request);
     const canViewPrivate =
       session && hasPermission(session.user, PERMISSIONS.PRODUCTS_VIEW);
 
@@ -46,7 +47,7 @@ export async function GET(
           }
         : product.features_localized,
     });
-  } catch (error) {
+  } catch {
     return apiError("Internal Server Error", 500);
   }
 }

@@ -21,8 +21,7 @@ import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { useAuth } from '@/hooks/use-auth';
-import { cn } from '@/lib/utils';
+import { usePermissions } from '@/hooks/use-permissions';
 
 interface Comment {
     id: string;
@@ -39,8 +38,8 @@ interface ProductCommentsProps {
     productSlug: string;
 }
 
-export function ProductComments({ productId, productSlug }: ProductCommentsProps) {
-    const { isAdmin } = useAuth();
+export function ProductComments({ productSlug }: ProductCommentsProps) {
+    const { isAdmin } = usePermissions();
     const [comments, setComments] = React.useState<Comment[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -74,7 +73,7 @@ export function ProductComments({ productId, productSlug }: ProductCommentsProps
                                 fetchedComments = [...validLocalPending, ...fetchedComments];
                                 fetchedComments.sort((a: Comment, b: Comment) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
                             }
-                        } catch (e) {}
+                        } catch {}
                     }
                 }
                 setComments(fetchedComments);
@@ -107,7 +106,7 @@ export function ProductComments({ productId, productSlug }: ProductCommentsProps
                     const localPendingRaw = localStorage.getItem(`pending_comments_${productSlug}`);
                     let localPending: Comment[] = [];
                     if (localPendingRaw) {
-                        try { localPending = JSON.parse(localPendingRaw); } catch (e) {}
+                        try { localPending = JSON.parse(localPendingRaw); } catch {}
                     }
                     localPending.unshift(newComment);
                     localStorage.setItem(`pending_comments_${productSlug}`, JSON.stringify(localPending.slice(0, 10)));
@@ -116,7 +115,7 @@ export function ProductComments({ productId, productSlug }: ProductCommentsProps
                 setFormData({ guest_name: '', guest_email: '', content: '' });
                 setShowForm(false);
             }
-        } catch (error) {
+        } catch {
             toast.error('Không thể gửi bình luận. Vui lòng thử lại.');
         } finally {
             setIsSubmitting(false);
@@ -137,7 +136,7 @@ export function ProductComments({ productId, productSlug }: ProductCommentsProps
                 setAdminReply('');
                 fetchComments();
             }
-        } catch (error) {
+        } catch {
             toast.error('Không thể gửi phản hồi');
         } finally {
             setIsReplying(false);

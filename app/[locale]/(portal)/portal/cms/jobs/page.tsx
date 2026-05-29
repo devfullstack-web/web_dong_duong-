@@ -34,7 +34,7 @@ import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { useAuth } from '@/hooks/use-auth';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { cn } from '@/lib/utils';
@@ -78,7 +78,7 @@ const STATUS_CONFIG = {
 };
 
 export default function JobsManagementPage() {
-    const { hasPermission } = useAuth();
+    const { can: hasPermission } = usePermissions();
     const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
@@ -112,18 +112,8 @@ export default function JobsManagementPage() {
         },
     });
 
-    // Query for stats
-    const { data: statsData } = useQuery<{ data: any }>({
-        queryKey: ['stats'],
-        queryFn: async () => {
-            const res = await $api.get(API_ROUTES.STATS);
-            return res.data;
-        },
-    });
-
     const jobs = jobsData?.data || [];
     const totalItems = jobsData?.meta?.total || 0;
-    const stats = statsData?.data;
 
     // Delete mutation
     const deleteMutation = useMutation({

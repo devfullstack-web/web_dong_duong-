@@ -38,8 +38,9 @@ export default function ContactForm() {
             await $api.post(API_ROUTES.CONTACTS, formData);
             toast.success(t('success'));
             setFormData({ name: '', phone: '', email: '', address: '', message: '' });
-        } catch (error: any) {
-            const message = error.response?.data?.message || t('errors.general');
+        } catch (error: unknown) {
+            const axiosError = error as { response?: { data?: { message?: string } } };
+            const message = axiosError.response?.data?.message || t('errors.general');
             toast.error(message);
         } finally {
             setIsSubmitting(false);

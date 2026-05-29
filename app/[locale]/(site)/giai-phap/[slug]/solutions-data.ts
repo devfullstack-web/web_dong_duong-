@@ -1,4 +1,4 @@
-export const SOLUTIONS_DATA: Record<string, any> = {
+export const SOLUTIONS_DATA: Record<string, Record<string, unknown>> = {
     'quan-ly-nuoc-thong-minh': {
         brand: 'SÀI GÒN VALVE WATER',
         title: 'QUẢN LÝ CẤP NƯỚC THÔNG MINH',

@@ -107,7 +107,7 @@ export default function ProductArchive() {
         staleTime: 5 * 60 * 1000, // Categories don't change often
     });
 
-    const products = productsData?.data || [];
+    const products = useMemo(() => productsData?.data || [], [productsData]);
     const totalPages = productsData?.meta?.totalPages || 1;
     const total = productsData?.meta?.total || 0;
 
@@ -355,7 +355,7 @@ export default function ProductArchive() {
                                         </span>
                                         <select
                                             value={sortBy}
-                                            onChange={(e) => setSortBy(e.target.value as any)}
+                                            onChange={(e) => setSortBy(e.target.value as "default" | "name-asc" | "name-desc")}
                                             className="bg-white border border-slate-200 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:border-brand-primary transition-colors rounded-none hover:cursor-pointer"
                                         >
                                             <option value="default">{locale === 'vi' ? 'Mặc định' : 'Default'}</option>

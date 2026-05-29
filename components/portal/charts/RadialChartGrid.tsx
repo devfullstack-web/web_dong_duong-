@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 interface RadialChartProps {
     title?: string;
     description?: string;
-    data: any[];
+    data: Record<string, unknown>[];
     config: ChartConfig;
     dataKey?: string;
     nameKey?: string;

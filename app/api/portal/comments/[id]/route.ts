@@ -10,11 +10,11 @@ import { sanitizePlainText } from '@/utils/sanitize';
 export const PATCH = withAuth(
     async (request, session, context) => {
         try {
-            const { id } = await (context as any).params;
+            const { id } = await (context as { params: Promise<{ id: string }> }).params;
             const body = await request.json();
             const { is_approved, reply_content } = body;
 
-            const updates: any = { updated_at: new Date() };
+            const updates: Record<string, unknown> = { updated_at: new Date() };
 
             if (is_approved !== undefined) {
                 updates.is_approved = is_approved;
@@ -53,7 +53,7 @@ export const PATCH = withAuth(
 export const DELETE = withAuth(
     async (request, session, context) => {
         try {
-            const { id } = await (context as any).params;
+            const { id } = await (context as { params: Promise<{ id: string }> }).params;
 
             const [deletedComment] = await db
                 .update(productComments)

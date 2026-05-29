@@ -2,10 +2,9 @@ import { db } from '@/db';
 import { users, user_roles, roles } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { eq, inArray } from 'drizzle-orm';
-// @ts-ignore
+// @ts-expect-error - bcryptjs has no type declarations
 import bcrypt from 'bcryptjs';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
-import { NextRequest } from 'next/server';
 import { AUTH } from '@/constants/app';
 import { PERMISSIONS } from '@/constants/rbac';
 import { auditService } from '@/services/audit-service';
@@ -144,7 +143,7 @@ export const PATCH = withAuth(
                 .where(eq(users.id, userId));
 
             const updatedUser = await db.transaction(async (tx) => {
-                const updateData: any = {};
+                const updateData: Record<string, unknown> = {};
                 if (username) updateData.username = username;
                 if (fullName !== undefined) updateData.full_name = fullName;
                 if (email !== undefined) updateData.email = email;
@@ -205,16 +204,17 @@ export const PATCH = withAuth(
             });
 
             return apiResponse(updatedUser);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error updating user:', error);
 
-            if (error.message === 'User not found') {
+            if (error instanceof Error && error.message === 'User not found') {
                 return apiError('Không tìm thấy người dùng', 404);
             }
 
             // Handle PostgreSQL unique constraint violations
-            if (error?.code === '23505') {
-                const detail = error?.detail || '';
+            const pgError = error as { code?: string; detail?: string };
+            if (pgError?.code === '23505') {
+                const detail = pgError?.detail || '';
                 if (detail.includes('email')) {
                     return apiError('Email này đã được sử dụng bởi một tài khoản khác', 400);
                 }

@@ -1,8 +1,12 @@
 import { db } from '@/db';
 import { auditLogs } from '@/db/schemas';
 import { lt, sql } from 'drizzle-orm';
+import { getRequiredPositiveIntegerEnv } from '@/utils/env';
 
-const AUDIT_LOG_RETENTION_DAYS = parseInt(process.env.AUDIT_LOG_RETENTION_DAYS || '30', 10);
+const AUDIT_LOG_RETENTION_DAYS = getRequiredPositiveIntegerEnv(
+    process.env.AUDIT_LOG_RETENTION_DAYS,
+    'AUDIT_LOG_RETENTION_DAYS',
+);
 
 class CronService {
     async cleanupAuditLogs(): Promise<{ deletedCount: number }> {

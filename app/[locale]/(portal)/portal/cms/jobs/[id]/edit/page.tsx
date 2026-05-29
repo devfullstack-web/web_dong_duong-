@@ -113,7 +113,7 @@ export default function EditJobPage() {
             queryClient.invalidateQueries({ queryKey: ['admin-jobs'] });
             toast.success('Cập nhật tin tuyển dụng thành công');
             router.push(PORTAL_ROUTES.cms.jobs.list);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
             const message =
                 error.response?.data?.error || error.message || 'Lỗi khi cập nhật tin tuyển dụng';

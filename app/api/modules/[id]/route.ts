@@ -103,7 +103,7 @@ export const DELETE = withAuth(
                 return apiError('Chỉ SuperAdmin mới có quyền xóa module hệ thống', 403);
             }
 
-            const [deletedModule] = await db.delete(modules).where(eq(modules.id, id)).returning();
+            await db.delete(modules).where(eq(modules.id, id));
 
             // Audit Log
             auditService.logAction({

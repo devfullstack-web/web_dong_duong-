@@ -1,6 +1,7 @@
 import { db } from "@/db";
 import { newsArticles, categories, authors } from "@/db/schemas";
 import { and, eq, isNull } from "drizzle-orm";
+import type { NextRequest } from "next/server";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { hasPermission, verifyAuth, withAuth } from "@/middlewares/middleware";
 import { PERMISSIONS } from "@/constants/rbac";
@@ -12,13 +13,13 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 
 // GET /api/news/[slug] - Get a single article by slug or ID
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
     const { slug } = await params;
     const isUUID = UUID_REGEX.test(slug);
-    const session = await verifyAuth(request as any);
+    const session = await verifyAuth(request);
     const canViewPrivate =
       session && hasPermission(session.user, PERMISSIONS.BLOG_VIEW);
     
@@ -82,7 +83,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const isUUID = UUID_REGEX.test(slug);
     
     // Prepare updates
-    const updates: any = {};
+    const updates: Record<string, unknown> = {};
     const allowedFields = [
       'title',
       'slug',
@@ -100,13 +101,34 @@ export const PATCH = withAuth(async (request, session, { params }) => {
       if (body[field] !== undefined) updates[field] = body[field];
     }
 
-    if (updates.summary !== undefined) updates.summary = sanitizePlainText(updates.summary, 1000);
-    if (updates.content !== undefined) updates.content = sanitizeRichText(updates.content);
-    if (updates.status !== undefined && !['draft', 'published'].includes(updates.status)) {
+    if (typeof updates.summary === 'string') {
+      updates.summary = sanitizePlainText(updates.summary, 1000);
+    }
+
+    if (typeof updates.content === 'string') {
+      updates.content = sanitizeRichText(updates.content);
+    }
+
+    if (
+      updates.status !== undefined &&
+      (typeof updates.status !== 'string' || !['draft', 'published'].includes(updates.status))
+    ) {
       return apiError("Invalid status", 400);
     }
+
     updates.updated_at = new Date();
-    if (updates.published_at) updates.published_at = new Date(updates.published_at);
+
+    if (updates.published_at) {
+      if (
+        typeof updates.published_at !== 'string' &&
+        typeof updates.published_at !== 'number' &&
+        !(updates.published_at instanceof Date)
+      ) {
+        return apiError("Invalid publish date", 400);
+      }
+
+      updates.published_at = new Date(updates.published_at);
+    }
 
     const whereCondition = isUUID ? eq(newsArticles.id, slug) : eq(newsArticles.slug, slug);
     const [updatedArticle] = await db.update(newsArticles)

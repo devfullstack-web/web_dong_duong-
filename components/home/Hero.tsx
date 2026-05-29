@@ -4,22 +4,10 @@ import * as React from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
 import { MoveRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 
-interface HeroProduct {
-    id: string;
-    name: string;
-    slug: string;
-    image_url: string | null;
-}
-
-interface HeroProps {
-    products?: HeroProduct[];
-}
-
-export default function Hero({ products = [] }: HeroProps) {
+export default function Hero() {
     const t = useTranslations('Hero');
     const tc = useTranslations('Common');
     const [current, setCurrent] = React.useState(0);

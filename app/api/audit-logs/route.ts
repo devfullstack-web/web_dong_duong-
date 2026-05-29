@@ -14,7 +14,7 @@ export const GET = withAuth(async (request, session) => {
 
         const { searchParams } = new URL(request.url);
         const search = searchParams.get('search');
-        const module = searchParams.get('module');
+        const moduleFilter = searchParams.get('module');
         const action = searchParams.get('action');
 
         // Parse pagination params
@@ -33,8 +33,8 @@ export const GET = withAuth(async (request, session) => {
             );
         }
 
-        if (module) {
-            conditions.push(eq(auditLogs.module, module));
+        if (moduleFilter) {
+            conditions.push(eq(auditLogs.module, moduleFilter));
         }
 
         if (action) {
@@ -48,7 +48,7 @@ export const GET = withAuth(async (request, session) => {
             .leftJoin(users, eq(auditLogs.user_id, users.id));
 
         if (conditions.length > 0) {
-            countQuery.where(and(...(conditions as any[])));
+            countQuery.where(and(...(conditions as Parameters<typeof and>)));
         }
         const [{ count: total }] = await countQuery;
 
@@ -77,7 +77,7 @@ export const GET = withAuth(async (request, session) => {
             .offset(offset);
 
         if (conditions.length > 0) {
-            // @ts-ignore
+            // @ts-expect-error drizzle query builder type mismatch
             query = query.where(and(...conditions));
         }
 

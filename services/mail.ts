@@ -2,17 +2,31 @@ import nodemailer from "nodemailer";
 import { getThankYouTemplate } from "./mail/templates/thank-you";
 import { getAdminNotificationTemplate } from "./mail/templates/admin-notification";
 import { getApplicationConfirmationTemplate } from "./mail/templates/application-confirmation";
-import { COMPANY_INFO } from "@/constants/site-info";
+import { getRequiredEnv, getRequiredPositiveIntegerEnv } from "@/utils/env";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: parseInt(process.env.MAIL_PORT || "587"),
-  secure: process.env.MAIL_PORT === "465",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASSWORD,
-  },
-});
+let transporter: nodemailer.Transporter | null = null;
+
+function getTransporter() {
+  if (transporter) return transporter;
+
+  const port = getRequiredPositiveIntegerEnv(process.env.MAIL_PORT, "MAIL_PORT");
+
+  transporter = nodemailer.createTransport({
+    host: getRequiredEnv(process.env.MAIL_HOST, "MAIL_HOST"),
+    port,
+    secure: port === 465,
+    auth: {
+      user: getRequiredEnv(process.env.MAIL_USER, "MAIL_USER"),
+      pass: getRequiredEnv(process.env.MAIL_PASSWORD, "MAIL_PASSWORD"),
+    },
+  });
+
+  return transporter;
+}
+
+function getMailFrom() {
+  return `"Sài Gòn Valve" <${getRequiredEnv(process.env.MAIL_FROM, "MAIL_FROM")}>`;
+}
 
 export async function sendEmail({
   to,
@@ -26,7 +40,7 @@ export async function sendEmail({
   html?: string;
 }) {
   const mailOptions = {
-    from: `"Sài Gòn Valve" <${process.env.MAIL_FROM || process.env.MAIL_USER}>`,
+    from: getMailFrom(),
     to,
     subject,
     text,
@@ -34,7 +48,7 @@ export async function sendEmail({
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
+    const info = await getTransporter().sendMail(mailOptions);
     return info;
   } catch (error) {
     console.error("Error sending email:", error);
@@ -64,7 +78,7 @@ export async function sendAdminNotificationEmail(contactData: {
   const html = getAdminNotificationTemplate(contactData);
 
   return sendEmail({
-    to: process.env.MAIL_FROM || process.env.MAIL_USER || COMPANY_INFO.email,
+    to: getRequiredEnv(process.env.MAIL_FROM, "MAIL_FROM"),
     subject,
     html,
   });

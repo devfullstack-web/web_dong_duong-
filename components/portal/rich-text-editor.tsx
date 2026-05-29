@@ -104,8 +104,8 @@ const FontSize = Extension.create({
 });
 
 // Custom Image with Resize and Alignment Extension
-const ImageResizeComponent = ({ node, updateAttributes, selected, editor }: any) => {
-  const [resizing, setResizing] = useState(false);
+const ImageResizeComponent = ({ node, updateAttributes, selected, editor }: { node: { attrs: Record<string, string> }; updateAttributes: (attrs: Record<string, string>) => void; selected: boolean; editor: Editor }) => {
+  const [, setResizing] = useState(false);
   const [startWidth, setStartWidth] = useState(0);
   const [startX, setStartX] = useState(0);
 
@@ -147,6 +147,7 @@ const ImageResizeComponent = ({ node, updateAttributes, selected, editor }: any)
         selected && "ring-2 ring-brand-primary ring-offset-2",
         node.attrs.align === 'full' ? "w-full" : "w-fit"
       )}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={node.attrs.src}
           alt={node.attrs.alt}
@@ -207,7 +208,7 @@ const ImageResizeComponent = ({ node, updateAttributes, selected, editor }: any)
           <div className="w-px h-4 bg-slate-200 mx-1" />
           <button 
             type="button"
-            onClick={() => (editor as any).commands.deleteSelection()}
+            onClick={() => (editor as Editor).commands.deleteSelection()}
             className="p-1.5 hover:bg-red-50 text-red-500"
             title="Xóa ảnh"
           >
@@ -448,14 +449,14 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
             {["12px", "14px", "16px", "18px", "20px", "24px", "30px", "36px", "48px"].map(size => (
               <DropdownMenuItem 
                 key={size} 
-                onClick={() => (editor.commands as any).setFontSize(size)}
+                onClick={() => (editor.commands as Record<string, (size: string) => boolean>).setFontSize(size)}
                 className={cn("text-xs font-bold", (editor.getAttributes("textStyle").fontSize === size) && "bg-slate-100 text-brand-primary")}
               >
                 {size}
               </DropdownMenuItem>
             ))}
             <Separator />
-            <DropdownMenuItem onClick={() => (editor.commands as any).unsetFontSize()} className="text-xs font-bold text-red-500">
+            <DropdownMenuItem onClick={() => (editor.commands as Record<string, () => boolean>).unsetFontSize()} className="text-xs font-bold text-red-500">
               Mặc định
             </DropdownMenuItem>
           </DropdownMenuContent>

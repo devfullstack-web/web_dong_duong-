@@ -20,7 +20,7 @@ export default function EditNewsCategoryPage() {
     const categoryId = params.id as string;
 
     const [isLoading, setIsLoading] = useState(true);
-    const [category, setCategory] = useState<any>(null);
+    const [category, setCategory] = useState<Record<string, unknown> | null>(null);
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -48,7 +48,7 @@ export default function EditNewsCategoryPage() {
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.news.categories.list);
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error(error);
             toast.error('Lỗi khi cập nhật danh mục');
         },

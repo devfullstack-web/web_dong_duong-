@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 interface RadialChartShapeProps {
     title?: string;
     description?: string;
-    data: any[];
+    data: Record<string, unknown>[];
     config: ChartConfig;
     dataKey?: string;
     label?: string;

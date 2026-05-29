@@ -188,6 +188,7 @@ export default function Header() {
           
           {/* Logo */}
           <Link href={SITE_ROUTES.HOME} className="relative h-11 lg:h-12 xl:h-14 w-36 lg:w-40 xl:w-48 shrink-0 group flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/logo/logo.png"
               alt={t('logoAlt')}
@@ -217,7 +218,7 @@ export default function Header() {
                                                     <NavigationMenuContent className="p-0 border border-slate-100 dark:border-white/10 shadow-lg w-auto!">
                                                         <ul className="grid w-[280px] gap-1 p-2 grid-cols-1 bg-white dark:bg-background rounded-md">
                                                             {(link.submenu || link.featured)?.map(
-                                                                (item: any) => (
+                                                            (item: { title: string; href: string; desc?: string; external?: boolean }) => (
                                                                     <ListItem
                                                                         key={item.title}
                                                                         title={item.title}
@@ -438,7 +439,7 @@ export default function Header() {
                                                         className="overflow-hidden"
                                                     >
                                                         <div className="pl-4 mt-1 mb-1 py-0.5 grid grid-cols-1 gap-1.5 border-l border-brand-primary/20">
-                                                            {(link.submenu || link.featured)?.map((item: any) => {
+                                                            {(link.submenu || link.featured)?.map((item: { title: string; href: string; desc?: string; external?: boolean }) => {
                                                                 const isSubActive = pathname === item.href;
                                                                 const subLinkContent = (
                                                                     <span className={cn(

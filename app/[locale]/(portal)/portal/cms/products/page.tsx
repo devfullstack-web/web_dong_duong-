@@ -6,11 +6,8 @@ import {
     Plus,
     Search,
     MoreHorizontal,
-    Eye,
     Edit2,
     Trash2,
-    Filter,
-    ArrowUpDown,
     CheckCircle2,
     XCircle,
     Loader2,
@@ -45,7 +42,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/use-auth';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -111,7 +108,7 @@ function ProductImage({ src, alt }: { src?: string | null; alt: string }) {
 }
 
 export default function ProductsManagementPage() {
-    const { hasPermission } = useAuth();
+    const { can: hasPermission } = usePermissions();
     const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);

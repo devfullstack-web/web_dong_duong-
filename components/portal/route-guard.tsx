@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/hooks/use-auth';
+import { usePermissions } from '@/hooks/use-permissions';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { PERMISSIONS } from '@/constants/rbac';
@@ -14,7 +14,7 @@ interface RouteGuardProps {
 }
 
 export function RouteGuard({ children }: RouteGuardProps) {
-    const { user, isLoading, isAdmin, hasPermission } = useAuth();
+    const { user, isLoading, isAdmin, canAny } = usePermissions();
     const pathname = usePathname();
 
     // If loading, show spinner
@@ -67,7 +67,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
             .filter((r) => r.path.length === longestPathLength)
             .map((r) => r.permission);
 
-        return permissionsForRoute.some((perm) => hasPermission(perm));
+        return canAny(permissionsForRoute);
     })();
 
     // If user is not logged in, return null (handled by middleware redirect)

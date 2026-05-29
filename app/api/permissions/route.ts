@@ -14,7 +14,7 @@ export const GET = withAuth(
 
             const allModules = await db.select().from(modules);
 
-            let rolePermissions: any[] = [];
+            let rolePermissions: (typeof permissions.$inferSelect)[] = [];
             if (roleId) {
                 rolePermissions = await db
                     .select()

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'motion/react';
 import { Phone, Mail, MapPin, Send, Facebook, Linkedin, Youtube, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
@@ -47,7 +46,7 @@ export default function ContactPage() {
                 address: '',
                 message: '',
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
             const message = error.response?.data?.message || tc('errors.general');
             toast.error(message);

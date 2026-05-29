@@ -1,25 +1,32 @@
 import { SignJWT, jwtVerify } from 'jose';
+import type { JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { roles, permissions, user_roles, modules, users } from '@/db/schemas';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { AUTH } from '@/constants/app';
-
-function getJwtSecret(): string {
-    const secret = process.env.JWT_SECRET;
-
-    if (process.env.NODE_ENV === 'production' && (!secret || secret.length < 32)) {
-        throw new Error('JWT_SECRET must be set to at least 32 characters in production');
-    }
-
-    return secret || 'dev-only-change-me-minimum-32-characters';
-}
+import { getJwtSecret } from '@/services/jwt-secret';
 
 const secretKey = getJwtSecret();
 const key = new TextEncoder().encode(secretKey);
 
-export async function encrypt(payload: any, expireTime: string = AUTH.JWT_EXPIRY) {
+type AuthUser = {
+    id: string;
+    username?: string;
+    full_name?: string | null;
+    is_super?: boolean;
+    roles?: string[];
+    permissions?: string[];
+    [key: string]: unknown;
+};
+
+type AuthSessionPayload = JWTPayload & {
+    user?: AuthUser;
+    expires?: Date | string;
+};
+
+export async function encrypt(payload: JWTPayload, expireTime: string = AUTH.JWT_EXPIRY) {
     return await new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -27,18 +34,18 @@ export async function encrypt(payload: any, expireTime: string = AUTH.JWT_EXPIRY
         .sign(key);
 }
 
-export async function decrypt(input: string): Promise<any> {
+export async function decrypt(input: string): Promise<AuthSessionPayload | null> {
     try {
-        const { payload } = await jwtVerify(input, key, {
+        const { payload } = await jwtVerify<AuthSessionPayload>(input, key, {
             algorithms: ['HS256'],
         });
         return payload;
-    } catch (error) {
+    } catch {
         return null;
     }
 }
 
-export async function generateTokens(user: any) {
+export async function generateTokens(user: Pick<AuthUser, 'id'>) {
     const [currentUser] = await db
         .select({
             id: users.id,
@@ -133,7 +140,7 @@ export async function setAuthCookies(accessToken: string, refreshToken: string) 
     });
 }
 
-export async function login(user: any) {
+export async function login(user: AuthUser) {
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const session = await encrypt({ user, expires });
     const secure = process.env.NODE_ENV === 'production';
@@ -189,13 +196,14 @@ export async function updateSession(request: NextRequest) {
 
     const parsed = await decrypt(session);
     if (!parsed) return;
-    parsed.expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    parsed.expires = expires;
     const res = NextResponse.next();
     res.cookies.set({
         name: 'session',
         value: await encrypt(parsed),
         httpOnly: true,
-        expires: parsed.expires,
+        expires,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
         path: '/',

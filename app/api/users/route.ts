@@ -2,7 +2,7 @@ import { db } from '@/db';
 import { users, user_roles, roles } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, eq, sql, inArray } from 'drizzle-orm';
-// @ts-ignore
+// @ts-expect-error - bcryptjs has no type declarations
 import bcrypt from 'bcryptjs';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
 import { NextRequest } from 'next/server';
@@ -27,7 +27,7 @@ export const GET = withAuth(
                     isLocked: users.is_locked,
                     is_super: users.is_super,
                     createdAt: users.created_at,
-                    roles: sql<any[]>`
+                    roles: sql<{ id: string; name: string; code: string }[]>`
           COALESCE(
             json_agg(
               json_build_object('id', ${roles.id}, 'name', ${roles.name}, 'code', ${roles.code})
@@ -118,12 +118,13 @@ export const POST = withAuth(
             });
 
             return apiResponse(newUser, { status: 201 });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error creating user:', error);
 
             // Handle PostgreSQL unique constraint violations
-            if (error?.code === '23505') {
-                const detail = error?.detail || '';
+            const pgError = error as { code?: string; detail?: string };
+            if (pgError?.code === '23505') {
+                const detail = pgError?.detail || '';
                 if (detail.includes('email')) {
                     return apiError('Email này đã được sử dụng', 400);
                 }

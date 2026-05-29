@@ -16,7 +16,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 export default function AnalyticsPage() {
     const queryClient = useQueryClient();
 
-    const { data: statsData, isLoading: loading } = useQuery<{ data: any }>({
+    const { data: statsData, isLoading: loading } = useQuery<{ data: Record<string, unknown> }>({
         queryKey: ['stats'],
         queryFn: async () => {
             const res = await $api.get(API_ROUTES.STATS);
@@ -52,7 +52,7 @@ export default function AnalyticsPage() {
     };
 
     const activityData =
-        stats?.trends?.map((t: any) => ({
+        stats?.trends?.map((t: { month: string; news: number; projects: number; products: number }) => ({
             month: t.month.toUpperCase(),
             news: t.news,
             projects: t.projects,

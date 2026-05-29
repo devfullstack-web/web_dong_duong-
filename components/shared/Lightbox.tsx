@@ -4,7 +4,6 @@ import * as React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
 
 interface LightboxProps {
   images: string[];
@@ -51,6 +50,7 @@ export default function Lightbox({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, currentIndex]);
 
   return (

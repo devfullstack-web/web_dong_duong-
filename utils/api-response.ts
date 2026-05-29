@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data: T;
-  meta: any;
+  meta: Record<string, unknown>;
   error?: string;
 }
 
@@ -19,7 +19,7 @@ export function apiResponse<T>(
     error,
   }: {
     status?: number;
-    meta?: any;
+    meta?: Record<string, unknown>;
     success?: boolean;
     error?: string;
   } = {}
@@ -41,7 +41,7 @@ export function apiResponse<T>(
 export function apiError(
   message: string,
   status: number = 400,
-  data: any = null
+  data: unknown = null
 ) {
   return apiResponse(data, {
     success: false,

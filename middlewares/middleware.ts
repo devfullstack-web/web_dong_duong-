@@ -6,7 +6,6 @@ import { RBAC_ROLES } from '@/constants/rbac';
 import { db } from '@/db';
 import { users } from '@/db/schemas';
 import { and, eq, isNull } from 'drizzle-orm';
-import { sanitizeRichText } from '@/utils/sanitize';
 
 export interface UserSession {
     user: {
@@ -18,6 +17,10 @@ export interface UserSession {
         permissions: string[];
     };
 }
+
+export type RouteHandlerContext = {
+    params: Promise<Record<string, string>>;
+} & Record<string, unknown>;
 
 export async function verifyAuth(request: NextRequest): Promise<UserSession | null> {
     const session = request.cookies.get('session')?.value;
@@ -137,10 +140,6 @@ export function validateQuery<T>(
     }
 }
 
-export function sanitizeHtml(html: string): string {
-    return sanitizeRichText(html);
-}
-
 export function isAdmin(user: UserSession['user']): boolean {
     return user.is_super || user.roles?.includes(RBAC_ROLES.ADMIN) || false;
 }
@@ -149,31 +148,18 @@ export function isSuperAdmin(user: UserSession['user']): boolean {
     return user.is_super || false;
 }
 
-export function canEdit(user: UserSession['user']): boolean {
-    if (isAdmin(user)) return true;
-    return user.roles?.some((r) => r.toLowerCase() === 'editor') || false;
-}
-
-export async function getUserOrError(
-    request: NextRequest,
-): Promise<{ user: UserSession['user'] } | Response> {
-    const session = await requireAuth(request);
-
-    if (session instanceof Response) {
-        return session;
-    }
-
-    return { user: session.user };
-}
-
 export function withAuth(
-    handler: (request: NextRequest, session: UserSession, context?: any) => Promise<Response>,
+    handler: (
+        request: NextRequest,
+        session: UserSession,
+        context: RouteHandlerContext,
+    ) => Promise<Response>,
     options?: {
         allowedRoles?: string[];
         requiredPermissions?: string[];
     },
 ) {
-    return async (request: NextRequest, context?: any) => {
+    return async (request: NextRequest, context: RouteHandlerContext) => {
         let sessionOrError: UserSession | Response;
 
         if (options?.allowedRoles) {
@@ -206,33 +192,18 @@ export function withAuth(
         return handler(request, session, context);
     };
 }
-
-export function withValidation<T>(
-    handler: (request: NextRequest, data: T, context?: unknown) => Promise<Response>,
-    schema: ZodSchema<T>,
-) {
-    return async (request: NextRequest, context?: unknown) => {
-        const dataOrError = await validateBody(request, schema);
-
-        if (dataOrError instanceof Response) {
-            return dataOrError;
-        }
-
-        return handler(request, dataOrError, context);
-    };
-}
 export function withHybridAuth(
     handler: (
         request: NextRequest,
         session: UserSession | null,
-        context?: any,
+        context: RouteHandlerContext,
     ) => Promise<Response>,
     options?: {
         requiredPermissions?: string[];
         publicStatuses?: string[];
     },
 ) {
-    return async (request: NextRequest, context?: any) => {
+    return async (request: NextRequest, context: RouteHandlerContext) => {
         const session = await verifyAuth(request);
         const { searchParams } = new URL(request.url);
         const requestedStatus = searchParams.get('status');

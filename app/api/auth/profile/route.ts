@@ -56,8 +56,32 @@ export async function GET() {
         // Check if user has superadmin role OR is_super flag is set in users table
         const isSystemSuper = userRoles.some((r) => r.is_super) || user.is_super;
 
+        interface PermissionWithModule {
+            id: string;
+            createdAt: Date | null;
+            updatedAt: Date | null;
+            deletedAt: Date | null;
+            moduleId: string;
+            roleId: string;
+            canView: boolean | null;
+            canCreate: boolean | null;
+            canUpdate: boolean | null;
+            canDelete: boolean | null;
+            module: {
+                id: string;
+                createdAt: Date | null;
+                updatedAt: Date | null;
+                deletedAt: Date | null;
+                code: string;
+                name: string;
+                icon: string | null;
+                route: string | null;
+                order: number | null;
+            };
+        }
+
         // 3. Fetch permissions for these roles
-        let allPermissions: any[] = [];
+        let allPermissions: PermissionWithModule[] = [];
         if (roleIds.length > 0) {
             allPermissions = await db
                 .select({
@@ -94,7 +118,8 @@ export async function GET() {
             permissions: allPermissions
                 .filter((p) => p.roleId === role.id)
                 .map((p) => {
-                    const { roleId, ...rest } = p;
+                    const { roleId: _roleId, ...rest } = p;
+                    void _roleId;
                     return rest;
                 }),
         }));

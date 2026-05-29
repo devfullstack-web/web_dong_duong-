@@ -27,7 +27,6 @@ import { cn } from '@/lib/utils';
 import { generateSlug } from '@/utils/slug';
 import { Calendar as CalendarIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { DateRange } from 'react-day-picker';
 import { useQueryClient } from '@tanstack/react-query';
 
 interface Category {
@@ -100,7 +99,7 @@ export default function AddProjectPage() {
             queryClient.invalidateQueries({ queryKey: ['projects'] });
             toast.success('Đã tạo dự án thành công');
             router.push(PORTAL_ROUTES.cms.projects.list);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
             const message = error.response?.data?.error || error.message || 'Lỗi khi tạo dự án';
             toast.error(message);

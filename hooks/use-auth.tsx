@@ -1,34 +1,21 @@
 'use client';
 
-import { RBAC_ROLES } from '@/constants/rbac';
-import { useAuthStore, AuthUser } from '@/stores/auth-store';
+import { usePermissions } from '@/hooks/use-permissions';
+import type { AuthUser } from '@/stores/auth-store';
 
 export type { AuthUser };
 
 export function useAuth() {
-    const { user, isLoading, refreshUser } = useAuthStore();
-
-    const hasPermission = (permission: string) => {
-        if (!user) return false;
-        if (user.is_super) return true;
-        return user.permissions?.includes(permission) || false;
-    };
-
-    const hasRole = (roleCode: string) => {
-        if (!user) return false;
-        return user.roles?.includes(roleCode) || false;
-    };
-
-    // isSuperAdmin checks the new is_super flag
-    const isSuperAdmin = user?.is_super || false;
+    const { user, isLoading, refreshUser, can, hasRole, isSuperAdmin, isAdmin } =
+        usePermissions();
 
     return {
         user,
         isLoading,
-        hasPermission,
+        hasPermission: can,
         hasRole,
         refreshUser,
         isSuperAdmin,
-        isAdmin: isSuperAdmin || user?.roles?.includes(RBAC_ROLES.ADMIN) || false,
+        isAdmin,
     };
 }

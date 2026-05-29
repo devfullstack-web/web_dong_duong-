@@ -1,10 +1,9 @@
 import { NextRequest } from 'next/server';
 import { db } from '@/db';
 import { notifications } from '@/db/schemas';
-import { desc, eq, and, isNull, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth } from '@/middlewares/middleware';
-import { PERMISSIONS } from '@/constants/rbac';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
 
 // GET /api/portal/notifications - List notifications

@@ -24,7 +24,7 @@ import {
 import { usePathname, useRouter } from 'next/navigation';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
-import { useAuth } from '@/hooks/use-auth';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useAuthStore } from '@/stores/auth-store';
 
 import { cn } from '@/lib/utils';
@@ -41,7 +41,7 @@ const DynamicIcon = memo(function DynamicIcon({ name, className }: { name: strin
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
     const router = useRouter();
-    const { user, hasPermission, isSuperAdmin } = useAuth();
+    const { user, can } = usePermissions();
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -66,10 +66,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (!user) return [];
         return SIDEBAR_ITEMS.filter((item) => {
             if (!item.permission) return true;
-            if (isSuperAdmin) return true;
-            return hasPermission(`${item.permission}:VIEW`);
+            return can(`${item.permission}:VIEW`);
         });
-    }, [user, isSuperAdmin, hasPermission]);
+    }, [user, can]);
 
     const isPathActive = (url: string) => {
         if (!url) return false;

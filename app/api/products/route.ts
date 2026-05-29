@@ -168,7 +168,7 @@ export const POST = withAuth(
                 description_localized?: LocalizedText;
                 tech_summary_localized?: LocalizedText;
                 features_localized?: LocalizedArray;
-                tech_specs_localized?: any;
+                tech_specs_localized?: Record<string, unknown>;
             } = {};
 
             if (rawBody.name_localized) {

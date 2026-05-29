@@ -50,7 +50,7 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
     };
 
     // Build update object
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
 
     if (name_localized) {
       updateData.name_localized = name_localized;

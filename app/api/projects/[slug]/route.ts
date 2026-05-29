@@ -69,7 +69,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     // Determine if it's a UUID (ID) or a slug
     const isUUID = UUID_REGEX.test(slug);
     
-    const updates: any = {};
+    const updates: Record<string, unknown> = {};
     const allowedFields = [
       'name',
       'slug',

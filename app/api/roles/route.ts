@@ -1,7 +1,7 @@
 import { db } from '@/db';
 import { roles, permissions } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
-import { desc, eq } from 'drizzle-orm';
+import { desc } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 

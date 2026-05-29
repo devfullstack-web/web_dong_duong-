@@ -15,13 +15,13 @@ import {
 } from '@/components/ui/card';
 import { Save, Loader2 } from 'lucide-react';
 import { ImageUploader } from '@/components/portal/ImageUploader';
-import { useAuth } from '@/hooks/use-auth';
+import { usePermissions } from '@/hooks/use-permissions';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 
 export default function SettingsPage() {
-    const { user, refreshUser } = useAuth();
+    const { user, refreshUser } = usePermissions();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         fullName: '',

@@ -35,7 +35,6 @@ export default function MediaManagementPage() {
     const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
-    const [isUploading, setIsUploading] = useState(false);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<UploadedImage | null>(null);

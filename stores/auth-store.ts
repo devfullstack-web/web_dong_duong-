@@ -59,11 +59,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (response.data.success) {
                 const profileData = response.data.data;
 
-                const roleCodes = profileData.roles.map((r: any) => r.code);
-                const permissionStrings = profileData.roles.flatMap((r: any) =>
+                const roleCodes = profileData.roles.map((r: { code: string }) => r.code);
+                const permissionStrings = profileData.roles.flatMap((r: { permissions: Array<{ module: { code: string }; canView: boolean; canCreate: boolean; canUpdate: boolean; canDelete: boolean }> }) =>
                     r.permissions
                         .map(
-                            (p: any) =>
+                            (p: { module: { code: string }; canView: boolean; canCreate: boolean; canUpdate: boolean; canDelete: boolean }) =>
                                 `${p.module.code}:${p.canView ? 'VIEW' : ''}${p.canCreate ? ',CREATE' : ''}${p.canUpdate ? ',UPDATE' : ''}${p.canDelete ? ',DELETE' : ''}`,
                         )
                         .flatMap((s: string) => {
@@ -76,7 +76,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 );
 
                 let isSystemSuper = !!profileData.is_super;
-                profileData.roles.forEach((r: any) => {
+                profileData.roles.forEach((r: { is_super?: boolean }) => {
                     if (r.is_super) isSystemSuper = true;
                 });
 
@@ -102,7 +102,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             } else {
                 await get().logout();
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Auth check failed:', error);
             if (
                 axios.isAxiosError(error) &&

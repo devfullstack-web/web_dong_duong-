@@ -28,8 +28,8 @@ import {
 import { sanitizeRichText } from '@/utils/sanitize';
 
 interface ProjectDetailClientProps {
-    project: any;
-    relatedProjects: any[];
+    project: Record<string, unknown>;
+    relatedProjects: Record<string, unknown>[];
 }
 
 export default function ProjectDetailClient({

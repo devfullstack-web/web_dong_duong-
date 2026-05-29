@@ -1,7 +1,7 @@
 'use client';
 
 import $api from '@/utils/axios';
-import { User } from '@/types';
+import { Role, User } from '@/types';
 import {
     Plus,
     Search,
@@ -33,7 +33,7 @@ import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
-import { useAuth } from '@/hooks/use-auth';
+import { usePermissions } from '@/hooks/use-permissions';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -43,7 +43,7 @@ export default function UsersManagementPage() {
     const [itemToDelete, setItemToDelete] = useState<User | null>(null);
     const [lockDialogOpen, setLockDialogOpen] = useState(false);
     const [itemToLock, setItemToLock] = useState<User | null>(null);
-    const { user: currentUser, hasPermission } = useAuth();
+    const { user: currentUser, can: hasPermission } = usePermissions();
     const queryClient = useQueryClient();
 
     // Fetch users using react-query
@@ -228,7 +228,7 @@ export default function UsersManagementPage() {
                                                 <td className="px-4 md:px-6 py-3 hidden md:table-cell">
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {user.roles && user.roles.length > 0 ? (
-                                                            user.roles.map((r: any) => (
+                                                            user.roles.map((r: Role) => (
                                                                 <Badge
                                                                     key={r.id}
                                                                     className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none"

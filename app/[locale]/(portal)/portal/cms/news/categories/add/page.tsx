@@ -25,7 +25,7 @@ export default function AddNewsCategoryPage() {
             queryClient.invalidateQueries({ queryKey: ['categories'] });
             router.push(PORTAL_ROUTES.cms.news.categories.list);
         },
-        onError: (error: any) => {
+        onError: (error: unknown) => {
             console.error(error);
             toast.error('Lỗi khi thêm danh mục');
         },
