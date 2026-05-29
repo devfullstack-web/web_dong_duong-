@@ -20,17 +20,29 @@ export default function Hero() {
     );
 
     return (
-        <section className="relative h-[62svh] min-h-110 max-h-140 w-full overflow-hidden sm:h-[66svh] sm:min-h-125 sm:max-h-[620px] lg:h-[85vh] lg:min-h-[600px] lg:max-h-none">
-            {/* Video Background - preload="none" to avoid blocking LCP */}
-            <div className="absolute inset-0 z-0">
+        <section className="relative h-[62svh] min-h-[440px] max-h-[560px] w-full overflow-hidden sm:h-[66svh] sm:min-h-[500px] sm:max-h-[620px] lg:h-[85vh] lg:min-h-[600px] lg:max-h-none bg-slate-950">
+            {/* Video Background with overlay grid for maximum clarity and tech aesthetic */}
+            <div className="absolute inset-0 z-0 bg-slate-950">
                 <video
                     autoPlay
                     loop
                     muted
                     playsInline
                     preload="none"
-                    className="absolute inset-0  w-full  object-cover object-center"
+                    className="absolute inset-0 w-full h-full object-cover object-center opacity-85"
                     src="/videos/iot-water.mp4"
+                />
+                {/* Thin overlay to ensure readability */}
+                <div className="absolute inset-0 bg-slate-950/30" />
+                {/* Radial gradient for cinematic lighting */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0)_0%,rgba(15,23,42,0.5)_100%)]" />
+                {/* Tech grid dots pattern to fake absolute sharpness and cover pixels */}
+                <div 
+                    className="absolute inset-0 opacity-15 pointer-events-none" 
+                    style={{
+                        backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)',
+                        backgroundSize: '8px 8px'
+                    }}
                 />
             </div>
 
