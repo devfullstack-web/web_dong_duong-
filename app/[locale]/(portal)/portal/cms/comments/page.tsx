@@ -50,6 +50,8 @@ import { API_ROUTES } from '@/constants/routes';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { SimpleConfirmDialog } from '@/components/shared/simple-confirm-dialog';
+import { useTranslations } from 'next-intl';
+import Loading from '@/components/shared/Loading';
 
 interface Comment {
     id: string;
@@ -64,6 +66,7 @@ interface Comment {
 }
 
 export default function CommentsManagementPage() {
+    const tc = useTranslations('Portal.Common');
     const [comments, setComments] = useState<Comment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -231,11 +234,8 @@ export default function CommentsManagementPage() {
                             </CardHeader>
                             <CardContent className="p-0">
                                 {isLoading ? (
-                                    <div className="flex flex-col items-center justify-center py-20 opacity-30">
-                                        <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
-                                        <p className="text-[10px] font-black uppercase tracking-widest">
-                                            Đang tải dữ liệu...
-                                        </p>
+                                    <div className="flex items-center justify-center py-20 w-full">
+                                        <Loading variant="section" size="md" text={tc('loading')} />
                                     </div>
                                 ) : comments.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center py-20 text-slate-400">

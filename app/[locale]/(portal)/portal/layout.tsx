@@ -14,7 +14,7 @@ import { Search, HelpCircle, Globe, Check } from 'lucide-react';
 import { PORTAL_ROUTES } from '@/constants/routes';
 import { RouteGuard } from '@/components/portal/route-guard';
 import { useAuthStore } from '@/stores/auth-store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/routing';
 import {
@@ -31,9 +31,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     const activeLocale = useLocale();
     const router = useRouter();
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         initialize();
+        setMounted(true);
     }, [initialize]);
 
     const switchLocale = (nextLocale: 'vi' | 'en') => {
@@ -82,34 +84,36 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                             />
                         </div>
                         <div className="flex items-center gap-1 md:gap-2 border-l border-slate-100 pl-2 md:pl-6 ml-1 md:ml-2">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-9 gap-2 px-2 text-[11px] font-black uppercase tracking-widest text-slate-600 hover:text-brand-primary hover:bg-slate-50 rounded-none transition-all hover:cursor-pointer"
-                                    >
-                                        <Globe size={15} className="text-slate-400" />
-                                        <span>{activeLocale}</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-32 rounded-none border border-slate-100 p-1 bg-white">
-                                    <DropdownMenuItem
-                                        className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer flex justify-between items-center"
-                                        onClick={() => switchLocale('vi')}
-                                    >
-                                        <span>Tiếng Việt</span>
-                                        {activeLocale === 'vi' && <Check size={12} className="text-brand-primary" />}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer flex justify-between items-center"
-                                        onClick={() => switchLocale('en')}
-                                    >
-                                        <span>English</span>
-                                        {activeLocale === 'en' && <Check size={12} className="text-brand-primary" />}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            {mounted && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-9 gap-2 px-2 text-[11px] font-black uppercase tracking-widest text-slate-600 hover:text-brand-primary hover:bg-slate-50 rounded-none transition-all hover:cursor-pointer"
+                                        >
+                                            <Globe size={15} className="text-slate-400" />
+                                            <span>{activeLocale}</span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-32 rounded-none border border-slate-100 p-1 bg-white">
+                                        <DropdownMenuItem
+                                            className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer flex justify-between items-center"
+                                            onClick={() => switchLocale('vi')}
+                                        >
+                                            <span>Tiếng Việt</span>
+                                            {activeLocale === 'vi' && <Check size={12} className="text-brand-primary" />}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer flex justify-between items-center"
+                                            onClick={() => switchLocale('en')}
+                                        >
+                                            <span>English</span>
+                                            {activeLocale === 'en' && <Check size={12} className="text-brand-primary" />}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
 
                             <button className="p-2 text-slate-400 hover:text-brand-primary hover:bg-slate-50 rounded-none transition-all">
                                 <HelpCircle size={18} />

@@ -23,6 +23,8 @@ import { TablePagination } from '@/components/portal/table-pagination';
 import Lightbox from '@/components/shared/Lightbox';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@/hooks/use-debounce';
+import { useTranslations } from 'next-intl';
+import Loading from '@/components/shared/Loading';
 
 interface UploadedImage {
     filename: string;
@@ -33,6 +35,7 @@ interface UploadedImage {
 
 export default function MediaManagementPage() {
     const queryClient = useQueryClient();
+    const tc = useTranslations('Portal.Common');
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
@@ -216,11 +219,8 @@ export default function MediaManagementPage() {
                 {/* Grid/List */}
                 <div className="flex-1 p-4 md:p-6">
                     {isLoading ? (
-                        <div className="flex items-center justify-center h-[400px]">
-                            <Loader2
-                                size={40}
-                                className="animate-spin text-brand-primary opacity-20"
-                            />
+                        <div className="flex items-center justify-center h-[400px] w-full">
+                            <Loading variant="section" size="md" text={tc('loading')} />
                         </div>
                     ) : images.length > 0 ? (
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
