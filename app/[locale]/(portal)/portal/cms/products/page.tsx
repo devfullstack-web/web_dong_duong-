@@ -124,7 +124,7 @@ export default function ProductsManagementPage() {
 
     // Category filter state
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
-    const [selectedStatus, setSelectedStatus] = useState<Product['status'] | ''>('');
+    const [selectedStatus, setSelectedStatus] = useState<Product['status'] | ''>('active');
 
     // Fetch product categories
     const { data: categoriesData } = useQuery<{ data: CategoryNode[] }>({
@@ -255,13 +255,13 @@ export default function ProductsManagementPage() {
         switch (status) {
             case 'active':
                 return (
-                    <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-none flex items-center gap-1.5">
+                    <Badge className="bg-emerald-100/80 hover:bg-emerald-100/80 text-emerald-700 border border-emerald-200 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-none flex items-center gap-1.5 w-fit">
                         <CheckCircle2 size={10} /> Đang bán
                     </Badge>
                 );
             case 'inactive':
                 return (
-                    <Badge className="bg-slate-50 text-slate-500 border-slate-100 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-none flex items-center gap-1.5">
+                    <Badge className="bg-slate-100 hover:bg-slate-100 text-slate-600 border border-slate-200 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-none flex items-center gap-1.5 w-fit">
                         <XCircle size={10} /> Ngừng kinh doanh
                     </Badge>
                 );
