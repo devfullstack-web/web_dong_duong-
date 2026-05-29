@@ -20,7 +20,7 @@ export default function Hero() {
     );
 
     return (
-        <section className="relative h-[62svh] min-h-[440px] max-h-[560px] w-full overflow-hidden sm:h-[66svh] sm:min-h-[500px] sm:max-h-[620px] lg:h-[85vh] lg:min-h-[600px] lg:max-h-none">
+        <section className="relative h-[62svh] min-h-110 max-h-140 w-full overflow-hidden sm:h-[66svh] sm:min-h-125 sm:max-h-[620px] lg:h-[85vh] lg:min-h-[600px] lg:max-h-none">
             {/* Video Background - preload="none" to avoid blocking LCP */}
             <div className="absolute inset-0 z-0">
                 <video
@@ -29,8 +29,8 @@ export default function Hero() {
                     muted
                     playsInline
                     preload="none"
-                    className="absolute inset-0 w-full h-full object-cover object-center"
-                    src="/videos/hero-background.mp4"
+                    className="absolute inset-0  w-full  object-cover object-center"
+                    src="/videos/iot-water.mp4"
                 />
             </div>
 
@@ -44,9 +44,7 @@ export default function Hero() {
                                     {HERO_COPY.highlight}
                                 </span>{' '}
                                 <br />
-                                <span className="text-white/60">
-                                    {HERO_COPY.titleSuffix}
-                                </span>
+                                <span className="text-white/60">{HERO_COPY.titleSuffix}</span>
                             </h1>
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
