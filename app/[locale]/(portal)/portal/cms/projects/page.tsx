@@ -4,15 +4,12 @@ import { Project } from '@/types';
 import $api from '@/utils/axios';
 import {
     Plus,
-    Search,
     MoreHorizontal,
     Edit2,
     Trash2,
-    ArrowUpDown,
     Calendar as CalendarIcon,
     CheckCircle,
     Clock,
-
     Layout,
     X,
     ChevronDown,
@@ -30,9 +27,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import Loading from '@/components/shared/Loading';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
-import { TablePagination } from '@/components/portal/table-pagination';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -44,6 +39,9 @@ import { usePermissions } from '@/hooks/use-permissions';
 import { useDebounce } from '@/hooks/use-debounce';
 import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ColumnDef } from '@tanstack/react-table';
+import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import * as React from 'react';
 
 const PROJECT_STATUS_FILTERS: { value: Project['status']; label: string }[] = [
     { value: 'ongoing', label: 'Đang triển khai' },
@@ -160,7 +158,7 @@ export default function ProjectsManagementPage() {
         deleteMutation.mutate(itemToDelete.id);
     };
 
-    const getStatusBadge = (status: Project['status']) => {
+    const getStatusBadge = React.useCallback((status: Project['status']) => {
         switch (status) {
             case 'completed':
                 return (
@@ -177,16 +175,159 @@ export default function ProjectsManagementPage() {
             default:
                 return null;
         }
-    };
+    }, []);
 
-    const formatDate = (dateStr?: string) => {
+    const formatDate = React.useCallback((dateStr?: string) => {
         if (!dateStr) return 'N/A';
         try {
             return new Date(dateStr).toLocaleDateString('vi-VN');
         } catch {
             return dateStr;
         }
-    };
+    }, []);
+
+    // Define table columns
+    const columns = React.useMemo<ColumnDef<Project>[]>(() => [
+        {
+            accessorKey: 'name',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Dự án" />
+            ),
+            cell: ({ row }) => {
+                const project = row.original;
+                return (
+                    <div className="flex items-center gap-3 md:gap-6">
+                        <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
+                            <ProjectImage src={project.image_url} alt={project.name} />
+                        </div>
+                        <div className="max-w-[200px] md:max-w-[400px]">
+                            <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-1">
+                                {project.name}
+                            </div>
+                            <Badge
+                                variant="outline"
+                                className="text-[9px] font-bold text-slate-400 border-slate-200 uppercase tracking-widest px-2 py-0 rounded-none"
+                            >
+                                {project.category || 'Chưa phân loại'}
+                            </Badge>
+                        </div>
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: 'client_name',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Chủ đầu tư" className="hidden md:flex" />
+            ),
+            cell: ({ row }) => (
+                <div className="text-[11px] font-black text-slate-600 uppercase tracking-tight hidden md:block">
+                    {row.original.client_name || 'N/A'}
+                </div>
+            ),
+        },
+        {
+            accessorKey: 'start_date',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Thời gian" className="hidden sm:flex" />
+            ),
+            cell: ({ row }) => {
+                const project = row.original;
+                return (
+                    <div className="flex flex-col gap-1 text-[11px] font-black text-slate-600 uppercase tracking-tight hidden sm:flex">
+                        <div className="flex items-center gap-2">
+                            <CalendarIcon
+                                size={14}
+                                className="text-brand-primary/40"
+                            />
+                            <span>{formatDate(project.start_date)}</span>
+                        </div>
+                        {project.status === 'completed' && (
+                            <span className="text-[9px] text-slate-400">
+                                Đến: {formatDate(project.end_date)}
+                            </span>
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: 'status',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Trạng thái" />
+            ),
+            cell: ({ row }) => getStatusBadge(row.original.status),
+        },
+        {
+            id: 'actions',
+            header: () => (
+                <div className="text-right uppercase text-[10px] font-black tracking-widest text-slate-400">
+                    Thao tác
+                </div>
+            ),
+            cell: ({ row }) => {
+                const project = row.original;
+                return (
+                    <div className="text-right">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    className="h-9 w-9 p-0 hover:bg-white hover:text-brand-primary border border-transparent hover:border-slate-100 rounded-none transition-all hover:cursor-pointer"
+                                >
+                                    <MoreHorizontal className="h-5 w-5" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                align="end"
+                                className="w-48 p-1 rounded-none border border-slate-100 bg-white"
+                            >
+                                <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
+                                    Tùy chọn dự án
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator className="bg-slate-50" />
+
+                                {hasPermission(PERMISSIONS.PROJECTS_UPDATE) && (
+                                    <DropdownMenuItem asChild>
+                                        <Link
+                                            href={PORTAL_ROUTES.cms.projects.edit(project.id)}
+                                            className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-slate-50 group"
+                                        >
+                                            <Edit2
+                                                size={16}
+                                                className="text-slate-400 group-hover:text-brand-primary transition-colors"
+                                            />
+                                            <span className="text-xs font-bold uppercase tracking-tight text-slate-900">
+                                                Sửa thông tin
+                                            </span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                )}
+
+                                {hasPermission(PERMISSIONS.PROJECTS_DELETE) && (
+                                    <>
+                                        <DropdownMenuSeparator className="bg-slate-50" />
+                                        <DropdownMenuItem
+                                            className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-rose-50 group"
+                                            onClick={() => handleDeleteClick(project)}
+                                        >
+                                            <Trash2
+                                                size={16}
+                                                className="text-slate-400 group-hover:text-rose-600 transition-colors"
+                                            />
+                                            <span className="text-xs font-bold uppercase tracking-tight text-rose-600">
+                                                Xóa dự án
+                                            </span>
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                );
+            },
+        },
+    ], [hasPermission, formatDate, getStatusBadge]);
 
     return (
         <div className="space-y-6">
@@ -220,289 +361,130 @@ export default function ProjectsManagementPage() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
-                {/* Table Filters  */}
-                <div className="py-2.5 px-4 md:px-5 border-b border-slate-50 flex flex-col xl:flex-row gap-4 items-center justify-between bg-white">
-                    <div className="relative w-full xl:w-1/2 group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-300 group-focus-within:text-brand-primary transition-colors" />
-                        <input
-                            placeholder="TÌM KIẾM THEO TÊN DỰ ÁN, ĐỊA ĐIỂM HOẶC LOẠI HÌNH..."
-                            className="w-full pl-12 bg-slate-50 border-none text-[9px] font-bold tracking-widest placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20 h-8 rounded-none outline-none"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
-                        {/* Status Filter */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className={cn(
-                                        'w-full sm:w-48 justify-between text-left font-bold text-[9px] uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50',
-                                        selectedStatus ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
-                                    )}
-                                >
-                                    <span className="truncate">
-                                        {selectedStatus
-                                            ? PROJECT_STATUS_FILTERS.find((item) => item.value === selectedStatus)?.label
-                                            : 'Lọc trạng thái'}
-                                    </span>
-                                    <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="start" className="w-48 rounded-none border border-slate-100 p-1">
-                                <DropdownMenuItem
-                                    className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
-                                    onClick={() => setSelectedStatus('')}
-                                >
-                                    Tất cả trạng thái
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator className="bg-slate-50" />
-                                {PROJECT_STATUS_FILTERS.map((status) => (
-                                    <DropdownMenuItem
-                                        key={status.value}
-                                        className={cn(
-                                            'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
-                                            selectedStatus === status.value && 'text-brand-primary bg-brand-primary/5',
-                                        )}
-                                        onClick={() => setSelectedStatus(status.value)}
-                                    >
-                                        {status.label}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        {/* Date Range Picker */}
-                        <div className="grid gap-2 w-full sm:w-75">
-                            <Popover>
-                                <PopoverTrigger asChild>
+            <DataTable
+                columns={columns}
+                data={projectsList}
+                isLoading={isLoading}
+                loadingText="Đang tải danh sách dự án..."
+                emptyText="Không tìm thấy dự án nào phù hợp."
+                emptyIcon={<Layout size={64} className="text-slate-100 mb-6" />}
+                toolbarProps={{
+                    searchValue: searchTerm,
+                    onSearchChange: setSearchTerm,
+                    searchPlaceholder: "TÌM KIẾM THEO TÊN DỰ ÁN, ĐỊA ĐIỂM HOẶC LOẠI HÌNH...",
+                    filters: (
+                        <>
+                            {/* Status Filter */}
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
                                     <Button
-                                        id="date"
-                                        variant={'outline'}
+                                        variant="outline"
                                         className={cn(
-                                            'w-full justify-start text-left font-bold text-[9px] hover:cursor-pointer uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50',
-                                            !date && 'text-slate-400',
+                                            'w-full sm:w-48 justify-between text-left font-bold text-[9px] uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50 hover:cursor-pointer',
+                                            selectedStatus ? 'text-brand-primary border-brand-primary/30' : 'text-slate-400',
                                         )}
                                     >
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {date?.from ? (
-                                            date.to ? (
-                                                <>
-                                                    {format(date.from, 'dd/MM/yy')} -{' '}
-                                                    {format(date.to, 'dd/MM/yy')}
-                                                </>
-                                            ) : (
-                                                format(date.from, 'dd/MM/yy')
-                                            )
-                                        ) : (
-                                            <span>Lọc theo ngày</span>
-                                        )}
+                                        <span className="truncate">
+                                            {selectedStatus
+                                                ? PROJECT_STATUS_FILTERS.find((item) => item.value === selectedStatus)?.label
+                                                : 'Lọc trạng thái'}
+                                        </span>
+                                        <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
                                     </Button>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                    className="w-auto p-0 rounded-none border border-slate-100 shadow-sm bg-white"
-                                    align="start"
-                                >
-                                    <Calendar
-                                        initialFocus
-                                        mode="range"
-                                        defaultMonth={date?.from}
-                                        selected={date}
-                                        onSelect={setDate}
-                                        numberOfMonths={2}
-                                        className="rounded-none bg-white"
-                                    />
-                                    {date && (
-                                        <div className="p-4 border-t border-slate-50 bg-slate-50/50 flex justify-end">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50"
-                                                onClick={() => setDate(undefined)}
-                                            >
-                                                <X className="mr-2 size-3" /> Xóa lọc
-                                            </Button>
-                                        </div>
-                                    )}
-                                </PopoverContent>
-                            </Popover>
-                        </div>
-
-                        <Button
-                            variant="outline"
-                            className="text-[9px] font-black uppercase tracking-widest px-4 h-8 border-slate-100 rounded-none hover:bg-slate-50 w-full sm:w-auto"
-                        >
-                            <ArrowUpDown className="mr-2 size-4 text-slate-400" /> Sắp xếp
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Table Content */}
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-[400px]">
-                        <Loading variant="section" size="lg" text="Đang tải danh sách dự án..." />
-                    </div>
-                ) : projectsList.length > 0 ? (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse min-w-[600px]">
-                            <thead>
-                                <tr className="bg-slate-50/30">
-                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
-                                        Dự án
-                                    </th>
-                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden md:table-cell">
-                                        Chủ đầu tư
-                                    </th>
-                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 hidden sm:table-cell">
-                                        Thời gian
-                                    </th>
-                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50">
-                                        Trạng thái
-                                    </th>
-                                    <th className="px-4 md:px-5 py-3 md:py-3.5 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-50 text-right">
-                                        Thao tác
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {projectsList.map((project) => (
-                                    <tr
-                                        key={project.id}
-                                        className="hover:bg-slate-50/30 transition-colors group"
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start" className="w-48 rounded-none border border-slate-100 p-1 bg-white">
+                                    <DropdownMenuItem
+                                        className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
+                                        onClick={() => setSelectedStatus('')}
                                     >
-                                        <td className="px-4 md:px-5 py-3 md:py-3.5">
-                                            <div className="flex items-center gap-3 md:gap-6">
-                                                <div className="relative h-10 w-14 md:h-11 md:w-16 rounded-none overflow-hidden shrink-0 border border-slate-100 transition-transform group-hover:scale-105 bg-slate-100">
-                                                    <ProjectImage src={project.image_url} alt={project.name} />
-                                                </div>
-                                                <div className="max-w-[200px] md:max-w-[400px]">
-                                                    <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-1">
-                                                        {project.name}
-                                                    </div>
-                                                    <Badge
-                                                        variant="outline"
-                                                        className="text-[9px] font-bold text-slate-400 border-slate-200 uppercase tracking-widest px-2 py-0 rounded-none"
-                                                    >
-                                                        {project.category || 'Chưa phân loại'}
-                                                    </Badge>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-4 md:px-5 py-3 md:py-3.5 hidden md:table-cell">
-                                            <div className="text-[11px] font-black text-slate-600 uppercase tracking-tight">
-                                                {project.client_name || 'N/A'}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 md:px-5 py-3 md:py-3.5 hidden sm:table-cell">
-                                            <div className="flex flex-col gap-1 text-[11px] font-black text-slate-600 uppercase tracking-tight">
-                                                <div className="flex items-center gap-2">
-                                                    <CalendarIcon
-                                                        size={14}
-                                                        className="text-brand-primary/40"
-                                                    />
-                                                    <span>{formatDate(project.start_date)}</span>
-                                                </div>
-                                                {project.status === 'completed' && (
-                                                    <span className="text-[9px] text-slate-400">
-                                                        Đến: {formatDate(project.end_date)}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="px-4 md:px-5 py-3 md:py-3.5">
-                                            {getStatusBadge(project.status)}
-                                        </td>
-                                        <td className="px-4 md:px-5 py-3 md:py-3.5 text-right">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button
-                                                        variant="ghost"
-                                                        className="h-9 w-9 p-0 hover:bg-white hover:text-brand-primary border border-transparent hover:border-slate-100 rounded-none transition-all"
-                                                    >
-                                                        <MoreHorizontal className="h-5 w-5" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent
-                                                    align="end"
-                                                    className="w-48 p-1 rounded-none border border-slate-100 bg-white"
-                                                >
-                                                    <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
-                                                        Tùy chọn dự án
-                                                    </DropdownMenuLabel>
-                                                    <DropdownMenuSeparator className="bg-slate-50" />
- 
-                                                    {hasPermission(PERMISSIONS.PROJECTS_UPDATE) && (
-                                                        <DropdownMenuItem asChild>
-                                                            <Link
-                                                                href={PORTAL_ROUTES.cms.projects.edit(
-                                                                    project.id,
-                                                                )}
-                                                                className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-slate-50 group"
-                                                            >
-                                                                <Edit2
-                                                                    size={16}
-                                                                    className="text-slate-400 group-hover:text-brand-primary transition-colors"
-                                                                />
-                                                                <span className="text-xs font-bold uppercase tracking-tight text-slate-900">
-                                                                    Sửa thông tin
-                                                                </span>
-                                                            </Link>
-                                                        </DropdownMenuItem>
-                                                    )}
- 
-                                                    {hasPermission(PERMISSIONS.PROJECTS_DELETE) && (
-                                                        <>
-                                                            <DropdownMenuSeparator className="bg-slate-50" />
-                                                            <DropdownMenuItem
-                                                                className="rounded-none px-3 py-2 flex items-center gap-2 cursor-pointer hover:bg-rose-50 group"
-                                                                onClick={() =>
-                                                                    handleDeleteClick(project)
-                                                                }
-                                                            >
-                                                                <Trash2
-                                                                    size={16}
-                                                                    className="text-slate-400 group-hover:text-rose-600 transition-colors"
-                                                                />
-                                                                <span className="text-xs font-bold uppercase tracking-tight text-rose-600">
-                                                                    Xóa dự án
-                                                                </span>
-                                                            </DropdownMenuItem>
-                                                        </>
-                                                    )}
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                ) : (
-                    <div className="p-24 text-center h-[500px] flex items-center justify-center flex-col">
-                        <Layout size={64} className="text-slate-100 mb-6" />
-                        <p className="text-slate-400 font-medium uppercase text-[10px] tracking-[0.2em]">
-                            Không tìm thấy dự án nào phù hợp.
-                        </p>
-                    </div>
-                )}
+                                        Tất cả trạng thái
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator className="bg-slate-50" />
+                                    {PROJECT_STATUS_FILTERS.map((status) => (
+                                        <DropdownMenuItem
+                                            key={status.value}
+                                            className={cn(
+                                                'text-[10px] font-bold uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer',
+                                                selectedStatus === status.value && 'text-brand-primary bg-brand-primary/5',
+                                            )}
+                                            onClick={() => setSelectedStatus(status.value)}
+                                        >
+                                            {status.label}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
 
-                {/* Pagination Footer */}
-                {!isLoading && totalItems > 0 && (
-                    <TablePagination
-                        currentPage={currentPage}
-                        totalItems={totalItems}
-                        pageSize={pageSize}
-                        onPageChange={setCurrentPage}
-                        onPageSizeChange={(size) => {
-                            setPageSize(size);
-                            setCurrentPage(1);
-                        }}
-                        itemLabel="dự án"
-                    />
-                )}
-            </div>
+                            {/* Date Range Picker */}
+                            <div className="grid gap-2 w-full sm:w-75">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            id="date"
+                                            variant={'outline'}
+                                            className={cn(
+                                                'w-full justify-start text-left font-bold text-[9px] hover:cursor-pointer uppercase tracking-widest h-8 border-slate-100 rounded-none bg-slate-50/50',
+                                                !date && 'text-slate-400',
+                                            )}
+                                        >
+                                            <CalendarIcon className="mr-2 h-4 w-4" />
+                                            {date?.from ? (
+                                                date.to ? (
+                                                    <>
+                                                        {format(date.from, 'dd/MM/yy')} -{' '}
+                                                        {format(date.to, 'dd/MM/yy')}
+                                                    </>
+                                                ) : (
+                                                    format(date.from, 'dd/MM/yy')
+                                                )
+                                            ) : (
+                                                <span>Lọc theo ngày</span>
+                                            )}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent
+                                        className="w-auto p-0 rounded-none border border-slate-100 shadow-sm bg-white"
+                                        align="start"
+                                    >
+                                        <Calendar
+                                            initialFocus
+                                            mode="range"
+                                            defaultMonth={date?.from}
+                                            selected={date}
+                                            onSelect={setDate}
+                                            numberOfMonths={2}
+                                            className="rounded-none bg-white"
+                                        />
+                                        {date && (
+                                            <div className="p-4 border-t border-slate-50 bg-slate-50/50 flex justify-end">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50 hover:cursor-pointer"
+                                                    onClick={() => setDate(undefined)}
+                                                >
+                                                    <X className="mr-2 size-3" /> Xóa lọc
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                        </>
+                    )
+                }}
+                paginationProps={{
+                    currentPage: currentPage,
+                    totalItems: totalItems,
+                    pageSize: pageSize,
+                    onPageChange: setCurrentPage,
+                    onPageSizeChange: (size) => {
+                        setPageSize(size);
+                        setCurrentPage(1);
+                    },
+                    itemLabel: "dự án"
+                }}
+            />
 
             {/* Delete Confirmation Dialog */}
             <DeleteConfirmationDialog

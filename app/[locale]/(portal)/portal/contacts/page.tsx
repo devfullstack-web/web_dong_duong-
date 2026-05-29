@@ -2,7 +2,6 @@
 
 import $api from '@/utils/axios';
 import {
-    Search,
     MoreHorizontal,
     Trash2,
     Mail,
@@ -44,9 +43,11 @@ import { vi } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useDebounce } from '@/hooks/use-debounce';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
-import { TablePagination } from '@/components/portal/table-pagination';
 import { API_ROUTES } from '@/constants/routes';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ColumnDef } from '@tanstack/react-table';
+import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
+import * as React from 'react';
 
 interface Contact {
     id: string;
@@ -183,9 +184,9 @@ export default function ContactsManagementPage() {
         },
     });
 
-    const handleUpdateStatus = (id: string, status: string) => {
+    const handleUpdateStatus = React.useCallback((id: string, status: string) => {
         updateStatusMutation.mutate({ id, status });
-    };
+    }, [updateStatusMutation]);
 
     const handleDelete = () => {
         if (!itemToDelete) return;
@@ -217,6 +218,182 @@ export default function ContactsManagementPage() {
         }
     };
 
+    const formatDate = (dateStr: string) => {
+        try {
+            return format(new Date(dateStr), 'HH:mm, dd/MM/yyyy', { locale: vi });
+        } catch {
+            return dateStr;
+        }
+    };
+
+    // Define table columns
+    const columns = React.useMemo<ColumnDef<Contact>[]>(() => [
+        {
+            accessorKey: 'name',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Khách hàng" />
+            ),
+            cell: ({ row }) => {
+                const contact = row.original;
+                return (
+                    <div>
+                        <p className="text-sm font-black text-slate-900 uppercase tracking-tight">
+                            {contact.name}
+                        </p>
+                        {contact.address && (
+                            <p className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[200px]">
+                                {contact.address}
+                            </p>
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: 'subject',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Chủ đề" className="hidden lg:flex" />
+            ),
+            cell: ({ row }) => (
+                <span className="text-[10px] font-black text-[#002d6b] uppercase truncate max-w-50 flex items-center gap-2 hidden lg:flex">
+                    <Building size={12} /> {row.original.subject || 'Không có chủ đề'}
+                </span>
+            ),
+        },
+        {
+            accessorKey: 'email',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Thông tin liên hệ" className="hidden md:flex" />
+            ),
+            cell: ({ row }) => {
+                const contact = row.original;
+                return (
+                    <div className="space-y-1 hidden md:block">
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
+                            <Mail size={12} className="text-slate-300" />
+                            {contact.email}
+                        </div>
+                        {contact.phone && (
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
+                                <Phone size={12} className="text-slate-300" />
+                                {contact.phone}
+                            </div>
+                        )}
+                    </div>
+                );
+            },
+        },
+        {
+            accessorKey: 'created_at',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Ngày gửi" className="hidden sm:flex" />
+            ),
+            cell: ({ row }) => (
+                <span className="text-[10px] font-bold text-slate-500 italic hidden sm:block">
+                    {formatDate(row.original.created_at)}
+                </span>
+            ),
+        },
+        {
+            accessorKey: 'status',
+            header: ({ column }) => (
+                <DataTableColumnHeader column={column} title="Trạng thái" />
+            ),
+            cell: ({ row }) => (
+                <Badge
+                    className={cn(
+                        'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none w-fit',
+                        STATUS_CONFIG[row.original.status as keyof typeof STATUS_CONFIG]?.color,
+                    )}
+                >
+                    {STATUS_CONFIG[row.original.status as keyof typeof STATUS_CONFIG]?.label}
+                </Badge>
+            ),
+        },
+        {
+            id: 'actions',
+            header: () => (
+                <div className="text-right uppercase text-[9px] font-black tracking-widest text-slate-400">
+                    Thao tác
+                </div>
+            ),
+            cell: ({ row }) => {
+                const contact = row.original;
+                return (
+                    <div className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-9 w-9 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none hover:cursor-pointer"
+                                onClick={() => {
+                                    setSelectedContact(contact);
+                                    setIsSheetOpen(true);
+                                }}
+                            >
+                                <Eye size={14} />
+                            </Button>
+
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        className="h-9 w-9 p-0 rounded-none hover:bg-slate-50 hover:cursor-pointer"
+                                    >
+                                        <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    className="rounded-none border-slate-100 shadow-sm w-56 p-2 bg-white"
+                                >
+                                    <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
+                                        Quản trị trạng thái
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator className="bg-slate-50" />
+                                    <DropdownMenuItem
+                                        className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
+                                        onClick={() => handleUpdateStatus(contact.id, 'read')}
+                                    >
+                                        <Clock size={14} className="text-amber-500" /> Đã đọc
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
+                                        onClick={() => handleUpdateStatus(contact.id, 'replied')}
+                                    >
+                                        <CheckCircle2 size={14} className="text-emerald-500" /> Đã trả lời
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
+                                        onClick={() => handleUpdateStatus(contact.id, 'archived')}
+                                    >
+                                        <Building size={14} className="text-slate-500" /> Lưu trữ
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
+                                        onClick={() => handleUpdateStatus(contact.id, 'spam')}
+                                    >
+                                        <AlertCircle size={14} className="text-rose-500" /> Spam
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator className="bg-slate-50" />
+                                    <DropdownMenuItem
+                                        className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 text-rose-500 hover:bg-rose-50 px-3 py-2"
+                                        onClick={() => {
+                                            setItemToDelete(contact);
+                                            setDeleteDialogOpen(true);
+                                        }}
+                                    >
+                                        <Trash2 size={14} /> Xóa vĩnh viễn
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </div>
+                );
+            },
+        },
+    ], [handleUpdateStatus]);
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
@@ -235,25 +412,25 @@ export default function ContactsManagementPage() {
                 </div>
             </div>
 
-            <div className="space-y-4 md:space-y-6 mt-0">
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 py-2 px-3 md:px-4 bg-slate-50 border border-slate-100">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                            <input
-                                placeholder="TÌM THEO TÊN, EMAIL, SĐT, CHỦ ĐỀ..."
-                                className="w-full h-8 pl-12 pr-4 bg-white border border-slate-100 text-[9px] font-black uppercase tracking-widest placeholder:text-slate-300 focus:outline-none focus:ring-1 focus:ring-brand-primary/20"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-
+            <DataTable
+                columns={columns}
+                data={contacts}
+                isLoading={isLoading}
+                loadingText="Đang tải danh sách liên hệ..."
+                emptyText="Không có yêu cầu liên hệ nào."
+                emptyIcon={<MessageSquare size={64} className="text-slate-100 mb-6" />}
+                toolbarProps={{
+                    searchValue: searchTerm,
+                    onSearchChange: setSearchTerm,
+                    searchPlaceholder: "TÌM THEO TÊN, EMAIL, SĐT, CHỦ ĐỀ...",
+                    filters: (
                         <div className="flex items-center gap-2">
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
                                         variant="outline"
                                         className={cn(
-                                            'h-8 justify-start text-left font-black uppercase tracking-widest text-[9px] rounded-none border-slate-100 bg-white w-48 shrink-0',
+                                            'h-8 justify-start text-left font-black uppercase tracking-widest text-[9px] rounded-none border-slate-100 bg-white w-48 shrink-0 hover:cursor-pointer',
                                             !dateRange && 'text-slate-400',
                                         )}
                                     >
@@ -272,7 +449,7 @@ export default function ContactsManagementPage() {
                                         )}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="end">
+                                <PopoverContent className="w-auto p-0 bg-white border border-slate-100 shadow-sm rounded-none" align="end">
                                     <Calendar
                                         initialFocus
                                         mode="range"
@@ -289,7 +466,7 @@ export default function ContactsManagementPage() {
                                     variant="ghost"
                                     size="icon"
                                     onClick={() => setDateRange(undefined)}
-                                    className="h-8 w-8 shrink-0 rounded-none text-rose-500 hover:bg-rose-50"
+                                    className="h-8 w-8 shrink-0 rounded-none text-rose-500 hover:bg-rose-50 hover:cursor-pointer"
                                 >
                                     <X className="h-4 w-4" />
                                 </Button>
@@ -298,247 +475,26 @@ export default function ContactsManagementPage() {
                             <Button
                                 variant="outline"
                                 onClick={handleExportExcel}
-                                className="h-8 px-4 rounded-none  bg-green-600 hover:bg-green-600 hover:text-white hover:opacity-80 text-[9px] font-black uppercase tracking-widest text-white   shrink-0 gap-2 hover:cursor-pointer"
+                                className="h-8 px-4 rounded-none bg-green-600 hover:bg-green-600 hover:text-white hover:opacity-80 text-[9px] font-black uppercase tracking-widest text-white shrink-0 gap-2 hover:cursor-pointer"
                             >
                                 <FileSpreadsheet className="h-4 w-4" />
                                 <span className="hidden sm:inline">Xuất Excel</span>
                             </Button>
                         </div>
-                    </div>
-
-                    <div className="bg-white border border-slate-100 overflow-hidden">
-                        {isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-20 opacity-30">
-                                <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">
-                                    Đang tải dữ liệu...
-                                </p>
-                            </div>
-                        ) : contacts.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                                <MessageSquare size={48} className="mb-4 opacity-10" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">
-                                    Không có yêu cầu liên hệ nào.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="overflow-x-auto">
-                                <table className="w-full min-w-175">
-                                    <thead>
-                                        <tr className="border-b border-slate-50 bg-slate-50/50">
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                                Khách hàng
-                                            </th>
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden lg:table-cell">
-                                                Chủ đề
-                                            </th>
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">
-                                                Thông tin liên hệ
-                                            </th>
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">
-                                                Ngày gửi
-                                            </th>
-                                            <th className="text-left p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                                Trạng thái
-                                            </th>
-                                            <th className="text-right p-3 md:p-6 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                                Thao tác
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                        {contacts.map((contact) => (
-                                            <tr
-                                                key={contact.id}
-                                                className="hover:bg-slate-50/30 transition-colors group"
-                                            >
-                                                <td className="p-3 md:p-6">
-                                                    <p className="text-sm font-black text-slate-900 uppercase tracking-tight">
-                                                        {contact.name}
-                                                    </p>
-                                                    {contact.address && (
-                                                        <p className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[200px]">
-                                                            {contact.address}
-                                                        </p>
-                                                    )}
-                                                </td>
-                                                <td className="p-3 md:p-6 max-w-50 hidden lg:table-cell">
-                                                    <p className="text-[10px] font-black text-[#002d6b] uppercase truncate flex items-center gap-2">
-                                                        <Building size={12} />{' '}
-                                                        {contact.subject || 'Không có chủ đề'}
-                                                    </p>
-                                                </td>
-                                                <td className="p-3 md:p-6 hidden md:table-cell">
-                                                    <div className="space-y-1">
-                                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
-                                                            <Mail
-                                                                size={12}
-                                                                className="text-slate-300"
-                                                            />
-                                                            {contact.email}
-                                                        </div>
-                                                        {contact.phone && (
-                                                            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-600">
-                                                                <Phone
-                                                                    size={12}
-                                                                    className="text-slate-300"
-                                                                />
-                                                                {contact.phone}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="p-3 md:p-6 whitespace-nowrap hidden sm:table-cell">
-                                                    <span className="text-[10px] font-bold text-slate-500 italic">
-                                                        {format(
-                                                            new Date(contact.created_at),
-                                                            'HH:mm, dd/MM/yyyy',
-                                                            { locale: vi },
-                                                        )}
-                                                    </span>
-                                                </td>
-                                                <td className="p-3 md:p-6">
-                                                    <Badge
-                                                        className={cn(
-                                                            'rounded-none text-[9px] uppercase tracking-widest font-black py-1 px-3 h-auto border-none',
-                                                            STATUS_CONFIG[
-                                                                contact.status as keyof typeof STATUS_CONFIG
-                                                            ]?.color,
-                                                        )}
-                                                    >
-                                                        {
-                                                            STATUS_CONFIG[
-                                                                contact.status as keyof typeof STATUS_CONFIG
-                                                            ]?.label
-                                                        }
-                                                    </Badge>
-                                                </td>
-                                                <td className="p-3 md:p-6 text-right">
-                                                    <div className="flex items-center justify-end gap-2">
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="h-9 w-9 bg-slate-50 hover:bg-[#002d6b] hover:text-white text-slate-400 transition-all rounded-none"
-                                                            onClick={() => {
-                                                                setSelectedContact(contact);
-                                                                setIsSheetOpen(true);
-                                                            }}
-                                                        >
-                                                            <Eye size={14} />
-                                                        </Button>
-
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    className="h-9 w-9 p-0 rounded-none hover:bg-slate-50"
-                                                                >
-                                                                    <MoreHorizontal className="h-4 w-4" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent
-                                                                align="end"
-                                                                className="rounded-none border-slate-100 shadow-sm w-56 p-2 bg-white"
-                                                            >
-                                                                <DropdownMenuLabel className="text-[9px] uppercase font-black tracking-widest text-slate-400 px-3 py-2">
-                                                                    Quản trị trạng thái
-                                                                </DropdownMenuLabel>
-                                                                <DropdownMenuSeparator className="bg-slate-50" />
-                                                                <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
-                                                                    onClick={() =>
-                                                                        handleUpdateStatus(
-                                                                            contact.id,
-                                                                            'read',
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <Clock
-                                                                        size={14}
-                                                                        className="text-amber-500"
-                                                                    />{' '}
-                                                                    Đã đọc
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
-                                                                    onClick={() =>
-                                                                        handleUpdateStatus(
-                                                                            contact.id,
-                                                                            'replied',
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <CheckCircle2
-                                                                        size={14}
-                                                                        className="text-emerald-500"
-                                                                    />{' '}
-                                                                    Đã trả lời
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
-                                                                    onClick={() =>
-                                                                        handleUpdateStatus(
-                                                                            contact.id,
-                                                                            'archived',
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <Building
-                                                                        size={14}
-                                                                        className="text-slate-500"
-                                                                    />{' '}
-                                                                    Lưu trữ
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 px-3 py-2"
-                                                                    onClick={() =>
-                                                                        handleUpdateStatus(
-                                                                            contact.id,
-                                                                            'spam',
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    <AlertCircle
-                                                                        size={14}
-                                                                        className="text-rose-500"
-                                                                    />{' '}
-                                                                    Spam
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuSeparator className="bg-slate-50" />
-                                                                <DropdownMenuItem
-                                                                    className="text-[10px] font-black uppercase tracking-tight cursor-pointer gap-3 text-rose-500 hover:bg-rose-50 px-3 py-2"
-                                                                    onClick={() => {
-                                                                        setItemToDelete(contact);
-                                                                        setDeleteDialogOpen(true);
-                                                                    }}
-                                                                >
-                                                                    <Trash2 size={14} /> Xóa vĩnh
-                                                                    viễn
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Pagination */}
-                    <TablePagination
-                        currentPage={currentPage}
-                        pageSize={pageSize}
-                        totalItems={totalItems}
-                        onPageChange={setCurrentPage}
-                        onPageSizeChange={(size) => {
-                            setPageSize(size);
-                            setCurrentPage(1);
-                        }}
-                    />
-            </div>
+                    )
+                }}
+                paginationProps={{
+                    currentPage: currentPage,
+                    totalItems: totalItems,
+                    pageSize: pageSize,
+                    onPageChange: setCurrentPage,
+                    onPageSizeChange: (size) => {
+                        setPageSize(size);
+                        setCurrentPage(1);
+                    },
+                    itemLabel: "liên hệ"
+                }}
+            />
 
             {/* Detail Sheet */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -645,7 +601,7 @@ export default function ContactsManagementPage() {
                                 <div className="flex gap-2">
                                     {selectedContact.status !== 'replied' && (
                                         <Button
-                                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-none h-12 px-6 text-[10px] font-black uppercase tracking-widest transition-all"
+                                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-none h-12 px-6 text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer"
                                             onClick={() => {
                                                 handleUpdateStatus(selectedContact.id, 'replied');
                                                 setIsSheetOpen(false);
@@ -657,7 +613,7 @@ export default function ContactsManagementPage() {
                                     {selectedContact.status !== 'spam' && (
                                         <Button
                                             variant="outline"
-                                            className="border-rose-100 text-rose-500 hover:bg-rose-50 rounded-none h-12 px-6 text-[10px] font-black uppercase tracking-widest"
+                                            className="border-rose-100 text-rose-500 hover:bg-rose-50 rounded-none h-12 px-6 text-[10px] font-black uppercase tracking-widest hover:cursor-pointer"
                                             onClick={() => {
                                                 handleUpdateStatus(selectedContact.id, 'spam');
                                                 setIsSheetOpen(false);
