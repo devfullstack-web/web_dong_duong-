@@ -228,7 +228,7 @@ export default function UsersManagementPage() {
                                                 <td className="px-4 md:px-6 py-3 hidden md:table-cell">
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {user.roles && user.roles.length > 0 ? (
-                                                            user.roles.map((r: Role) => (
+                                                            user.roles.filter((r: Role, idx: number, self: Role[]) => self.findIndex((t: Role) => t.id === r.id) === idx).map((r: Role) => (
                                                                 <Badge
                                                                     key={r.id}
                                                                     className="bg-indigo-50 text-indigo-600 border border-indigo-100 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-none"
