@@ -105,11 +105,10 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                                         <div className="relative h-36 sm:h-40 md:h-44 w-full bg-slate-50/30 flex items-center justify-center p-6 overflow-hidden rounded-none border-b border-slate-100">
                                             <Image
                                                 src={
-                                                    product.image_url ||
-                                                    'https://saigonvalve.vn/uploads/files/2025/03/19/VAN-C-NG-TL.png'
-                                                }
+                                                    product.image_url ||"err"                                                }
                                                 alt={product.name}
                                                 fill
+                                                unoptimized
                                                 sizes="(max-width: 640px) 50vw, 33vw"
                                                 className="object-contain p-3 transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                                             />

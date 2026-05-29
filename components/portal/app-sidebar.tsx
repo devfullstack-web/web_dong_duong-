@@ -21,7 +21,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, Link } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import $api from '@/utils/axios';
 import { toast } from 'sonner';
@@ -31,7 +31,6 @@ import { useAuthStore } from '@/stores/auth-store';
 import { cn } from '@/lib/utils';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { SIDEBAR_ITEMS } from '@/constants/sidebar';
-import Link from 'next/link';
 
 const DynamicIcon = memo(function DynamicIcon({ name, className }: { name: string; className?: string }) {
     const IconComponent = icons[name as keyof typeof icons];
