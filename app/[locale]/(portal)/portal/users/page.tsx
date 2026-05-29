@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Loading from '@/components/shared/Loading';
 import { DeleteConfirmationDialog, ConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -162,11 +163,8 @@ export default function UsersManagementPage() {
 
                     <div className="bg-white border border-slate-100 overflow-hidden">
                         {isLoading ? (
-                            <div className="flex flex-col items-center justify-center py-20 opacity-30">
-                                <div className="h-12 w-12 border-4 border-[#002d6b] border-t-transparent rounded-full animate-spin mb-4" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">
-                                    Đang tải dữ liệu...
-                                </p>
+                            <div className="relative min-h-[220px]">
+                                <Loading variant="section" size="md" text="Đang tải danh sách tài khoản..." />
                             </div>
                         ) : filteredUsers.length > 0 ? (
                             <div className="overflow-x-auto">

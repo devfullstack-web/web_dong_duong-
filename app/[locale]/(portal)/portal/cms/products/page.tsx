@@ -10,7 +10,6 @@ import {
     Trash2,
     CheckCircle2,
     XCircle,
-    Loader2,
     Package,
     Calendar as CalendarIcon,
     X,
@@ -33,6 +32,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import Loading from '@/components/shared/Loading';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { TablePagination } from '@/components/portal/table-pagination';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
@@ -510,7 +510,7 @@ export default function ProductsManagementPage() {
                 {/* Table Content */}
                 {isLoading ? (
                     <div className="flex items-center justify-center h-100">
-                        <Loader2 size={40} className="animate-spin text-brand-primary opacity-20" />
+                        <Loading variant="section" size="lg" text="Đang tải danh sách sản phẩm..." />
                     </div>
                 ) : productsList.length > 0 ? (
                     <div className="overflow-x-auto">

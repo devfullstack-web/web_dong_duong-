@@ -4,7 +4,8 @@ import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import $api from '@/utils/axios';
-import { Save, ArrowLeft, Loader2,ChevronDown } from 'lucide-react';
+import { Save, ArrowLeft, ChevronDown } from 'lucide-react';
+import Loading from '@/components/shared/Loading';
 import { generateSlug } from '@/utils/slug';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -230,7 +231,7 @@ export default function AddProductPage() {
                         className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 h-10 transition-all rounded-none"
                     >
                         {isSubmitting ? (
-                            <Loader2 className="mr-2 size-4 animate-spin" />
+                            <Loading variant="inline" size="sm" className="mr-2" />
                         ) : (
                             <Save className="mr-2 size-4" />
                         )}
