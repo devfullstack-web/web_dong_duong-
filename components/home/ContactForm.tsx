@@ -7,11 +7,12 @@ import {
     Send,
     Loader2,
 } from 'lucide-react';
-import { COMPANY_INFO } from '@/constants/site-info';
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 import { useTranslations } from 'next-intl';
 import { useContactForm } from '@/hooks/use-contact-form';
 
 export default function ContactForm() {
+    const COMPANY_INFO = useSiteInfo();
     const t = useTranslations('ContactForm');
     const tCompany = useTranslations('Company');
     const { formData, isSubmitting, handleChange, handleSubmit } = useContactForm({
@@ -48,7 +49,7 @@ export default function ContactForm() {
                                 {[
                                     { icon: Phone, label: COMPANY_INFO.phone },
                                     { icon: Mail, label: COMPANY_INFO.email },
-                                    { icon: MapPin, label: tCompany('address') },
+                                    { icon: MapPin, label: COMPANY_INFO.address },
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-start gap-4">
                                         <div className="h-10 w-10 bg-white/5 border border-white/10 flex items-center justify-center shrink-0">

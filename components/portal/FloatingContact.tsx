@@ -4,37 +4,39 @@ import React from 'react';
 import { Phone, Facebook, Mail } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { COMPANY_INFO } from '@/constants/site-info';
-
-const CONTACT_LINKS = [
-    {
-        name: 'Hotline',
-        icon: <Phone className="w-5 h-5 fill-[#fbbf24] text-[#fbbf24]" />,
-        href: `tel:${COMPANY_INFO.hotlineRaw}`,
-        color: 'bg-[#002d6b]',
-        pulse: true,
-    },
-    {
-        name: 'Zalo',
-        icon: <span className="text-[10px] font-black text-[#fbbf24] uppercase">Zalo</span>,
-        href: COMPANY_INFO.social.zalo,
-        color: 'bg-[#002d6b]',
-    },
-    {
-        name: 'Facebook',
-        icon: <Facebook className="w-5 h-5 fill-[#fbbf24] text-[#fbbf24]" />,
-        href: COMPANY_INFO.social.facebook,
-        color: 'bg-[#002d6b]',
-    },
-    {
-        name: 'Email',
-        icon: <Mail className="w-5 h-5 text-[#fbbf24]" />,
-        href: `mailto:${COMPANY_INFO.email}`,
-        color: 'bg-[#002d6b]',
-    },
-];
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 
 export default function FloatingContact() {
+    const COMPANY_INFO = useSiteInfo();
+
+    const CONTACT_LINKS = [
+        {
+            name: 'Hotline',
+            icon: <Phone className="w-5 h-5 fill-[#fbbf24] text-[#fbbf24]" />,
+            href: `tel:${COMPANY_INFO.hotlineRaw}`,
+            color: 'bg-[#002d6b]',
+            pulse: true,
+        },
+        {
+            name: 'Zalo',
+            icon: <span className="text-[10px] font-black text-[#fbbf24] uppercase">Zalo</span>,
+            href: COMPANY_INFO.social.zalo,
+            color: 'bg-[#002d6b]',
+        },
+        {
+            name: 'Facebook',
+            icon: <Facebook className="w-5 h-5 fill-[#fbbf24] text-[#fbbf24]" />,
+            href: COMPANY_INFO.social.facebook,
+            color: 'bg-[#002d6b]',
+        },
+        {
+            name: 'Email',
+            icon: <Mail className="w-5 h-5 text-[#fbbf24]" />,
+            href: `mailto:${COMPANY_INFO.email}`,
+            color: 'bg-[#002d6b]',
+        },
+    ];
+
     return (
         <div className="fixed bottom-10 right-4 z-50 flex flex-col gap-3 items-center">
             {CONTACT_LINKS.map((contact, index) => (

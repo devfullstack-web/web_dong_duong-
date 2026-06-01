@@ -5,9 +5,10 @@ import { useTranslations } from 'next-intl';
 import { Phone, Mail, Clock, Facebook, Linkedin, Youtube } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
-import { COMPANY_INFO } from '@/constants/site-info';
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 
 export default function TopBar() {
+    const COMPANY_INFO = useSiteInfo();
     const t = useTranslations('Company');
     const [isScrolled, setIsScrolled] = React.useState(false);
     const socialLinks = [

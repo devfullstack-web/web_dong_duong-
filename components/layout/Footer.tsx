@@ -13,10 +13,11 @@ import {
     ArrowRight,
     ShieldCheck,
 } from 'lucide-react';
-import { COMPANY_INFO } from '@/constants/site-info';
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 import { PORTAL_ROUTES } from '@/constants/routes';
 
 export default function Footer() {
+    const COMPANY_INFO = useSiteInfo();
     const t = useTranslations('Footer');
     const tCompany = useTranslations('Company');
     const socialLinks = [
@@ -110,7 +111,7 @@ export default function Footer() {
                                     size={16}
                                 />
                                 <span className="text-[11px] text-blue-100/80 font-bold uppercase tracking-wider leading-relaxed">
-                                    {tCompany('address')}
+                                    {COMPANY_INFO.address}
                                 </span>
                             </li>
                             <li className="flex gap-3 items-center group">

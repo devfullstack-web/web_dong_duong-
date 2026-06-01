@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/navigation-menu';
 
 import { SITE_ROUTES } from '@/constants/routes';
-import { COMPANY_INFO } from '@/constants/site-info';
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 
 type Locale = 'vi' | 'en';
 
@@ -32,6 +32,7 @@ interface NavLink {
 }
 
 export default function Header() {
+    const COMPANY_INFO = useSiteInfo();
     const t = useTranslations('Header');
     const ts = useTranslations('Solutions');
     const intlLocale = useLocale();
