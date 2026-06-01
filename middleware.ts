@@ -16,7 +16,6 @@ const PUBLIC_PATHS = [
 ];
 
 const WRITE_METHODS = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
-const CHAT_GUEST_METHODS = new Set(['GET', 'POST', 'PATCH']);
 
 const isLocalHostname = (hostname: string) =>
     hostname === 'localhost' || hostname === '127.0.0.1';
@@ -123,10 +122,6 @@ async function handleApi(request: NextRequest): Promise<NextResponse> {
     if (PUBLIC_PATHS.some((p) => matchesPath(pathname, p))) return NextResponse.next();
 
     if (pathname === `/api${API_ROUTES.CONTACTS}` && method === 'POST') {
-        return NextResponse.next();
-    }
-
-    if (pathname.startsWith('/api/chat/') && CHAT_GUEST_METHODS.has(method)) {
         return NextResponse.next();
     }
 

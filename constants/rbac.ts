@@ -1,4 +1,3 @@
-
 export const RBAC_ROLES = {
     ADMIN: 'ADMIN',
     EDITOR: 'EDITOR',
@@ -31,7 +30,6 @@ export const MODULE_CODES = {
     RECRUITMENT: 'RECRUITMENT',
     APPLICATIONS: 'APPLICATIONS',
     COMMENTS: 'COMMENTS',
-    CHAT: 'CHAT',
     MEDIA: 'MEDIA',
     CONTACTS: 'CONTACTS',
     USERS: 'USERS',

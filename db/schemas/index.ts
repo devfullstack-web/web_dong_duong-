@@ -15,7 +15,5 @@ export * from './modules';
 export * from './permissions';
 export * from './user-roles';
 export * from './product-comments';
-export * from './chat-sessions';
-export * from './chat-messages';
 export * from './notifications';
 export * from './audit-logs';

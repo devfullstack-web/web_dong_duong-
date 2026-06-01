@@ -62,7 +62,6 @@ export const PORTAL_ROUTES = {
         comments: {
             list: '/portal/cms/comments',
         },
-        chat: '/portal/cms/chat',
         media: '/portal/cms/media',
     },
 
@@ -111,10 +110,6 @@ export const API_ROUTES = {
     COMMENTS: '/portal/comments',
     NOTIFICATIONS: '/portal/notifications',
     UPLOAD: '/upload',
-    CHAT: {
-        SESSIONS: '/chat/sessions',
-        MESSAGES: '/chat/messages',
-    },
     AUDIT_LOGS: '/audit-logs',
     AUDIT_LOGS_CLEANUP: '/audit-logs/cleanup',
 } as const;

@@ -42,8 +42,6 @@ export function RouteGuard({ children }: RouteGuardProps) {
             { path: PORTAL_ROUTES.cms.jobs.list, permission: PERMISSIONS.RECRUITMENT_VIEW },
             { path: PORTAL_ROUTES.cms.applications.list, permission: PERMISSIONS.APPLICATIONS_VIEW },
             { path: PORTAL_ROUTES.cms.comments.list, permission: PERMISSIONS.COMMENTS_VIEW },
-            { path: PORTAL_ROUTES.cms.chat, permission: PERMISSIONS.CHAT_VIEW },
-            { path: PORTAL_ROUTES.cms.chat, permission: PERMISSIONS.CHAT_MANAGEMENT_VIEW },
             { path: PORTAL_ROUTES.cms.media, permission: PERMISSIONS.MEDIA_VIEW },
             { path: PORTAL_ROUTES.contacts, permission: PERMISSIONS.CONTACTS_VIEW },
             { path: PORTAL_ROUTES.users.list, permission: PERMISSIONS.USERS_VIEW },
