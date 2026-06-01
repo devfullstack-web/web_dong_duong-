@@ -8,7 +8,9 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RichTextEditor } from '@/components/portal/rich-text-editor';
+import { LocalizedInput } from '@/components/portal/LocalizedInput';
+import { LocalizedRichTextEditor } from '@/components/portal/LocalizedRichTextEditor';
+import { createEmptyLocalizedText, type LocalizedText } from '@/types/i18n';
 import {
     Select,
     SelectContent,
@@ -42,9 +44,9 @@ export default function AddProjectPage() {
     const [categories, setCategories] = React.useState<Category[]>([]);
 
     const [formData, setFormData] = React.useState({
-        name: '',
+        name_localized: createEmptyLocalizedText(),
         slug: '',
-        description: '',
+        description_localized: createEmptyLocalizedText(),
         client_name: '',
         start_date: undefined as Date | undefined,
         end_date: undefined as Date | undefined,
@@ -68,18 +70,23 @@ export default function AddProjectPage() {
         fetchCategories();
     }, []);
 
-    const handleNameChange = (name: string) => {
-        const slug = generateSlug(name);
+    const handleNameLocalizedChange = (nameLoc: LocalizedText) => {
+        const viName = nameLoc.vi || '';
+        const slug = generateSlug(viName);
 
         setFormData((prev) => ({
             ...prev,
-            name,
-            slug: prev.slug === '' || prev.slug === generateSlug(prev.name) ? slug : prev.slug,
+            name_localized: nameLoc,
+            slug: prev.slug === '' || prev.slug === generateSlug(prev.name_localized.vi) ? slug : prev.slug,
         }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!formData.name_localized.vi) {
+            toast.error('Vui lòng nhập tên dự án (Tiếng Việt)');
+            return;
+        }
         if (!formData.category_id) {
             toast.error('Vui lòng chọn danh mục');
             return;
@@ -89,6 +96,8 @@ export default function AddProjectPage() {
         try {
             const submissionData = {
                 ...formData,
+                name: formData.name_localized.vi,
+                description: formData.description_localized.vi,
                 start_date: formData.start_date?.toISOString() || null,
                 end_date: formData.end_date?.toISOString() || null,
                 image_url: formData.image,
@@ -100,9 +109,10 @@ export default function AddProjectPage() {
             queryClient.invalidateQueries({ queryKey: ['projects'] });
             toast.success('Đã tạo dự án thành công');
             router.push(PORTAL_ROUTES.cms.projects.list);
-        } catch (error: unknown) {
+        } catch (error) {
             console.error(error);
-            const message = error.response?.data?.error || error.message || 'Lỗi khi tạo dự án';
+            const err = error as { response?: { data?: { error?: string } }; message?: string };
+            const message = err.response?.data?.error || err.message || 'Lỗi khi tạo dự án';
             toast.error(message);
         } finally {
             setIsSubmitting(false);
@@ -157,22 +167,14 @@ export default function AddProjectPage() {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-20">
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
-                        <div className="space-y-3">
-                            <Label
-                                htmlFor="name"
-                                className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                            >
-                                Tên dự án *
-                            </Label>
-                            <Input
-                                id="name"
-                                placeholder="Nhập tên dự án..."
-                                className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                value={formData.name}
-                                onChange={(e) => handleNameChange(e.target.value)}
-                                required
-                            />
-                        </div>
+                        <LocalizedInput
+                            id="name"
+                            label="Tên dự án"
+                            value={formData.name_localized}
+                            onChange={handleNameLocalizedChange}
+                            required
+                            placeholder={{ vi: 'Nhập tên dự án...', en: 'Enter project name...' }}
+                        />
 
                         <div className="space-y-3">
                             <Label
@@ -197,21 +199,14 @@ export default function AddProjectPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <Label
-                                htmlFor="description"
-                                className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                            >
-                                Mô tả dự án *
-                            </Label>
-                            <RichTextEditor
-                                content={formData.description}
-                                onChange={(content: string) =>
-                                    setFormData({ ...formData, description: content })
-                                }
-                                placeholder="Mô tả chi tiết về dự án, phạm vi công việc..."
-                            />
-                        </div>
+                        <LocalizedRichTextEditor
+                            id="description"
+                            label="Mô tả dự án"
+                            value={formData.description_localized}
+                            onChange={(val) => setFormData({ ...formData, description_localized: val })}
+                            required
+                            placeholder="Mô tả chi tiết về dự án, phạm vi công việc..."
+                        />
 
                         <div className="space-y-3">
                             <Label

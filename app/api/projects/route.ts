@@ -77,7 +77,10 @@ export const GET = withHybridAuth(
                 .select({
                     id: projects.id,
                     name: projects.name,
+                    name_localized: projects.name_localized,
                     slug: projects.slug,
+                    description: projects.description,
+                    description_localized: projects.description_localized,
                     client_name: projects.client_name,
                     start_date: projects.start_date,
                     end_date: projects.end_date,
@@ -120,8 +123,10 @@ export const POST = withAuth(
             const body = await request.json();
             const {
                 name,
+                name_localized,
                 slug,
                 description,
+                description_localized,
                 client_name,
                 start_date,
                 end_date,
@@ -139,8 +144,10 @@ export const POST = withAuth(
                 .insert(projects)
                 .values({
                     name,
+                    name_localized: name_localized || { vi: name, en: '' },
                     slug,
                     description: sanitizeRichText(description),
+                    description_localized: description_localized || { vi: sanitizeRichText(description), en: '' },
                     client_name: client_name || null,
                     start_date: start_date ? new Date(start_date) : null,
                     end_date: end_date ? new Date(end_date) : null,

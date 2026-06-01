@@ -425,6 +425,41 @@
       "hotline": "CALL HOTLINE"
     }
   },
+  "ProjectDetail": {
+    "breadcrumb": {
+      "home": "Home",
+      "projects": "Projects"
+    },
+    "back": "Back",
+    "info": {
+      "client": "Client",
+      "location": "Location",
+      "time": "Duration",
+      "category": "Project Type",
+      "status": "Status",
+      "title": "Project Info"
+    },
+    "status": {
+      "completed": "Completed",
+      "ongoing": "Ongoing"
+    },
+    "unknown": "Updating",
+    "share": "Share",
+    "shareLabel": "Share:",
+    "print": "Print",
+    "save": "Save Project",
+    "contactAdvice": "Contact Advice",
+    "cta": {
+      "title": "Have a similar project?",
+      "desc": "Contact us now for the most suitable solution for your project.",
+      "btnText": "Contact Now"
+    },
+    "related": {
+      "title": "RELATED PROJECTS",
+      "viewAll": "ALL PROJECTS",
+      "detail": "View Detail"
+    }
+  },
   "Careers": {
     "hero": {
       "badge": "CAREER OPPORTUNITIES",

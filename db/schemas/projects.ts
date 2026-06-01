@@ -2,14 +2,17 @@ import { index, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-o
 import { projectStatusEnum } from './enums';
 import { categories } from './categories';
 import { PROJECT_STATUS } from '@/constants/content';
+import type { LocalizedText } from '@/types/i18n';
 
 export const projects = pgTable(
     'projects',
     {
         id: uuid('id').primaryKey().defaultRandom(),
         name: varchar('name', { length: 255 }).notNull(),
+        name_localized: jsonb('name_localized').$type<LocalizedText>(),
         slug: varchar('slug', { length: 255 }).notNull().unique(),
         description: text('description').notNull(),
+        description_localized: jsonb('description_localized').$type<LocalizedText>(),
         client_name: varchar('client_name', { length: 255 }),
         start_date: timestamp('start_date'),
         end_date: timestamp('end_date'),

@@ -7,7 +7,9 @@ import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RichTextEditor } from '@/components/portal/rich-text-editor';
+import { LocalizedInput } from '@/components/portal/LocalizedInput';
+import { LocalizedRichTextEditor } from '@/components/portal/LocalizedRichTextEditor';
+import { createEmptyLocalizedText, toLocalizedText, type LocalizedText } from '@/types/i18n';
 import {
     Select,
     SelectContent,
@@ -33,8 +35,10 @@ import { CATEGORY_TYPE, PROJECT_STATUS, type ProjectStatus } from '@/constants/c
 interface Project {
     id: string;
     name: string;
+    name_localized: LocalizedText | null;
     slug: string;
     description: string;
+    description_localized: LocalizedText | null;
     client_name: string | null;
     start_date: string | null;
     end_date: string | null;
@@ -56,9 +60,9 @@ export default function EditProjectPage() {
     const [categories, setCategories] = React.useState<Record<string, unknown>[]>([]);
 
     const [formData, setFormData] = React.useState({
-        name: '',
+        name_localized: createEmptyLocalizedText(),
         slug: '',
-        description: '',
+        description_localized: createEmptyLocalizedText(),
         client_name: '',
         start_date: undefined as Date | undefined,
         end_date: undefined as Date | undefined,
@@ -77,9 +81,9 @@ export default function EditProjectPage() {
                     const p = projectRes.data.data;
                     setProject(p);
                     setFormData({
-                        name: p.name || '',
+                        name_localized: toLocalizedText(p.name_localized || p.name),
                         slug: p.slug || '',
-                        description: p.description || '',
+                        description_localized: toLocalizedText(p.description_localized || p.description),
                         client_name: p.client_name || '',
                         start_date: p.start_date ? new Date(p.start_date) : undefined,
                         end_date: p.end_date ? new Date(p.end_date) : undefined,
@@ -105,12 +109,29 @@ export default function EditProjectPage() {
         fetchData();
     }, [projectId]);
 
+    const handleNameLocalizedChange = (nameLoc: LocalizedText) => {
+        const viName = nameLoc.vi || '';
+        const slug = generateSlug(viName);
+
+        setFormData((prev) => ({
+            ...prev,
+            name_localized: nameLoc,
+            slug: prev.slug === '' || prev.slug === generateSlug(prev.name_localized.vi) ? slug : prev.slug,
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!formData.name_localized.vi) {
+            toast.error('Vui lòng nhập tên dự án (Tiếng Việt)');
+            return;
+        }
         setSaving(true);
         try {
             const submissionData = {
                 ...formData,
+                name: formData.name_localized.vi,
+                description: formData.description_localized.vi,
                 start_date: formData.start_date?.toISOString() || null,
                 end_date: formData.end_date?.toISOString() || null,
                 image_url: formData.image,
@@ -201,34 +222,14 @@ export default function EditProjectPage() {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-20">
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
-                        <div className="space-y-3">
-                            <Label
-                                htmlFor="name"
-                                className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                            >
-                                Tên dự án *
-                            </Label>
-                            <Input
-                                id="name"
-                                className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                value={formData.name}
-                                onChange={(e) => {
-                                    const name = e.target.value;
-                                    const slug = generateSlug(name);
-
-                                    setFormData((prev) => ({
-                                        ...prev,
-                                        name,
-                                        slug:
-                                            prev.slug === '' ||
-                                            prev.slug === generateSlug(prev.name)
-                                                ? slug
-                                                : prev.slug,
-                                    }));
-                                }}
-                                required
-                            />
-                        </div>
+                        <LocalizedInput
+                            id="name"
+                            label="Tên dự án"
+                            value={formData.name_localized}
+                            onChange={handleNameLocalizedChange}
+                            required
+                            placeholder={{ vi: 'Nhập tên dự án...', en: 'Enter project name...' }}
+                        />
 
                         <div className="space-y-3">
                             <Label
@@ -253,21 +254,14 @@ export default function EditProjectPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <Label
-                                htmlFor="description"
-                                className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                            >
-                                Mô tả dự án *
-                            </Label>
-                            <RichTextEditor
-                                content={formData.description}
-                                onChange={(content: string) =>
-                                    setFormData({ ...formData, description: content })
-                                }
-                                placeholder="Mô tả chi tiết về dự án, phạm vi công việc..."
-                            />
-                        </div>
+                        <LocalizedRichTextEditor
+                            id="description"
+                            label="Mô tả dự án"
+                            value={formData.description_localized}
+                            onChange={(val) => setFormData({ ...formData, description_localized: val })}
+                            required
+                            placeholder="Mô tả chi tiết về dự án, phạm vi công việc..."
+                        />
 
                         <div className="space-y-3">
                             <Label
@@ -415,7 +409,7 @@ export default function EditProjectPage() {
                                             value={cat.id}
                                             className="text-sm font-bold rounded-none"
                                         >
-                                            {cat.name}
+                                            {cat.name as string}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>

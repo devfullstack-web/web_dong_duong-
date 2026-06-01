@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { MapPin, FolderOpen } from 'lucide-react';
@@ -12,11 +12,13 @@ import { SiteEmptyState } from '@/components/site/SiteEmptyState';
 import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
 import { SitePagination } from '@/components/site/SitePagination';
 import { getYear } from '@/utils/client-format';
+import { getLocalizedValue, type Locale, type LocalizedText } from '@/types/i18n';
 import type { ProjectStatus } from '@/constants/content';
 
 interface Project {
     id: string;
     name: string;
+    name_localized?: LocalizedText | null;
     slug: string;
     category: string;
     image_url: string | null;
@@ -29,6 +31,7 @@ const ITEMS_PER_PAGE = 12;
 
 export default function ProjectsPage() {
     const t = useTranslations('Projects');
+    const locale = useLocale();
     const {
         items: projects,
         isLoading,
@@ -75,7 +78,7 @@ export default function ProjectsPage() {
                                                     project.image_url ||
                                                     'https://saigonvalve.vn/uploads/files/2025/07/16/thumbs/z6809258125215_0bfd24b1d2a12247ce2fe99f8bc81598-306x234-5.jpg'
                                                 }
-                                                alt={project.name}
+                                                alt={getLocalizedValue(project.name_localized, locale as Locale) || project.name}
                                                 fill
                                                 unoptimized
                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -91,7 +94,7 @@ export default function ProjectsPage() {
                                             </div>
                                             <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
                                                 <LocalizedLink href={`/du-an/${project.slug}`}>
-                                                    {project.name}
+                                                    {getLocalizedValue(project.name_localized, locale as Locale) || project.name}
                                                 </LocalizedLink>
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase">

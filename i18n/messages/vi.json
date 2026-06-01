@@ -426,6 +426,41 @@
             "hotline": "GỌI HOTLINE"
         }
     },
+    "ProjectDetail": {
+        "breadcrumb": {
+            "home": "Trang chủ",
+            "projects": "Dự án"
+        },
+        "back": "Quay lại",
+        "info": {
+            "client": "Khách hàng",
+            "location": "Vị trí",
+            "time": "Thời gian",
+            "category": "Loại dự án",
+            "status": "Trạng thái",
+            "title": "Thông tin dự án"
+        },
+        "status": {
+            "completed": "Đã hoàn thành",
+            "ongoing": "Đang triển khai"
+        },
+        "unknown": "Đang cập nhật",
+        "share": "Chia sẻ",
+        "shareLabel": "Chia sẻ:",
+        "print": "In",
+        "save": "Lưu dự án",
+        "contactAdvice": "Liên hệ tư vấn",
+        "cta": {
+            "title": "Bạn có dự án tương tự?",
+            "desc": "Liên hệ ngay để được tư vấn giải pháp phù hợp nhất cho dự án của bạn.",
+            "btnText": "Liên hệ ngay"
+        },
+        "related": {
+            "title": "DỰ ÁN LIÊN QUAN",
+            "viewAll": "TẤT CẢ DỰ ÁN",
+            "detail": "Xem chi tiết"
+        }
+    },
     "Careers": {
         "hero": {
             "badge": "CƠ HỘI NGHỀ NGHIỆP",

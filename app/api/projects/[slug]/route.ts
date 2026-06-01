@@ -24,8 +24,10 @@ export async function GET(
     const query = db.select({
       id: projects.id,
       name: projects.name,
+      name_localized: projects.name_localized,
       slug: projects.slug,
       description: projects.description,
+      description_localized: projects.description_localized,
       client_name: projects.client_name,
       start_date: projects.start_date,
       end_date: projects.end_date,
@@ -73,8 +75,10 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const updates: Record<string, unknown> = {};
     const allowedFields = [
       'name',
+      'name_localized',
       'slug',
       'description',
+      'description_localized',
       'client_name',
       'start_date',
       'end_date',
@@ -88,6 +92,15 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     }
     updates.updated_at = new Date();
     if (updates.description !== undefined) updates.description = sanitizeRichText(updates.description);
+    if (updates.description_localized !== undefined) {
+      const descLoc = updates.description_localized as Record<string, string> | null;
+      if (descLoc) {
+        updates.description_localized = {
+          vi: sanitizeRichText(descLoc.vi || ''),
+          en: sanitizeRichText(descLoc.en || ''),
+        };
+      }
+    }
     if (updates.start_date) updates.start_date = new Date(updates.start_date);
     if (updates.end_date) updates.end_date = new Date(updates.end_date);
     if (updates.status !== undefined && !isConstantValue(PROJECT_STATUS_VALUES, updates.status)) {

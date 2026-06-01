@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
     ArrowLeft,
     ArrowRight,
@@ -27,17 +28,24 @@ import {
 } from '@/components/ui/breadcrumb';
 import { sanitizeRichText } from '@/utils/sanitize';
 import { PROJECT_STATUS } from '@/constants/content';
+import { getLocalizedValue, type Locale, type LocalizedText } from '@/types/i18n';
 
 interface ProjectDetailClientProps {
     project: Record<string, unknown>;
     relatedProjects: Record<string, unknown>[];
+    locale: string;
 }
 
 export default function ProjectDetailClient({
     project,
     relatedProjects,
+    locale,
 }: ProjectDetailClientProps) {
     const router = useRouter();
+    const t = useTranslations('ProjectDetail');
+
+    const activeName = getLocalizedValue(project.name_localized as LocalizedText, locale as Locale) || (project.name as string);
+    const activeDescription = getLocalizedValue(project.description_localized as LocalizedText, locale as Locale) || (project.description as string);
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
@@ -49,19 +57,19 @@ export default function ProjectDetailClient({
                             <BreadcrumbList>
                                 <BreadcrumbItem>
                                     <BreadcrumbLink asChild>
-                                        <Link href="/">Trang chủ</Link>
+                                        <Link href="/">{t('breadcrumb.home')}</Link>
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
                                     <BreadcrumbLink asChild>
-                                        <Link href="/du-an">Dự án</Link>
+                                        <Link href="/du-an">{t('breadcrumb.projects')}</Link>
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
                                     <BreadcrumbPage className="max-w-[200px] truncate">
-                                        {project.name}
+                                        {activeName}
                                     </BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
@@ -71,7 +79,7 @@ export default function ProjectDetailClient({
                             onClick={() => router.back()}
                             className="hidden md:flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-brand-primary transition-colors"
                         >
-                            <ArrowLeft size={14} /> Quay lại
+                            <ArrowLeft size={14} /> {t('back')}
                         </button>
                     </div>
                 </div>
@@ -86,7 +94,7 @@ export default function ProjectDetailClient({
                         </div>
 
                         <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                            {project.name}
+                            {activeName}
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-y-4 gap-6 pt-4 border-t border-slate-100 text-slate-500">
@@ -96,10 +104,10 @@ export default function ProjectDetailClient({
                                 </div>
                                 <div>
                                     <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        Khách hàng
+                                        {t('info.client')}
                                     </div>
                                     <div className="text-xs font-bold text-slate-900">
-                                        {project.client_name || 'Đang cập nhật'}
+                                        {project.client_name || t('unknown')}
                                     </div>
                                 </div>
                             </div>
@@ -168,7 +176,7 @@ export default function ProjectDetailClient({
                                     <div className="relative aspect-video w-full bg-slate-100 overflow-hidden">
                                         <Image
                                             src={project.image_url}
-                                            alt={project.name}
+                                            alt={activeName}
                                             fill
                                             unoptimized
                                             className="object-cover"
@@ -189,8 +197,8 @@ export default function ProjectDetailClient({
                                     className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-primary hover:prose-a:text-brand-secondary prose-img:rounded-none"
                                     dangerouslySetInnerHTML={{
                                         __html: sanitizeRichText(
-                                            project.description ||
-                                                '<p>Nội dung đang được cập nhật...</p>',
+                                            activeDescription ||
+                                                `<p>${t('unknown')}...</p>`,
                                         ),
                                     }}
                                 />
@@ -199,7 +207,7 @@ export default function ProjectDetailClient({
                                 <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8">
                                     <div className="flex gap-4 items-center">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Chia sẻ:
+                                            {t('shareLabel')}
                                         </span>
                                         <div className="flex gap-2">
                                             {[Facebook, Linkedin, Twitter].map((Icon, i) => (
@@ -215,13 +223,13 @@ export default function ProjectDetailClient({
 
                                     <div className="flex gap-3">
                                         <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-600 bg-slate-50 px-5 py-2.5 hover:bg-slate-200 transition-all rounded-none border border-slate-100">
-                                            <Bookmark size={14} /> Lưu dự án
+                                            <Bookmark size={14} /> {t('save')}
                                         </button>
                                         <Link
                                             href="/lien-he"
                                             className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-brand-primary px-5 py-2.5 hover:bg-brand-secondary transition-all rounded-none"
                                         >
-                                            Liên hệ tư vấn <MoveRight size={14} />
+                                            {t('contactAdvice')} <MoveRight size={14} />
                                         </Link>
                                     </div>
                                 </div>
@@ -233,14 +241,13 @@ export default function ProjectDetailClient({
                             {/* Project Info Card */}
                             <div className="bg-slate-50 border border-slate-100 p-6 space-y-6">
                                 <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-3">
-                                    <span className="w-8 h-[2px] bg-brand-primary"></span> Thông tin
-                                    dự án
+                                    <span className="w-8 h-[2px] bg-brand-primary"></span> {t('info.title')}
                                 </h3>
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Loại dự án
+                                            {t('info.category')}
                                         </span>
                                         <span className="text-xs font-bold text-slate-900">
                                             {project.category || 'Hạ tầng nước'}
@@ -248,15 +255,15 @@ export default function ProjectDetailClient({
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Khách hàng
+                                            {t('info.client')}
                                         </span>
                                         <span className="text-xs font-bold text-slate-900">
-                                            {project.client_name || 'Đang cập nhật'}
+                                            {project.client_name || t('unknown')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Vị trí
+                                            {t('info.location')}
                                         </span>
                                         <span className="text-xs font-bold text-slate-900">
                                             {project.location || 'Việt Nam'}
@@ -264,19 +271,19 @@ export default function ProjectDetailClient({
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Trạng thái
+                                            {t('info.status')}
                                         </span>
                                         <span
                                             className={`text-xs font-bold ${project.status === PROJECT_STATUS.COMPLETED ? 'text-green-600' : 'text-amber-600'}`}
                                         >
                                             {project.status === PROJECT_STATUS.COMPLETED
-                                                ? 'Đã hoàn thành'
-                                                : 'Đang triển khai'}
+                                                ? t('status.completed')
+                                                : t('status.ongoing')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3">
                                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            Thời gian
+                                            {t('info.time')}
                                         </span>
                                         <span className="text-xs font-bold text-slate-900">
                                             {project.start_date
@@ -293,17 +300,16 @@ export default function ProjectDetailClient({
                             {/* CTA */}
                             <div className="bg-brand-primary p-6 text-white space-y-4">
                                 <h3 className="text-sm font-black uppercase tracking-tight">
-                                    Bạn có dự án tương tự?
+                                    {t('cta.title')}
                                 </h3>
                                 <p className="text-xs text-white/80 leading-relaxed">
-                                    Liên hệ ngay để được tư vấn giải pháp phù hợp nhất cho dự án của
-                                    bạn.
+                                    {t('cta.desc')}
                                 </p>
                                 <Link
                                     href="/lien-he"
                                     className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-white text-brand-primary px-4 py-2 hover:bg-slate-100 transition-all"
                                 >
-                                    Liên hệ ngay <ArrowRight size={12} />
+                                    {t('cta.btnText')} <ArrowRight size={12} />
                                 </Link>
                             </div>
                         </aside>
@@ -318,7 +324,7 @@ export default function ProjectDetailClient({
                         <div className="mb-12 flex items-center justify-between">
                             <div>
                                 <h2 className="text-2xl font-black uppercase tracking-tight text-slate-900">
-                                    DỰ ÁN LIÊN QUAN
+                                    {t('related.title')}
                                 </h2>
                                 <div className="h-1 w-20 bg-brand-primary mt-2"></div>
                             </div>
@@ -326,48 +332,51 @@ export default function ProjectDetailClient({
                                 href="/du-an"
                                 className="text-[10px] font-black uppercase tracking-widest text-brand-primary border-b-2 border-brand-primary/20 pb-1 hover:border-brand-primary transition-all"
                             >
-                                TẤT CẢ DỰ ÁN
+                                {t('related.viewAll')}
                             </Link>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {relatedProjects.map((proj) => (
-                                <Link
-                                    key={proj.id}
-                                    href={`/du-an/${proj.slug}`}
-                                    className="group bg-white overflow-hidden hover:translate-y-[-4px] transition-all duration-500 border border-slate-100 flex flex-col rounded-none"
-                                >
-                                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 rounded-none">
-                                        {proj.image_url ? (
-                                            <Image
-                                                src={proj.image_url}
-                                                alt={proj.name}
-                                                fill
-                                                unoptimized
-                                                className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center justify-center h-full text-slate-300">
-                                                <Building size={32} />
+                            {relatedProjects.map((proj) => {
+                                const projName = getLocalizedValue(proj.name_localized as LocalizedText, locale as Locale) || (proj.name as string);
+                                return (
+                                    <Link
+                                        key={proj.id}
+                                        href={`/du-an/${proj.slug}`}
+                                        className="group bg-white overflow-hidden hover:translate-y-[-4px] transition-all duration-500 border border-slate-100 flex flex-col rounded-none"
+                                    >
+                                        <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 rounded-none">
+                                            {proj.image_url ? (
+                                                <Image
+                                                    src={proj.image_url}
+                                                    alt={projName}
+                                                    fill
+                                                    unoptimized
+                                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                                />
+                                            ) : (
+                                                <div className="flex items-center justify-center h-full text-slate-300">
+                                                    <Building size={32} />
+                                                </div>
+                                            )}
+                                            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2 py-1 text-[8px] font-black uppercase tracking-widest text-brand-primary rounded-none">
+                                                {proj.category || 'DỰ ÁN'}
                                             </div>
-                                        )}
-                                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2 py-1 text-[8px] font-black uppercase tracking-widest text-brand-primary rounded-none">
-                                            {proj.category || 'DỰ ÁN'}
                                         </div>
-                                    </div>
-                                    <div className="p-6 flex flex-col grow">
-                                        <div className="text-[9px] font-bold text-slate-400 mb-2 flex items-center gap-2">
-                                            <MapPin size={10} /> {proj.location || 'Việt Nam'}
+                                        <div className="p-6 flex flex-col grow">
+                                            <div className="text-[9px] font-bold text-slate-400 mb-2 flex items-center gap-2">
+                                                <MapPin size={10} /> {proj.location || 'Việt Nam'}
+                                            </div>
+                                            <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-tight mb-4 grow tracking-tight">
+                                                {projName}
+                                            </h4>
+                                            <div className="flex items-center text-[9px] font-black uppercase tracking-widest text-brand-primary gap-1 group-hover:gap-2 transition-all">
+                                                {t('related.detail')} <MoveRight size={12} />
+                                            </div>
                                         </div>
-                                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-tight mb-4 grow tracking-tight">
-                                            {proj.name}
-                                        </h4>
-                                        <div className="flex items-center text-[9px] font-black uppercase tracking-widest text-brand-primary gap-1 group-hover:gap-2 transition-all">
-                                            Xem chi tiết <MoveRight size={12} />
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
+                                    </Link>
+                                );
+                            })}
                         </div>
                     </div>
                 </section>

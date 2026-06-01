@@ -43,6 +43,13 @@
       "when": 1780300699067,
       "tag": "0005_careful_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780302166770,
+      "tag": "0006_shocking_shinobi_shaw",
+      "breakpoints": true
     }
   ]
 }
