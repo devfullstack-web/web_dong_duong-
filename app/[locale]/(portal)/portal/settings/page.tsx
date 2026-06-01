@@ -230,7 +230,7 @@ export default function SettingsPage() {
                                                         fullName: e.target.value,
                                                     })
                                                 }
-                                                className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                                className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -240,7 +240,7 @@ export default function SettingsPage() {
                                             <Input
                                                 disabled
                                                 value={formData.email}
-                                                className="h-12 border-slate-200 text-xs font-bold rounded-none bg-slate-50 text-slate-400"
+                                                className="h-9 border-slate-200 text-[11px] font-bold rounded-none bg-slate-50 text-slate-400"
                                             />
                                         </div>
                                     </div>
@@ -257,7 +257,7 @@ export default function SettingsPage() {
                                                         phone: e.target.value,
                                                     })
                                                 }
-                                                className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                                className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             />
                                         </div>
                                     </div>
@@ -268,7 +268,7 @@ export default function SettingsPage() {
                             <Button
                                 onClick={handleSubmit}
                                 disabled={isSubmitting}
-                                className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-4 hover:cursor-pointer h-auto transition-all rounded-none"
+                                className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 py-2 hover:cursor-pointer h-9 transition-all rounded-none"
                             >
                                 {isSubmitting ? (
                                     <Loader2 className="mr-2 size-4 animate-spin" />
@@ -310,7 +310,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_name}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_name: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: Sài Gòn Valve"
                                         />
                                     </div>
@@ -321,7 +321,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_short_name}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_short_name: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: SGV"
                                         />
                                     </div>
@@ -332,7 +332,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_full_name}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_full_name: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: CÔNG TY TNHH SÀI GÒN VALVE"
                                         />
                                     </div>
@@ -343,7 +343,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_tax_code}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_tax_code: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Nhập mã số thuế"
                                         />
                                     </div>
@@ -355,7 +355,7 @@ export default function SettingsPage() {
                                             type="number"
                                             value={siteInfo.site_founded_year}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_founded_year: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: 2020"
                                         />
                                     </div>
@@ -394,7 +394,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_phone}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_phone: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: 0903.123.456"
                                         />
                                     </div>
@@ -405,7 +405,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_phone_raw}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_phone_raw: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: 0903123456"
                                         />
                                     </div>
@@ -417,7 +417,7 @@ export default function SettingsPage() {
                                             type="email"
                                             value={siteInfo.site_email}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_email: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: contact@saigonvalve.com"
                                         />
                                     </div>
@@ -429,7 +429,7 @@ export default function SettingsPage() {
                                             type="email"
                                             value={siteInfo.site_support_email}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_support_email: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Ví dụ: support@saigonvalve.com"
                                         />
                                     </div>
@@ -440,7 +440,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_address}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_address: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Địa chỉ đầy đủ hiển thị ở Footer và Liên hệ"
                                         />
                                     </div>
@@ -468,7 +468,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_website}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_website: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="https://saigonvalve.vn"
                                         />
                                     </div>
@@ -479,7 +479,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_website_label}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_website_label: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="saigonvalve.vn"
                                         />
                                     </div>
@@ -490,7 +490,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_facebook}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_facebook: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Link trang Facebook"
                                         />
                                     </div>
@@ -501,7 +501,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_zalo}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_zalo: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Link chat Zalo"
                                         />
                                     </div>
@@ -512,7 +512,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_youtube}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_youtube: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Link kênh Youtube"
                                         />
                                     </div>
@@ -523,7 +523,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_linkedin}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_linkedin: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Link trang Linkedin"
                                         />
                                     </div>
@@ -551,7 +551,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_working_hours_weekdays}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_working_hours_weekdays: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Thứ 2 - Thứ 6: 8:00 - 17:00"
                                         />
                                     </div>
@@ -562,7 +562,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_working_hours_saturday}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_working_hours_saturday: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Thứ 7: 8:00 - 12:00"
                                         />
                                     </div>
@@ -573,7 +573,7 @@ export default function SettingsPage() {
                                         <Input
                                             value={siteInfo.site_working_hours_sunday}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_working_hours_sunday: e.target.value })}
-                                            className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                            className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                             placeholder="Nghỉ hoặc Đóng cửa"
                                         />
                                     </div>
@@ -585,7 +585,7 @@ export default function SettingsPage() {
                                             <Input
                                                 value={siteInfo.site_copyright_name}
                                                 onChange={(e) => setSiteInfo({ ...siteInfo, site_copyright_name: e.target.value })}
-                                                className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                                className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                                 placeholder="Ví dụ: Sài Gòn Valve"
                                             />
                                         </div>
@@ -596,7 +596,7 @@ export default function SettingsPage() {
                                             <Input
                                                 value={siteInfo.site_copyright_text}
                                                 onChange={(e) => setSiteInfo({ ...siteInfo, site_copyright_text: e.target.value })}
-                                                className="h-12 border-slate-200 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                                className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
                                                 placeholder="Ví dụ: Bảo lưu mọi quyền."
                                             />
                                         </div>
@@ -606,7 +606,7 @@ export default function SettingsPage() {
                                     <Button
                                         onClick={handleSaveSettings}
                                         disabled={isSavingSettings}
-                                        className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-8 py-4 hover:cursor-pointer h-auto transition-all rounded-none"
+                                        className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 py-2 hover:cursor-pointer h-9 transition-all rounded-none"
                                     >
                                         {isSavingSettings ? (
                                             <Loader2 className="mr-2 size-4 animate-spin" />
