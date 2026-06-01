@@ -30,9 +30,11 @@ async function getFeaturedProducts() {
             .select({
                 id: products.id,
                 name: products.name,
+                name_localized: products.name_localized,
                 slug: products.slug,
                 image_url: products.image_url,
                 description: products.description,
+                description_localized: products.description_localized,
             })
             .from(products)
             .where(
@@ -56,8 +58,10 @@ async function getLatestNews() {
             .select({
                 id: newsArticles.id,
                 title: newsArticles.title,
+                title_localized: newsArticles.title_localized,
                 slug: newsArticles.slug,
                 summary: newsArticles.summary,
+                summary_localized: newsArticles.summary_localized,
                 image_url: newsArticles.image_url,
                 published_at: newsArticles.published_at,
                 created_at: newsArticles.created_at,

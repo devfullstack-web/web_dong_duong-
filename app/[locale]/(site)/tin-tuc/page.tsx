@@ -1,10 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { Newspaper, Calendar } from 'lucide-react';
+import { getLocalizedValue, type Locale } from '@/types/i18n';
 import { PageBanner } from '@/components/site/PageBanner';
 import { API_ROUTES } from '@/constants/routes';
 import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
@@ -17,8 +18,10 @@ import { NEWS_STATUS } from '@/constants/content';
 interface NewsArticle {
     id: string;
     title: string;
+    title_localized?: LocalizedText | null;
     slug: string;
     summary: string;
+    summary_localized?: LocalizedText | null;
     category: string;
     published_at: string | null;
     image_url: string;
@@ -28,6 +31,7 @@ const ITEMS_PER_PAGE = 12;
 
 export default function NewsPage() {
     const t = useTranslations('News');
+    const locale = useLocale();
     const {
         items: news,
         isLoading,
@@ -57,49 +61,53 @@ export default function NewsPage() {
                     ) : (
                         <>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                                {news.map((article, i) => (
-                                    <motion.div
-                                        key={article.id}
-                                        initial={{ opacity: 0 }}
-                                        whileInView={{ opacity: 1 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.05 }}
-                                        className="group flex flex-col space-y-4"
-                                    >
-                                        <LocalizedLink
-                                            href={`/tin-tuc/${article.slug}`}
-                                            className="relative aspect-video w-full overflow-hidden rounded-lg bg-slate-100"
+                                {news.map((article, i) => {
+                                    const activeTitle = getLocalizedValue(article.title_localized, locale as Locale) || article.title;
+                                    const activeSummary = getLocalizedValue(article.summary_localized, locale as Locale) || article.summary;
+                                    return (
+                                        <motion.div
+                                            key={article.id}
+                                            initial={{ opacity: 0 }}
+                                            whileInView={{ opacity: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.05 }}
+                                            className="group flex flex-col space-y-4"
                                         >
-                                            <Image
-                                                src={article.image_url}
-                                                alt={article.title}
-                                                fill
-                                                unoptimized
-                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                            />
-                                        </LocalizedLink>
+                                            <LocalizedLink
+                                                href={`/tin-tuc/${article.slug}`}
+                                                className="relative aspect-video w-full overflow-hidden rounded-lg bg-slate-100"
+                                            >
+                                                <Image
+                                                    src={article.image_url}
+                                                    alt={activeTitle}
+                                                    fill
+                                                    unoptimized
+                                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                                />
+                                            </LocalizedLink>
 
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
-                                                <span>
-                                                    {article.category || t('grid.defaultCategory')}
-                                                </span>
-                                                <div className="flex items-center gap-1">
-                                                    <Calendar size={8} />
-                                                    <span>{formatViDate(article.published_at)}</span>
+                                            <div className="space-y-2">
+                                                <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
+                                                    <span>
+                                                        {article.category || t('grid.defaultCategory')}
+                                                    </span>
+                                                    <div className="flex items-center gap-1">
+                                                        <Calendar size={8} />
+                                                        <span>{formatViDate(article.published_at)}</span>
+                                                    </div>
                                                 </div>
+                                                <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                                                    <LocalizedLink href={`/tin-tuc/${article.slug}`}>
+                                                        {activeTitle}
+                                                    </LocalizedLink>
+                                                </h3>
+                                                <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                                                    {activeSummary}
+                                                </p>
                                             </div>
-                                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
-                                                <LocalizedLink href={`/tin-tuc/${article.slug}`}>
-                                                    {article.title}
-                                                </LocalizedLink>
-                                            </h3>
-                                            <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
-                                                {article.summary}
-                                            </p>
-                                        </div>
-                                    </motion.div>
-                                ))}
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
 
                             {/* Simple Pagination */}

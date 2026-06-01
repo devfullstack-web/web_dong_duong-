@@ -25,8 +25,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { RichTextEditor } from '@/components/portal/rich-text-editor';
+import { LocalizedInput, LocalizedTextarea } from '@/components/portal/LocalizedInput';
+import { LocalizedRichTextEditor } from '@/components/portal/LocalizedRichTextEditor';
+import { createEmptyLocalizedText, type LocalizedText } from '@/types/i18n';
 import {
     Select,
     SelectContent,
@@ -62,10 +63,10 @@ export default function AddNewsPage() {
     const [categories, setCategories] = useState<Category[]>([]);
 
     const [formData, setFormData] = useState({
-        title: '',
+        title_localized: createEmptyLocalizedText(),
         slug: '',
-        summary: '',
-        content: '',
+        summary_localized: createEmptyLocalizedText(),
+        content_localized: createEmptyLocalizedText(),
         category_id: '',
         author_id: '',
         status: NEWS_STATUS.DRAFT as NewsStatus,
@@ -105,18 +106,22 @@ export default function AddNewsPage() {
         fetchData();
     }, []);
 
-    const handleTitleChange = (title: string) => {
-        const slug = generateSlug(title);
+    const handleTitleChange = (title_localized: LocalizedText) => {
+        const slug = generateSlug(title_localized.vi);
 
         setFormData((prev) => ({
             ...prev,
-            title,
-            slug: prev.slug === '' || prev.slug === generateSlug(prev.title) ? slug : prev.slug,
+            title_localized,
+            slug: prev.slug === '' || prev.slug === generateSlug(prev.title_localized.vi) ? slug : prev.slug,
         }));
     };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        if (!formData.title_localized.vi) {
+            toast.error('Vui lòng nhập tiêu đề tiếng Việt');
+            return;
+        }
         if (!formData.category_id || !formData.author_id) {
             toast.error('Vui lòng chọn danh mục');
             return;
@@ -125,7 +130,21 @@ export default function AddNewsPage() {
         setIsSubmitting(true);
         try {
             const submissionData = {
-                ...formData,
+                // Legacy fields (populated from Vietnamese)
+                title: formData.title_localized.vi,
+                summary: formData.summary_localized.vi,
+                content: formData.content_localized.vi,
+                // Localized fields
+                title_localized: formData.title_localized,
+                summary_localized: formData.summary_localized,
+                content_localized: formData.content_localized,
+                // Other fields
+                slug: formData.slug,
+                category_id: formData.category_id,
+                author_id: formData.author_id,
+                status: formData.status,
+                image_url: formData.image_url,
+                gallery: formData.gallery,
                 published_at: formData.published_at ? formData.published_at.toISOString() : null,
             };
             await $api.post(API_ROUTES.NEWS, submissionData);
@@ -136,7 +155,8 @@ export default function AddNewsPage() {
             router.push(PORTAL_ROUTES.cms.news.list);
         } catch (error: unknown) {
             console.error(error);
-            const message = error.response?.data?.error || error.message || 'Lỗi khi tạo bài viết';
+            const err = error as { response?: { data?: { error?: string } }; message?: string };
+            const message = err.response?.data?.error || err.message || 'Lỗi khi tạo bài viết';
             toast.error(message);
         } finally {
             setIsSubmitting(false);
@@ -160,7 +180,7 @@ export default function AddNewsPage() {
                             Thêm bài viết mới
                         </h1>
                         <p className="text-slate-500 font-medium italic mt-2 text-xs">
-                            Tạo bài viết tin tức mới với chuẩn dữ liệu chuyên nghiệp.
+                            Tạo bài viết tin tức mới với chuẩn dữ liệu đa ngôn ngữ chuyên nghiệp.
                         </p>
                     </div>
                 </div>
@@ -223,7 +243,7 @@ export default function AddNewsPage() {
                                 </div>
 
                                 <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                                    {formData.title || 'Tiêu đề bài viết'}
+                                    {formData.title_localized.vi || 'Tiêu đề bài viết'}
                                 </h1>
 
                                 <div className="flex flex-wrap items-center gap-y-4 gap-6 pt-4 border-t border-slate-100 text-slate-500">
@@ -310,7 +330,7 @@ export default function AddNewsPage() {
                                         )}
 
                                         <p className="text-xl sm:text-2xl text-slate-600 font-medium leading-relaxed italic border-l-4 border-brand-primary pl-8">
-                                            {formData.summary ||
+                                            {formData.summary_localized.vi ||
                                                 'Bản tóm tắt bài viết sẽ hiển thị ở đây...'}
                                         </p>
 
@@ -318,7 +338,7 @@ export default function AddNewsPage() {
                                             className="prose prose-slate prose-lg max-w-none prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-primary hover:prose-a:text-brand-secondary prose-img:rounded-none"
                                             dangerouslySetInnerHTML={{
                                                 __html: sanitizeRichText(
-                                                    formData.content ||
+                                                    formData.content_localized.vi ||
                                                         `<p className="italic text-slate-400">Nội dung bài viết đang được soạn thảo...</p>`,
                                                 ),
                                             }}
@@ -366,11 +386,11 @@ export default function AddNewsPage() {
                                             <div className="flex flex-col border-t border-slate-100">
                                                 {categories.map((cat: Record<string, unknown>) => (
                                                     <div
-                                                        key={cat.id}
+                                                        key={cat.id as string}
                                                         className="group flex items-center justify-between py-4 border-b border-slate-100 hover:pl-2 transition-all cursor-default"
                                                     >
                                                         <span className="text-sm font-bold text-slate-600 group-hover:text-brand-primary transition-colors">
-                                                            {cat.name}
+                                                            {cat.name as string}
                                                         </span>
                                                         <div className="h-6 w-6 bg-slate-50 flex items-center justify-center text-[10px] font-black text-slate-400 rounded-none border border-slate-100">
                                                             0
@@ -389,13 +409,13 @@ export default function AddNewsPage() {
                                             <div className="space-y-6">
                                                 {recentArticles.map((ra: Record<string, unknown>) => (
                                                     <div
-                                                        key={ra.id}
+                                                        key={ra.id as string}
                                                         className="group block space-y-2 cursor-default"
                                                     >
                                                         <div className="text-[10px] font-black text-brand-primary/60 uppercase tracking-widest">
                                                             {ra.published_at
                                                                 ? format(
-                                                                      ra.published_at,
+                                                                      new Date(ra.published_at),
                                                                       'dd/MM/yyyy',
                                                                       { locale: vi },
                                                                   )
@@ -422,22 +442,17 @@ export default function AddNewsPage() {
                 >
                     <div className="lg:col-span-2 space-y-8">
                         <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="title"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Tiêu đề bài viết *
-                                </Label>
-                                <Input
-                                    id="title"
-                                    placeholder="Nhập tiêu đề bài viết..."
-                                    className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                    value={formData.title}
-                                    onChange={(e) => handleTitleChange(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            <LocalizedInput
+                                id="title"
+                                label="Tiêu đề bài viết"
+                                value={formData.title_localized}
+                                onChange={handleTitleChange}
+                                required
+                                placeholder={{
+                                    vi: 'Nhập tiêu đề bài viết...',
+                                    en: 'Enter article title...',
+                                }}
+                            />
 
                             <div className="space-y-3">
                                 <Label
@@ -462,40 +477,31 @@ export default function AddNewsPage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="summary"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Mô tả ngắn *
-                                </Label>
-                                <Textarea
-                                    id="summary"
-                                    placeholder="Nhập mô tả ngắn cho bài viết (hiển thị trên danh sách)..."
-                                    className="min-h-[100px] bg-slate-50 border-none text-sm font-medium rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                    value={formData.summary}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, summary: e.target.value })
-                                    }
-                                    required
-                                />
-                            </div>
+                            <LocalizedTextarea
+                                id="summary"
+                                label="Mô tả ngắn"
+                                value={formData.summary_localized}
+                                onChange={(value) =>
+                                    setFormData({ ...formData, summary_localized: value })
+                                }
+                                required
+                                placeholder={{
+                                    vi: 'Nhập mô tả ngắn cho bài viết (hiển thị trên danh sách)...',
+                                    en: 'Enter short summary for the article...',
+                                }}
+                                rows={4}
+                            />
 
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="content"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Nội dung bài viết *
-                                </Label>
-                                <RichTextEditor
-                                    content={formData.content}
-                                    onChange={(content: string) =>
-                                        setFormData({ ...formData, content })
-                                    }
-                                    placeholder="Nhập nội dung chi tiết của bài viết..."
-                                />
-                            </div>
+                            <LocalizedRichTextEditor
+                                id="content"
+                                label="Nội dung bài viết"
+                                value={formData.content_localized}
+                                onChange={(value) =>
+                                    setFormData({ ...formData, content_localized: value })
+                                }
+                                required
+                                placeholder="Nhập nội dung chi tiết của bài viết..."
+                            />
                         </div>
                     </div>
 

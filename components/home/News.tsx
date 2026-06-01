@@ -2,12 +2,16 @@ import Image from 'next/image';
 import { MoveRight, Newspaper } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
+import type { LocalizedText, Locale } from '@/types/i18n';
+import { getLocalizedValue } from '@/types/i18n';
 
 interface NewsArticle {
     id: string;
     title: string;
+    title_localized?: LocalizedText | null;
     slug: string;
     summary: string;
+    summary_localized?: LocalizedText | null;
     category_id?: string;
     image_url?: string | null;
     published_at?: Date | null;
@@ -51,45 +55,49 @@ export default function News({ articles = [] }: NewsProps) {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {articles.map((item) => (
-                            <article
-                                key={item.id}
-                                className="group relative h-[300px] overflow-hidden cursor-pointer bg-slate-100"
-                            >
-                                {item.image_url ? (
-                                    <Image
-                                        src={item.image_url}
-                                        alt={item.title}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, 33vw"
-                                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                                    />
-                                ) : (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-slate-200">
-                                        <Newspaper size={48} className="text-slate-300" />
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
-
-                                <div className="absolute bottom-6 left-6 right-6 space-y-3">
-                                    <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest text-brand-primary">
-                                        {t('grid.defaultCategory')}
-                                        <span className="h-1 w-1 rounded-full bg-brand-primary/20"></span>
-                                        {formatDate(item.published_at || item.created_at, locale)}
-                                    </div>
-                                    <h3 className="text-[15px] font-bold text-white leading-tight transition-colors group-hover:text-white line-clamp-2 uppercase">
-                                        {item.title}
-                                    </h3>
-                                </div>
-
-                                <Link
-                                    href={`/tin-tuc/${item.slug}`}
-                                    className="absolute inset-0 z-10"
+                        {articles.map((item) => {
+                            const activeTitle = getLocalizedValue(item.title_localized, locale as Locale) || item.title;
+                            const activeSummary = getLocalizedValue(item.summary_localized, locale as Locale) || item.summary;
+                            return (
+                                <article
+                                    key={item.id}
+                                    className="group relative h-[300px] overflow-hidden cursor-pointer bg-slate-100"
                                 >
-                                    <span className="sr-only">{t('grid.viewDetail')} {item.title}</span>
-                                </Link>
-                            </article>
-                        ))}
+                                    {item.image_url ? (
+                                        <Image
+                                            src={item.image_url}
+                                            alt={activeTitle}
+                                            fill
+                                            sizes="(max-width: 768px) 100vw, 33vw"
+                                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                        />
+                                    ) : (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-slate-200">
+                                            <Newspaper size={48} className="text-slate-300" />
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
+
+                                    <div className="absolute bottom-6 left-6 right-6 space-y-3">
+                                        <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest text-brand-primary">
+                                            {t('grid.defaultCategory')}
+                                            <span className="h-1 w-1 rounded-full bg-brand-primary/20"></span>
+                                            {formatDate(item.published_at || item.created_at, locale)}
+                                        </div>
+                                        <h3 className="text-[15px] font-bold text-white leading-tight transition-colors group-hover:text-white line-clamp-2 uppercase" title={activeSummary}>
+                                            {activeTitle}
+                                        </h3>
+                                    </div>
+
+                                    <Link
+                                        href={`/tin-tuc/${item.slug}`}
+                                        className="absolute inset-0 z-10"
+                                    >
+                                        <span className="sr-only">{t('grid.viewDetail')} {activeTitle}</span>
+                                    </Link>
+                                </article>
+                            );
+                        })}
                     </div>
                 )}
 

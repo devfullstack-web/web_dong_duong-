@@ -10,9 +10,12 @@ export interface NewsArticle {
     id: string;
     slug: string;
     title: string;
+    title_localized?: LocalizedText | null;
     summary: string;
+    summary_localized?: LocalizedText | null;
     desc?: string; // Legacy field for frontend compatibility
     content?: string;
+    content_localized?: LocalizedText | null;
     published_at?: string;
     date?: string; // Legacy field for frontend compatibility
     readTime?: string; // Legacy field for frontend compatibility

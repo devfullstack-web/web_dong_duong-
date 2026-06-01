@@ -32,9 +32,12 @@ export async function GET(
     const [article] = await db.select({
       id: newsArticles.id,
       title: newsArticles.title,
+      title_localized: newsArticles.title_localized,
       slug: newsArticles.slug,
       summary: newsArticles.summary,
+      summary_localized: newsArticles.summary_localized,
       content: newsArticles.content,
+      content_localized: newsArticles.content_localized,
       status: newsArticles.status,
       image_url: newsArticles.image_url,
       gallery: newsArticles.gallery,
@@ -87,9 +90,12 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const updates: Record<string, unknown> = {};
     const allowedFields = [
       'title',
+      'title_localized',
       'slug',
       'summary',
+      'summary_localized',
       'content',
+      'content_localized',
       'category_id',
       'author_id',
       'status',
@@ -169,4 +175,3 @@ export const DELETE = withAuth(async (request, session, { params }) => {
     return apiError("Internal Server Error", 500);
   }
 }, { requiredPermissions: [PERMISSIONS.BLOG_DELETE] });
-

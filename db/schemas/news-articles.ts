@@ -3,15 +3,19 @@ import { statusEnum } from './enums';
 import { authors } from './authors';
 import { categories } from './categories';
 import { NEWS_STATUS } from '@/constants/content';
+import type { LocalizedText } from '@/types/i18n';
 
 export const newsArticles = pgTable(
     'news_articles',
     {
         id: uuid('id').primaryKey().defaultRandom(),
         title: varchar('title', { length: 255 }).notNull(),
+        title_localized: jsonb('title_localized').$type<LocalizedText>(),
         slug: varchar('slug', { length: 255 }).notNull().unique(),
         summary: text('summary').notNull(),
+        summary_localized: jsonb('summary_localized').$type<LocalizedText>(),
         content: text('content').notNull(),
+        content_localized: jsonb('content_localized').$type<LocalizedText>(),
         category_id: uuid('category_id')
             .references(() => categories.id, { onDelete: 'restrict' })
             .notNull(),

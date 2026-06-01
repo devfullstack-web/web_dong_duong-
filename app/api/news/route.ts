@@ -80,9 +80,12 @@ export const GET = withHybridAuth(
                 .select({
                     id: newsArticles.id,
                     title: newsArticles.title,
+                    title_localized: newsArticles.title_localized,
                     slug: newsArticles.slug,
                     summary: newsArticles.summary,
+                    summary_localized: newsArticles.summary_localized,
                     content: newsArticles.content,
+                    content_localized: newsArticles.content_localized,
                     status: newsArticles.status,
                     published_at: newsArticles.published_at,
                     created_at: newsArticles.created_at,
@@ -144,9 +147,12 @@ export const POST = withAuth(
             const body = await request.json();
             const {
                 title,
+                title_localized,
                 slug,
                 summary,
+                summary_localized,
                 content,
+                content_localized,
                 category_id,
                 author_id,
                 status,
@@ -163,9 +169,12 @@ export const POST = withAuth(
                 .insert(newsArticles)
                 .values({
                     title,
+                    title_localized: title_localized || { vi: title, en: '' },
                     slug,
                     summary: sanitizePlainText(summary, 1000),
+                    summary_localized: summary_localized || { vi: summary, en: '' },
                     content: sanitizeRichText(content),
+                    content_localized: content_localized || { vi: content, en: '' },
                     category_id,
                     author_id,
                     status: status || NEWS_STATUS.DRAFT,

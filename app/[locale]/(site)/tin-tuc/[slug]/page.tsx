@@ -8,9 +8,10 @@ import { COMPANY_INFO } from '@/constants/site-info';
 import NewsDetailClient from './_components/NewsDetailClient';
 import { sanitizePlainText, sanitizeRichText } from '@/utils/sanitize';
 import { NEWS_STATUS } from '@/constants/content';
+import { getLocalizedValue, type Locale } from '@/types/i18n';
 
 type PageProps = {
-    params: Promise<{ slug: string }>;
+    params: Promise<{ slug: string; locale: string }>;
 };
 
 const getArticle = cache(async (slug: string) => {
@@ -18,9 +19,12 @@ const getArticle = cache(async (slug: string) => {
         .select({
             id: newsArticles.id,
             title: newsArticles.title,
+            title_localized: newsArticles.title_localized,
             slug: newsArticles.slug,
             summary: newsArticles.summary,
+            summary_localized: newsArticles.summary_localized,
             content: newsArticles.content,
+            content_localized: newsArticles.content_localized,
             category_id: newsArticles.category_id,
             status: newsArticles.status,
             image_url: newsArticles.image_url,
@@ -55,8 +59,10 @@ async function getRelatedArticles(slug: string) {
         .select({
             id: newsArticles.id,
             title: newsArticles.title,
+            title_localized: newsArticles.title_localized,
             slug: newsArticles.slug,
             summary: newsArticles.summary,
+            summary_localized: newsArticles.summary_localized,
             image_url: newsArticles.image_url,
             published_at: newsArticles.published_at,
             category_name: categories.name,
@@ -75,19 +81,22 @@ async function getRelatedArticles(slug: string) {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { slug } = await params;
+    const { slug, locale } = await params;
     const article = await getArticle(slug);
 
     if (!article) {
         return { title: 'Không tìm thấy bài viết' };
     }
 
+    const activeTitle = getLocalizedValue(article.title_localized, locale as Locale) || article.title;
+    const activeSummary = getLocalizedValue(article.summary_localized, locale as Locale) || article.summary;
+
     return {
-        title: article.title,
-        description: article.summary,
+        title: activeTitle,
+        description: activeSummary,
         openGraph: {
-            title: `${article.title} | ${COMPANY_INFO.name}`,
-            description: article.summary,
+            title: `${activeTitle} | ${COMPANY_INFO.name}`,
+            description: activeSummary,
             type: 'article',
             publishedTime: article.published_at?.toISOString(),
             authors: article.author_name ? [article.author_name] : undefined,
@@ -95,15 +104,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         },
         twitter: {
             card: 'summary_large_image',
-            title: article.title,
-            description: article.summary,
+            title: activeTitle,
+            description: activeSummary,
             images: article.image_url ? [article.image_url] : undefined,
         },
     };
 }
 
 export default async function NewsDetailPage({ params }: PageProps) {
-    const { slug } = await params;
+    const { slug, locale } = await params;
     const [article, relatedArticles] = await Promise.all([
         getArticle(slug),
         getRelatedArticles(slug),
@@ -113,14 +122,22 @@ export default async function NewsDetailPage({ params }: PageProps) {
         notFound();
     }
 
+    const activeContent = getLocalizedValue(article.content_localized, locale as Locale) || article.content;
+    const activeTitle = getLocalizedValue(article.title_localized, locale as Locale) || article.title;
+    const activeSummary = getLocalizedValue(article.summary_localized, locale as Locale) || article.summary;
+
     // Compute readTime server-side
-    const wordCount = (article.content || '').replace(/<[^>]*>/g, '').split(/\s+/).length;
-    const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} phút`;
+    const wordCount = (activeContent || '').replace(/<[^>]*>/g, '').split(/\s+/).length;
+    const readTimeSuffix = locale === 'vi' ? 'phút' : 'min';
+    const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} ${readTimeSuffix}`;
 
     const articleWithMeta = {
         ...article,
-        author: article.author_name || 'Sài Gòn Valve',
-        category: article.category_name || 'Tin tức',
+        title: activeTitle,
+        summary: activeSummary,
+        content: activeContent,
+        author: article.author_name || (locale === 'vi' ? 'Sài Gòn Valve' : 'Saigon Valve'),
+        category: article.category_name || (locale === 'vi' ? 'Tin tức' : 'News'),
         readTime,
     };
 

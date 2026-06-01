@@ -25,8 +25,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { RichTextEditor } from '@/components/portal/rich-text-editor';
+import { LocalizedInput, LocalizedTextarea } from '@/components/portal/LocalizedInput';
+import { LocalizedRichTextEditor } from '@/components/portal/LocalizedRichTextEditor';
+import { createEmptyLocalizedText, toLocalizedText, type LocalizedText } from '@/types/i18n';
 import {
     Select,
     SelectContent,
@@ -54,9 +55,12 @@ import { CATEGORY_TYPE, NEWS_STATUS, type NewsStatus } from '@/constants/content
 interface NewsArticle {
     id: string;
     title: string;
+    title_localized?: LocalizedText | null;
     slug: string;
     summary: string;
+    summary_localized?: LocalizedText | null;
     content: string;
+    content_localized?: LocalizedText | null;
     category_id: string;
     author_id: string;
     status: NewsStatus;
@@ -82,10 +86,10 @@ export default function EditNewsPage() {
     const [categories, setCategories] = useState<Category[]>([]);
 
     const [formData, setFormData] = useState({
-        title: '',
+        title_localized: createEmptyLocalizedText(),
         slug: '',
-        summary: '',
-        content: '',
+        summary_localized: createEmptyLocalizedText(),
+        content_localized: createEmptyLocalizedText(),
         category_id: '',
         author_id: '',
         status: NEWS_STATUS.DRAFT as NewsStatus,
@@ -111,10 +115,10 @@ export default function EditNewsPage() {
                     const a = articleRes.data.data;
                     setArticle(a);
                     setFormData({
-                        title: a.title || '',
+                        title_localized: a.title_localized || toLocalizedText(a.title),
                         slug: a.slug || '',
-                        summary: a.summary || '',
-                        content: a.content || '',
+                        summary_localized: a.summary_localized || toLocalizedText(a.summary),
+                        content_localized: a.content_localized || toLocalizedText(a.content),
                         category_id: a.category_id || '',
                         author_id: a.author_id || authorRes.data.data?.[0]?.id || '',
                         status: a.status || NEWS_STATUS.DRAFT,
@@ -153,22 +157,41 @@ export default function EditNewsPage() {
         fetchData();
     }, [newsId]);
 
-    const handleTitleChange = (title: string) => {
-        const slug = generateSlug(title);
+    const handleTitleChange = (title_localized: LocalizedText) => {
+        const slug = generateSlug(title_localized.vi);
 
         setFormData((prev) => ({
             ...prev,
-            title,
-            slug: prev.slug === '' || prev.slug === generateSlug(prev.title) ? slug : prev.slug,
+            title_localized,
+            slug: prev.slug === '' || prev.slug === generateSlug(prev.title_localized.vi) ? slug : prev.slug,
         }));
     };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        if (!formData.title_localized.vi) {
+            toast.error('Vui lòng nhập tiêu đề tiếng Việt');
+            return;
+        }
+
         setSaving(true);
         try {
             const submissionData = {
-                ...formData,
+                // Legacy fields (populated from Vietnamese)
+                title: formData.title_localized.vi,
+                summary: formData.summary_localized.vi,
+                content: formData.content_localized.vi,
+                // Localized fields
+                title_localized: formData.title_localized,
+                summary_localized: formData.summary_localized,
+                content_localized: formData.content_localized,
+                // Other fields
+                slug: formData.slug,
+                category_id: formData.category_id,
+                author_id: formData.author_id,
+                status: formData.status,
+                image_url: formData.image_url,
+                gallery: formData.gallery,
                 published_at: formData.published_at ? formData.published_at.toISOString() : null,
             };
             const response = await $api.patch(`${API_ROUTES.NEWS}/${newsId}`, submissionData);
@@ -228,7 +251,7 @@ export default function EditNewsPage() {
                             Chỉnh sửa bài viết
                         </h1>
                         <p className="text-slate-500 font-medium italic mt-2 text-xs">
-                            Cập nhật nội dung bài viết tin tức và chuẩn hóa dữ liệu.
+                            Cập nhật nội dung bài viết tin tức và chuẩn hóa dữ liệu đa ngôn ngữ.
                         </p>
                     </div>
                 </div>
@@ -291,7 +314,7 @@ export default function EditNewsPage() {
                                 </div>
 
                                 <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
-                                    {formData.title || 'Tiêu đề bài viết'}
+                                    {formData.title_localized.vi || 'Tiêu đề bài viết'}
                                 </h1>
 
                                 <div className="flex flex-wrap items-center gap-y-4 gap-6 pt-4 border-t border-slate-100 text-slate-500">
@@ -378,7 +401,7 @@ export default function EditNewsPage() {
                                         )}
 
                                         <p className="text-xl sm:text-2xl text-slate-600 font-medium leading-relaxed italic border-l-4 border-brand-primary pl-8">
-                                            {formData.summary ||
+                                            {formData.summary_localized.vi ||
                                                 'Bản tóm tắt bài viết sẽ hiển thị ở đây...'}
                                         </p>
 
@@ -386,7 +409,7 @@ export default function EditNewsPage() {
                                             className="prose prose-slate prose-lg max-w-none prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-primary hover:prose-a:text-brand-secondary prose-img:rounded-none"
                                             dangerouslySetInnerHTML={{
                                                 __html: sanitizeRichText(
-                                                    formData.content ||
+                                                    formData.content_localized.vi ||
                                                         `<p className="italic text-slate-400">Nội dung bài viết đang được soạn thảo...</p>`,
                                                 ),
                                             }}
@@ -455,26 +478,29 @@ export default function EditNewsPage() {
                                                 Tin mới nhất
                                             </h3>
                                             <div className="space-y-6">
-                                                {recentArticles.map((ra) => (
-                                                    <div
-                                                        key={ra.id}
-                                                        className="group block space-y-2 cursor-default"
-                                                    >
-                                                        <div className="text-[10px] font-black text-brand-primary/60 uppercase tracking-widest">
-                                                            {ra.published_at
-                                                                ? format(
-                                                                      new Date(ra.published_at),
-                                                                      'dd/MM/yyyy',
-                                                                      { locale: vi },
-                                                                  )
-                                                                : 'Đang cập nhật'}
+                                                {recentArticles.map((ra) => {
+                                                    const raTitle = ra.title_localized?.vi || ra.title;
+                                                    return (
+                                                        <div
+                                                            key={ra.id}
+                                                            className="group block space-y-2 cursor-default"
+                                                        >
+                                                            <div className="text-[10px] font-black text-brand-primary/60 uppercase tracking-widest">
+                                                                {ra.published_at
+                                                                    ? format(
+                                                                          new Date(ra.published_at),
+                                                                          'dd/MM/yyyy',
+                                                                          { locale: vi },
+                                                                      )
+                                                                    : 'Đang cập nhật'}
+                                                            </div>
+                                                            <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors leading-snug tracking-tight">
+                                                                {raTitle}
+                                                            </h4>
+                                                            <div className="h-px w-0 group-hover:w-full bg-slate-100 transition-all duration-500"></div>
                                                         </div>
-                                                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors leading-snug tracking-tight">
-                                                            {ra.title}
-                                                        </h4>
-                                                        <div className="h-px w-0 group-hover:w-full bg-slate-100 transition-all duration-500"></div>
-                                                    </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     </aside>
@@ -490,21 +516,17 @@ export default function EditNewsPage() {
                 >
                     <div className="lg:col-span-2 space-y-8">
                         <div className="bg-white rounded-none border border-slate-100 p-3.5 md:p-4 space-y-5">
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="title"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Tiêu đề bài viết *
-                                </Label>
-                                <Input
-                                    id="title"
-                                    className="h-9 bg-slate-50 border-none text-sm font-bold rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                    value={formData.title}
-                                    onChange={(e) => handleTitleChange(e.target.value)}
-                                    required
-                                />
-                            </div>
+                            <LocalizedInput
+                                id="title"
+                                label="Tiêu đề bài viết"
+                                value={formData.title_localized}
+                                onChange={handleTitleChange}
+                                required
+                                placeholder={{
+                                    vi: 'Nhập tiêu đề bài viết...',
+                                    en: 'Enter article title...',
+                                }}
+                            />
 
                             <div className="space-y-3">
                                 <Label
@@ -529,39 +551,31 @@ export default function EditNewsPage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="summary"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Mô tả ngắn *
-                                </Label>
-                                <Textarea
-                                    id="summary"
-                                    className="min-h-[100px] bg-slate-50 border-none text-sm font-medium rounded-none placeholder:text-slate-300 focus:ring-1 focus:ring-brand-primary/20"
-                                    value={formData.summary}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, summary: e.target.value })
-                                    }
-                                    required
-                                />
-                            </div>
+                            <LocalizedTextarea
+                                id="summary"
+                                label="Mô tả ngắn"
+                                value={formData.summary_localized}
+                                onChange={(value) =>
+                                    setFormData({ ...formData, summary_localized: value })
+                                }
+                                required
+                                placeholder={{
+                                    vi: 'Nhập mô tả ngắn cho bài viết (hiển thị trên danh sách)...',
+                                    en: 'Enter short summary for the article...',
+                                }}
+                                rows={4}
+                            />
 
-                            <div className="space-y-3">
-                                <Label
-                                    htmlFor="content"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Nội dung bài viết *
-                                </Label>
-                                <RichTextEditor
-                                    content={formData.content}
-                                    onChange={(content: string) =>
-                                        setFormData({ ...formData, content })
-                                    }
-                                    placeholder="Nhập nội dung chi tiết của bài viết..."
-                                />
-                            </div>
+                            <LocalizedRichTextEditor
+                                id="content"
+                                label="Nội dung bài viết"
+                                value={formData.content_localized}
+                                onChange={(value) =>
+                                    setFormData({ ...formData, content_localized: value })
+                                }
+                                required
+                                placeholder="Nhập nội dung chi tiết của bài viết..."
+                            />
                         </div>
                     </div>
 

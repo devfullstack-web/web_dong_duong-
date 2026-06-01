@@ -13,13 +13,17 @@ import Autoplay from 'embla-carousel-autoplay';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
+import type { LocalizedText, Locale } from '@/types/i18n';
+import { getLocalizedValue } from '@/types/i18n';
 
 interface Product {
     id: string;
     name: string;
+    name_localized?: LocalizedText | null;
     slug: string;
     image_url: string | null;
     description: string;
+    description_localized?: LocalizedText | null;
 }
 
 interface ProductSpotlightProps {
@@ -77,9 +81,12 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                 >
                     <CarouselContent className="-ml-4 lg:-ml-6">
                         {products.map((product) => {
+                            const activeName = getLocalizedValue(product.name_localized, activeLocale as Locale) || product.name;
+                            const rawDescription = getLocalizedValue(product.description_localized, activeLocale as Locale) || product.description;
+
                             // Strip HTML tags and decode HTML entities for clean layout
-                            const cleanDescription = product.description 
-                                ? product.description
+                            const cleanDescription = rawDescription 
+                                ? rawDescription
                                     .replace(/<[^>]*>/g, '')
                                     .replace(/&nbsp;/g, ' ')
                                     .replace(/&amp;/g, '&')
@@ -106,7 +113,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                                             <Image
                                                 src={
                                                     product.image_url ||"err"                                                }
-                                                alt={product.name}
+                                                alt={activeName}
                                                 fill
                                                 unoptimized
                                                 sizes="(max-width: 640px) 50vw, 33vw"
@@ -125,7 +132,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
 
                                                 {/* Product Title - Distinct & Clear */}
                                                 <h3 className="text-xs md:text-sm font-bold text-slate-800 uppercase tracking-tight line-clamp-1 leading-snug group-hover:text-brand-primary transition-colors">
-                                                    {product.name}
+                                                    {activeName}
                                                 </h3>
 
                                                 {/* Compact Single-line Description with HTML stripped */}
