@@ -3,11 +3,12 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbopack",
-        "build": "next build --turbopack",
-        "start": "node .next/standalone/server.js",
+        "dev": "drizzle-kit push && next dev --turbopack",
+        "build": "drizzle-kit push && next build --turbopack",
+        "start": "drizzle-kit migrate && node .next/standalone/server.js",
         "lint": "eslint",
         "db:push": "drizzle-kit push",
+        "db:migrate": "drizzle-kit migrate",
         "db:studio": "drizzle-kit studio",
         "db:generate": "drizzle-kit generate",
         "prepare": "node -e \"if (process.env.NODE_ENV !== 'production') { try { require('child_process').execSync('husky') } catch (e) {} }\""
