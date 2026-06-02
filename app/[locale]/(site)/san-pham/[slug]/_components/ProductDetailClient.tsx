@@ -37,7 +37,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
     const locale = useLocale() as Locale;
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [activeTab, setActiveTab] = useState<'description' | 'specs'>('specs');
+    const [activeTab, setActiveTab] = useState<'description' | 'specs'>('description');
 
     const allImages = useMemo(() => {
         if (!product) return [];
@@ -237,26 +237,26 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                     {/* Tab Switcher - More Visible Active State */}
                     <div className="flex border-x border-slate-100 w-fit">
                         <button
-                            onClick={() => setActiveTab('specs')}
-                            className={cn(
-                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all",
-                                activeTab === 'specs' 
-                                    ? "bg-brand-primary text-white" 
-                                    : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-                            )}
-                        >
-                            <Settings2 size={14} /> Thông số kỹ thuật
-                        </button>
-                        <button
                             onClick={() => setActiveTab('description')}
                             className={cn(
-                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all",
+                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer",
                                 activeTab === 'description' 
                                     ? "bg-brand-primary text-white" 
                                     : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                             )}
                         >
-                            <FileText size={14} /> Chi tiết sản phẩm
+                            <FileText size={14} /> {t('description')}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('specs')}
+                            className={cn(
+                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer",
+                                activeTab === 'specs' 
+                                    ? "bg-brand-primary text-white" 
+                                    : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                            )}
+                        >
+                            <Settings2 size={14} /> {t('techSpecs')}
                         </button>
                     </div>
 

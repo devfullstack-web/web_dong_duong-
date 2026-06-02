@@ -410,6 +410,7 @@
         "getQuote": "NHẬN BÁO GIÁ CHI TIẾT",
         "downloadCatalog": "TẢI CATALOGUE (PDF)",
         "techSpecs": "THÔNG SỐ KỸ THUẬT",
+        "description": "CHI TIẾT SẢN PHẨM",
         "projectSupport": {
             "title": "Hỗ trợ dự án",
             "defaultDesc": "Sài Gòn Valve cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi cho các dự án trọng điểm.",

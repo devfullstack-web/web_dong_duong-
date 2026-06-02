@@ -409,6 +409,7 @@
     "getQuote": "GET DETAILED QUOTE",
     "downloadCatalog": "DOWNLOAD CATALOGUE (PDF)",
     "techSpecs": "TECHNICAL SPECIFICATIONS",
+    "description": "PRODUCT DETAILS",
     "projectSupport": {
       "title": "Project Support",
       "defaultDesc": "Saigon Valve provides complete CO/CQ certificates and on-site technical support for major projects.",
