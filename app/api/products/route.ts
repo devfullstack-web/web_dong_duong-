@@ -74,7 +74,12 @@ export const GET = withHybridAuth(
             }
             if (search) {
                 conditions.push(
-                    or(ilike(products.name, `%${search}%`), ilike(products.sku, `%${search}%`)),
+                    or(
+                        ilike(products.name, `%${search}%`),
+                        ilike(products.sku, `%${search}%`),
+                        ilike(sql<string>`(${products.name_localized}->>'vi')`, `%${search}%`),
+                        ilike(sql<string>`(${products.name_localized}->>'en')`, `%${search}%`),
+                    ),
                 );
             }
             if (startDate) {

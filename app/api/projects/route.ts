@@ -53,6 +53,8 @@ export const GET = withHybridAuth(
                     or(
                         ilike(projects.name, `%${search}%`),
                         ilike(projects.client_name, `%${search}%`),
+                        ilike(sql<string>`(${projects.name_localized}->>'vi')`, `%${search}%`),
+                        ilike(sql<string>`(${projects.name_localized}->>'en')`, `%${search}%`),
                     ),
                 );
             }
