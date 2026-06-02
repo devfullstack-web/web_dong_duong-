@@ -28,36 +28,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-'use client';
-
-import { NewsArticle } from '@/types';
-import $api from '@/utils/axios';
-import {
-    Plus,
-    MoreHorizontal,
-    Edit2,
-    Trash2,
-    Calendar as CalendarIcon,
-    X,
-    CheckCircle,
-    Clock,
-    ChevronDown,
-    Newspaper,
-} from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
