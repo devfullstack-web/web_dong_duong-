@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import $api from '@/utils/axios';
-import { Plus, Edit2, Trash2, FolderOpen, Folder, ArrowLeft, Loader2, ChevronRight, ChevronDown, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit2, Trash2, FolderOpen, Folder, ArrowLeft, ChevronRight, ChevronDown, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
@@ -13,7 +13,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { LocalizedText } from '@/types/i18n';
 import { getLocalizedValue } from '@/types/i18n';
 import { CATEGORY_TYPE } from '@/constants/content';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import Loading from '@/components/shared/Loading';
 
 interface Category {
     id: string;
@@ -93,6 +94,7 @@ function CategoryTreeItem({
 
 export default function NewsCategoriesPage() {
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.News');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Category | null>(null);
     const locale = useLocale();
@@ -153,11 +155,9 @@ export default function NewsCategoriesPage() {
                 </Link>
             </div>
 
-            <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[400px]">
+            <div className="relative bg-white rounded-none border border-slate-100 overflow-hidden min-h-[400px]">
                 {isLoading ? (
-                    <div className="flex items-center justify-center h-[400px]">
-                        <Loader2 size={32} className="animate-spin text-brand-primary opacity-20" />
-                    </div>
+                    <Loading variant="section" text={t('loadingCategories')} />
                 ) : (
                     <>
                         {categories.map((cat) => (
