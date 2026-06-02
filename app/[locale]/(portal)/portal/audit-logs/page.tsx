@@ -375,7 +375,7 @@ export default function AuditLogsPage() {
 
             {/* Log Detail Dialog */}
             <Dialog open={!!selectedLog} onOpenChange={() => setSelectedLog(null)}>
-                <DialogContent className="max-w-2xl w-[95vw] rounded-none border-slate-100 p-0 overflow-hidden bg-white">
+                <DialogContent className="rounded-none border-slate-100 p-0 overflow-hidden bg-white sm:max-w-4xl">
                     <DialogHeader className="p-4 md:p-6 bg-slate-50 border-b border-slate-100">
                         <DialogTitle className="text-xl font-black uppercase tracking-tight text-[#002d6b] flex items-center gap-3">
                             <Info size={20} /> Chi tiết Nhật ký
