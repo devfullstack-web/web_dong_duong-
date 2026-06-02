@@ -90,8 +90,8 @@ export default function Loading({
     }
 
     const containerStyles = {
-        full: 'fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/70 backdrop-blur-md transition-all duration-300',
-        section: 'absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-[2px] min-h-[200px] transition-all duration-300',
+        full: 'fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white transition-all duration-300',
+        section: 'absolute inset-0 z-50 flex flex-col items-center justify-center bg-transparent min-h-[200px] transition-all duration-300',
     };
 
     return (

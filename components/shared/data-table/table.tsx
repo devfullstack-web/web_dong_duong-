@@ -91,8 +91,8 @@ export function DataTable<TData, TValue>({
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="flex items-center justify-center h-[400px]">
-          <Loading variant="section" size="lg" text={loadingText} />
+        <div className="relative flex items-center justify-center h-[400px]">
+          <Loading variant="section" size="md" text={loadingText} />
         </div>
       );
     }
@@ -156,7 +156,7 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <div className="bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
+    <div className="relative bg-white rounded-none border border-slate-100 overflow-hidden min-h-[500px]">
       {/* Search / Filters Toolbar */}
       {toolbarProps && (
         <DataTableToolbar
