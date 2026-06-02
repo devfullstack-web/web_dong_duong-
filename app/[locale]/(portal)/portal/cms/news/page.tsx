@@ -28,6 +28,36 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+'use client';
+
+import { NewsArticle } from '@/types';
+import $api from '@/utils/axios';
+import {
+    Plus,
+    MoreHorizontal,
+    Edit2,
+    Trash2,
+    Calendar as CalendarIcon,
+    X,
+    CheckCircle,
+    Clock,
+    ChevronDown,
+    Newspaper,
+} from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
@@ -35,7 +65,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { vi, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { usePermissions } from '@/hooks/use-permissions';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -43,14 +73,11 @@ import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import * as React from 'react';
 import { NEWS_STATUS } from '@/constants/content';
 
-const NEWS_STATUS_FILTERS: { value: NewsArticle['status']; label: string }[] = [
-    { value: NEWS_STATUS.PUBLISHED, label: 'Công khai' },
-    { value: NEWS_STATUS.DRAFT, label: 'Bản nháp' },
-];
+
 
 function NewsImage({ src, alt }: { src?: string | null; alt: string }) {
     const [imgSrc, setImgSrc] = useState(src);
@@ -86,6 +113,12 @@ export default function NewsManagementPage() {
     const queryClient = useQueryClient();
     const t = useTranslations('Portal.News');
     const tc = useTranslations('Portal.Common');
+    const localeStr = useLocale();
+    const newsStatusFilters = React.useMemo(() => [
+        { value: NEWS_STATUS.PUBLISHED, label: t('published') },
+        { value: NEWS_STATUS.DRAFT, label: t('draft') },
+    ], [t]);
+    
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -184,13 +217,13 @@ export default function NewsManagementPage() {
     }, [t]);
 
     const formatDate = React.useCallback((dateStr?: string) => {
-        if (!dateStr) return 'Chưa đăng';
+        if (!dateStr) return t('notPublished');
         try {
-            return format(new Date(dateStr), 'dd/MM/yyyy', { locale: vi });
+            return format(new Date(dateStr), 'dd/MM/yyyy', { locale: localeStr === 'vi' ? vi : enUS });
         } catch {
             return dateStr;
         }
-    }, []);
+    }, [localeStr, t]);
 
     // Define table columns
     const columns = React.useMemo<ColumnDef<NewsArticle>[]>(() => [
@@ -214,7 +247,7 @@ export default function NewsManagementPage() {
                                 variant="outline"
                                 className="text-[9px] font-bold text-slate-400 border-slate-200 uppercase tracking-widest px-2 py-0 rounded-none"
                             >
-                                {news.category || 'Chưa phân loại'}
+                                {news.category || t('uncategorized')}
                             </Badge>
                         </div>
                     </div>
@@ -287,7 +320,7 @@ export default function NewsManagementPage() {
                                 className="w-48 p-1 rounded-none border border-slate-100 bg-white"
                             >
                                 <DropdownMenuLabel className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
-                                    Tùy chọn bài viết
+                                    {t('articleOptions')}
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator className="bg-slate-50" />
 
@@ -302,7 +335,7 @@ export default function NewsManagementPage() {
                                                 className="text-slate-400 group-hover:text-brand-primary transition-colors"
                                             />
                                             <span className="text-xs font-bold uppercase tracking-tight text-slate-900">
-                                                Sửa nội dung
+                                                {t('editArticle')}
                                             </span>
                                         </Link>
                                     </DropdownMenuItem>
@@ -320,7 +353,7 @@ export default function NewsManagementPage() {
                                                 className="text-slate-400 group-hover:text-rose-600 transition-colors"
                                             />
                                             <span className="text-xs font-bold uppercase tracking-tight text-rose-600">
-                                                Xóa bài viết
+                                                {t('deleteArticle')}
                                             </span>
                                         </DropdownMenuItem>
                                     </>
@@ -338,10 +371,10 @@ export default function NewsManagementPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
                 <div>
                     <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase leading-none">
-                        Quản lý tin tức
+                        {t('title')}
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-2 text-xs">
-                        Cập nhật tin tức, sự kiện và kiến thức kỹ thuật của Sài Gòn Valve.
+                        {t('subtitle')}
                     </p>
                 </div>
                 <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
@@ -351,14 +384,14 @@ export default function NewsManagementPage() {
                                 variant="outline"
                                 className="text-[10px] font-black uppercase tracking-widest px-4 md:px-5 hover:cursor-pointer h-10 border-slate-100 bg-white rounded-none"
                             >
-                                Danh mục
+                                {t('categories')}
                             </Button>
                         </Link>
                     )}
                     {hasPermission(PERMISSIONS.BLOG_CREATE) && (
                         <Link href={PORTAL_ROUTES.cms.news.add}>
                             <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 md:px-6 hover:cursor-pointer h-10 transition-all rounded-none">
-                                <Plus className="mr-2 size-4" /> Viết bài mới
+                                <Plus className="mr-2 size-4" /> {t('addArticle')}
                             </Button>
                         </Link>
                     )}
@@ -369,13 +402,13 @@ export default function NewsManagementPage() {
                 columns={columns}
                 data={newsList}
                 isLoading={isLoading}
-                loadingText="Đang tải danh sách tin tức..."
-                emptyText="Không tìm thấy bài viết nào phù hợp."
+                loadingText={t('loading')}
+                emptyText={t('empty')}
                 emptyIcon={<Newspaper size={64} className="text-slate-100 mb-6" />}
                 toolbarProps={{
                     searchValue: searchTerm,
                     onSearchChange: setSearchTerm,
-                    searchPlaceholder: "TÌM KIẾM BÀI VIẾT THEO TIÊU ĐỀ HOẶC DANH MỤC...",
+                    searchPlaceholder: t('searchPlaceholder'),
                     filters: (
                         <>
                             {/* Status Filter */}
@@ -390,8 +423,8 @@ export default function NewsManagementPage() {
                                     >
                                         <span className="truncate">
                                             {selectedStatus
-                                                ? NEWS_STATUS_FILTERS.find((item) => item.value === selectedStatus)?.label
-                                                : 'Lọc trạng thái'}
+                                                ? newsStatusFilters.find((item) => item.value === selectedStatus)?.label
+                                                : t('filterStatus')}
                                         </span>
                                         <ChevronDown className="ml-2 h-3 w-3 shrink-0" />
                                     </Button>
@@ -401,10 +434,10 @@ export default function NewsManagementPage() {
                                         className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer"
                                         onClick={() => setSelectedStatus('')}
                                     >
-                                        Tất cả trạng thái
+                                        {t('allStatuses')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator className="bg-slate-50" />
-                                    {NEWS_STATUS_FILTERS.map((status) => (
+                                    {newsStatusFilters.map((status) => (
                                         <DropdownMenuItem
                                             key={status.value}
                                             className={cn(
@@ -442,7 +475,7 @@ export default function NewsManagementPage() {
                                                     format(date.from, 'dd/MM/yy')
                                                 )
                                             ) : (
-                                                <span>Lọc theo ngày</span>
+                                                <span>{t('filterDate')}</span>
                                             )}
                                         </Button>
                                     </PopoverTrigger>
@@ -467,7 +500,7 @@ export default function NewsManagementPage() {
                                                     className="text-[10px] font-black uppercase tracking-widest text-rose-600 hover:bg-rose-50 hover:cursor-pointer"
                                                     onClick={() => setDate(undefined)}
                                                 >
-                                                    <X className="mr-2 size-3" /> Xóa lọc
+                                                    <X className="mr-2 size-3" /> {t('clearFilter')}
                                                 </Button>
                                             </div>
                                         )}
@@ -486,7 +519,7 @@ export default function NewsManagementPage() {
                         setPageSize(size);
                         setCurrentPage(1);
                     },
-                    itemLabel: "bài viết"
+                    itemLabel: t('itemLabel')
                 }}
             />
 
@@ -495,10 +528,10 @@ export default function NewsManagementPage() {
                 open={deleteDialogOpen}
                 onOpenChange={setDeleteDialogOpen}
                 onConfirm={handleDeleteConfirm}
-                title="Xóa bài viết"
-                description="Bài viết sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác."
+                title={t('deleteTitle')}
+                description={t('deleteConfirm')}
                 itemName={itemToDelete?.title}
-                itemLabel="Bài viết"
+                itemLabel={t('itemLabelCap')}
                 loading={deleteMutation.isPending}
             />
         </div>
