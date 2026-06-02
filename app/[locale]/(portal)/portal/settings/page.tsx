@@ -22,16 +22,20 @@ import {
     Globe, 
     Building, 
     Phone, 
-    Mail, 
     Clock, 
     Share2,
-    Shield
+    Trash2,
+    ArrowUp,
+    ArrowDown,
+    Edit2
 } from 'lucide-react';
 import { ImageUploader } from '@/components/portal/ImageUploader';
 import { usePermissions } from '@/hooks/use-permissions';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
 
 export default function SettingsPage() {
     const { user, refreshUser } = usePermissions();
@@ -71,6 +75,131 @@ export default function SettingsPage() {
         site_copyright_name: '',
         site_copyright_text: '',
     });
+
+    const [submenuItems, setSubmenuItems] = useState<{
+        id: string;
+        titleVi: string;
+        titleEn: string;
+        href: string;
+        isExternal: boolean;
+    }[]>([]);
+
+    const [editingItem, setEditingItem] = useState<string | null>(null);
+    const [itemForm, setItemForm] = useState({
+        titleVi: '',
+        titleEn: '',
+        href: '',
+        isExternal: false,
+    });
+
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
+    const saveSubmenuToDb = async (items: typeof submenuItems, silent = true): Promise<boolean> => {
+        setIsSavingSettings(true);
+        try {
+            const response = await $api.patch('/settings/site-info', {
+                site_product_submenu: JSON.stringify(items),
+            });
+            if (response.data.success) {
+                if (!silent) {
+                    toast.success('Đã tự động lưu thay đổi vào cơ sở dữ liệu');
+                }
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Failed to auto-save menu items', error);
+            toast.error('Lỗi khi tự động lưu cấu hình');
+            return false;
+        } finally {
+            setIsSavingSettings(false);
+        }
+    };
+
+    const saveItem = async () => {
+        if (!itemForm.titleVi.trim() || !itemForm.titleEn.trim() || !itemForm.href.trim()) {
+            toast.error('Vui lòng điền đầy đủ thông tin liên kết');
+            return;
+        }
+
+        let updatedItems;
+        const isEditing = !!editingItem;
+        if (isEditing) {
+            updatedItems = submenuItems.map((item) =>
+                item.id === editingItem ? { ...item, ...itemForm } : item
+            );
+            setEditingItem(null);
+        } else {
+            const newItem = {
+                id: crypto.randomUUID(),
+                ...itemForm,
+            };
+            updatedItems = [...submenuItems, newItem];
+        }
+
+        setSubmenuItems(updatedItems);
+        setItemForm({
+            titleVi: '',
+            titleEn: '',
+            href: '',
+            isExternal: false,
+        });
+
+        const success = await saveSubmenuToDb(updatedItems, true);
+        if (success) {
+            toast.success(isEditing ? 'Đã cập nhật liên kết' : 'Đã thêm liên kết vào menu');
+        }
+    };
+
+    const editItem = (item: typeof submenuItems[number]) => {
+        setEditingItem(item.id);
+        setItemForm({
+            titleVi: item.titleVi,
+            titleEn: item.titleEn,
+            href: item.href,
+            isExternal: !!item.isExternal,
+        });
+    };
+
+    const cancelEditing = () => {
+        setEditingItem(null);
+        setItemForm({
+            titleVi: '',
+            titleEn: '',
+            href: '',
+            isExternal: false,
+        });
+    };
+
+    const handleDeleteClick = (id: string) => {
+        setItemToDelete(id);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!itemToDelete) return;
+        const updatedItems = submenuItems.filter((item) => item.id !== itemToDelete);
+        setSubmenuItems(updatedItems);
+        setDeleteDialogOpen(false);
+        setItemToDelete(null);
+        const success = await saveSubmenuToDb(updatedItems, true);
+        if (success) {
+            toast.success('Đã xóa liên kết');
+        }
+    };
+
+    const moveItem = async (index: number, direction: 'up' | 'down') => {
+        const newItems = [...submenuItems];
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        if (targetIndex >= 0 && targetIndex < newItems.length) {
+            const temp = newItems[index];
+            newItems[index] = newItems[targetIndex];
+            newItems[targetIndex] = temp;
+            setSubmenuItems(newItems);
+            await saveSubmenuToDb(newItems, false);
+        }
+    };
 
     useEffect(() => {
         if (user) {
@@ -115,6 +244,34 @@ export default function SettingsPage() {
                     site_copyright_name: raw.site_copyright_name || '',
                     site_copyright_text: raw.site_copyright_text || '',
                 });
+
+                const rawJson = raw.site_product_submenu;
+                if (rawJson) {
+                    try {
+                        const parsed = JSON.parse(rawJson);
+                        setSubmenuItems(parsed);
+                    } catch (e) {
+                        console.error('Failed to parse site_product_submenu JSON', e);
+                        setSubmenuItems([]);
+                    }
+                } else {
+                    setSubmenuItems([
+                        {
+                            id: 'default-1',
+                            titleVi: 'Tất cả sản phẩm',
+                            titleEn: 'All Products',
+                            href: '/san-pham',
+                            isExternal: false,
+                        },
+                        {
+                            id: 'default-2',
+                            titleVi: 'Phần mềm IoT điều khiển',
+                            titleEn: 'IoT Control Software',
+                            href: 'https://iot.saigonvalve.vn/login',
+                            isExternal: true,
+                        }
+                    ]);
+                }
             }
         } catch (error) {
             console.error('Failed to load site settings', error);
@@ -152,7 +309,11 @@ export default function SettingsPage() {
     const handleSaveSettings = async () => {
         setIsSavingSettings(true);
         try {
-            const response = await $api.patch('/settings/site-info', siteInfo);
+            const dataToSave = {
+                ...siteInfo,
+                site_product_submenu: JSON.stringify(submenuItems),
+            };
+            const response = await $api.patch('/settings/site-info', dataToSave);
             if (response.data.success) {
                 toast.success('Cập nhật cấu hình website thành công');
                 await fetchSiteSettings();
@@ -617,10 +778,209 @@ export default function SettingsPage() {
                                     </Button>
                                 </CardFooter>
                             </Card>
+
+                            {/* Section 5: Quản lý Menu Dropdown Sản phẩm */}
+                            <Card className="border-slate-100 rounded-none overflow-hidden shadow-sm">
+                                <CardHeader className="bg-slate-50/50 border-b border-slate-50">
+                                    <div className="flex items-center gap-2">
+                                        <Share2 size={16} className="text-brand-primary" />
+                                        <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-900">
+                                            Menu Dropdown Sản phẩm (Header)
+                                        </CardTitle>
+                                    </div>
+                                    <CardDescription className="text-xs font-medium italic">
+                                        Cấu hình danh sách các liên kết xuất hiện trong menu dropdown &quot;SẢN PHẨM&quot; ở Header.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-4 md:p-8 space-y-6">
+                                    {/* Form Thêm/Sửa nhanh */}
+                                    <div className="bg-slate-50/70 p-4 border border-slate-200/60 rounded-none space-y-4">
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            {editingItem ? 'Chỉnh sửa liên kết' : 'Thêm liên kết mới'}
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                            <div className="md:col-span-3 space-y-1.5">
+                                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                                    Tiêu đề (Tiếng Việt)
+                                                </Label>
+                                                <Input
+                                                    value={itemForm.titleVi}
+                                                    onChange={(e) => setItemForm({ ...itemForm, titleVi: e.target.value })}
+                                                    className="h-8 border-slate-200 text-[10px] font-bold rounded-none bg-white focus:ring-brand-primary"
+                                                    placeholder="Ví dụ: Van bi OKM"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-3 space-y-1.5">
+                                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                                    Tiêu đề (Tiếng Anh)
+                                                </Label>
+                                                <Input
+                                                    value={itemForm.titleEn}
+                                                    onChange={(e) => setItemForm({ ...itemForm, titleEn: e.target.value })}
+                                                    className="h-8 border-slate-200 text-[10px] font-bold rounded-none bg-white focus:ring-brand-primary"
+                                                    placeholder="Ví dụ: OKM Ball Valve"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-4 space-y-1.5">
+                                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                                    Đường dẫn liên kết (URL)
+                                                </Label>
+                                                <Input
+                                                    value={itemForm.href}
+                                                    onChange={(e) => setItemForm({ ...itemForm, href: e.target.value })}
+                                                    className="h-8 border-slate-200 text-[10px] font-bold rounded-none bg-white focus:ring-brand-primary"
+                                                    placeholder="Ví dụ: /san-pham?category=id hoặc link ngoài"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-2 flex flex-col items-start gap-2 pb-1">
+                                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                                    Tùy chọn
+                                                </Label>
+                                                <div className="flex items-center gap-2 pt-1.5">
+                                                    <Checkbox
+                                                        id="isExternalCheckbox"
+                                                        checked={itemForm.isExternal}
+                                                        onCheckedChange={(checked) => 
+                                                            setItemForm({ ...itemForm, isExternal: !!checked })
+                                                        }
+                                                        className="rounded-none border-slate-300 data-[state=checked]:bg-brand-primary data-[state=checked]:border-brand-primary cursor-pointer"
+                                                    />
+                                                    <Label 
+                                                        htmlFor="isExternalCheckbox" 
+                                                        className="text-[10px] font-bold text-slate-600 cursor-pointer select-none"
+                                                    >
+                                                        Mở tab mới
+                                                    </Label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-end gap-2 pt-2">
+                                            {editingItem && (
+                                                <Button
+                                                    type="button"
+                                                    onClick={cancelEditing}
+                                                    variant="outline"
+                                                    className="h-8 border-slate-200 text-[9px] font-black uppercase tracking-widest px-4 rounded-none hover:bg-slate-100 hover:cursor-pointer"
+                                                >
+                                                    Hủy
+                                                </Button>
+                                            )}
+                                            <Button
+                                                type="button"
+                                                onClick={saveItem}
+                                                className="h-8 bg-brand-primary hover:bg-brand-secondary text-[9px] font-black uppercase tracking-widest px-5 rounded-none hover:cursor-pointer"
+                                            >
+                                                {editingItem ? 'Cập nhật' : 'Thêm vào menu'}
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {/* Danh sách items hiện tại */}
+                                    <div className="border border-slate-200/60 rounded-none overflow-hidden">
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-left border-collapse">
+                                                <thead>
+                                                    <tr className="bg-slate-50 border-b border-slate-200/60 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                        <th className="py-2.5 px-4 w-1/4">Tiêu đề (VI)</th>
+                                                        <th className="py-2.5 px-4 w-1/4">Tiêu đề (EN)</th>
+                                                        <th className="py-2.5 px-4 w-1/3">Đường dẫn liên kết</th>
+                                                        <th className="py-2.5 px-4 w-20 text-center">Tab mới</th>
+                                                        <th className="py-2.5 px-4 w-32 text-right">Thao tác</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-slate-100 text-[10px] font-bold text-slate-700">
+                                                    {submenuItems.length === 0 ? (
+                                                        <tr>
+                                                            <td colSpan={5} className="py-8 text-center text-slate-400 italic">
+                                                                Chưa cấu hình menu nào. Dropdown sẽ hiển thị danh sách mặc định.
+                                                            </td>
+                                                        </tr>
+                                                    ) : (
+                                                        submenuItems.map((item, index) => (
+                                                            <tr key={item.id} className="hover:bg-slate-50/40 transition-colors">
+                                                                <td className="py-2 px-4 uppercase">{item.titleVi}</td>
+                                                                <td className="py-2 px-4 uppercase text-slate-500">{item.titleEn}</td>
+                                                                <td className="py-2 px-4 font-mono text-[9px] text-slate-400 break-all">{item.href}</td>
+                                                                <td className="py-2 px-4 text-center">
+                                                                    {item.isExternal ? (
+                                                                        <span className="inline-block bg-blue-50 text-blue-600 px-1.5 py-0.5 text-[8px] font-black uppercase rounded-none border border-blue-100">
+                                                                            Có
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span className="text-slate-300">-</span>
+                                                                    )}
+                                                                </td>
+                                                                <td className="py-2 px-4 text-right flex items-center justify-end gap-1.5">
+                                                                    <Button
+                                                                        type="button"
+                                                                        disabled={index === 0}
+                                                                        onClick={() => moveItem(index, 'up')}
+                                                                        variant="ghost"
+                                                                        className="h-6 w-6 p-0 rounded-none hover:bg-slate-100 text-slate-400 hover:text-slate-800 disabled:opacity-30 disabled:pointer-events-none hover:cursor-pointer"
+                                                                    >
+                                                                        <ArrowUp size={12} />
+                                                                    </Button>
+                                                                    <Button
+                                                                        type="button"
+                                                                        disabled={index === submenuItems.length - 1}
+                                                                        onClick={() => moveItem(index, 'down')}
+                                                                        variant="ghost"
+                                                                        className="h-6 w-6 p-0 rounded-none hover:bg-slate-100 text-slate-400 hover:text-slate-800 disabled:opacity-30 disabled:pointer-events-none hover:cursor-pointer"
+                                                                    >
+                                                                        <ArrowDown size={12} />
+                                                                    </Button>
+                                                                    <Button
+                                                                        type="button"
+                                                                        onClick={() => editItem(item)}
+                                                                        variant="ghost"
+                                                                        className="h-6 w-6 p-0 rounded-none hover:bg-slate-100 text-brand-primary hover:text-brand-secondary hover:cursor-pointer"
+                                                                    >
+                                                                        <Edit2 size={11} />
+                                                                    </Button>
+                                                                    <Button
+                                                                        type="button"
+                                                                        onClick={() => handleDeleteClick(item.id)}
+                                                                        variant="ghost"
+                                                                        className="h-6 w-6 p-0 rounded-none hover:bg-slate-100 text-red-500 hover:text-red-700 hover:cursor-pointer"
+                                                                    >
+                                                                        <Trash2 size={11} />
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="bg-slate-50/30 p-4 md:p-8 border-t border-slate-50 flex justify-end">
+                                    <Button
+                                        onClick={handleSaveSettings}
+                                        disabled={isSavingSettings}
+                                        className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-6 py-2 hover:cursor-pointer h-9 transition-all rounded-none"
+                                    >
+                                        {isSavingSettings ? (
+                                            <Loader2 className="mr-2 size-4 animate-spin" />
+                                        ) : (
+                                            <Save className="mr-2 size-4" />
+                                        )}
+                                        Lưu cấu hình website
+                                    </Button>
+                                </CardFooter>
+                            </Card>
                         </div>
                     )}
                 </TabsContent>
             </Tabs>
+            <DeleteConfirmationDialog
+                open={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                onConfirm={handleDeleteConfirm}
+                title="Xóa liên kết menu"
+                description="Bạn có chắc chắn muốn xóa liên kết này khỏi menu dropdown? Hành động này sẽ được lưu ngay lập tức vào hệ thống."
+                itemLabel="liên kết"
+            />
         </div>
     );
 }

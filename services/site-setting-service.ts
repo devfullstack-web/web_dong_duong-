@@ -62,8 +62,14 @@ class SiteSettingService {
             const youtube = get('site_youtube', COMPANY_INFO.social.youtube || '');
             const zalo = get('site_zalo', COMPANY_INFO.social.zalo || '');
 
-            const weekdays = get('site_working_hours_weekdays', COMPANY_INFO.workingHours.weekdays || '');
-            const saturday = get('site_working_hours_saturday', COMPANY_INFO.workingHours.saturday || '');
+            const weekdays = get(
+                'site_working_hours_weekdays',
+                COMPANY_INFO.workingHours.weekdays || '',
+            );
+            const saturday = get(
+                'site_working_hours_saturday',
+                COMPANY_INFO.workingHours.saturday || '',
+            );
             const sunday = get('site_working_hours_sunday', COMPANY_INFO.workingHours.sunday || '');
 
             const taxCode = get('site_tax_code', COMPANY_INFO.taxCode || '');
