@@ -46,6 +46,7 @@ export async function GET(
       updated_at: newsArticles.updated_at,
       category_id: newsArticles.category_id,
       category: categories.name,
+      category_localized: categories.name_localized,
       author_id: newsArticles.author_id,
       author: authors.name,
     })

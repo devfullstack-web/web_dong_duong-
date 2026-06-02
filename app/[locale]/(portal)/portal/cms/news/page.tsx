@@ -1,7 +1,10 @@
 'use client';
 
 import { NewsArticle } from '@/types';
+import { getLocalizedValue, type Locale, type LocalizedText } from '@/types/i18n';
 import $api from '@/utils/axios';
+
+type LocalizedNewsArticle = NewsArticle & { category_localized?: LocalizedText | null };
 import {
     Plus,
     MoreHorizontal,
@@ -211,13 +214,13 @@ export default function NewsManagementPage() {
                         </div>
                         <div className="max-w-[250px] md:max-w-[450px]">
                             <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-1">
-                                {news.title}
+                                {getLocalizedValue(news.title_localized, localeStr as Locale) || news.title}
                             </div>
                             <Badge
                                 variant="outline"
                                 className="text-[9px] font-bold text-slate-400 border-slate-200 uppercase tracking-widest px-2 py-0 rounded-none"
                             >
-                                {news.category || t('uncategorized')}
+                                {getLocalizedValue((news as LocalizedNewsArticle).category_localized, localeStr as Locale) || news.category || t('uncategorized')}
                             </Badge>
                         </div>
                     </div>
@@ -334,7 +337,7 @@ export default function NewsManagementPage() {
                 );
             },
         },
-    ], [hasPermission, formatDate, getStatusBadge, t, tc]);
+    ], [hasPermission, formatDate, getStatusBadge, t, tc, localeStr]);
 
     return (
         <div className="space-y-6">

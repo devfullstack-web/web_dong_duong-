@@ -91,6 +91,7 @@ export const GET = withHybridAuth(
                     created_at: newsArticles.created_at,
                     category_id: newsArticles.category_id,
                     category: categories.name,
+                    category_localized: categories.name_localized,
                     author_id: newsArticles.author_id,
                     author: authors.name,
                     image_url: newsArticles.image_url,
