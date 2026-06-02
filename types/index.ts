@@ -67,6 +67,7 @@ export interface Project {
     end_date?: string;
     category_id: string;
     category?: string;
+    category_localized?: LocalizedText | null;
     image?: string;
     image_url: string;
     status: ProjectStatus;

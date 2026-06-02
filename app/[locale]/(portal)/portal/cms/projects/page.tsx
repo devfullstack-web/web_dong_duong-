@@ -41,9 +41,10 @@ import { PERMISSIONS } from '@/constants/rbac';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, DataTableColumnHeader } from '@/components/shared/data-table';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import * as React from 'react';
 import { PROJECT_STATUS } from '@/constants/content';
+import { getLocalizedValue, type Locale } from '@/types/i18n';
 
 const PROJECT_STATUS_FILTERS: Project['status'][] = [
     PROJECT_STATUS.ONGOING,
@@ -84,6 +85,7 @@ export default function ProjectsManagementPage() {
     const queryClient = useQueryClient();
     const t = useTranslations('Portal.Projects');
     const tc = useTranslations('Portal.Common');
+    const locale = useLocale();
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearch = useDebounce(searchTerm, 500);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -206,13 +208,13 @@ export default function ProjectsManagementPage() {
                         </div>
                         <div className="max-w-[200px] md:max-w-[400px]">
                             <div className="text-sm font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-1 uppercase tracking-tight mb-1">
-                                {project.name}
+                                {getLocalizedValue(project.name_localized, locale as Locale) || project.name}
                             </div>
                             <Badge
                                 variant="outline"
                                 className="text-[9px] font-bold text-slate-400 border-slate-200 uppercase tracking-widest px-2 py-0 rounded-none"
                             >
-                                {project.category || t('uncategorized')}
+                                {getLocalizedValue(project.category_localized, locale as Locale) || project.category || t('uncategorized')}
                             </Badge>
                         </div>
                     </div>
@@ -331,7 +333,7 @@ export default function ProjectsManagementPage() {
                 );
             },
         },
-    ], [hasPermission, formatDate, getStatusBadge, t, tc]);
+    ], [hasPermission, formatDate, getStatusBadge, t, tc, locale]);
 
     return (
         <div className="space-y-6">
@@ -497,7 +499,7 @@ export default function ProjectsManagementPage() {
                 onConfirm={handleDeleteConfirm}
                 title={t('deleteTitle')}
                 description={t('deleteConfirm')}
-                itemName={itemToDelete?.name}
+                itemName={itemToDelete ? (getLocalizedValue(itemToDelete.name_localized, locale as Locale) || itemToDelete.name) : undefined}
                 itemLabel={t('itemLabelCap')}
                 loading={deleteMutation.isPending}
             />

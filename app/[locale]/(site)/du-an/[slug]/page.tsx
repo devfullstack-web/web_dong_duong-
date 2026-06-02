@@ -30,6 +30,7 @@ const getProject = cache(async (slug: string) => {
             image_url: projects.image_url,
             gallery: projects.gallery,
             category_name: categories.name,
+            category_localized: categories.name_localized,
         })
         .from(projects)
         .leftJoin(categories, eq(projects.category_id, categories.id))
@@ -53,6 +54,7 @@ async function getRelatedProjects(slug: string) {
             image_url: projects.image_url,
             status: projects.status,
             category_name: categories.name,
+            category_localized: categories.name_localized,
         })
         .from(projects)
         .leftJoin(categories, eq(projects.category_id, categories.id))
@@ -103,11 +105,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
     const projectWithMeta = {
         ...project,
         category: project.category_name || 'DỰ ÁN',
+        category_localized: project.category_localized,
     };
 
     const relatedWithMeta = relatedProjects.map((p) => ({
         ...p,
         category: p.category_name || 'DỰ ÁN',
+        category_localized: p.category_localized,
     }));
 
     return <ProjectDetailClient project={projectWithMeta} relatedProjects={relatedWithMeta} locale={locale} />;

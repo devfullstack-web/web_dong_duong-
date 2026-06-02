@@ -21,6 +21,7 @@ interface Project {
     name_localized?: LocalizedText | null;
     slug: string;
     category: string;
+    category_localized?: LocalizedText | null;
     image_url: string | null;
     start_date: string | null;
     client_name: string | null;
@@ -88,7 +89,7 @@ export default function ProjectsPage() {
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
                                                 <span>
-                                                    {project.category || t('grid.defaultCategory')}
+                                                    {getLocalizedValue(project.category_localized, locale as Locale) || project.category || t('grid.defaultCategory')}
                                                 </span>
                                                 <span>{getYear(project.start_date)}</span>
                                             </div>

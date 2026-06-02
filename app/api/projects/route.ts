@@ -88,6 +88,7 @@ export const GET = withHybridAuth(
                     image_url: projects.image_url,
                     gallery: projects.gallery,
                     category: categories.name,
+                    category_localized: categories.name_localized,
                 })
                 .from(projects)
                 .innerJoin(categories, eq(projects.category_id, categories.id))

@@ -36,6 +36,7 @@ export async function GET(
       gallery: projects.gallery,
       category_id: projects.category_id,
       category: categories.name,
+      category_localized: categories.name_localized,
       created_at: projects.created_at,
     })
     .from(projects)

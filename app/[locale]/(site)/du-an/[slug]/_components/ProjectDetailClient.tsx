@@ -90,7 +90,7 @@ export default function ProjectDetailClient({
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="space-y-6">
                         <div className="inline-flex items-center bg-brand-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-brand-primary rounded-none">
-                            {project.category || 'DỰ ÁN'}
+                            {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || 'DỰ ÁN'}
                         </div>
 
                         <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-[1.1]">
@@ -118,10 +118,10 @@ export default function ProjectDetailClient({
                                 </div>
                                 <div>
                                     <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        Vị trí
+                                        {t('info.location')}
                                     </div>
                                     <div className="text-xs font-bold text-slate-900">
-                                        {project.location || 'Việt Nam'}
+                                        {project.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
                                     </div>
                                 </div>
                             </div>
@@ -132,14 +132,14 @@ export default function ProjectDetailClient({
                                 </div>
                                 <div>
                                     <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        Thời gian
+                                        {t('info.time')}
                                     </div>
                                     <div className="text-xs font-bold text-slate-900">
                                         {project.start_date
-                                            ? new Date(project.start_date).getFullYear()
+                                            ? new Date(project.start_date as string).getFullYear()
                                             : '2024'}
                                         {project.end_date
-                                            ? ` - ${new Date(project.end_date).getFullYear()}`
+                                            ? ` - ${new Date(project.end_date as string).getFullYear()}`
                                             : ''}
                                     </div>
                                 </div>
@@ -250,7 +250,7 @@ export default function ProjectDetailClient({
                                             {t('info.category')}
                                         </span>
                                         <span className="text-xs font-bold text-slate-900">
-                                            {project.category || 'Hạ tầng nước'}
+                                            {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || 'Hạ tầng nước'}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
@@ -266,7 +266,7 @@ export default function ProjectDetailClient({
                                             {t('info.location')}
                                         </span>
                                         <span className="text-xs font-bold text-slate-900">
-                                            {project.location || 'Việt Nam'}
+                                            {project.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
@@ -360,12 +360,12 @@ export default function ProjectDetailClient({
                                                 </div>
                                             )}
                                             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2 py-1 text-[8px] font-black uppercase tracking-widest text-brand-primary rounded-none">
-                                                {proj.category || 'DỰ ÁN'}
+                                                {getLocalizedValue(proj.category_localized as LocalizedText, locale as Locale) || (proj.category as string) || 'DỰ ÁN'}
                                             </div>
                                         </div>
                                         <div className="p-6 flex flex-col grow">
                                             <div className="text-[9px] font-bold text-slate-400 mb-2 flex items-center gap-2">
-                                                <MapPin size={10} /> {proj.location || 'Việt Nam'}
+                                                <MapPin size={10} /> {proj.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
                                             </div>
                                             <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-tight mb-4 grow tracking-tight">
                                                 {projName}
