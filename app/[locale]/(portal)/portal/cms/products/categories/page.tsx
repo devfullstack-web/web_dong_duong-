@@ -13,6 +13,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { LocalizedText } from '@/types/i18n';
 import { getLocalizedValue } from '@/types/i18n';
 import { CATEGORY_TYPE } from '@/constants/content';
+import { useLocale } from 'next-intl';
 
 interface Category {
     id: string;
@@ -37,7 +38,8 @@ function CategoryTreeItem({
 }) {
     const [expanded, setExpanded] = useState(true);
     const hasChildren = cat.children && cat.children.length > 0;
-    const displayName = getLocalizedValue(cat.name_localized, 'vi') || cat.name;
+    const locale = useLocale();
+    const displayName = getLocalizedValue(cat.name_localized, locale) || cat.name;
 
     return (
         <>
@@ -132,6 +134,7 @@ export default function ProductCategoriesPage() {
     const queryClient = useQueryClient();
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<Category | null>(null);
+    const locale = useLocale();
 
     const { data: categoriesData, isLoading } = useQuery<{ data: Category[] }>({
         queryKey: ['categories', CATEGORY_TYPE.PRODUCT],
@@ -230,7 +233,7 @@ export default function ProductCategoriesPage() {
                 onConfirm={handleDeleteConfirm}
                 title="Xóa danh mục"
                 description="Danh mục sẽ bị xóa. Các sản phẩm thuộc danh mục này sẽ không còn được phân loại."
-                itemName={itemToDelete?.name}
+                itemName={itemToDelete ? (getLocalizedValue(itemToDelete.name_localized, locale) || itemToDelete.name) : ''}
                 loading={deleteMutation.isPending}
             />
         </div>

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useLocale } from "next-intl";
 import { Save, Layout, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,14 +42,14 @@ interface CategoryFormProps {
 }
 
 // Flatten tree for select options with indent
-function flattenForSelect(cats: ParentCategory[], level = 0, excludeId?: string): { id: string; name: string; level: number }[] {
+function flattenForSelect(cats: ParentCategory[], locale: Locale, level = 0, excludeId?: string): { id: string; name: string; level: number }[] {
   const result: { id: string; name: string; level: number }[] = [];
   for (const cat of cats) {
     if (cat.id === excludeId) continue;
-    const name = getLocalizedValue(cat.name_localized, 'vi' as Locale) || cat.name;
+    const name = getLocalizedValue(cat.name_localized, locale) || cat.name;
     result.push({ id: cat.id, name, level });
     if (cat.children?.length) {
-      result.push(...flattenForSelect(cat.children, level + 1, excludeId));
+      result.push(...flattenForSelect(cat.children, locale, level + 1, excludeId));
     }
   }
   return result;
@@ -62,6 +63,7 @@ export function CategoryForm({
   backUrl,
   editingId,
 }: CategoryFormProps) {
+  const locale = useLocale() as Locale;
   const [formData, setFormData] = React.useState<CategoryFormData>({
     name_localized: initialData?.name_localized || toLocalizedText(initialData?.name) || createEmptyLocalizedText(),
     category_type_id: initialData?.category_type_id || "",
@@ -95,8 +97,8 @@ export function CategoryForm({
   }, [type]);
 
   const flatParents = React.useMemo(
-    () => flattenForSelect(parentCategories, 0, editingId),
-    [parentCategories, editingId]
+    () => flattenForSelect(parentCategories, locale, 0, editingId),
+    [parentCategories, locale, editingId]
   );
 
   const handleSubmit = (e: React.FormEvent) => {
