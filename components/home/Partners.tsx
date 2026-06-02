@@ -11,49 +11,44 @@ export const PARTNERS = [
 
 export default function Partners() {
     const t = useTranslations('Partners');
+
     return (
         <motion.section 
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="bg-linear-to-b from-slate-50 to-white py-20 sm:py-28"
+            className="bg-white py-20 sm:py-24 border-t border-slate-100"
         >
             <div className="container mx-auto px-4 lg:px-8">
                 {/* Header */}
-                <div className="text-center mb-12">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-3">
+                <div className="text-center mb-14 space-y-3">
+                    <p className="text-[10px] font-black tracking-[0.2em] text-brand-primary uppercase flex items-center justify-center gap-2">
+                        <span className="w-6 h-px bg-brand-primary inline-block" />
                         {t('title')}
+                        <span className="w-6 h-px bg-brand-primary inline-block" />
+                    </p>
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight">
+                        {t('description')}
                     </h2>
-                    <p className="text-slate-500 max-w-2xl mx-auto">{t('description')}</p>
                 </div>
 
-                {/* Partners Grid */}
-                <div className="flex flex-wrap items-center justify-center gap-6 lg:gap-10 max-w-5xl mx-auto">
+                {/* Partners - Static centered grid, full color */}
+                <div className="flex items-center justify-center gap-8 sm:gap-12 lg:gap-16 max-w-3xl mx-auto">
                     {PARTNERS.map((partner, i) => (
                         <div
                             key={`${partner.name}-${i}`}
-                            className="group w-48 sm:w-56 lg:w-64"
+                            className="group relative h-28 sm:h-32 lg:h-36 w-44 sm:w-56 lg:w-64 bg-white border border-slate-200 hover:border-brand-primary/40 hover:shadow-md transition-all duration-300 p-6 flex items-center justify-center"
                         >
-                            <div className="relative h-32 sm:h-36 lg:h-40 w-full bg-white  border border-slate-200 shadow-sm hover:shadow-lg hover:border-brand-primary/30 transition-all duration-300 p-6 flex items-center justify-center overflow-hidden">
-                                {/* Background glow effect on hover */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                                <div className="relative w-full h-full group-hover:scale-105 transition-transform duration-300">
-                                    <Image
-                                        src={partner.logo}
-                                        alt={partner.name}
-                                        fill
-                                        className="object-contain p-2 hover:cursor-pointer"
-                                        sizes="(max-width: 768px) 192px, (max-width: 1024px) 224px, 256px"
-                                    />
-                                </div>
+                            <div className="relative w-full h-full group-hover:scale-[1.03] transition-transform duration-300">
+                                <Image
+                                    src={partner.logo}
+                                    alt={partner.name}
+                                    fill
+                                    className="object-contain"
+                                    sizes="(max-width: 768px) 176px, (max-width: 1024px) 224px, 256px"
+                                />
                             </div>
-
-                            {/* Partner name tooltip */}
-                            <p className="text-center text-sm text-slate-500 mt-3 font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                {t('partner', { defaultValue: partner.name })}
-                            </p>
                         </div>
                     ))}
                 </div>
