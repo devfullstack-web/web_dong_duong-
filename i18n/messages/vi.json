@@ -699,7 +699,8 @@
             "deleteTitle": "Xóa sản phẩm",
             "deleteConfirm": "Sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
             "itemLabelCap": "Sản phẩm",
-            "uncategorized": "Chưa phân loại"
+            "uncategorized": "Chưa phân loại",
+            "loadingProduct": "Đang tải thông tin sản phẩm..."
         },
         "News": {
             "title": "Quản lý Tin tức",

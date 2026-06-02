@@ -698,7 +698,8 @@
       "deleteTitle": "Delete Product",
       "deleteConfirm": "The product will be permanently deleted from the system. This action cannot be undone.",
       "itemLabelCap": "Product",
-      "uncategorized": "Uncategorized"
+      "uncategorized": "Uncategorized",
+      "loadingProduct": "Loading product details..."
     },
     "News": {
       "title": "News Management",

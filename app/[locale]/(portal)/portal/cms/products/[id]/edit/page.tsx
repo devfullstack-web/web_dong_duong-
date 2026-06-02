@@ -32,6 +32,8 @@ import { toast } from 'sonner';
 import { createEmptyLocalizedText, toLocalizedText, getLocalizedValue } from '@/types/i18n';
 import type { LocalizedText } from '@/types/i18n';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import Loading from '@/components/shared/Loading';
 import { CATEGORY_TYPE, PRODUCT_STATUS, type ProductStatus } from '@/constants/content';
 
 interface Category {
@@ -56,6 +58,7 @@ export default function EditProductPage() {
     const params = useParams();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.Products');
     const productId = params.id as string;
 
     const [isLoading, setIsLoading] = useState(true);
@@ -251,14 +254,7 @@ export default function EditProductPage() {
     };
 
     if (isLoading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
-                <p className="mt-4 text-slate-500 font-medium italic animate-pulse">
-                    Đang tải thông tin sản phẩm...
-                </p>
-            </div>
-        );
+        return <Loading variant="section" text={t('loadingProduct')} />;
     }
 
     if (!formData.name_localized.vi && !isLoading) {
