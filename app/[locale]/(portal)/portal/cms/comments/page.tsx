@@ -232,13 +232,11 @@ export default function CommentsManagementPage() {
                                     </div>
                                 </div>
                             </CardHeader>
-                            <CardContent className="p-0">
+                            <CardContent className="relative p-0 min-h-[300px]">
                                 {isLoading ? (
-                                    <div className="flex items-center justify-center py-20 w-full">
-                                        <Loading variant="section" size="md" text={tc('loading')} />
-                                    </div>
+                                    <Loading variant="section" size="md" text={tc('loading')} />
                                 ) : comments.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+                                    <div className="flex flex-col items-center justify-center py-20 text-slate-400 min-h-[300px]">
                                         <MessageSquare size={48} className="mb-4 opacity-10" />
                                         <p className="text-[10px] font-black uppercase tracking-widest">
                                             Không tìm thấy bình luận nào.
