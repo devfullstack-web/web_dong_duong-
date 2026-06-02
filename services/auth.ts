@@ -3,7 +3,7 @@ import type { JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { roles, permissions, user_roles, modules, users } from '@/db/schemas';
+import { roles, permissions, role_permissions, user_roles, modules, users } from '@/db/schemas';
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { AUTH } from '@/constants/app';
 import { getJwtSecret } from '@/services/jwt-secret';
@@ -87,24 +87,13 @@ export async function generateTokens(user: Pick<AuthUser, 'id'>) {
     if (roleIds.length > 0) {
         const perms = await db
             .select({
-                moduleCode: modules.code,
-                canView: permissions.can_view,
-                canCreate: permissions.can_create,
-                canUpdate: permissions.can_update,
-                canDelete: permissions.can_delete,
+                code: permissions.code,
             })
-            .from(permissions)
-            .innerJoin(modules, eq(permissions.module_id, modules.id))
-            .where(inArray(permissions.role_id, roleIds));
+            .from(role_permissions)
+            .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
+            .where(inArray(role_permissions.role_id, roleIds));
 
-        userPermissions = perms.flatMap((p) => {
-            const ps = [];
-            if (p.canView) ps.push(`${p.moduleCode}:VIEW`);
-            if (p.canCreate) ps.push(`${p.moduleCode}:CREATE`);
-            if (p.canUpdate) ps.push(`${p.moduleCode}:UPDATE`);
-            if (p.canDelete) ps.push(`${p.moduleCode}:DELETE`);
-            return ps;
-        });
+        userPermissions = perms.map((p) => p.code);
     }
 
     const sessionPayload = {

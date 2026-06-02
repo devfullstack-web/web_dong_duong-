@@ -1,7 +1,7 @@
 import { db } from '@/db';
-import { permissions, modules } from '@/db/schemas';
+import { permissions, role_permissions, modules } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
-import {  PERMISSIONS } from '@/constants/rbac';
+import { PERMISSIONS } from '@/constants/rbac';
 import { eq } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
 import { NextRequest } from 'next/server';
@@ -14,24 +14,28 @@ export const GET = withAuth(
 
             const allModules = await db.select().from(modules);
 
-            let rolePermissions: (typeof permissions.$inferSelect)[] = [];
+            // Fetch permissions assigned to the role
+            const assignedPermissionCodes = new Set<string>();
             if (roleId) {
-                rolePermissions = await db
-                    .select()
-                    .from(permissions)
-                    .where(eq(permissions.role_id, roleId));
+                const assigned = await db
+                    .select({ code: permissions.code })
+                    .from(role_permissions)
+                    .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
+                    .where(eq(role_permissions.role_id, roleId));
+                
+                assigned.forEach((ap) => assignedPermissionCodes.add(ap.code));
             }
 
-            // Combine modules with role permissions for a matrix view
+            // Combine modules with dynamically mapped role permissions
             const matrix = allModules.map((module) => {
-                const perm = rolePermissions.find((p) => p.module_id === module.id);
+                const moduleCode = module.code.toUpperCase();
                 return {
                     module: module,
-                    permissions: perm || {
-                        can_view: false,
-                        can_create: false,
-                        can_update: false,
-                        can_delete: false,
+                    permissions: {
+                        can_view: assignedPermissionCodes.has(`${moduleCode}:VIEW`),
+                        can_create: assignedPermissionCodes.has(`${moduleCode}:CREATE`),
+                        can_update: assignedPermissionCodes.has(`${moduleCode}:UPDATE`),
+                        can_delete: assignedPermissionCodes.has(`${moduleCode}:DELETE`),
                     },
                 };
             });

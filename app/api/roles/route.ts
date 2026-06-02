@@ -1,7 +1,7 @@
 import { db } from '@/db';
-import { roles, permissions } from '@/db/schemas';
+import { roles, permissions, role_permissions, modules } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
-import { desc } from 'drizzle-orm';
+import { desc, inArray } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 
@@ -41,15 +41,38 @@ export const POST = withAuth(
                     .returning();
 
                 if (permissionsMatrix && Array.isArray(permissionsMatrix)) {
+                    // Fetch modules to match moduleId to module.code
+                    const allModules = await tx.select().from(modules);
+
+                    // Build permission codes to assign
+                    const permissionCodesToAssign: string[] = [];
+
                     for (const pm of permissionsMatrix) {
-                        await tx.insert(permissions).values({
-                            role_id: insertedRole.id,
-                            module_id: pm.moduleId,
-                            can_view: pm.canView || false,
-                            can_create: pm.canCreate || false,
-                            can_update: pm.canUpdate || false,
-                            can_delete: pm.canDelete || false,
-                        });
+                        const moduleObj = allModules.find((m) => m.id === pm.moduleId);
+                        if (!moduleObj) continue;
+
+                        const moduleCode = moduleObj.code.toUpperCase();
+                        if (pm.canView) permissionCodesToAssign.push(`${moduleCode}:VIEW`);
+                        if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}:CREATE`);
+                        if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}:UPDATE`);
+                        if (pm.canDelete) permissionCodesToAssign.push(`${moduleCode}:DELETE`);
+                    }
+
+                    // Query the matching permission records from the database
+                    if (permissionCodesToAssign.length > 0) {
+                        const dbPermissions = await tx
+                            .select({ id: permissions.id })
+                            .from(permissions)
+                            .where(inArray(permissions.code, permissionCodesToAssign));
+
+                        if (dbPermissions.length > 0) {
+                            await tx.insert(role_permissions).values(
+                                dbPermissions.map((dp) => ({
+                                    role_id: insertedRole.id,
+                                    permission_id: dp.id,
+                                }))
+                            );
+                        }
                     }
                 }
 

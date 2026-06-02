@@ -18,3 +18,4 @@ export * from './product-comments';
 export * from './notifications';
 export * from './audit-logs';
 export * from './system-settings';
+export * from './role-permissions';

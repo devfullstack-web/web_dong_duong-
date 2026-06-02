@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { users, roles, user_roles, permissions, modules } from '@/db/schemas';
+import { users, roles, user_roles, permissions, role_permissions, modules } from '@/db/schemas';
 import { eq, inArray } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { getSession } from '@/services/auth';
@@ -58,20 +58,14 @@ export async function GET() {
 
         interface PermissionWithModule {
             id: string;
-            createdAt: Date | null;
-            updatedAt: Date | null;
-            deletedAt: Date | null;
             moduleId: string;
             roleId: string;
-            canView: boolean | null;
-            canCreate: boolean | null;
-            canUpdate: boolean | null;
-            canDelete: boolean | null;
+            canView: boolean;
+            canCreate: boolean;
+            canUpdate: boolean;
+            canDelete: boolean;
             module: {
                 id: string;
-                createdAt: Date | null;
-                updatedAt: Date | null;
-                deletedAt: Date | null;
                 code: string;
                 name: string;
                 icon: string | null;
@@ -83,33 +77,52 @@ export async function GET() {
         // 3. Fetch permissions for these roles
         let allPermissions: PermissionWithModule[] = [];
         if (roleIds.length > 0) {
-            allPermissions = await db
+            const rawRolePermissions = await db
                 .select({
-                    id: permissions.id,
-                    createdAt: permissions.created_at,
-                    updatedAt: permissions.updated_at,
-                    deletedAt: permissions.deleted_at,
-                    moduleId: permissions.module_id,
-                    roleId: permissions.role_id,
-                    canView: permissions.can_view,
-                    canCreate: permissions.can_create,
-                    canUpdate: permissions.can_update,
-                    canDelete: permissions.can_delete,
+                    roleId: role_permissions.role_id,
+                    permId: permissions.id,
+                    permCode: permissions.code,
                     module: {
                         id: modules.id,
-                        createdAt: modules.created_at,
-                        updatedAt: modules.updated_at,
-                        deletedAt: modules.deleted_at,
                         code: modules.code,
                         name: modules.name,
                         icon: modules.icon,
                         route: modules.route,
                         order: modules.order,
-                    },
+                    }
                 })
-                .from(permissions)
-                .innerJoin(modules, eq(permissions.module_id, modules.id))
-                .where(inArray(permissions.role_id, roleIds));
+                .from(role_permissions)
+                .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
+                .innerJoin(modules, eq(permissions.module_code, modules.code))
+                .where(inArray(role_permissions.role_id, roleIds));
+
+            // Group raw permissions by (roleId, moduleId) to build dynamic matrix
+            const roleModuleMap = new Map<string, PermissionWithModule>();
+
+            for (const raw of rawRolePermissions) {
+                const key = `${raw.roleId}:${raw.module.id}`;
+                if (!roleModuleMap.has(key)) {
+                    roleModuleMap.set(key, {
+                        id: raw.permId,
+                        roleId: raw.roleId,
+                        moduleId: raw.module.id,
+                        canView: false,
+                        canCreate: false,
+                        canUpdate: false,
+                        canDelete: false,
+                        module: raw.module
+                    });
+                }
+
+                const entry = roleModuleMap.get(key)!;
+                const action = raw.permCode.split(':')[1];
+                if (action === 'VIEW') entry.canView = true;
+                if (action === 'CREATE') entry.canCreate = true;
+                if (action === 'UPDATE') entry.canUpdate = true;
+                if (action === 'DELETE') entry.canDelete = true;
+            }
+
+            allPermissions = Array.from(roleModuleMap.values());
         }
 
         // Compose the response
