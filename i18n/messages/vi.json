@@ -578,7 +578,8 @@
             "status": "Trạng thái",
             "createdAt": "Ngày tạo",
             "updatedAt": "Cập nhật",
-            "action": "Hành động"
+            "action": "Hành động",
+            "checkingPermissions": "Đang kiểm tra quyền truy cập..."
         },
         "AuditLogs": {
             "title": "Nhật ký hệ thống",

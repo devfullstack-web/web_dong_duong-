@@ -4,6 +4,8 @@ import { usePermissions } from '@/hooks/use-permissions';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { PERMISSIONS } from '@/constants/rbac';
+import { useTranslations } from 'next-intl';
+import Loading from '@/components/shared/Loading';
 import { PORTAL_ROUTES } from '@/constants/routes';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,14 +18,11 @@ interface RouteGuardProps {
 export function RouteGuard({ children }: RouteGuardProps) {
     const { user, isLoading, isAdmin, canAny } = usePermissions();
     const pathname = usePathname();
+    const t = useTranslations('Portal.Common');
 
     // If loading, show spinner
     if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-primary"></div>
-            </div>
-        );
+        return <Loading variant="section" text={t('checkingPermissions')} />;
     }
 
     // Determine authorization based on static route mapping

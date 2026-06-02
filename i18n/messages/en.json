@@ -577,7 +577,8 @@
       "status": "Status",
       "createdAt": "Created At",
       "updatedAt": "Updated At",
-      "action": "Action"
+      "action": "Action",
+      "checkingPermissions": "Checking access permissions..."
     },
     "AuditLogs": {
       "title": "System Audit Logs",
