@@ -9,7 +9,7 @@ import { PageBanner } from '@/components/site/PageBanner';
 import { API_ROUTES } from '@/constants/routes';
 import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
 import { SiteEmptyState } from '@/components/site/SiteEmptyState';
-import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
+import Loading from '@/components/shared/Loading';
 import { SitePagination } from '@/components/site/SitePagination';
 import { getYear } from '@/utils/client-format';
 import { getLocalizedValue, type Locale, type LocalizedText } from '@/types/i18n';
@@ -32,6 +32,7 @@ const ITEMS_PER_PAGE = 12;
 
 export default function ProjectsPage() {
     const t = useTranslations('Projects');
+    const tCommon = useTranslations('Common');
     const locale = useLocale();
     const {
         items: projects,
@@ -45,18 +46,16 @@ export default function ProjectsPage() {
         pageSize: ITEMS_PER_PAGE,
     });
 
-    if (isLoading && projects.length === 0) {
-        return <SiteLoadingScreen />;
-    }
-
     return (
         <div className="flex flex-col min-h-screen bg-white">
             <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Compact Grid Section */}
-            <section className="py-12 bg-white">
+            <section className="py-12 bg-white relative min-h-[400px]">
                 <div className="container mx-auto px-4 lg:px-8">
-                    {projects.length === 0 ? (
+                    {isLoading && projects.length === 0 ? (
+                        <Loading variant="section" size="lg" text={tCommon('loading')} />
+                    ) : projects.length === 0 ? (
                         <SiteEmptyState icon={FolderOpen} title={t('empty.title')} />
                     ) : (
                         <>
@@ -75,11 +74,13 @@ export default function ProjectsPage() {
                                             className="relative aspect-4/3 w-full overflow-hidden rounded-lg bg-slate-100"
                                         >
                                             <Image
-                                                src={
-                                                    project.image_url ||
-                                                    'https://saigonvalve.vn/uploads/files/2025/07/16/thumbs/z6809258125215_0bfd24b1d2a12247ce2fe99f8bc81598-306x234-5.jpg'
+                                                src={project.image_url || ''}
+                                                alt={
+                                                    getLocalizedValue(
+                                                        project.name_localized,
+                                                        locale as Locale,
+                                                    ) || project.name
                                                 }
-                                                alt={getLocalizedValue(project.name_localized, locale as Locale) || project.name}
                                                 fill
                                                 unoptimized
                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -89,13 +90,21 @@ export default function ProjectsPage() {
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
                                                 <span>
-                                                    {getLocalizedValue(project.category_localized, locale as Locale) || project.category || t('grid.defaultCategory')}
+                                                    {getLocalizedValue(
+                                                        project.category_localized,
+                                                        locale as Locale,
+                                                    ) ||
+                                                        project.category ||
+                                                        t('grid.defaultCategory')}
                                                 </span>
                                                 <span>{getYear(project.start_date)}</span>
                                             </div>
                                             <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
                                                 <LocalizedLink href={`/du-an/${project.slug}`}>
-                                                    {getLocalizedValue(project.name_localized, locale as Locale) || project.name}
+                                                    {getLocalizedValue(
+                                                        project.name_localized,
+                                                        locale as Locale,
+                                                    ) || project.name}
                                                 </LocalizedLink>
                                             </h3>
                                             <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase">

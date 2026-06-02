@@ -9,7 +9,7 @@ import { PageBanner } from '@/components/site/PageBanner';
 import { API_ROUTES } from '@/constants/routes';
 import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
 import { SiteEmptyState } from '@/components/site/SiteEmptyState';
-import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
+import Loading from '@/components/shared/Loading';
 import { SitePagination } from '@/components/site/SitePagination';
 import { EMPLOYMENT_TYPE, JOB_STATUS, type JobStatus } from '@/constants/content';
 
@@ -32,6 +32,7 @@ const ITEMS_PER_PAGE = 12;
 
 export default function RecruitmentHub() {
     const t = useTranslations('Careers');
+    const tCommon = useTranslations('Common');
     const jobsListRef = useRef<HTMLDivElement>(null);
     const {
         items: jobs,
@@ -47,18 +48,16 @@ export default function RecruitmentHub() {
         scrollTargetRef: jobsListRef,
     });
 
-    if (isLoading && jobs.length === 0) {
-        return <SiteLoadingScreen />;
-    }
-
     return (
         <div className="flex flex-col min-h-screen bg-white">
             <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Jobs List */}
-            <section className="py-16 bg-white" ref={jobsListRef}>
+            <section className="py-16 bg-white relative min-h-[400px]" ref={jobsListRef}>
                 <div className="container mx-auto px-4 lg:px-8">
-                    {jobs.length === 0 ? (
+                    {isLoading && jobs.length === 0 ? (
+                        <Loading variant="section" size="lg" text={tCommon('loading')} />
+                    ) : jobs.length === 0 ? (
                         <SiteEmptyState icon={Users} title={t('empty.title')} />
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -5,12 +5,12 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { Newspaper, Calendar } from 'lucide-react';
-import { getLocalizedValue, type Locale } from '@/types/i18n';
+import { getLocalizedValue, LocalizedText, type Locale } from '@/types/i18n';
 import { PageBanner } from '@/components/site/PageBanner';
 import { API_ROUTES } from '@/constants/routes';
 import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
 import { SiteEmptyState } from '@/components/site/SiteEmptyState';
-import { SiteLoadingScreen } from '@/components/site/SiteLoadingScreen';
+import Loading from '@/components/shared/Loading';
 import { SitePagination } from '@/components/site/SitePagination';
 import { formatViDate } from '@/utils/client-format';
 import { NEWS_STATUS } from '@/constants/content';
@@ -31,6 +31,7 @@ const ITEMS_PER_PAGE = 12;
 
 export default function NewsPage() {
     const t = useTranslations('News');
+    const tCommon = useTranslations('Common');
     const locale = useLocale();
     const {
         items: news,
@@ -45,18 +46,16 @@ export default function NewsPage() {
         params: { status: NEWS_STATUS.PUBLISHED },
     });
 
-    if (isLoading && news.length === 0) {
-        return <SiteLoadingScreen />;
-    }
-
     return (
         <div className="flex flex-col min-h-screen bg-white">
             <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Compact News Grid */}
-            <section className="py-12 bg-white">
+            <section className="py-12 bg-white relative min-h-[400px]">
                 <div className="container mx-auto px-4 lg:px-8">
-                    {news.length === 0 ? (
+                    {isLoading && news.length === 0 ? (
+                        <Loading variant="section" size="lg" text={tCommon('loading')} />
+                    ) : news.length === 0 ? (
                         <SiteEmptyState icon={Newspaper} title={t('empty.title')} />
                     ) : (
                         <>
