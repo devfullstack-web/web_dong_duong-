@@ -1,5 +1,8 @@
+'use client';
+
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+import { motion } from 'motion/react';
 
 export const PARTNERS = [
     { name: 'Đối tác', logo: '/uploads/images/2026/02/02/1770023382773-fw807q.png' },
@@ -9,7 +12,13 @@ export const PARTNERS = [
 export default function Partners() {
     const t = useTranslations('Partners');
     return (
-        <section className="bg-gradient-to-b from-slate-50 to-white py-20 sm:py-28">
+        <motion.section 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="bg-linear-to-b from-slate-50 to-white py-20 sm:py-28"
+        >
             <div className="container mx-auto px-4 lg:px-8">
                 {/* Header */}
                 <div className="text-center mb-12">
@@ -49,6 +58,6 @@ export default function Partners() {
                     ))}
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }

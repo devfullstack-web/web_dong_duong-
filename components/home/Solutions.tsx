@@ -8,6 +8,8 @@ import { SITE_ROUTES } from '@/constants/routes';
 import { Link } from '@/i18n/routing';
 import { Droplet, Sprout, Waves, CloudRain, Building2, ArrowRight } from 'lucide-react';
 
+import { motion } from 'motion/react';
+
 export default function Solutions() {
     const t = useTranslations('Solutions');
     const commonT = useTranslations('Common');
@@ -87,7 +89,13 @@ export default function Solutions() {
     ];
 
     return (
-        <section className="bg-brand-primary overflow-hidden relative">
+        <motion.section 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="bg-brand-primary overflow-hidden relative"
+        >
             {/* Header Area */}
             <div className="pt-24 pb-16 text-center relative z-20 container mx-auto px-4">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-white/10 border border-white/20 rounded-none mb-4">
@@ -305,6 +313,6 @@ export default function Solutions() {
                     );
                 })}
             </div>
-        </section>
+        </motion.section>
     );
 }

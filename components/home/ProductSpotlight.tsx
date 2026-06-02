@@ -15,6 +15,7 @@ import { Link } from '@/i18n/routing';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import type { LocalizedText, Locale } from '@/types/i18n';
 import { getLocalizedValue } from '@/types/i18n';
+import { motion } from 'motion/react';
 
 interface Product {
     id: string;
@@ -38,7 +39,13 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
     if (products.length === 0) return null;
 
     return (
-        <section className="bg-slate-50 py-16 overflow-hidden border-t border-b border-slate-100">
+        <motion.section 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="bg-slate-50 py-16 overflow-hidden border-t border-b border-slate-100"
+        >
             <div className="container mx-auto px-4 lg:px-8">
                 {/* Section Header - Highly Polished & Structured */}
                 <div className="flex items-end justify-between gap-4 mb-10 border-b border-slate-100 pb-6">
@@ -160,6 +167,6 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                     </div>
                 </Carousel>
             </div>
-        </section>
+        </motion.section>
     );
 }

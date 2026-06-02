@@ -10,6 +10,7 @@ import {
 import { useSiteInfo } from '@/components/providers/site-info-provider';
 import { useTranslations } from 'next-intl';
 import { useContactForm } from '@/hooks/use-contact-form';
+import { motion } from 'motion/react';
 
 export default function ContactForm() {
     const COMPANY_INFO = useSiteInfo();
@@ -24,7 +25,13 @@ export default function ContactForm() {
     });
 
     return (
-        <section className="bg-white py-12 lg:py-16">
+        <motion.section 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="bg-white py-12 lg:py-16"
+        >
             <div className="container mx-auto px-4 lg:px-8">
                 {/* 
                     Full Aligned Card: 
@@ -147,6 +154,6 @@ export default function ContactForm() {
                     </div>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }

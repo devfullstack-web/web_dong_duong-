@@ -1,9 +1,12 @@
+'use client';
+
 import Image from 'next/image';
 import { MoveRight, Newspaper } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import type { LocalizedText, Locale } from '@/types/i18n';
 import { getLocalizedValue } from '@/types/i18n';
+import { motion } from 'motion/react';
 
 interface NewsArticle {
     id: string;
@@ -35,7 +38,13 @@ export default function News({ articles = [] }: NewsProps) {
     const locale = useLocale();
 
     return (
-        <section className="bg-white py-24 sm:py-32">
+        <motion.section 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="bg-white py-24 sm:py-32"
+        >
             <div className="container mx-auto px-4 lg:px-8">
                 {/* Header */}
                 <div className="mb-20 text-center space-y-4">
@@ -108,6 +117,6 @@ export default function News({ articles = [] }: NewsProps) {
                     </Link>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 }
