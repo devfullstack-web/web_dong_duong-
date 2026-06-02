@@ -1,5 +1,5 @@
 import { db } from '@/db';
-import { roles, permissions, role_permissions, modules } from '@/db/schemas';
+import { roles, permissions, role_permissions } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, inArray } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
@@ -41,17 +41,11 @@ export const POST = withAuth(
                     .returning();
 
                 if (permissionsMatrix && Array.isArray(permissionsMatrix)) {
-                    // Fetch modules to match moduleId to module.code
-                    const allModules = await tx.select().from(modules);
-
                     // Build permission codes to assign
                     const permissionCodesToAssign: string[] = [];
 
                     for (const pm of permissionsMatrix) {
-                        const moduleObj = allModules.find((m) => m.id === pm.moduleId);
-                        if (!moduleObj) continue;
-
-                        const moduleCode = moduleObj.code.toUpperCase();
+                        const moduleCode = pm.moduleId.toUpperCase();
                         if (pm.canView) permissionCodesToAssign.push(`${moduleCode}:VIEW`);
                         if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}:CREATE`);
                         if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}:UPDATE`);

@@ -11,7 +11,6 @@ export * from './contacts';
 export * from './job-postings';
 export * from './job-applications';
 export * from './roles';
-export * from './modules';
 export * from './permissions';
 export * from './user-roles';
 export * from './product-comments';

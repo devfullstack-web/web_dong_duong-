@@ -1,8 +1,9 @@
 import { db } from '@/db';
-import { users, roles, user_roles, permissions, role_permissions, modules } from '@/db/schemas';
+import { users, roles, user_roles, permissions, role_permissions } from '@/db/schemas';
 import { eq, inArray } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { getSession } from '@/services/auth';
+import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 
 export async function GET() {
     try {
@@ -82,35 +83,37 @@ export async function GET() {
                     roleId: role_permissions.role_id,
                     permId: permissions.id,
                     permCode: permissions.code,
-                    module: {
-                        id: modules.id,
-                        code: modules.code,
-                        name: modules.name,
-                        icon: modules.icon,
-                        route: modules.route,
-                        order: modules.order,
-                    }
+                    moduleCode: permissions.module_code,
                 })
                 .from(role_permissions)
                 .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
-                .innerJoin(modules, eq(permissions.module_code, modules.code))
                 .where(inArray(role_permissions.role_id, roleIds));
 
-            // Group raw permissions by (roleId, moduleId) to build dynamic matrix
+            // Group raw permissions by (roleId, moduleCode) to build dynamic matrix
             const roleModuleMap = new Map<string, PermissionWithModule>();
 
             for (const raw of rawRolePermissions) {
-                const key = `${raw.roleId}:${raw.module.id}`;
+                const sidebarItem = SIDEBAR_ITEMS.find((item) => item.permission === raw.moduleCode);
+                const moduleInfo = {
+                    id: raw.moduleCode,
+                    code: raw.moduleCode,
+                    name: sidebarItem?.name || raw.moduleCode,
+                    icon: sidebarItem?.icon || 'Shield',
+                    route: sidebarItem?.route || null,
+                    order: sidebarItem?.order ?? 0,
+                };
+
+                const key = `${raw.roleId}:${raw.moduleCode}`;
                 if (!roleModuleMap.has(key)) {
                     roleModuleMap.set(key, {
                         id: raw.permId,
                         roleId: raw.roleId,
-                        moduleId: raw.module.id,
+                        moduleId: raw.moduleCode,
                         canView: false,
                         canCreate: false,
                         canUpdate: false,
                         canDelete: false,
-                        module: raw.module
+                        module: moduleInfo
                     });
                 }
 

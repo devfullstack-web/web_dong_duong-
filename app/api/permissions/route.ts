@@ -1,10 +1,11 @@
 import { db } from '@/db';
-import { permissions, role_permissions, modules } from '@/db/schemas';
+import { permissions, role_permissions } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { PERMISSIONS } from '@/constants/rbac';
 import { eq } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
 import { NextRequest } from 'next/server';
+import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 
 export const GET = withAuth(
     async (request: NextRequest) => {
@@ -12,7 +13,16 @@ export const GET = withAuth(
             const { searchParams } = new URL(request.url);
             const roleId = searchParams.get('roleId');
 
-            const allModules = await db.select().from(modules);
+            // Generate list of modules dynamically from static sidebar config
+            const allModules = SIDEBAR_ITEMS
+                .filter((item) => item.permission !== null)
+                .map((item) => ({
+                    id: item.permission,
+                    code: item.permission,
+                    name: item.name,
+                    icon: item.icon,
+                    route: item.route,
+                }));
 
             // Fetch permissions assigned to the role
             const assignedPermissionCodes = new Set<string>();
@@ -28,7 +38,7 @@ export const GET = withAuth(
 
             // Combine modules with dynamically mapped role permissions
             const matrix = allModules.map((module) => {
-                const moduleCode = module.code.toUpperCase();
+                const moduleCode = module.code!.toUpperCase();
                 return {
                     module: module,
                     permissions: {

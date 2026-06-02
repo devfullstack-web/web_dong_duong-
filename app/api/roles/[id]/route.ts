@@ -1,9 +1,10 @@
 import { db } from '@/db';
-import { roles, permissions, role_permissions, modules } from '@/db/schemas';
+import { roles, permissions, role_permissions } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { eq, inArray } from 'drizzle-orm';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
+import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 import { auditService } from '@/services/audit-service';
 import { AUDIT_ACTIONS, AUDIT_MODULES } from '@/constants/audit';
 
@@ -21,31 +22,33 @@ export const GET = withAuth(
                 .select({
                     permId: permissions.id,
                     permCode: permissions.code,
-                    module: {
-                        id: modules.id,
-                        code: modules.code,
-                        name: modules.name,
-                    }
+                    moduleCode: permissions.module_code,
                 })
                 .from(role_permissions)
                 .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
-                .innerJoin(modules, eq(permissions.module_code, modules.code))
                 .where(eq(role_permissions.role_id, roleId));
 
             const moduleMap = new Map();
             for (const raw of rawRolePermissions) {
-                const moduleId = raw.module.id;
-                if (!moduleMap.has(moduleId)) {
-                    moduleMap.set(moduleId, {
+                const moduleCode = raw.moduleCode;
+                const sidebarItem = SIDEBAR_ITEMS.find((item) => item.permission === moduleCode);
+                const moduleInfo = {
+                    id: moduleCode,
+                    code: moduleCode,
+                    name: sidebarItem?.name || moduleCode,
+                };
+
+                if (!moduleMap.has(moduleCode)) {
+                    moduleMap.set(moduleCode, {
                         id: raw.permId,
                         canView: false,
                         canCreate: false,
                         canUpdate: false,
                         canDelete: false,
-                        module: raw.module
+                        module: moduleInfo
                     });
                 }
-                const entry = moduleMap.get(moduleId);
+                const entry = moduleMap.get(moduleCode);
                 const action = raw.permCode.split(':')[1];
                 if (action === 'VIEW') entry.canView = true;
                 if (action === 'CREATE') entry.canCreate = true;
@@ -110,17 +113,11 @@ export const PATCH = withAuth(
                 if (!role) throw new Error('Role not found');
 
                 if (permissionsMatrix && Array.isArray(permissionsMatrix)) {
-                    // Fetch modules to match moduleId to module.code
-                    const allModules = await tx.select().from(modules);
-
                     // Build permission codes to assign
                     const permissionCodesToAssign: string[] = [];
 
                     for (const pm of permissionsMatrix) {
-                        const moduleObj = allModules.find((m) => m.id === pm.moduleId);
-                        if (!moduleObj) continue;
-
-                        const moduleCode = moduleObj.code.toUpperCase();
+                        const moduleCode = pm.moduleId.toUpperCase();
                         if (pm.canView) permissionCodesToAssign.push(`${moduleCode}:VIEW`);
                         if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}:CREATE`);
                         if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}:UPDATE`);
