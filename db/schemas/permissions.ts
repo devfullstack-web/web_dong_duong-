@@ -1,4 +1,4 @@
-import { boolean, index, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, index, pgTable, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { modules } from './modules';
 import { roles } from './roles';
 
@@ -21,7 +21,7 @@ export const permissions = pgTable(
         deleted_at: timestamp('deleted_at'),
     },
     (table) => [
-        index('idx_permissions_role_module').on(table.role_id, table.module_id),
+        uniqueIndex('idx_permissions_role_module_unique').on(table.role_id, table.module_id),
         index('idx_permissions_module_id').on(table.module_id),
         index('idx_permissions_deleted_at').on(table.deleted_at),
     ],
