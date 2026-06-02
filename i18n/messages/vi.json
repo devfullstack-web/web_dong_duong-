@@ -728,7 +728,8 @@
             "deleteTitle": "Xóa bài viết",
             "deleteConfirm": "Bài viết sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
             "itemLabelCap": "Bài viết",
-            "loadingCategories": "Đang tải danh mục..."
+            "loadingCategories": "Đang tải danh mục...",
+            "loadingArticle": "Đang tải thông tin bài viết..."
         },
         "Projects": {
             "title": "Quản lý Dự án",

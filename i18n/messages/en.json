@@ -727,7 +727,8 @@
       "deleteTitle": "Delete Article",
       "deleteConfirm": "The article will be permanently deleted from the system. This action cannot be undone.",
       "itemLabelCap": "Article",
-      "loadingCategories": "Loading categories..."
+      "loadingCategories": "Loading categories...",
+      "loadingArticle": "Loading article details..."
     },
     "Projects": {
       "title": "Projects Management",

@@ -49,6 +49,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import Loading from '@/components/shared/Loading';
 import { sanitizeRichText } from '@/utils/sanitize';
 import { CATEGORY_TYPE, NEWS_STATUS, type NewsStatus } from '@/constants/content';
 
@@ -78,6 +80,7 @@ export default function EditNewsPage() {
     const params = useParams();
     const router = useRouter();
     const queryClient = useQueryClient();
+    const t = useTranslations('Portal.News');
     const newsId = params.id as string;
 
     const [loading, setLoading] = useState(true);
@@ -210,14 +213,7 @@ export default function EditNewsPage() {
     };
 
     if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[400px]">
-                <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
-                <p className="mt-4 text-slate-500 font-medium italic animate-pulse">
-                    Đang tải thông tin bài viết...
-                </p>
-            </div>
-        );
+        return <Loading variant="section" text={t('loadingArticle')} />;
     }
 
     if (!article) {
