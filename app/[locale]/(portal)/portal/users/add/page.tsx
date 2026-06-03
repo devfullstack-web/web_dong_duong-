@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import $api from '@/utils/axios';
 import { ArrowLeft, UserPlus, Shield, Lock, User as UserIcon, Loader2, Eye, EyeOff } from 'lucide-react';
@@ -35,6 +35,55 @@ export default function AddUserPage() {
     const [, setIsLoadingRoles] = useState(true);
     const [selectedRoleDetails, setSelectedRoleDetails] = useState<Record<string, unknown> | null>(null);
     const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+
+    const groupedPermissions = useMemo(() => {
+        if (!selectedRoleDetails?.permissions || !Array.isArray(selectedRoleDetails.permissions)) return [];
+        
+        const perms = selectedRoleDetails.permissions as string[];
+        const groups: Record<string, { moduleName: string; actions: string[] }> = {};
+        
+        const getModuleFriendlyName = (moduleCode: string): string => {
+            const mapping: Record<string, string> = {
+                dashboard: 'Bảng điều khiển',
+                product: 'Quản lý Sản phẩm',
+                news: 'Quản lý Tin tức',
+                project: 'Quản lý Dự án',
+                recruitment: 'Quản lý Tuyển dụng',
+                application: 'Danh sách Ứng viên',
+                comment: 'Quản lý Bình luận',
+                file: 'Thư viện Media',
+                contact: 'Quản lý Liên hệ',
+                user: 'Quản lý Tài khoản',
+                role: 'Phân quyền & Vai trò',
+                audit_log: 'Nhật ký hệ thống',
+                setting: 'Cài đặt hệ thống',
+            };
+            return mapping[moduleCode] || moduleCode;
+        };
+
+        perms.forEach((code) => {
+            const parts = code.split('.');
+            if (parts.length < 2) return;
+            const moduleCode = parts[0];
+            const action = parts[1];
+            
+            if (!groups[moduleCode]) {
+                groups[moduleCode] = {
+                    moduleName: getModuleFriendlyName(moduleCode),
+                    actions: []
+                };
+            }
+            if (!groups[moduleCode].actions.includes(action)) {
+                groups[moduleCode].actions.push(action);
+            }
+        });
+        
+        return Object.entries(groups).map(([id, g]) => ({
+            id,
+            moduleName: g.moduleName,
+            actions: g.actions
+        }));
+    }, [selectedRoleDetails]);
 
     useEffect(() => {
         const fetchRoles = async () => {
@@ -266,47 +315,35 @@ export default function AddUserPage() {
                                                 </div>
                                             ) : (
                                                 <div className="divide-y divide-slate-50">
-                                                    {selectedRoleDetails?.permissions?.map(
-                                                        (p: { id: string; module?: { name: string }; canView: boolean; canCreate: boolean; canUpdate: boolean; canDelete: boolean }) => (
-                                                            <div
-                                                                key={p.id}
-                                                                className="grid grid-cols-2 py-3 px-4 items-center group hover:bg-slate-50/30 transition-colors"
-                                                            >
-                                                                <span className="text-[10px] font-black text-slate-900 uppercase tracking-tight">
-                                                                    {p.module?.name}
-                                                                </span>
-                                                                <div className="flex flex-wrap gap-1.5 leading-none">
-                                                                    {p.canView && (
-                                                                        <span className="bg-blue-100/50 text-blue-600 text-[8px] font-black px-2 py-0.5 uppercase tracking-tighter">
-                                                                            View
+                                                    {groupedPermissions.map((p) => (
+                                                        <div
+                                                            key={p.id}
+                                                            className="grid grid-cols-2 py-3 px-4 items-center group hover:bg-slate-50/30 transition-colors"
+                                                        >
+                                                            <span className="text-[10px] font-black text-slate-900 uppercase tracking-tight">
+                                                                {p.moduleName}
+                                                            </span>
+                                                            <div className="flex flex-wrap gap-1.5 leading-none">
+                                                                {p.actions.map((action) => {
+                                                                    const colorClass = 
+                                                                        action === 'view' ? 'bg-blue-100/50 text-blue-600' :
+                                                                        action === 'create' || action === 'upload' ? 'bg-emerald-100/50 text-emerald-600' :
+                                                                        action === 'update' || action === 'assign_permission' ? 'bg-amber-100/50 text-amber-600' :
+                                                                        'bg-rose-100/50 text-rose-600';
+                                                                    
+                                                                    return (
+                                                                        <span key={action} className={cn("text-[8px] font-black px-2 py-0.5 uppercase tracking-tighter", colorClass)}>
+                                                                            {action === 'assign_permission' ? 'Assign' : action === 'upload' ? 'Upload' : action}
                                                                         </span>
-                                                                    )}
-                                                                    {p.canCreate && (
-                                                                        <span className="bg-emerald-100/50 text-emerald-600 text-[8px] font-black px-2 py-0.5 uppercase tracking-tighter">
-                                                                            Create
-                                                                        </span>
-                                                                    )}
-                                                                    {p.canUpdate && (
-                                                                        <span className="bg-amber-100/50 text-amber-600 text-[8px] font-black px-2 py-0.5 uppercase tracking-tighter">
-                                                                            Update
-                                                                        </span>
-                                                                    )}
-                                                                    {p.canDelete && (
-                                                                        <span className="bg-rose-100/50 text-rose-600 text-[8px] font-black px-2 py-0.5 uppercase tracking-tighter">
-                                                                            Delete
-                                                                        </span>
-                                                                    )}
-                                                                    {!p.canView &&
-                                                                        !p.canCreate &&
-                                                                        !p.canUpdate &&
-                                                                        !p.canDelete && (
-                                                                            <span className="text-[8px] font-bold italic text-slate-300">
-                                                                                Không có quyền
-                                                                            </span>
-                                                                        )}
-                                                                </div>
+                                                                    );
+                                                                })}
                                                             </div>
-                                                        ),
+                                                        </div>
+                                                    ))}
+                                                    {groupedPermissions.length === 0 && (
+                                                        <div className="py-6 text-center text-[10px] font-bold italic text-slate-300">
+                                                            Không có quyền
+                                                        </div>
                                                     )}
                                                 </div>
                                             )}

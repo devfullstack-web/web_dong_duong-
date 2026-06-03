@@ -4,7 +4,6 @@ import { apiResponse, apiError } from '@/utils/api-response';
 import { eq, inArray } from 'drizzle-orm';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
-import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 import { auditService } from '@/services/audit-service';
 import { AUDIT_ACTIONS, AUDIT_MODULES } from '@/constants/audit';
 
@@ -17,47 +16,18 @@ export const GET = withAuth(
 
             if (!role) return apiError('Role not found', 404);
 
-            // Fetch associated permissions
+            // Fetch associated permissions codes
             const rawRolePermissions = await db
                 .select({
-                    permId: permissions.id,
                     permCode: permissions.code,
-                    moduleCode: permissions.module,
                 })
                 .from(role_permissions)
                 .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
                 .where(eq(role_permissions.role_id, roleId));
+            
+            const permissionCodes = rawRolePermissions.map((rp) => rp.permCode);
 
-            const moduleMap = new Map();
-            for (const raw of rawRolePermissions) {
-                const moduleCode = raw.moduleCode;
-                const sidebarItem = SIDEBAR_ITEMS.find((item) => item.permission?.startsWith(moduleCode + '.'));
-                const moduleInfo = {
-                    id: moduleCode,
-                    code: moduleCode,
-                    name: sidebarItem?.name || moduleCode,
-                };
-
-                if (!moduleMap.has(moduleCode)) {
-                    moduleMap.set(moduleCode, {
-                        id: raw.permId,
-                        canView: false,
-                        canCreate: false,
-                        canUpdate: false,
-                        canDelete: false,
-                        module: moduleInfo
-                    });
-                }
-                const entry = moduleMap.get(moduleCode);
-                const action = raw.permCode.split('.')[1];
-                if (action === 'view') entry.canView = true;
-                if (action === 'create') entry.canCreate = true;
-                if (action === 'update') entry.canUpdate = true;
-                if (action === 'delete') entry.canDelete = true;
-            }
-            const rolePermissions = Array.from(moduleMap.values());
-
-            return apiResponse({ ...role, permissions: rolePermissions });
+            return apiResponse({ ...role, permissions: permissionCodes });
         } catch (error) {
             console.error('Error fetching role:', error);
             return apiError('Internal Server Error', 500);
@@ -70,7 +40,7 @@ export const PATCH = withAuth(
     async (request, session, { params }) => {
         try {
             const { id: roleId } = await params;
-            const { name, code, description, is_system, permissionsMatrix } = await request.json();
+            const { name, code, description, is_system, permissions: permissionCodes } = await request.json();
 
             const [existingRole] = await db.select().from(roles).where(eq(roles.id, roleId));
             if (!existingRole) return apiError('Role not found', 404);
@@ -112,27 +82,16 @@ export const PATCH = withAuth(
 
                 if (!role) throw new Error('Role not found');
 
-                if (permissionsMatrix && Array.isArray(permissionsMatrix)) {
-                    // Build permission codes to assign
-                    const permissionCodesToAssign: string[] = [];
-
-                    for (const pm of permissionsMatrix) {
-                        const moduleCode = pm.moduleId.toLowerCase();
-                        if (pm.canView) permissionCodesToAssign.push(`${moduleCode}.view`);
-                        if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}.create`);
-                        if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}.update`);
-                        if (pm.canDelete) permissionCodesToAssign.push(`${moduleCode}.delete`);
-                    }
-
+                if (permissionCodes && Array.isArray(permissionCodes)) {
                     // Delete old permissions for this role from role_permissions
                     await tx.delete(role_permissions).where(eq(role_permissions.role_id, roleId));
 
                     // Query the matching permission records from the database
-                    if (permissionCodesToAssign.length > 0) {
+                    if (permissionCodes.length > 0) {
                         const dbPermissions = await tx
                             .select({ id: permissions.id })
                             .from(permissions)
-                            .where(inArray(permissions.code, permissionCodesToAssign));
+                            .where(inArray(permissions.code, permissionCodes));
 
                         if (dbPermissions.length > 0) {
                             await tx.insert(role_permissions).values(

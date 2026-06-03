@@ -15,6 +15,14 @@ import { toast } from 'sonner';
 import { Role } from '@/types';
 import { cn } from '@/lib/utils';
 
+interface SystemPermission {
+    code: string;
+    name: string;
+    module: string;
+    action: string;
+    description: string;
+}
+
 interface RoleFormProps {
     initialData?: Role;
     isEditing?: boolean;
@@ -24,7 +32,10 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isLoadingMatrix, setIsLoadingMatrix] = React.useState(true);
-    const [matrix, setMatrix] = React.useState<Record<string, unknown>[]>([]);
+    
+    // Flat permission codes state
+    const [selectedPermissions, setSelectedPermissions] = React.useState<string[]>([]);
+    const [allPermissions, setAllPermissions] = React.useState<SystemPermission[]>([]);
 
     const [formData, setFormData] = React.useState({
         name: initialData?.name || '',
@@ -39,10 +50,11 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                 ? `${API_ROUTES.PERMISSIONS}?roleId=${initialData.id}`
                 : API_ROUTES.PERMISSIONS;
             const res = await $api.get(url);
-            setMatrix(res.data.data || []);
+            setAllPermissions(res.data.data.allPermissions || []);
+            setSelectedPermissions(res.data.data.assignedPermissions || []);
         } catch (error) {
             console.error(error);
-            toast.error('Không thể tải ma trận phân quyền');
+            toast.error('Không thể tải danh sách quyền hạn');
         } finally {
             setIsLoadingMatrix(false);
         }
@@ -52,76 +64,90 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
         fetchMatrix();
     }, [fetchMatrix]);
 
-    const togglePermission = (moduleId: string, field: string) => {
-        setMatrix((prev) =>
-            prev.map((item) => {
-                if (item.module.id === moduleId) {
-                    return {
-                        ...item,
-                        permissions: {
-                            ...item.permissions,
-                            [field]: !item.permissions[field],
-                        },
-                    };
-                }
-                return item;
-            }),
-        );
+    // Map module code to friendly name
+    const getModuleFriendlyName = (moduleCode: string): string => {
+        const mapping: Record<string, string> = {
+            dashboard: 'Bảng điều khiển',
+            product: 'Quản lý Sản phẩm',
+            news: 'Quản lý Tin tức',
+            project: 'Quản lý Dự án',
+            recruitment: 'Quản lý Tuyển dụng',
+            application: 'Danh sách Ứng viên',
+            comment: 'Quản lý Bình luận',
+            file: 'Thư viện Media',
+            contact: 'Quản lý Liên hệ',
+            user: 'Quản lý Tài khoản',
+            role: 'Phân quyền & Vai trò',
+            audit_log: 'Nhật ký hệ thống',
+            setting: 'Cài đặt hệ thống',
+        };
+        return mapping[moduleCode] || moduleCode;
     };
 
-    const toggleModuleAll = (moduleId: string) => {
-        setMatrix((prev) =>
-            prev.map((item) => {
-                if (item.module.id === moduleId) {
-                    const p = item.permissions;
-                    const allSet = p.can_view && p.can_create && p.can_update && p.can_delete;
-                    return {
-                        ...item,
-                        permissions: {
-                            can_view: !allSet,
-                            can_create: !allSet,
-                            can_update: !allSet,
-                            can_delete: !allSet,
-                        },
-                    };
-                }
-                return item;
-            }),
-        );
-    };
-
-    const toggleColumn = (field: string) => {
-        setMatrix((prev) => {
-            const allSet = prev.every((item) => item.permissions[field]);
-            return prev.map((item) => ({
-                ...item,
-                permissions: {
-                    ...item.permissions,
-                    [field]: !allSet,
-                },
-            }));
+    // Group permissions by module
+    const groupedPermissions = React.useMemo(() => {
+        const groups: Record<string, { moduleName: string; permissions: SystemPermission[] }> = {};
+        
+        allPermissions.forEach((p) => {
+            const moduleCode = p.module;
+            if (!groups[moduleCode]) {
+                groups[moduleCode] = {
+                    moduleName: getModuleFriendlyName(moduleCode),
+                    permissions: []
+                };
+            }
+            groups[moduleCode].permissions.push(p);
         });
+        
+        return Object.entries(groups).map(([id, g]) => ({
+            id,
+            moduleName: g.moduleName,
+            permissions: g.permissions
+        }));
+    }, [allPermissions]);
+
+    // Helper to get permission code based on module and action field
+    const getPermissionCode = (moduleCode: string, actionField: string): string => {
+        const suffix = actionField === 'view' ? '.view' :
+                       actionField === 'create' ? (moduleCode === 'file' ? '.upload' : '.create') :
+                       actionField === 'update' ? (moduleCode === 'role' ? '.assign_permission' : '.update') :
+                       '.delete';
+        return `${moduleCode}${suffix}`;
+    };
+
+    const togglePermission = (moduleCode: string, actionField: string) => {
+        const code = getPermissionCode(moduleCode, actionField);
+        setSelectedPermissions((prev) =>
+            prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+        );
+    };
+
+    const toggleModuleAll = (moduleCode: string) => {
+        const moduleCodes = allPermissions.filter((p) => p.module === moduleCode).map((p) => p.code);
+        const allSet = moduleCodes.every((c) => selectedPermissions.includes(c));
+        
+        setSelectedPermissions((prev) =>
+            allSet ? prev.filter((c) => !moduleCodes.includes(c)) : [...new Set([...prev, ...moduleCodes])]
+        );
+    };
+
+    const toggleColumn = (actionField: string) => {
+        const colCodes = groupedPermissions
+            .map((g) => getPermissionCode(g.id, actionField))
+            .filter((code) => allPermissions.some((p) => p.code === code));
+        
+        const allSet = colCodes.every((c) => selectedPermissions.includes(c));
+        
+        setSelectedPermissions((prev) =>
+            allSet ? prev.filter((c) => !colCodes.includes(c)) : [...new Set([...prev, ...colCodes])]
+        );
     };
 
     const toggleGlobal = () => {
-        setMatrix((prev) => {
-            const allSet = prev.every(
-                (item) =>
-                    item.permissions.can_view &&
-                    item.permissions.can_create &&
-                    item.permissions.can_update &&
-                    item.permissions.can_delete,
-            );
-            return prev.map((item) => ({
-                ...item,
-                permissions: {
-                    can_view: !allSet,
-                    can_create: !allSet,
-                    can_update: !allSet,
-                    can_delete: !allSet,
-                },
-            }));
-        });
+        const allCodes = allPermissions.map((p) => p.code);
+        const allSet = allCodes.every((c) => selectedPermissions.includes(c));
+        
+        setSelectedPermissions(allSet ? [] : allCodes);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -135,13 +161,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
         try {
             const payload = {
                 ...formData,
-                permissionsMatrix: matrix.map((item) => ({
-                    moduleId: item.module.id,
-                    canView: item.permissions.can_view,
-                    canCreate: item.permissions.can_create,
-                    canUpdate: item.permissions.can_update,
-                    canDelete: item.permissions.can_delete,
-                })),
+                permissions: selectedPermissions,
             };
 
             if (isEditing && initialData) {
@@ -289,13 +309,10 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                             <Checkbox
                                                 checked={
                                                     isSuperRole ||
-                                                    matrix.every(
-                                                        (i) =>
-                                                            i.permissions.can_view &&
-                                                            i.permissions.can_create &&
-                                                            i.permissions.can_update &&
-                                                            i.permissions.can_delete,
-                                                    )
+                                                    (allPermissions.length > 0 &&
+                                                        allPermissions.every((p) =>
+                                                            selectedPermissions.includes(p.code)
+                                                        ))
                                                 }
                                                 onCheckedChange={() =>
                                                     !isSuperRole && toggleGlobal()
@@ -308,45 +325,50 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                             Module
                                         </th>
                                         {[
-                                            { label: 'Xem', field: 'can_view' },
-                                            { label: 'Tạo', field: 'can_create' },
-                                            { label: 'Sửa', field: 'can_update' },
-                                            { label: 'Xóa', field: 'can_delete' },
-                                        ].map((col) => (
-                                            <th key={col.field} className="pb-4 text-center">
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <Checkbox
-                                                        checked={
-                                                            isSuperRole ||
-                                                            matrix.every(
-                                                                (i) => i.permissions[col.field],
-                                                            )
-                                                        }
-                                                        onCheckedChange={() =>
-                                                            !isSuperRole && toggleColumn(col.field)
-                                                        }
-                                                        disabled={isSuperRole}
-                                                        className="border-slate-300 data-[state=checked]:bg-amber-500  data-[state=checked]:border-amber-500 rounded-none"
-                                                    />
-                                                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                                        {col.label}
-                                                    </span>
-                                                </div>
-                                            </th>
-                                        ))}
+                                            { label: 'Xem', field: 'view' },
+                                            { label: 'Tạo', field: 'create' },
+                                            { label: 'Sửa', field: 'update' },
+                                            { label: 'Xóa', field: 'delete' },
+                                        ].map((col) => {
+                                            const colCodes = groupedPermissions
+                                                .map((g) => getPermissionCode(g.id, col.field))
+                                                .filter((code) => allPermissions.some((p) => p.code === code));
+                                            
+                                            const isColChecked =
+                                                isSuperRole ||
+                                                (colCodes.length > 0 &&
+                                                    colCodes.every((c) => selectedPermissions.includes(c)));
+
+                                            return (
+                                                <th key={col.field} className="pb-4 text-center">
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <Checkbox
+                                                            checked={isColChecked}
+                                                            onCheckedChange={() =>
+                                                                !isSuperRole && toggleColumn(col.field)
+                                                            }
+                                                            disabled={isSuperRole}
+                                                            className="border-slate-300 data-[state=checked]:bg-amber-500  data-[state=checked]:border-amber-500 rounded-none"
+                                                        />
+                                                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                            {col.label}
+                                                        </span>
+                                                    </div>
+                                                </th>
+                                            );
+                                        })}
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-50">
-                                    {matrix.map((item) => {
-                                        const { module, permissions: p } = item;
+                                    {groupedPermissions.map((group) => {
+                                        const moduleCodes = group.permissions.map((p) => p.code);
                                         const rowAllSet =
-                                            p.can_view &&
-                                            p.can_create &&
-                                            p.can_update &&
-                                            p.can_delete;
+                                            moduleCodes.length > 0 &&
+                                            moduleCodes.every((c) => selectedPermissions.includes(c));
+                                        
                                         return (
                                             <tr
-                                                key={module.id}
+                                                key={group.id}
                                                 className="group hover:bg-slate-50/50 transition-colors"
                                             >
                                                 <td className="py-4 text-center">
@@ -354,7 +376,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                                         checked={isSuperRole || rowAllSet}
                                                         onCheckedChange={() =>
                                                             !isSuperRole &&
-                                                            toggleModuleAll(module.id)
+                                                            toggleModuleAll(group.id)
                                                         }
                                                         disabled={isSuperRole}
                                                         className="mx-auto border-slate-200 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500 rounded-none"
@@ -367,48 +389,58 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                                         </div>
                                                         <div>
                                                             <p className="text-[11px] font-bold text-slate-900 uppercase tracking-tight">
-                                                                {module.name}
+                                                                {group.moduleName}
                                                             </p>
                                                             <p className="text-[9px] text-slate-400 font-medium uppercase tracking-tighter">
-                                                                {module.code}
+                                                                {group.id}
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 {[
                                                     {
-                                                        field: 'can_view',
+                                                        field: 'view',
                                                         color: 'data-[state=checked]:bg-amber-500',
                                                     },
                                                     {
-                                                        field: 'can_create',
+                                                        field: 'create',
                                                         color: 'data-[state=checked]:bg-amber-500',
                                                     },
                                                     {
-                                                        field: 'can_update',
+                                                        field: 'update',
                                                         color: 'data-[state=checked]:bg-amber-500',
                                                     },
                                                     {
-                                                        field: 'can_delete',
+                                                        field: 'delete',
                                                         color: 'data-[state=checked]:bg-amber-500',
                                                     },
-                                                ].map(({ field, color }) => (
-                                                    <td key={field} className="py-4 text-center">
-                                                        <Checkbox
-                                                            checked={isSuperRole || p[field]}
-                                                            onCheckedChange={() =>
-                                                                !isSuperRole &&
-                                                                togglePermission(module.id, field)
-                                                            }
-                                                            disabled={isSuperRole}
-                                                            className={cn(
-                                                                'size-5 mx-auto border-slate-200 rounded-none transition-all',
-                                                                color,
-                                                                'data-[state=checked]:border-amber-500 shadow-sm',
+                                                ].map(({ field, color }) => {
+                                                    const code = getPermissionCode(group.id, field);
+                                                    const hasThisPermission = allPermissions.some((p) => p.code === code);
+                                                    const isChecked = isSuperRole || selectedPermissions.includes(code);
+
+                                                    return (
+                                                        <td key={field} className="py-4 text-center">
+                                                            {hasThisPermission ? (
+                                                                <Checkbox
+                                                                    checked={isChecked}
+                                                                    onCheckedChange={() =>
+                                                                        !isSuperRole &&
+                                                                        togglePermission(group.id, field)
+                                                                    }
+                                                                    disabled={isSuperRole}
+                                                                    className={cn(
+                                                                        'size-5 mx-auto border-slate-200 rounded-none transition-all',
+                                                                        color,
+                                                                        'data-[state=checked]:border-amber-500 shadow-sm',
+                                                                    )}
+                                                                />
+                                                            ) : (
+                                                                <span className="text-[9px] text-slate-300 font-semibold italic">-</span>
                                                             )}
-                                                        />
-                                                    </td>
-                                                ))}
+                                                        </td>
+                                                    );
+                                                })}
                                             </tr>
                                         );
                                     })}

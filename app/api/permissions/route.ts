@@ -5,7 +5,6 @@ import { PERMISSIONS, ALL_SYSTEM_PERMISSIONS } from '@/constants/rbac';
 import { eq } from 'drizzle-orm';
 import { withAuth } from '@/middlewares/middleware';
 import { NextRequest } from 'next/server';
-import { SIDEBAR_ITEMS } from '@/constants/sidebar';
 
 export const GET = withAuth(
     async (request: NextRequest) => {
@@ -30,22 +29,8 @@ export const GET = withAuth(
                 );
             }
 
-            // Generate list of modules dynamically from static sidebar config (and convert permission names to lowercase for module IDs)
-            const allModules = SIDEBAR_ITEMS
-                .filter((item) => item.permission !== null)
-                .map((item) => {
-                    const moduleCode = item.permission!.split('.')[0];
-                    return {
-                        id: moduleCode,
-                        code: moduleCode,
-                        name: item.name,
-                        icon: item.icon,
-                        route: item.route,
-                    };
-                });
-
             // Fetch permissions assigned to the role
-            const assignedPermissionCodes = new Set<string>();
+            const assignedPermissionCodes: string[] = [];
             if (roleId) {
                 const assigned = await db
                     .select({ code: permissions.code })
@@ -53,26 +38,15 @@ export const GET = withAuth(
                     .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
                     .where(eq(role_permissions.role_id, roleId));
                 
-                assigned.forEach((ap) => assignedPermissionCodes.add(ap.code));
+                assigned.forEach((ap) => assignedPermissionCodes.push(ap.code));
             }
 
-            // Combine modules with dynamically mapped role permissions using format module.action
-            const matrix = allModules.map((module) => {
-                const moduleCode = module.code;
-                return {
-                    module: module,
-                    permissions: {
-                        can_view: assignedPermissionCodes.has(`${moduleCode}.view`),
-                        can_create: assignedPermissionCodes.has(`${moduleCode}.create`),
-                        can_update: assignedPermissionCodes.has(`${moduleCode}.update`),
-                        can_delete: assignedPermissionCodes.has(`${moduleCode}.delete`),
-                    },
-                };
+            return apiResponse({
+                allPermissions: ALL_SYSTEM_PERMISSIONS,
+                assignedPermissions: assignedPermissionCodes
             });
-
-            return apiResponse(matrix);
         } catch (error) {
-            console.error('Error fetching permissions matrix:', error);
+            console.error('Error fetching permissions:', error);
             return apiError('Internal Server Error', 500);
         }
     },

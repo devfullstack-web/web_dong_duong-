@@ -136,7 +136,7 @@ export interface Role {
     name: string;
     description: string;
     is_super?: boolean;
-    permissions?: Permission[];
+    permissions?: string[] | Permission[];
     createdAt?: string;
     updatedAt?: string;
     deletedAt?: string | null;

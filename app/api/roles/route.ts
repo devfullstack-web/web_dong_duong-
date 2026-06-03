@@ -22,7 +22,7 @@ export const GET = withAuth(
 export const POST = withAuth(
     async (request) => {
         try {
-            const { name, code, description, permissionsMatrix } = await request.json();
+            const { name, code, description, permissions: permissionCodes } = await request.json();
 
             if (!name) {
                 return apiError('Role name is required', 400);
@@ -40,24 +40,13 @@ export const POST = withAuth(
                     })
                     .returning();
 
-                if (permissionsMatrix && Array.isArray(permissionsMatrix)) {
-                    // Build permission codes to assign
-                    const permissionCodesToAssign: string[] = [];
-
-                    for (const pm of permissionsMatrix) {
-                        const moduleCode = pm.moduleId.toLowerCase();
-                        if (pm.canView) permissionCodesToAssign.push(`${moduleCode}.view`);
-                        if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}.create`);
-                        if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}.update`);
-                        if (pm.canDelete) permissionCodesToAssign.push(`${moduleCode}.delete`);
-                    }
-
+                if (permissionCodes && Array.isArray(permissionCodes)) {
                     // Query the matching permission records from the database
-                    if (permissionCodesToAssign.length > 0) {
+                    if (permissionCodes.length > 0) {
                         const dbPermissions = await tx
                             .select({ id: permissions.id })
                             .from(permissions)
-                            .where(inArray(permissions.code, permissionCodesToAssign));
+                            .where(inArray(permissions.code, permissionCodes));
 
                         if (dbPermissions.length > 0) {
                             await tx.insert(role_permissions).values(
