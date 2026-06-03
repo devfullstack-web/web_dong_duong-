@@ -49,7 +49,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     refreshUser: async () => {
         set({ isLoading: true });
 
-        // Decode JWT for instant UI (trước khi fetch API)
         if (!get().isInitialized) {
             const token = Cookies.get('accessToken');
             if (token) {
@@ -69,7 +68,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
             set({ user: toAuthUser(res.data.data), isInitialized: true });
 
-            // Sync server session
             $api.post(API_ROUTES.AUTH.REFRESH).catch(() => {});
         } catch (err) {
             const status = axios.isAxiosError(err) ? err.response?.status : null;
