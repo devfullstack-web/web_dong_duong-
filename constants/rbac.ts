@@ -135,8 +135,10 @@ export const PERMISSIONS = {
 export type PermissionCode = typeof PERMISSIONS[keyof typeof PERMISSIONS];
 
 // Tự động sinh danh sách permissions chi tiết dựa trên mapping trên
-export const ALL_SYSTEM_PERMISSIONS = Object.entries(PERMISSIONS).map(([key, code]) => {
-    const [module, action] = code.split('.');
+export const ALL_SYSTEM_PERMISSIONS = Object.entries(PERMISSIONS)
+    .filter(([key, code]) => code !== '*')
+    .map(([key, code]) => {
+        const [module, action] = code.split('.');
     
     // Tạo name thân thiện từ key
     let name = `Quyền ${action} trên module ${module}`;
