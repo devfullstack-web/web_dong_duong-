@@ -28,7 +28,6 @@ export default function AddUserPage() {
         password: '',
         fullName: '',
         email: '',
-        phone: '',
         roleId: '' as string,
     });
     const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
@@ -232,36 +231,20 @@ export default function AddUserPage() {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                        Email liên hệ
-                                    </Label>
-                                    <Input
-                                        placeholder="example@saigonvalve.vn"
-                                        className="h-9 bg-slate-50 border-none text-[11px] font-black tracking-widest focus:ring-2 focus:ring-brand-primary/10 rounded-none transition-all"
-                                        value={formData.email}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, email: e.target.value })
-                                        }
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                        Số điện thoại
-                                    </Label>
-                                    <Input
-                                        placeholder="09xx xxx xxx"
-                                        className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-brand-primary/10 rounded-none transition-all"
-                                        value={formData.phone}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, phone: e.target.value })
-                                        }
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-                             </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                    Email liên hệ
+                                </Label>
+                                <Input
+                                    placeholder="example@saigonvalve.vn"
+                                    className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-brand-primary/10 rounded-none transition-all"
+                                    value={formData.email}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, email: e.target.value })
+                                    }
+                                    disabled={isSubmitting}
+                                />
+                            </div>
 
                              <div className="pt-4 border-t border-slate-100 space-y-4">
                                 <div className="space-y-2">

@@ -17,6 +17,7 @@ export const GET = withAuth(
             const [user] = await db
                 .select({
                     id: users.id,
+                    username: users.username,
                     fullName: users.full_name,
                     email: users.email,
                     isActive: users.is_active,
@@ -34,12 +35,15 @@ export const GET = withAuth(
                     id: roles.id,
                     code: roles.code,
                     name: roles.name,
+                    is_system: roles.is_system,
                 })
                 .from(user_roles)
                 .innerJoin(roles, eq(user_roles.role_id, roles.id))
                 .where(eq(user_roles.user_id, userId));
 
-            return apiResponse({ ...user, roles: userRoles });
+            const isSuper = userRoles.some(r => r.is_system || r.code === 'admin' || r.code === 'superadmin');
+
+            return apiResponse({ ...user, roles: userRoles, is_super: isSuper });
         } catch (error) {
             console.error('Error fetching user:', error);
             return apiError('Internal Server Error', 500);

@@ -17,6 +17,7 @@ export const GET = withAuth(
             const usersWithRoles = await db
                 .select({
                     id: users.id,
+                    username: users.username,
                     fullName: users.full_name,
                     email: users.email,
                     isActive: users.is_active,

@@ -38,7 +38,6 @@ export default function EditUserPage() {
         password: '', // Optional for edit
         fullName: '',
         email: '',
-        phone: '',
         roleIds: [] as string[],
     });
     const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
@@ -61,7 +60,6 @@ export default function EditUserPage() {
                     password: '',
                     fullName: user.fullName || user.full_name || '',
                     email: user.email || '',
-                    phone: user.phone || '',
                     roleIds: user.roles?.map((r: { id: string }) => r.id) || [],
                 });
             } catch (error) {
@@ -204,35 +202,19 @@ export default function EditUserPage() {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                        Email liên hệ
-                                    </Label>
-                                    <Input
-                                        placeholder="example@saigonvalve.vn"
-                                        className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
-                                        value={formData.email}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, email: e.target.value })
-                                        }
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                        Số điện thoại
-                                    </Label>
-                                    <Input
-                                        placeholder="09xx xxx xxx"
-                                        className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
-                                        value={formData.phone}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, phone: e.target.value })
-                                        }
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                    Email liên hệ
+                                </Label>
+                                <Input
+                                    placeholder="example@saigonvalve.vn"
+                                    className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
+                                    value={formData.email}
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, email: e.target.value })
+                                    }
+                                    disabled={isSubmitting}
+                                />
                             </div>
 
                             {!isSuperAdmin && (
