@@ -135,30 +135,34 @@ export const PERMISSIONS = {
 export type PermissionCode = typeof PERMISSIONS[keyof typeof PERMISSIONS];
 
 // Tự động sinh danh sách permissions chi tiết dựa trên mapping trên
-export const ALL_SYSTEM_PERMISSIONS = Object.entries(PERMISSIONS)
-    .filter(([key, code]) => code !== '*')
-    .map(([key, code]) => {
-        const [module, action] = code.split('.');
-    
-    // Tạo name thân thiện từ key
-    let name = `Quyền ${action} trên module ${module}`;
-    if (code === 'dashboard.view') name = 'Xem Dashboard';
-    else if (code.startsWith('user.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} người dùng`;
-    else if (code.startsWith('role.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : action === 'assign_permission' ? 'Gán quyền cho' : 'Xóa'} vai trò`;
-    else if (code === 'permission.view') name = 'Xem danh sách quyền';
-    else if (code === 'audit_log.view') name = 'Xem nhật ký hệ thống';
-    else if (code.startsWith('news.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} tin tức`;
-    else if (code.startsWith('product.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} sản phẩm`;
-    else if (code.startsWith('project.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} dự án`;
-    
-    return {
-        code,
-        name,
-        module,
-        action,
-        description: name
-    };
-});
+export const ALL_SYSTEM_PERMISSIONS = Array.from(
+    new Map(
+        Object.entries(PERMISSIONS)
+            .filter(([key, code]) => code !== '*')
+            .map(([key, code]) => {
+                const [module, action] = code.split('.');
+                
+                // Tạo name thân thiện từ key
+                let name = `Quyền ${action} trên module ${module}`;
+                if (code === 'dashboard.view') name = 'Xem Dashboard';
+                else if (code.startsWith('user.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} người dùng`;
+                else if (code.startsWith('role.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : action === 'assign_permission' ? 'Gán quyền cho' : 'Xóa'} vai trò`;
+                else if (code === 'permission.view') name = 'Xem danh sách quyền';
+                else if (code === 'audit_log.view') name = 'Xem nhật ký hệ thống';
+                else if (code.startsWith('news.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} tin tức`;
+                else if (code.startsWith('product.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} sản phẩm`;
+                else if (code.startsWith('project.')) name = `${action === 'view' ? 'Xem' : action === 'create' ? 'Tạo' : action === 'update' ? 'Sửa' : 'Xóa'} dự án`;
+                
+                return [code, {
+                    code,
+                    name,
+                    module,
+                    action,
+                    description: name
+                }];
+            })
+    ).values()
+);
 
 export const PROTECTED_MODULES = ['dashboard', 'user', 'role', 'permission'] as const;
 
