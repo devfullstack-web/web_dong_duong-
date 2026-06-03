@@ -14,6 +14,7 @@ import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 import { Role } from '@/types';
 import { cn } from '@/lib/utils';
+import { getModuleName } from '@/constants/rbac';
 
 interface SystemPermission {
     code: string;
@@ -64,26 +65,6 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
         fetchMatrix();
     }, [fetchMatrix]);
 
-    // Map module code to friendly name
-    const getModuleFriendlyName = (moduleCode: string): string => {
-        const mapping: Record<string, string> = {
-            dashboard: 'Bảng điều khiển',
-            product: 'Quản lý Sản phẩm',
-            news: 'Quản lý Tin tức',
-            project: 'Quản lý Dự án',
-            recruitment: 'Quản lý Tuyển dụng',
-            application: 'Danh sách Ứng viên',
-            comment: 'Quản lý Bình luận',
-            file: 'Thư viện Media',
-            contact: 'Quản lý Liên hệ',
-            user: 'Quản lý Tài khoản',
-            role: 'Phân quyền & Vai trò',
-            audit_log: 'Nhật ký hệ thống',
-            setting: 'Cài đặt hệ thống',
-        };
-        return mapping[moduleCode] || moduleCode;
-    };
-
     // Group permissions by module
     const groupedPermissions = React.useMemo(() => {
         const groups: Record<string, { moduleName: string; permissions: SystemPermission[] }> = {};
@@ -92,7 +73,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
             const moduleCode = p.module;
             if (!groups[moduleCode]) {
                 groups[moduleCode] = {
-                    moduleName: getModuleFriendlyName(moduleCode),
+                    moduleName: getModuleName(moduleCode),
                     permissions: []
                 };
             }

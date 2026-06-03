@@ -18,6 +18,7 @@ import {
 import { PORTAL_ROUTES, API_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 import { Role } from '@/types';
+import { getModuleName } from '@/constants/rbac';
 
 export default function AddUserPage() {
     const router = useRouter();
@@ -41,25 +42,6 @@ export default function AddUserPage() {
         const perms = selectedRoleDetails.permissions as string[];
         const groups: Record<string, { moduleName: string; actions: string[] }> = {};
         
-        const getModuleFriendlyName = (moduleCode: string): string => {
-            const mapping: Record<string, string> = {
-                dashboard: 'Bảng điều khiển',
-                product: 'Quản lý Sản phẩm',
-                news: 'Quản lý Tin tức',
-                project: 'Quản lý Dự án',
-                recruitment: 'Quản lý Tuyển dụng',
-                application: 'Danh sách Ứng viên',
-                comment: 'Quản lý Bình luận',
-                file: 'Thư viện Media',
-                contact: 'Quản lý Liên hệ',
-                user: 'Quản lý Tài khoản',
-                role: 'Phân quyền & Vai trò',
-                audit_log: 'Nhật ký hệ thống',
-                setting: 'Cài đặt hệ thống',
-            };
-            return mapping[moduleCode] || moduleCode;
-        };
-
         perms.forEach((code) => {
             const parts = code.split('.');
             if (parts.length < 2) return;
@@ -68,7 +50,7 @@ export default function AddUserPage() {
             
             if (!groups[moduleCode]) {
                 groups[moduleCode] = {
-                    moduleName: getModuleFriendlyName(moduleCode),
+                    moduleName: getModuleName(moduleCode),
                     actions: []
                 };
             }

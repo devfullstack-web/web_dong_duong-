@@ -93,3 +93,23 @@ export const ALL_SYSTEM_PERMISSIONS = Array.from(
             }),
     ).values(),
 );
+
+export const MODULE_NAMES: Record<string, string> = {
+    dashboard: 'Bảng điều khiển',
+    product: 'Quản lý Sản phẩm',
+    news: 'Quản lý Tin tức',
+    project: 'Quản lý Dự án',
+    recruitment: 'Quản lý Tuyển dụng',
+    application: 'Danh sách Ứng viên',
+    comment: 'Quản lý Bình luận',
+    file: 'Thư viện Media',
+    contact: 'Quản lý Liên hệ',
+    user: 'Quản lý Tài khoản',
+    role: 'Phân quyền & Vai trò',
+    audit_log: 'Nhật ký hệ thống',
+    setting: 'Cài đặt hệ thống',
+};
+
+export function getModuleName(code: string): string {
+    return MODULE_NAMES[code] || code;
+}

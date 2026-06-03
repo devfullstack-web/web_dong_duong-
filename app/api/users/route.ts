@@ -51,7 +51,7 @@ export const GET = withAuth(
 export const POST = withAuth(
     async (request: NextRequest, session) => {
         try {
-            const { email, password, full_name, role_ids } = await request.json();
+            const { username, email, password, full_name, role_ids } = await request.json();
 
             if (!email || !password) {
                 return apiError('Email and password are required', 400);
@@ -79,12 +79,14 @@ export const POST = withAuth(
                 const [user] = await tx
                     .insert(users)
                     .values({
+                        username: username ? username.toLowerCase().trim() : undefined,
                         email: email.toLowerCase().trim(),
                         password_hash: hashedPassword,
                         full_name: full_name,
                     })
                     .returning({
                         id: users.id,
+                        username: users.username,
                         email: users.email,
                         full_name: users.full_name,
                     });

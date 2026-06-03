@@ -58,7 +58,7 @@ export const PATCH = withAuth(
         try {
             const { id: userId } = await params;
             const body = await request.json();
-            const { password, full_name, email, role_ids, is_active, is_locked } = body;
+            const { username, password, full_name, email, role_ids, is_active, is_locked } = body;
 
             // 1. Fetch the user being updated
             const [targetUser] = await db
@@ -124,6 +124,7 @@ export const PATCH = withAuth(
             const [oldUser] = await db
                 .select({
                     id: users.id,
+                    username: users.username,
                     full_name: users.full_name,
                     email: users.email,
                 })
@@ -132,6 +133,7 @@ export const PATCH = withAuth(
 
             const updatedUser = await db.transaction(async (tx) => {
                 const updateData: Record<string, unknown> = {};
+                if (username !== undefined) updateData.username = username ? username.toLowerCase().trim() : null;
                 if (full_name !== undefined) updateData.full_name = full_name;
                 if (email !== undefined) updateData.email = email;
                 if (is_active !== undefined) updateData.is_active = is_active;
@@ -147,6 +149,7 @@ export const PATCH = withAuth(
                     .where(eq(users.id, userId))
                     .returning({
                         id: users.id,
+                        username: users.username,
                         full_name: users.full_name,
                         email: users.email,
                         is_active: users.is_active,
