@@ -58,7 +58,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (response.data.success) {
                 const { user, roles, permissions } = response.data.data;
 
-                const roleCodes = roles.map((r: { code: string }) => r.code);
+                const roleCodes = Array.isArray(roles)
+                    ? roles.map((r: string | { code: string }) => typeof r === 'string' ? r : r.code)
+                    : [];
 
                 const synchronizedUser: AuthUser = {
                     id: user.id,

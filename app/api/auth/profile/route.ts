@@ -73,11 +73,7 @@ export async function GET() {
                 is_locked: user.is_locked,
                 is_system: hasSystemRole || userPermissions.includes('*'),
             },
-            roles: userRoles.map(r => ({
-                id: r.id,
-                code: r.code,
-                name: r.name,
-            })),
+            roles: userRoles.map(r => r.code),
             permissions: userPermissions,
         });
     } catch (error) {
