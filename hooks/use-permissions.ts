@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
-import type { PermissionCode } from '@/utils/permissions';
+import type { PermissionCode } from '@/constants/rbac';
 
 export type PermissionInput = PermissionCode | string;
 
