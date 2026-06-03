@@ -45,7 +45,7 @@ export default function RolesManagementPage() {
     }, []);
 
     const handleDeleteClick = (role: Role) => {
-        if (role.is_super) {
+        if (role.is_system) {
             toast.error('Không thể xóa vai trò quản trị viên hệ thống');
             return;
         }
@@ -151,7 +151,7 @@ export default function RolesManagementPage() {
                                                 <span className="text-sm font-black text-slate-900 uppercase tracking-tight">
                                                     {role.name}
                                                 </span>
-                                                {role.is_super && (
+                                                {role.is_system && (
                                                     <Badge
                                                         variant="secondary"
                                                         className="bg-amber-50 text-amber-600 border-amber-100 text-[8px] font-black tracking-widest uppercase rounded-none"
@@ -178,7 +178,7 @@ export default function RolesManagementPage() {
                                                         <Edit2 size={14} />
                                                     </Button>
                                                 </Link>
-                                                {!role.is_super && (
+                                                {!role.is_system && (
                                                     <Button
                                                         variant="outline"
                                                         size="icon"

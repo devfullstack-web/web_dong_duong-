@@ -11,7 +11,7 @@ export interface UserSession {
         id: string;
         email: string;
         fullName?: string | null;
-        is_super: boolean;
+        is_system: boolean;
         roles: string[];
         permissions: string[];
     };
@@ -90,7 +90,7 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
                 id: dbUser.id,
                 email: dbUser.email,
                 fullName: dbUser.full_name,
-                is_super: isSystem || userPermissions.includes('*'),
+                is_system: isSystem || userPermissions.includes('*'),
                 roles: roleCodes,
                 permissions: userPermissions,
             }
@@ -115,7 +115,7 @@ export function hasRole(user: UserSession['user'], allowedRoles: string[]): bool
 }
 
 export function hasPermission(user: UserSession['user'], permission: string): boolean {
-    if (user.is_super || user.permissions?.includes('*')) return true;
+    if (user.is_system || user.permissions?.includes('*')) return true;
 
     return user.permissions?.includes(permission) || false;
 }
@@ -187,11 +187,11 @@ export function validateQuery<T>(
 }
 
 export function isAdmin(user: UserSession['user']): boolean {
-    return user.is_super || user.roles?.includes('admin') || user.roles?.includes('superadmin') || false;
+    return user.is_system || user.roles?.includes('admin') || user.roles?.includes('superadmin') || false;
 }
 
-export function isSuperAdmin(user: UserSession['user']): boolean {
-    return user.is_super || false;
+export function isSystemAdmin(user: UserSession['user']): boolean {
+    return user.is_system || false;
 }
 
 export function withAuth(
@@ -221,7 +221,7 @@ export function withAuth(
         const session = sessionOrError as UserSession;
 
         // Superadmin bypass
-        if (isSuperAdmin(session.user)) {
+        if (isSystemAdmin(session.user)) {
             return handler(request, session, context);
         }
 
@@ -261,7 +261,7 @@ export function withHybridAuth(
 
         if (session) {
             // Superadmin bypass
-            if (isSuperAdmin(session.user)) {
+            if (isSystemAdmin(session.user)) {
                 return handler(request, session, context);
             }
 

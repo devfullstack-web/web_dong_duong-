@@ -3,7 +3,7 @@ import { users, user_roles, roles } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, eq, sql, inArray } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
+import { withAuth, isSystemAdmin } from '@/middlewares/middleware';
 import { NextRequest } from 'next/server';
 import { PERMISSIONS } from '@/constants/rbac';
 import { AUTH } from '@/constants/app';
@@ -65,7 +65,7 @@ export const POST = withAuth(
                     .where(inArray(roles.id, roleIds));
 
                 const assigningSuperAdminRole = requestedRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
-                if (assigningSuperAdminRole && !isSuperAdmin(session.user)) {
+                if (assigningSuperAdminRole && !isSystemAdmin(session.user)) {
                     return apiError(
                         'Chỉ SuperAdmin mới có quyền gán vai trò hệ thống',
                         403,

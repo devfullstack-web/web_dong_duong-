@@ -90,7 +90,6 @@ export interface User {
     email?: string;
     full_name?: string;
     fullName?: string; // CamelCase from API
-    phone?: string;
     is_active?: boolean;
     isActive?: boolean; // CamelCase from API
     is_locked?: boolean;
@@ -105,6 +104,8 @@ export interface User {
     updatedAt?: string; // CamelCase from API
     deleted_at?: string | null;
     deletedAt?: string | null; // CamelCase from API
+    is_system?: boolean;
+    isSystem?: boolean;
 }
 
 export interface Module {
@@ -135,7 +136,8 @@ export interface Role {
     code: string;
     name: string;
     description: string;
-    is_super?: boolean;
+    is_system?: boolean;
+    isSystem?: boolean;
     permissions?: string[] | Permission[];
     createdAt?: string;
     updatedAt?: string;

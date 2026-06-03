@@ -31,7 +31,7 @@ export default function EditUserPage() {
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const [isSystemAdmin, setIsSystemAdmin] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         username: '',
@@ -54,7 +54,7 @@ export default function EditUserPage() {
                 const roles = rolesRes.data.data;
 
                 setAvailableRoles(roles || []);
-                setIsSuperAdmin(!!user.is_super);
+                setIsSystemAdmin(!!user.is_system);
                 setFormData({
                     username: user.username,
                     password: '',
@@ -217,7 +217,7 @@ export default function EditUserPage() {
                                 />
                             </div>
 
-                            {!isSuperAdmin && (
+                            {!isSystemAdmin && (
                                 <div className="pt-4 border-t border-slate-100 space-y-4">
                                     <div>
                                         <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block">

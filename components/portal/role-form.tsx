@@ -184,7 +184,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
         }
     };
 
-    const isSuperRole = !!initialData?.is_super;
+    const isSystemRole = !!initialData?.is_system;
 
     return (
         <div className="space-y-6">
@@ -308,16 +308,16 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                         <th className="pb-4 w-12 text-center text-slate-400">
                                             <Checkbox
                                                 checked={
-                                                    isSuperRole ||
+                                                    isSystemRole ||
                                                     (allPermissions.length > 0 &&
                                                         allPermissions.every((p) =>
                                                             selectedPermissions.includes(p.code)
                                                         ))
                                                 }
                                                 onCheckedChange={() =>
-                                                    !isSuperRole && toggleGlobal()
+                                                    !isSystemRole && toggleGlobal()
                                                 }
-                                                disabled={isSuperRole}
+                                                disabled={isSystemRole}
                                                 className="mx-auto border-slate-300 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500 rounded-none"
                                             />
                                         </th>
@@ -335,7 +335,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                                 .filter((code) => allPermissions.some((p) => p.code === code));
                                             
                                             const isColChecked =
-                                                isSuperRole ||
+                                                isSystemRole ||
                                                 (colCodes.length > 0 &&
                                                     colCodes.every((c) => selectedPermissions.includes(c)));
 
@@ -345,9 +345,9 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                                         <Checkbox
                                                             checked={isColChecked}
                                                             onCheckedChange={() =>
-                                                                !isSuperRole && toggleColumn(col.field)
+                                                                !isSystemRole && toggleColumn(col.field)
                                                             }
-                                                            disabled={isSuperRole}
+                                                            disabled={isSystemRole}
                                                             className="border-slate-300 data-[state=checked]:bg-amber-500  data-[state=checked]:border-amber-500 rounded-none"
                                                         />
                                                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
@@ -373,12 +373,12 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                             >
                                                 <td className="py-4 text-center">
                                                     <Checkbox
-                                                        checked={isSuperRole || rowAllSet}
+                                                        checked={isSystemRole || rowAllSet}
                                                         onCheckedChange={() =>
-                                                            !isSuperRole &&
+                                                            !isSystemRole &&
                                                             toggleModuleAll(group.id)
                                                         }
-                                                        disabled={isSuperRole}
+                                                        disabled={isSystemRole}
                                                         className="mx-auto border-slate-200 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500 rounded-none"
                                                     />
                                                 </td>
@@ -417,7 +417,7 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                                 ].map(({ field, color }) => {
                                                     const code = getPermissionCode(group.id, field);
                                                     const hasThisPermission = allPermissions.some((p) => p.code === code);
-                                                    const isChecked = isSuperRole || selectedPermissions.includes(code);
+                                                    const isChecked = isSystemRole || selectedPermissions.includes(code);
 
                                                     return (
                                                         <td key={field} className="py-4 text-center">
@@ -425,10 +425,10 @@ export function RoleForm({ initialData, isEditing = false }: RoleFormProps) {
                                                                 <Checkbox
                                                                     checked={isChecked}
                                                                     onCheckedChange={() =>
-                                                                        !isSuperRole &&
+                                                                        !isSystemRole &&
                                                                         togglePermission(group.id, field)
                                                                     }
-                                                                    disabled={isSuperRole}
+                                                                    disabled={isSystemRole}
                                                                     className={cn(
                                                                         'size-5 mx-auto border-slate-200 rounded-none transition-all',
                                                                         color,

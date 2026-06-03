@@ -70,7 +70,7 @@ export async function GET() {
                 fullName: user.full_name,
                 avatarUrl: user.avatar_url,
                 status: user.is_locked ? 'locked' : user.is_active ? 'active' : 'inactive',
-                is_super: hasSystemRole || userPermissions.includes('*'),
+                is_system: hasSystemRole || userPermissions.includes('*'),
             },
             roles: userRoles.map(r => ({
                 id: r.id,

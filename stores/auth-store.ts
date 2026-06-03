@@ -11,7 +11,7 @@ export interface AuthUser {
     fullName?: string;
     email?: string;
     isActive?: boolean;
-    is_super?: boolean;
+    is_system?: boolean;
     avatarUrl?: string;
     phone?: string;
     roles: string[];
@@ -67,7 +67,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                     fullName: user.fullName || '',
                     email: user.email,
                     isActive: user.status === 'active',
-                    is_super: !!user.is_super,
+                    is_system: !!user.is_system,
                     avatarUrl: user.avatarUrl || undefined,
                     roles: roleCodes,
                     permissions: permissions || [],

@@ -3,7 +3,7 @@ import { users, user_roles, roles } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { eq, inArray } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
+import { withAuth, isSystemAdmin } from '@/middlewares/middleware';
 import { AUTH } from '@/constants/app';
 import { PERMISSIONS } from '@/constants/rbac';
 import { auditService } from '@/services/audit-service';
@@ -41,9 +41,9 @@ export const GET = withAuth(
                 .innerJoin(roles, eq(user_roles.role_id, roles.id))
                 .where(eq(user_roles.user_id, userId));
 
-            const isSuper = userRoles.some(r => r.is_system || r.code === 'admin' || r.code === 'superadmin');
+            const isSystem = userRoles.some(r => r.is_system || r.code === 'admin' || r.code === 'superadmin');
 
-            return apiResponse({ ...user, roles: userRoles, is_super: isSuper });
+            return apiResponse({ ...user, roles: userRoles, is_system: isSystem });
         } catch (error) {
             console.error('Error fetching user:', error);
             return apiError('Internal Server Error', 500);
@@ -79,11 +79,11 @@ export const PATCH = withAuth(
                 .innerJoin(roles, eq(user_roles.role_id, roles.id))
                 .where(eq(user_roles.user_id, userId));
 
-            const targetIsSuperAdmin = currentUserRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
-            const isActorSuper = isSuperAdmin(session.user);
+            const targetIsSystemAdmin = currentUserRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
+            const isActorSystem = isSystemAdmin(session.user);
 
             // Protection: Only SuperAdmin can modify another SuperAdmin
-            if (targetIsSuperAdmin && !isActorSuper) {
+            if (targetIsSystemAdmin && !isActorSystem) {
                 return apiError(
                     'Chỉ SuperAdmin mới có quyền sửa đổi tài khoản SuperAdmin khác',
                     403,
@@ -99,9 +99,9 @@ export const PATCH = withAuth(
                     .where(inArray(roles.id, roleIds));
 
                 const assigningSuperAdminRole = newRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
-                const revokingSuperAdminRole = targetIsSuperAdmin && !assigningSuperAdminRole;
+                const revokingSuperAdminRole = targetIsSystemAdmin && !assigningSuperAdminRole;
 
-                if ((assigningSuperAdminRole || revokingSuperAdminRole) && !isActorSuper) {
+                if ((assigningSuperAdminRole || revokingSuperAdminRole) && !isActorSystem) {
                     return apiError(
                         'Chỉ SuperAdmin mới có quyền gán hoặc tước vai trò hệ thống',
                         403,
@@ -116,7 +116,7 @@ export const PATCH = withAuth(
                     return apiError('Bạn không thể khóa tài khoản của chính mình', 400);
                 }
                 // Only SuperAdmin can lock/unlock another SuperAdmin
-                if (targetIsSuperAdmin && !isActorSuper) {
+                if (targetIsSystemAdmin && !isActorSystem) {
                     return apiError('Chỉ SuperAdmin mới có quyền khóa/mở khóa tài khoản SuperAdmin', 403);
                 }
             }
@@ -219,11 +219,11 @@ export const DELETE = withAuth(
                 .innerJoin(roles, eq(user_roles.role_id, roles.id))
                 .where(eq(user_roles.user_id, userId));
 
-            const targetIsSuperAdmin = targetUserRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
-            const isActorSuper = isSuperAdmin(session.user);
+            const targetIsSystemAdmin = targetUserRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
+            const isActorSystem = isSystemAdmin(session.user);
 
             // Protection: Only SuperAdmin can delete another SuperAdmin
-            if (targetIsSuperAdmin && !isActorSuper) {
+            if (targetIsSystemAdmin && !isActorSystem) {
                 return apiError('Chỉ SuperAdmin mới có quyền xóa tài khoản SuperAdmin', 403);
             }
 

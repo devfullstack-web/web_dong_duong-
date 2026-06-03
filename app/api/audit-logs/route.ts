@@ -2,13 +2,13 @@ import { db } from '@/db';
 import { auditLogs, users } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, eq, ilike, or, and, sql } from 'drizzle-orm';
-import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
+import { withAuth, isSystemAdmin } from '@/middlewares/middleware';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
 
 export const GET = withAuth(async (request, session) => {
     try {
         // Only SuperAdmin can view audit logs
-        if (!isSuperAdmin(session.user)) {
+        if (!isSystemAdmin(session.user)) {
             return apiError('Chỉ SuperAdmin mới có quyền xem nhật ký hệ thống', 403);
         }
 
