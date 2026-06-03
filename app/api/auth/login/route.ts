@@ -16,14 +16,15 @@ export async function POST(request: Request) {
             return dataOrError;
         }
 
-        const { username, password } = dataOrError;
+        const { email, password } = dataOrError;
         const ip =
             request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
             request.headers.get('x-real-ip') ||
             'unknown';
+        
         const ipLimit = checkRateLimit(`login:ip:${ip}`, 20, 15 * 60 * 1000);
         const accountLimit = checkRateLimit(
-            `login:account:${ip}:${username.toLowerCase()}`,
+            `login:account:${ip}:${email.toLowerCase()}`,
             5,
             15 * 60 * 1000,
         );
@@ -35,14 +36,14 @@ export async function POST(request: Request) {
         const [user] = await db
             .select()
             .from(users)
-            .where(and(eq(users.username, username), isNull(users.deleted_at)))
+            .where(and(eq(users.email, email.toLowerCase().trim()), isNull(users.deleted_at)))
             .limit(1);
 
         if (!user || !user.is_active || user.is_locked) {
             return apiError('Tên đăng nhập hoặc mật khẩu không đúng', 401);
         }
 
-        const passwordMatch = await bcrypt.compare(password, user.password);
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
         if (!passwordMatch) {
             return apiError('Tên đăng nhập hoặc mật khẩu không đúng', 401);
@@ -51,12 +52,10 @@ export async function POST(request: Request) {
         // Success
         const sessionUser = {
             id: user.id,
-            username: user.username,
-            full_name: user.full_name,
-            is_super: user.is_super,
+            email: user.email,
         };
 
-        // Generate Tokens (now includes roles/permissions)
+        // Generate Tokens (JWT chỉ chứa id/email)
         const { accessToken, refreshToken, sessionPayload } = await generateTokens(sessionUser);
 
         // Set Cookies

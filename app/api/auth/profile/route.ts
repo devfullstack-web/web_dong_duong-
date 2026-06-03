@@ -3,7 +3,7 @@ import { users, roles, user_roles, permissions, role_permissions } from '@/db/sc
 import { eq, inArray } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { getSession } from '@/services/auth';
-import { SIDEBAR_ITEMS } from '@/constants/sidebar';
+import { ALL_SYSTEM_PERMISSIONS } from '@/constants/rbac';
 
 export async function GET() {
     try {
@@ -18,16 +18,11 @@ export async function GET() {
         const [user] = await db
             .select({
                 id: users.id,
-                createdAt: users.created_at,
-                updatedAt: users.updated_at,
-                deletedAt: users.deleted_at,
                 email: users.email,
-                fullName: users.full_name,
-                phone: users.phone,
-                isActive: users.is_active,
-                isLocked: users.is_locked,
-                is_super: users.is_super, // Use consistent field name
-                avatarUrl: users.avatar_url,
+                full_name: users.full_name,
+                avatar_url: users.avatar_url,
+                is_active: users.is_active,
+                is_locked: users.is_locked,
             })
             .from(users)
             .where(eq(users.id, userId));
@@ -40,110 +35,50 @@ export async function GET() {
         const userRoles = await db
             .select({
                 id: roles.id,
-                createdAt: roles.created_at,
-                updatedAt: roles.updated_at,
-                deletedAt: roles.deleted_at,
                 code: roles.code,
                 name: roles.name,
-                description: roles.description,
-                is_super: roles.is_super,
+                is_system: roles.is_system,
             })
             .from(user_roles)
             .innerJoin(roles, eq(user_roles.role_id, roles.id))
             .where(eq(user_roles.user_id, userId));
 
         const roleIds = userRoles.map((r) => r.id);
-
-        // Check if user has superadmin role OR is_super flag is set in users table
-        const isSystemSuper = userRoles.some((r) => r.is_super) || user.is_super;
-
-        interface PermissionWithModule {
-            id: string;
-            moduleId: string;
-            roleId: string;
-            canView: boolean;
-            canCreate: boolean;
-            canUpdate: boolean;
-            canDelete: boolean;
-            module: {
-                id: string;
-                code: string;
-                name: string;
-                icon: string | null;
-                route: string | null;
-                order: number | null;
-            };
-        }
+        const hasSystemRole = userRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
 
         // 3. Fetch permissions for these roles
-        let allPermissions: PermissionWithModule[] = [];
-        if (roleIds.length > 0) {
+        let userPermissions: string[] = [];
+        if (hasSystemRole) {
+            // Super Admin bypass: có toàn bộ quyền
+            userPermissions = ALL_SYSTEM_PERMISSIONS.map(p => p.code);
+        } else if (roleIds.length > 0) {
             const rawRolePermissions = await db
                 .select({
-                    roleId: role_permissions.role_id,
-                    permId: permissions.id,
-                    permCode: permissions.code,
-                    moduleCode: permissions.module_code,
+                    code: permissions.code,
                 })
                 .from(role_permissions)
                 .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
                 .where(inArray(role_permissions.role_id, roleIds));
 
-            // Group raw permissions by (roleId, moduleCode) to build dynamic matrix
-            const roleModuleMap = new Map<string, PermissionWithModule>();
-
-            for (const raw of rawRolePermissions) {
-                const sidebarItem = SIDEBAR_ITEMS.find((item) => item.permission === raw.moduleCode);
-                const moduleInfo = {
-                    id: raw.moduleCode,
-                    code: raw.moduleCode,
-                    name: sidebarItem?.name || raw.moduleCode,
-                    icon: sidebarItem?.icon || 'Shield',
-                    route: sidebarItem?.route || null,
-                    order: sidebarItem?.order ?? 0,
-                };
-
-                const key = `${raw.roleId}:${raw.moduleCode}`;
-                if (!roleModuleMap.has(key)) {
-                    roleModuleMap.set(key, {
-                        id: raw.permId,
-                        roleId: raw.roleId,
-                        moduleId: raw.moduleCode,
-                        canView: false,
-                        canCreate: false,
-                        canUpdate: false,
-                        canDelete: false,
-                        module: moduleInfo
-                    });
-                }
-
-                const entry = roleModuleMap.get(key)!;
-                const action = raw.permCode.split(':')[1];
-                if (action === 'VIEW') entry.canView = true;
-                if (action === 'CREATE') entry.canCreate = true;
-                if (action === 'UPDATE') entry.canUpdate = true;
-                if (action === 'DELETE') entry.canDelete = true;
-            }
-
-            allPermissions = Array.from(roleModuleMap.values());
+            userPermissions = Array.from(new Set(rawRolePermissions.map(p => p.code)));
         }
 
-        // Compose the response
-        const rolesWithPermissions = userRoles.map((role) => ({
-            ...role,
-            permissions: allPermissions
-                .filter((p) => p.roleId === role.id)
-                .map((p) => {
-                    const { roleId: _roleId, ...rest } = p;
-                    void _roleId;
-                    return rest;
-                }),
-        }));
-
+        // Compose response theo format chuẩn yêu cầu
         return apiResponse({
-            ...user,
-            is_super: isSystemSuper,
-            roles: rolesWithPermissions,
+            user: {
+                id: user.id,
+                email: user.email,
+                fullName: user.full_name,
+                avatarUrl: user.avatar_url,
+                status: user.is_locked ? 'locked' : user.is_active ? 'active' : 'inactive',
+                is_super: hasSystemRole,
+            },
+            roles: userRoles.map(r => ({
+                id: r.id,
+                code: r.code,
+                name: r.name,
+            })),
+            permissions: userPermissions,
         });
     } catch (error) {
         console.error('Profile Error:', error);
@@ -160,13 +95,12 @@ export async function PATCH(request: Request) {
 
         const userId = session.user.id;
         const body = await request.json();
-        const { fullName, phone, avatarUrl } = body;
+        const { fullName, avatarUrl } = body;
 
         const [updatedUser] = await db
             .update(users)
             .set({
                 full_name: fullName,
-                phone: phone,
                 avatar_url: avatarUrl,
                 updated_at: new Date(),
             })
@@ -181,7 +115,6 @@ export async function PATCH(request: Request) {
             id: updatedUser.id,
             email: updatedUser.email,
             fullName: updatedUser.full_name,
-            phone: updatedUser.phone,
             avatarUrl: updatedUser.avatar_url,
             isActive: updatedUser.is_active,
             isLocked: updatedUser.is_locked,

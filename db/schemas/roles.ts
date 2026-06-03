@@ -7,7 +7,7 @@ export const roles = pgTable(
         code: varchar('code', { length: 50 }).notNull().unique(),
         name: varchar('name', { length: 255 }).notNull(),
         description: text('description'),
-        is_super: boolean('is_super').default(false).notNull(),
+        is_system: boolean('is_system').default(false).notNull(),
         created_at: timestamp('created_at').defaultNow().notNull(),
         updated_at: timestamp('updated_at').defaultNow().notNull(),
         deleted_at: timestamp('deleted_at'),

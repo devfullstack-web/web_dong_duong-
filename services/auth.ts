@@ -3,8 +3,8 @@ import type { JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { roles, permissions, role_permissions, user_roles, modules, users } from '@/db/schemas';
-import { and, eq, inArray, isNull } from 'drizzle-orm';
+import { users } from '@/db/schemas';
+import { and, eq, isNull } from 'drizzle-orm';
 import { AUTH } from '@/constants/app';
 import { getJwtSecret } from '@/services/jwt-secret';
 
@@ -13,11 +13,7 @@ const key = new TextEncoder().encode(secretKey);
 
 type AuthUser = {
     id: string;
-    username?: string;
-    full_name?: string | null;
-    is_super?: boolean;
-    roles?: string[];
-    permissions?: string[];
+    email: string;
     [key: string]: unknown;
 };
 
@@ -49,58 +45,31 @@ export async function generateTokens(user: Pick<AuthUser, 'id'>) {
     const [currentUser] = await db
         .select({
             id: users.id,
-            username: users.username,
-            full_name: users.full_name,
-            is_super: users.is_super,
+            email: users.email,
+            is_active: users.is_active,
+            is_locked: users.is_locked,
         })
         .from(users)
         .where(
             and(
                 eq(users.id, user.id),
-                eq(users.is_active, true),
-                eq(users.is_locked, false),
                 isNull(users.deleted_at),
             ),
         )
         .limit(1);
 
     if (!currentUser) {
+        throw new Error('USER_NOT_FOUND');
+    }
+
+    if (!currentUser.is_active || currentUser.is_locked) {
         throw new Error('USER_INACTIVE_OR_LOCKED');
     }
 
-    const userRoles = await db
-        .select({
-            id: roles.id,
-            name: roles.name,
-            code: roles.code,
-            is_super: roles.is_super,
-        })
-        .from(user_roles)
-        .innerJoin(roles, eq(user_roles.role_id, roles.id))
-        .where(eq(user_roles.user_id, user.id));
-
-    const roleIds = userRoles.map((r) => r.id);
-    // is_super if EITHER user.is_super flag is true OR any role has is_super true
-    const isSuperUser = currentUser.is_super || userRoles.some((r) => r.is_super);
-
-    let userPermissions: string[] = [];
-    if (roleIds.length > 0) {
-        const perms = await db
-            .select({
-                code: permissions.code,
-            })
-            .from(role_permissions)
-            .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
-            .where(inArray(role_permissions.role_id, roleIds));
-
-        userPermissions = perms.map((p) => p.code);
-    }
-
+    // JWT chỉ chứa user_id và email
     const sessionPayload = {
-        ...currentUser,
-        is_super: isSuperUser,
-        roles: userRoles.map((r) => r.code),
-        permissions: userPermissions,
+        id: currentUser.id,
+        email: currentUser.email,
     };
 
     const accessToken = await encrypt({ user: sessionPayload }, '15m');
@@ -129,7 +98,7 @@ export async function setAuthCookies(accessToken: string, refreshToken: string) 
     });
 }
 
-export async function login(user: AuthUser) {
+export async function login(user: { id: string; email: string }) {
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     const session = await encrypt({ user, expires });
     const secure = process.env.NODE_ENV === 'production';

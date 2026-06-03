@@ -36,7 +36,7 @@ export const POST = withAuth(
                         name,
                         code: code || name.toUpperCase().replace(/\s+/g, '_'),
                         description,
-                        is_super: false, // Default to false for security, can be changed via PATCH if needed
+                        is_system: false, // Default to false for security
                     })
                     .returning();
 
@@ -45,11 +45,11 @@ export const POST = withAuth(
                     const permissionCodesToAssign: string[] = [];
 
                     for (const pm of permissionsMatrix) {
-                        const moduleCode = pm.moduleId.toUpperCase();
-                        if (pm.canView) permissionCodesToAssign.push(`${moduleCode}:VIEW`);
-                        if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}:CREATE`);
-                        if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}:UPDATE`);
-                        if (pm.canDelete) permissionCodesToAssign.push(`${moduleCode}:DELETE`);
+                        const moduleCode = pm.moduleId.toLowerCase();
+                        if (pm.canView) permissionCodesToAssign.push(`${moduleCode}.view`);
+                        if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}.create`);
+                        if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}.update`);
+                        if (pm.canDelete) permissionCodesToAssign.push(`${moduleCode}.delete`);
                     }
 
                     // Query the matching permission records from the database
@@ -76,9 +76,6 @@ export const POST = withAuth(
             return apiResponse(newRole, { status: 201 });
         } catch (error) {
             console.error('Error creating role:', error);
-            if (error instanceof Error && error.message.includes('unique constraint')) {
-                return apiError('Role name already exists', 400);
-            }
             return apiError('Internal Server Error', 500);
         }
     },

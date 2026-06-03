@@ -1,4 +1,4 @@
-import { pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, primaryKey, uuid, timestamp } from 'drizzle-orm/pg-core';
 import { roles } from './roles';
 import { users } from './users';
 
@@ -11,6 +11,7 @@ export const user_roles = pgTable(
         role_id: uuid('role_id')
             .references(() => roles.id, { onDelete: 'cascade' })
             .notNull(),
+        created_at: timestamp('created_at').defaultNow().notNull(),
     },
     (table) => [
         primaryKey({ columns: [table.user_id, table.role_id] }),

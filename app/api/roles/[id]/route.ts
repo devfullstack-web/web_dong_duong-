@@ -22,7 +22,7 @@ export const GET = withAuth(
                 .select({
                     permId: permissions.id,
                     permCode: permissions.code,
-                    moduleCode: permissions.module_code,
+                    moduleCode: permissions.module,
                 })
                 .from(role_permissions)
                 .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
@@ -49,11 +49,11 @@ export const GET = withAuth(
                     });
                 }
                 const entry = moduleMap.get(moduleCode);
-                const action = raw.permCode.split(':')[1];
-                if (action === 'VIEW') entry.canView = true;
-                if (action === 'CREATE') entry.canCreate = true;
-                if (action === 'UPDATE') entry.canUpdate = true;
-                if (action === 'DELETE') entry.canDelete = true;
+                const action = raw.permCode.split('.')[1];
+                if (action === 'view') entry.canView = true;
+                if (action === 'create') entry.canCreate = true;
+                if (action === 'update') entry.canUpdate = true;
+                if (action === 'delete') entry.canDelete = true;
             }
             const rolePermissions = Array.from(moduleMap.values());
 
@@ -70,30 +70,30 @@ export const PATCH = withAuth(
     async (request, session, { params }) => {
         try {
             const { id: roleId } = await params;
-            const { name, code, description, is_super, permissionsMatrix } = await request.json();
+            const { name, code, description, is_system, permissionsMatrix } = await request.json();
 
             const [existingRole] = await db.select().from(roles).where(eq(roles.id, roleId));
             if (!existingRole) return apiError('Role not found', 404);
 
             // Protection: Only SuperAdmin can modify a system role
-            if (existingRole.is_super && !isSuperAdmin(session.user)) {
+            if (existingRole.is_system && !isSuperAdmin(session.user)) {
                 return apiError('Chỉ SuperAdmin mới có quyền sửa đổi vai trò hệ thống', 403);
             }
 
-            // Protection: Only SuperAdmin can change the is_super flag
+            // Protection: Only SuperAdmin can change the is_system flag
             if (
-                is_super !== undefined &&
-                is_super !== existingRole.is_super &&
+                is_system !== undefined &&
+                is_system !== existingRole.is_system &&
                 !isSuperAdmin(session.user)
             ) {
                 return apiError(
-                    'Chỉ SuperAdmin mới có quyền thay đổi trạng thái SuperAdmin của vai trò',
+                    'Chỉ SuperAdmin mới có quyền thay đổi trạng thái vai trò hệ thống',
                     403,
                 );
             }
 
             // Protection: Prevent renaming the code of system roles
-            if (existingRole.is_super && code && code !== existingRole.code) {
+            if (existingRole.is_system && code && code !== existingRole.code) {
                 return apiError('Không thể thay đổi mã định danh của vai trò hệ thống', 400);
             }
 
@@ -102,9 +102,9 @@ export const PATCH = withAuth(
                     .update(roles)
                     .set({
                         name,
-                        ...(existingRole.is_super ? {} : { code }),
+                        ...(existingRole.is_system ? {} : { code }),
                         description,
-                        is_super: is_super !== undefined ? is_super : undefined,
+                        is_system: is_system !== undefined ? is_system : undefined,
                         updated_at: new Date(),
                     })
                     .where(eq(roles.id, roleId))
@@ -117,11 +117,11 @@ export const PATCH = withAuth(
                     const permissionCodesToAssign: string[] = [];
 
                     for (const pm of permissionsMatrix) {
-                        const moduleCode = pm.moduleId.toUpperCase();
-                        if (pm.canView) permissionCodesToAssign.push(`${moduleCode}:VIEW`);
-                        if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}:CREATE`);
-                        if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}:UPDATE`);
-                        if (pm.canDelete) permissionCodesToAssign.push(`${moduleCode}:DELETE`);
+                        const moduleCode = pm.moduleId.toLowerCase();
+                        if (pm.canView) permissionCodesToAssign.push(`${moduleCode}.view`);
+                        if (pm.canCreate) permissionCodesToAssign.push(`${moduleCode}.create`);
+                        if (pm.canUpdate) permissionCodesToAssign.push(`${moduleCode}.update`);
+                        if (pm.canDelete) permissionCodesToAssign.push(`${moduleCode}.delete`);
                     }
 
                     // Delete old permissions for this role from role_permissions
@@ -180,13 +180,10 @@ export const DELETE = withAuth(
             const [role] = await db.select().from(roles).where(eq(roles.id, roleId));
             if (!role) return apiError('Role not found', 404);
 
-            // Protection: Prevent deleting protected roles (is_super)
-            if (role.is_super) {
+            // Protection: Prevent deleting system roles
+            if (role.is_system) {
                 return apiError('Không thể xóa vai trò hệ thống cốt lõi', 400);
             }
-
-            // Additional Protection: Only SuperAdmin can delete any system-related roles if needed
-            // (Already blocked above for is_super roles)
 
             const [deletedRole] = await db.delete(roles).where(eq(roles.id, roleId)).returning();
 

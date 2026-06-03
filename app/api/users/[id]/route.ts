@@ -2,7 +2,6 @@ import { db } from '@/db';
 import { users, user_roles, roles } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { eq, inArray } from 'drizzle-orm';
-// @ts-expect-error - bcryptjs has no type declarations
 import bcrypt from 'bcryptjs';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
 import { AUTH } from '@/constants/app';
@@ -18,12 +17,10 @@ export const GET = withAuth(
             const [user] = await db
                 .select({
                     id: users.id,
-                    username: users.username,
                     fullName: users.full_name,
                     email: users.email,
-                    phone: users.phone,
                     isActive: users.is_active,
-                    is_super: users.is_super,
+                    isLocked: users.is_locked,
                     createdAt: users.created_at,
                 })
                 .from(users)
@@ -35,6 +32,7 @@ export const GET = withAuth(
             const userRoles = await db
                 .select({
                     id: roles.id,
+                    code: roles.code,
                     name: roles.name,
                 })
                 .from(user_roles)
@@ -56,13 +54,15 @@ export const PATCH = withAuth(
         try {
             const { id: userId } = await params;
             const body = await request.json();
-            const { username, password, fullName, email, phone, roleIds } = body;
+            const { password, fullName, email, roleIds, isActive, isLocked } = body;
 
-            // 1. Fetch the user being updated and their current status
+            // 1. Fetch the user being updated
             const [targetUser] = await db
                 .select({
-                    isSuper: users.is_super,
-                    username: users.username,
+                    id: users.id,
+                    email: users.email,
+                    is_active: users.is_active,
+                    is_locked: users.is_locked,
                 })
                 .from(users)
                 .where(eq(users.id, userId));
@@ -70,14 +70,12 @@ export const PATCH = withAuth(
             if (!targetUser) return apiError('User not found', 404);
 
             const currentUserRoles = await db
-                .select({ is_super: roles.is_super })
+                .select({ is_system: roles.is_system, code: roles.code })
                 .from(user_roles)
                 .innerJoin(roles, eq(user_roles.role_id, roles.id))
                 .where(eq(user_roles.user_id, userId));
 
-            // targetIsSuper if he has super role OR is_super flag
-            const targetIsSuperAdmin =
-                currentUserRoles.some((r) => r.is_super) || targetUser.isSuper;
+            const targetIsSuperAdmin = currentUserRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
             const isActorSuper = isSuperAdmin(session.user);
 
             // Protection: Only SuperAdmin can modify another SuperAdmin
@@ -92,34 +90,22 @@ export const PATCH = withAuth(
             if (roleIds && Array.isArray(roleIds)) {
                 // Check if NEW roles include a SuperAdmin role
                 const newRoles = await db
-                    .select({ is_super: roles.is_super })
+                    .select({ is_system: roles.is_system, code: roles.code })
                     .from(roles)
                     .where(inArray(roles.id, roleIds));
 
-                const assigningSuperAdminRole = newRoles.some((r) => r.is_super);
+                const assigningSuperAdminRole = newRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
                 const revokingSuperAdminRole = targetIsSuperAdmin && !assigningSuperAdminRole;
 
                 if ((assigningSuperAdminRole || revokingSuperAdminRole) && !isActorSuper) {
                     return apiError(
-                        'Chỉ SuperAdmin mới có quyền gán hoặc tước vai trò SuperAdmin',
+                        'Chỉ SuperAdmin mới có quyền gán hoặc tước vai trò hệ thống',
                         403,
                     );
                 }
             }
 
-            const { isSuper, isLocked } = body;
-            // Protection for is_super flag
-            if (isSuper !== undefined && isSuper !== targetUser.isSuper) {
-                if (!isActorSuper) {
-                    return apiError('Chỉ SuperAdmin mới có quyền thay đổi cờ SuperAdmin', 403);
-                }
-                // Prevent self-demotion
-                if (!isSuper && userId === session.user.id) {
-                    return apiError('Bạn không thể tự tước quyền SuperAdmin của chính mình', 400);
-                }
-            }
-
-            // Protection for is_locked flag
+            // Protection for isLocked flag
             if (isLocked !== undefined) {
                 // Cannot lock your own account
                 if (userId === session.user.id) {
@@ -134,24 +120,20 @@ export const PATCH = withAuth(
             const [oldUser] = await db
                 .select({
                     id: users.id,
-                    username: users.username,
                     fullName: users.full_name,
                     email: users.email,
-                    phone: users.phone,
                 })
                 .from(users)
                 .where(eq(users.id, userId));
 
             const updatedUser = await db.transaction(async (tx) => {
                 const updateData: Record<string, unknown> = {};
-                if (username) updateData.username = username;
                 if (fullName !== undefined) updateData.full_name = fullName;
                 if (email !== undefined) updateData.email = email;
-                if (phone !== undefined) updateData.phone = phone;
-                if (isSuper !== undefined) updateData.is_super = isSuper;
+                if (isActive !== undefined) updateData.is_active = isActive;
                 if (isLocked !== undefined) updateData.is_locked = isLocked;
                 if (password) {
-                    updateData.password = await bcrypt.hash(password, AUTH.BCRYPT_SALT_ROUNDS);
+                    updateData.password_hash = await bcrypt.hash(password, AUTH.BCRYPT_SALT_ROUNDS);
                 }
                 updateData.updated_at = new Date();
 
@@ -161,11 +143,9 @@ export const PATCH = withAuth(
                     .where(eq(users.id, userId))
                     .returning({
                         id: users.id,
-                        username: users.username,
                         fullName: users.full_name,
                         email: users.email,
-                        phone: users.phone,
-                        isSuper: users.is_super,
+                        isActive: users.is_active,
                         isLocked: users.is_locked,
                     });
 
@@ -193,8 +173,8 @@ export const PATCH = withAuth(
                 module: AUDIT_MODULES.USERS,
                 targetId: userId,
                 description: isLocked !== undefined
-                    ? `${isLocked ? 'Khóa' : 'Mở khóa'} tài khoản người dùng: ${updatedUser.username}`
-                    : `Cập nhật thông tin người dùng: ${updatedUser.username}`,
+                    ? `${isLocked ? 'Khóa' : 'Mở khóa'} tài khoản người dùng: ${updatedUser.email}`
+                    : `Cập nhật thông tin người dùng: ${updatedUser.email}`,
 
                 changes: {
                     old: oldUser,
@@ -211,17 +191,9 @@ export const PATCH = withAuth(
                 return apiError('Không tìm thấy người dùng', 404);
             }
 
-            // Handle PostgreSQL unique constraint violations
             const pgError = error as { code?: string; detail?: string };
             if (pgError?.code === '23505') {
-                const detail = pgError?.detail || '';
-                if (detail.includes('email')) {
-                    return apiError('Email này đã được sử dụng bởi một tài khoản khác', 400);
-                }
-                if (detail.includes('username')) {
-                    return apiError('Tên đăng nhập này đã được sử dụng', 400);
-                }
-                return apiError('Dữ liệu đã tồn tại (trùng lặp)', 400);
+                return apiError('Email này đã được sử dụng bởi một tài khoản khác', 400);
             }
 
             return apiError('Lỗi máy chủ nội bộ', 500);
@@ -236,14 +208,14 @@ export const DELETE = withAuth(
         try {
             const { id: userId } = await params;
 
-            // 1. Fetch user status and roles
+            // 1. Fetch user roles
             const targetUserRoles = await db
-                .select({ is_super: roles.is_super })
+                .select({ is_system: roles.is_system, code: roles.code })
                 .from(user_roles)
                 .innerJoin(roles, eq(user_roles.role_id, roles.id))
                 .where(eq(user_roles.user_id, userId));
 
-            const targetIsSuperAdmin = targetUserRoles.some((r) => r.is_super);
+            const targetIsSuperAdmin = targetUserRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
             const isActorSuper = isSuperAdmin(session.user);
 
             // Protection: Only SuperAdmin can delete another SuperAdmin
@@ -266,7 +238,7 @@ export const DELETE = withAuth(
                 action: AUDIT_ACTIONS.DELETE,
                 module: AUDIT_MODULES.USERS,
                 targetId: userId,
-                description: `Xóa tài khoản người dùng: ${deletedUser.username}`,
+                description: `Xóa tài khoản người dùng: ${deletedUser.email}`,
                 changes: { old: deletedUser },
                 request,
             });

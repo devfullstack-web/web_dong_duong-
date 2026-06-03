@@ -2,7 +2,6 @@ import { db } from '@/db';
 import { users, user_roles, roles } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { desc, eq, sql, inArray } from 'drizzle-orm';
-// @ts-expect-error - bcryptjs has no type declarations
 import bcrypt from 'bcryptjs';
 import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
 import { NextRequest } from 'next/server';
@@ -15,17 +14,13 @@ import { AUDIT_ACTIONS, AUDIT_MODULES } from '@/constants/audit';
 export const GET = withAuth(
     async () => {
         try {
-            // Get all users with their roles in a single query using aggregation
             const usersWithRoles = await db
                 .select({
                     id: users.id,
-                    username: users.username,
                     fullName: users.full_name,
                     email: users.email,
-                    phone: users.phone,
                     isActive: users.is_active,
                     isLocked: users.is_locked,
-                    is_super: users.is_super,
                     createdAt: users.created_at,
                     roles: sql<{ id: string; name: string; code: string }[]>`
           COALESCE(
@@ -55,23 +50,23 @@ export const GET = withAuth(
 export const POST = withAuth(
     async (request: NextRequest, session) => {
         try {
-            const { username, password, fullName, email, phone, roleIds } = await request.json();
+            const { email, password, fullName, roleIds } = await request.json();
 
-            if (!username || !password) {
-                return apiError('Username and password are required', 400);
+            if (!email || !password) {
+                return apiError('Email and password are required', 400);
             }
 
-            // Security check: Only SuperAdmin can assign SuperAdmin roles
+            // Security check: Only SuperAdmin can assign system/superadmin roles
             if (roleIds && Array.isArray(roleIds) && roleIds.length > 0) {
                 const requestedRoles = await db
-                    .select({ is_super: roles.is_super })
+                    .select({ is_system: roles.is_system, code: roles.code })
                     .from(roles)
                     .where(inArray(roles.id, roleIds));
 
-                const assigningSuperAdminRole = requestedRoles.some((r) => r.is_super);
+                const assigningSuperAdminRole = requestedRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
                 if (assigningSuperAdminRole && !isSuperAdmin(session.user)) {
                     return apiError(
-                        'Chỉ SuperAdmin mới có quyền gán vai trò có quyền tối cao',
+                        'Chỉ SuperAdmin mới có quyền gán vai trò hệ thống',
                         403,
                     );
                 }
@@ -83,15 +78,13 @@ export const POST = withAuth(
                 const [user] = await tx
                     .insert(users)
                     .values({
-                        username,
-                        password: hashedPassword,
+                        email: email.toLowerCase().trim(),
+                        password_hash: hashedPassword,
                         full_name: fullName,
-                        email,
-                        phone,
                     })
                     .returning({
                         id: users.id,
-                        username: users.username,
+                        email: users.email,
                         fullName: users.full_name,
                     });
 
@@ -113,7 +106,7 @@ export const POST = withAuth(
                 action: AUDIT_ACTIONS.CREATE,
                 module: AUDIT_MODULES.USERS,
                 targetId: newUser.id,
-                description: `Tạo người dùng mới: ${newUser.username}`,
+                description: `Tạo người dùng mới: ${newUser.email}`,
                 request,
             });
 
@@ -121,24 +114,9 @@ export const POST = withAuth(
         } catch (error: unknown) {
             console.error('Error creating user:', error);
 
-            // Handle PostgreSQL unique constraint violations
             const pgError = error as { code?: string; detail?: string };
             if (pgError?.code === '23505') {
-                const detail = pgError?.detail || '';
-                if (detail.includes('email')) {
-                    return apiError('Email này đã được sử dụng', 400);
-                }
-                if (detail.includes('username')) {
-                    return apiError('Tên đăng nhập đã tồn tại', 400);
-                }
-                return apiError('Dữ liệu đã tồn tại (trùng lặp)', 400);
-            }
-
-            if (error instanceof Error && error.message.includes('unique constraint')) {
-                if (error.message.includes('email')) {
-                    return apiError('Email này đã được sử dụng', 400);
-                }
-                return apiError('Tên đăng nhập đã tồn tại', 400);
+                return apiError('Email này đã được sử dụng', 400);
             }
 
             return apiError('Lỗi máy chủ nội bộ', 500);

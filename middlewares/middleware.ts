@@ -2,17 +2,17 @@ import { NextRequest } from 'next/server';
 import { decrypt } from '@/services/auth';
 import { ZodSchema, ZodError } from 'zod';
 import { apiError } from '@/utils/api-response';
-import { RBAC_ROLES } from '@/constants/rbac';
 import { db } from '@/db';
-import { users } from '@/db/schemas';
-import { and, eq, isNull } from 'drizzle-orm';
+import { users, roles, user_roles, role_permissions, permissions } from '@/db/schemas';
+import { and, eq, isNull, inArray } from 'drizzle-orm';
+import { ALL_SYSTEM_PERMISSIONS } from '@/constants/rbac';
 
 export interface UserSession {
     user: {
         id: string;
-        username: string;
-        full_name?: string | null;
-        is_super?: boolean;
+        email: string;
+        fullName?: string | null;
+        is_super: boolean;
         roles: string[];
         permissions: string[];
     };
@@ -33,8 +33,15 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
         const sessionData = await decrypt(session);
         if (!sessionData?.user?.id) return null;
 
-        const [activeUser] = await db
-            .select({ id: users.id })
+        // Fetch fresh user data and auth info from database
+        const [dbUser] = await db
+            .select({
+                id: users.id,
+                email: users.email,
+                full_name: users.full_name,
+                is_active: users.is_active,
+                is_locked: users.is_locked,
+            })
             .from(users)
             .where(
                 and(
@@ -46,9 +53,49 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
             )
             .limit(1);
 
-        if (!activeUser) return null;
+        if (!dbUser) return null;
 
-        return sessionData as UserSession;
+        // Fetch user roles
+        const dbRoles = await db
+            .select({
+                id: roles.id,
+                code: roles.code,
+                is_system: roles.is_system,
+            })
+            .from(user_roles)
+            .innerJoin(roles, eq(user_roles.role_id, roles.id))
+            .where(eq(user_roles.user_id, dbUser.id));
+
+        const roleCodes = dbRoles.map((r) => r.code);
+        const roleIds = dbRoles.map((r) => r.id);
+        const isSystem = dbRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
+
+        // Fetch user permissions
+        let userPermissions: string[] = [];
+        if (isSystem) {
+            userPermissions = ALL_SYSTEM_PERMISSIONS.map((p) => p.code);
+        } else if (roleIds.length > 0) {
+            const dbPermissions = await db
+                .select({
+                    code: permissions.code,
+                })
+                .from(role_permissions)
+                .innerJoin(permissions, eq(role_permissions.permission_id, permissions.id))
+                .where(inArray(role_permissions.role_id, roleIds));
+            
+            userPermissions = Array.from(new Set(dbPermissions.map((p) => p.code)));
+        }
+
+        return {
+            user: {
+                id: dbUser.id,
+                email: dbUser.email,
+                fullName: dbUser.full_name,
+                is_super: isSystem,
+                roles: roleCodes,
+                permissions: userPermissions,
+            }
+        };
     } catch {
         return null;
     }
@@ -141,7 +188,7 @@ export function validateQuery<T>(
 }
 
 export function isAdmin(user: UserSession['user']): boolean {
-    return user.is_super || user.roles?.includes(RBAC_ROLES.ADMIN) || false;
+    return user.is_super || user.roles?.includes('admin') || user.roles?.includes('superadmin') || false;
 }
 
 export function isSuperAdmin(user: UserSession['user']): boolean {
@@ -174,7 +221,7 @@ export function withAuth(
 
         const session = sessionOrError as UserSession;
 
-        // Superadmin bypass - full quyền, không cần check permission
+        // Superadmin bypass
         if (isSuperAdmin(session.user)) {
             return handler(request, session, context);
         }
@@ -192,6 +239,7 @@ export function withAuth(
         return handler(request, session, context);
     };
 }
+
 export function withHybridAuth(
     handler: (
         request: NextRequest,
@@ -213,7 +261,7 @@ export function withHybridAuth(
         const isPortalRequest = referer.includes('/portal');
 
         if (session) {
-            // Superadmin bypass - full quyền, không cần check permission
+            // Superadmin bypass
             if (isSuperAdmin(session.user)) {
                 return handler(request, session, context);
             }

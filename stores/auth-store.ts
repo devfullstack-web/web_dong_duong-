@@ -57,40 +57,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         try {
             const response = await $api.get(API_ROUTES.AUTH.PROFILE);
             if (response.data.success) {
-                const profileData = response.data.data;
+                const { user, roles, permissions } = response.data.data;
 
-                const roleCodes = profileData.roles.map((r: { code: string }) => r.code);
-                const permissionStrings = profileData.roles.flatMap((r: { permissions: Array<{ module: { code: string }; canView: boolean; canCreate: boolean; canUpdate: boolean; canDelete: boolean }> }) =>
-                    r.permissions
-                        .map(
-                            (p: { module: { code: string }; canView: boolean; canCreate: boolean; canUpdate: boolean; canDelete: boolean }) =>
-                                `${p.module.code}:${p.canView ? 'VIEW' : ''}${p.canCreate ? ',CREATE' : ''}${p.canUpdate ? ',UPDATE' : ''}${p.canDelete ? ',DELETE' : ''}`,
-                        )
-                        .flatMap((s: string) => {
-                            const [mod, perms] = s.split(':');
-                            return perms
-                                .split(',')
-                                .filter(Boolean)
-                                .map((p) => `${mod}:${p}`);
-                        }),
-                );
-
-                let isSystemSuper = !!profileData.is_super;
-                profileData.roles.forEach((r: { is_super?: boolean }) => {
-                    if (r.is_super) isSystemSuper = true;
-                });
+                const roleCodes = roles.map((r: { code: string }) => r.code);
 
                 const synchronizedUser: AuthUser = {
-                    id: profileData.id,
-                    username: profileData.username || profileData.email.split('@')[0],
-                    fullName: profileData.fullName,
-                    email: profileData.email,
-                    isActive: profileData.isActive,
-                    is_super: isSystemSuper,
-                    avatarUrl: profileData.avatarUrl,
-                    phone: profileData.phone,
+                    id: user.id,
+                    username: user.email.split('@')[0],
+                    fullName: user.fullName || '',
+                    email: user.email,
+                    isActive: user.status === 'active',
+                    is_super: !!user.is_super,
+                    avatarUrl: user.avatarUrl || undefined,
                     roles: roleCodes,
-                    permissions: Array.from(new Set(permissionStrings)),
+                    permissions: permissions || [],
                 };
 
                 set({ user: synchronizedUser, isInitialized: true });
