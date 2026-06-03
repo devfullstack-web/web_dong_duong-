@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { AUTH_ROLE_CODES, AUTH_ROLE_CODE_VALUES } from '@/constants/rbac';
 
 /**
  * User & Auth Validation Schemas
@@ -34,7 +33,7 @@ export const userSchema = z.object({
     .nullable()
     .optional(),
   
-  roleIds: z.array(z.string().uuid("Role ID phải là UUID hợp lệ")).optional(),
+  role_ids: z.array(z.string().uuid("Role ID phải là UUID hợp lệ")).optional(),
 });
 
 export const createUserSchema = userSchema;
