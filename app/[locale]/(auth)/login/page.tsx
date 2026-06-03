@@ -81,7 +81,7 @@ export default function LoginPage() {
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <Label className="text-xs font-semibold text-slate-600">
-                                Tên đăng nhập / Username
+                                Tên đăng nhập hoặc Email
                             </Label>
                             <div className="relative group">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
@@ -89,7 +89,7 @@ export default function LoginPage() {
                                     type="text"
                                     required
                                     className="h-12 bg-slate-50 border border-slate-200 pl-11 text-sm font-medium tracking-tight rounded-none focus-visible:ring-2 focus-visible:ring-brand-primary/20 focus-visible:border-brand-primary transition-all"
-                                    placeholder="Username"
+                                    placeholder="Username hoặc email@saigonvalve.vn"
                                     value={formData.username}
                                     onChange={(e) =>
                                         setFormData({ ...formData, username: e.target.value })

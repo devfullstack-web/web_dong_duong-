@@ -6,9 +6,9 @@ import { AUTH_ROLE_CODES, AUTH_ROLE_CODE_VALUES } from '@/constants/rbac';
  */
 
 export const loginSchema = z.object({
-  email: z.string()
-    .email("Email không hợp lệ")
-    .max(255, "Email không được quá 255 ký tự")
+  username: z.string()
+    .min(3, "Tên đăng nhập hoặc email phải có ít nhất 3 ký tự")
+    .max(255, "Tên đăng nhập hoặc email không được quá 255 ký tự")
     .trim(),
   
   password: z.string()

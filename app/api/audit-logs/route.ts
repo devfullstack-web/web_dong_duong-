@@ -28,7 +28,7 @@ export const GET = withAuth(async (request, session) => {
             conditions.push(
                 or(
                     ilike(auditLogs.description, `%${search}%`),
-                    ilike(users.username, `%${search}%`),
+                    ilike(users.email, `%${search}%`),
                 ),
             );
         }
@@ -66,7 +66,7 @@ export const GET = withAuth(async (request, session) => {
                 createdAt: auditLogs.created_at,
                 user: {
                     id: users.id,
-                    username: users.username,
+                    username: users.email,
                     fullName: users.full_name,
                 },
             })

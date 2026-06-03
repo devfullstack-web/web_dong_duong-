@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { users } from '@/db/schemas';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, isNull, or } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 import { login, generateTokens } from '@/services/auth';
 import { apiResponse, apiError } from '@/utils/api-response';
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
             return dataOrError;
         }
 
-        const { email, password } = dataOrError;
+        const { username, password } = dataOrError;
         const ip =
             request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
             request.headers.get('x-real-ip') ||
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
         
         const ipLimit = checkRateLimit(`login:ip:${ip}`, 20, 15 * 60 * 1000);
         const accountLimit = checkRateLimit(
-            `login:account:${ip}:${email.toLowerCase()}`,
+            `login:account:${ip}:${username.toLowerCase()}`,
             5,
             15 * 60 * 1000,
         );
@@ -36,7 +36,15 @@ export async function POST(request: Request) {
         const [user] = await db
             .select()
             .from(users)
-            .where(and(eq(users.email, email.toLowerCase().trim()), isNull(users.deleted_at)))
+            .where(
+                and(
+                    or(
+                        eq(users.email, username.toLowerCase().trim()),
+                        eq(users.username, username.toLowerCase().trim())
+                    ),
+                    isNull(users.deleted_at)
+                )
+            )
             .limit(1);
 
         if (!user || !user.is_active || user.is_locked) {
