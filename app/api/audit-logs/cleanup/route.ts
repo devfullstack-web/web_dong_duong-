@@ -1,13 +1,13 @@
 import { cronService } from '@/services/cron-service';
 import { apiResponse, apiError } from '@/utils/api-response';
-import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
+import { withAuth, isSystemAdmin } from '@/middlewares/middleware';
 import { getRequiredEnv } from '@/utils/env';
 
 // GET - Get cleanup statistics
 export const GET = withAuth(async (request, session) => {
     try {
         // Only SuperAdmin can view cleanup stats
-        if (!isSuperAdmin(session.user)) {
+        if (!isSystemAdmin(session.user)) {
             return apiError('Chỉ SuperAdmin mới có quyền xem thống kê', 403);
         }
 
@@ -28,7 +28,7 @@ export const GET = withAuth(async (request, session) => {
 export const POST = withAuth(async (request, session) => {
     try {
         // Only SuperAdmin can trigger cleanup
-        if (!isSuperAdmin(session.user)) {
+        if (!isSystemAdmin(session.user)) {
             return apiError('Chỉ SuperAdmin mới có quyền thực hiện dọn dẹp', 403);
         }
 

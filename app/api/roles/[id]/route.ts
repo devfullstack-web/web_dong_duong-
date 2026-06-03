@@ -2,7 +2,7 @@ import { db } from '@/db';
 import { roles, permissions, role_permissions } from '@/db/schemas';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { eq, inArray } from 'drizzle-orm';
-import { withAuth, isSuperAdmin } from '@/middlewares/middleware';
+import { withAuth, isSystemAdmin } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { auditService } from '@/services/audit-service';
 import { AUDIT_ACTIONS, AUDIT_MODULES } from '@/constants/audit';
@@ -46,7 +46,7 @@ export const PATCH = withAuth(
             if (!existingRole) return apiError('Role not found', 404);
 
             // Protection: Only SuperAdmin can modify a system role
-            if (existingRole.is_system && !isSuperAdmin(session.user)) {
+            if (existingRole.is_system && !isSystemAdmin(session.user)) {
                 return apiError('Chỉ SuperAdmin mới có quyền sửa đổi vai trò hệ thống', 403);
             }
 
@@ -54,7 +54,7 @@ export const PATCH = withAuth(
             if (
                 is_system !== undefined &&
                 is_system !== existingRole.is_system &&
-                !isSuperAdmin(session.user)
+                !isSystemAdmin(session.user)
             ) {
                 return apiError(
                     'Chỉ SuperAdmin mới có quyền thay đổi trạng thái vai trò hệ thống',
