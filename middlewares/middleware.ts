@@ -5,7 +5,6 @@ import { apiError } from '@/utils/api-response';
 import { db } from '@/db';
 import { users, roles, user_roles, role_permissions, permissions } from '@/db/schemas';
 import { and, eq, isNull, inArray } from 'drizzle-orm';
-import { ALL_SYSTEM_PERMISSIONS } from '@/constants/rbac';
 
 export interface UserSession {
     user: {
@@ -73,7 +72,7 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
         // Fetch user permissions
         let userPermissions: string[] = [];
         if (isSystem) {
-            userPermissions = ALL_SYSTEM_PERMISSIONS.map((p) => p.code);
+            userPermissions = ['*'];
         } else if (roleIds.length > 0) {
             const dbPermissions = await db
                 .select({
@@ -91,7 +90,7 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
                 id: dbUser.id,
                 email: dbUser.email,
                 fullName: dbUser.full_name,
-                is_super: isSystem,
+                is_super: isSystem || userPermissions.includes('*'),
                 roles: roleCodes,
                 permissions: userPermissions,
             }
@@ -116,7 +115,7 @@ export function hasRole(user: UserSession['user'], allowedRoles: string[]): bool
 }
 
 export function hasPermission(user: UserSession['user'], permission: string): boolean {
-    if (user.is_super) return true;
+    if (user.is_super || user.permissions?.includes('*')) return true;
 
     return user.permissions?.includes(permission) || false;
 }

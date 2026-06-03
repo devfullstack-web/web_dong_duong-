@@ -3,7 +3,6 @@ import { users, roles, user_roles, permissions, role_permissions } from '@/db/sc
 import { eq, inArray } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { getSession } from '@/services/auth';
-import { ALL_SYSTEM_PERMISSIONS } from '@/constants/rbac';
 
 export async function GET() {
     try {
@@ -50,7 +49,7 @@ export async function GET() {
         let userPermissions: string[] = [];
         if (hasSystemRole) {
             // Super Admin bypass: có toàn bộ quyền
-            userPermissions = ALL_SYSTEM_PERMISSIONS.map(p => p.code);
+            userPermissions = ['*'];
         } else if (roleIds.length > 0) {
             const rawRolePermissions = await db
                 .select({
@@ -71,7 +70,7 @@ export async function GET() {
                 fullName: user.full_name,
                 avatarUrl: user.avatar_url,
                 status: user.is_locked ? 'locked' : user.is_active ? 'active' : 'inactive',
-                is_super: hasSystemRole,
+                is_super: hasSystemRole || userPermissions.includes('*'),
             },
             roles: userRoles.map(r => ({
                 id: r.id,

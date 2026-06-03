@@ -18,13 +18,14 @@ export function usePermissions() {
     const roles = user?.roles ?? EMPTY_LIST;
     const permissions = user?.permissions ?? EMPTY_LIST;
     const isAuthenticated = Boolean(user);
-    const isSuperAdmin = user?.is_super ?? false;
+    const isSuperAdmin = (user?.is_super ?? false) || permissions.includes('*');
     const isAdmin = isSuperAdmin || roles.includes(RBAC_ROLES.ADMIN);
 
     const can = useCallback(
         (permission: PermissionInput) => {
             if (!isAuthenticated) return false;
             if (isSuperAdmin) return true;
+            if (permissions.includes('*')) return true;
             return permissions.includes(permission);
         },
         [isAuthenticated, isSuperAdmin, permissions],
