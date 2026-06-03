@@ -12,8 +12,8 @@ export function usePermissions() {
     const isInitialized = useAuthStore((state) => state.isInitialized);
     const refreshUser = useAuthStore((state) => state.refreshUser);
 
-    const roles = user?.roles ?? [];
-    const permissions = user?.permissions ?? [];
+    const roles = useMemo(() => user?.roles ?? [], [user?.roles]);
+    const permissions = useMemo(() => user?.permissions ?? [], [user?.permissions]);
     const isAuthenticated = Boolean(user);
     const isAdmin = Boolean(user?.is_system) || permissions.includes('*');
 
@@ -21,7 +21,10 @@ export function usePermissions() {
         (permission: PermissionInput) => {
             if (!isAuthenticated || !permission) return false;
             if (isAdmin) return true;
-            return permissions.includes(permission);
+            if (permissions.includes(permission)) return true;
+            // Wildcard: 'user.*' matches 'user.view', etc.
+            const mod = permission.split('.')[0];
+            return permissions.includes(`${mod}.*`);
         },
         [isAuthenticated, isAdmin, permissions],
     );

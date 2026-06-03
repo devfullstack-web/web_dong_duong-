@@ -116,8 +116,11 @@ export function hasRole(user: UserSession['user'], allowedRoles: string[]): bool
 
 export function hasPermission(user: UserSession['user'], permission: string): boolean {
     if (user.is_system || user.permissions?.includes('*')) return true;
+    if (user.permissions?.includes(permission)) return true;
 
-    return user.permissions?.includes(permission) || false;
+    // Wildcard: 'user.*' matches 'user.view', 'user.create', etc.
+    const mod = permission.split('.')[0];
+    return user.permissions?.includes(`${mod}.*`) || false;
 }
 
 export async function requirePermission(
