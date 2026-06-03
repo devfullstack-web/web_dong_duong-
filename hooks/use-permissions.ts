@@ -15,16 +15,15 @@ export function usePermissions() {
     const roles = user?.roles ?? [];
     const permissions = user?.permissions ?? [];
     const isAuthenticated = Boolean(user);
-    const isSystem = Boolean(user?.is_system) || permissions.includes('*');
-    const isAdmin = isSystem || roles.includes('admin');
+    const isAdmin = Boolean(user?.is_system) || permissions.includes('*');
 
     const can = useCallback(
         (permission: PermissionInput) => {
             if (!isAuthenticated || !permission) return false;
-            if (isSystem) return true;
+            if (isAdmin) return true;
             return permissions.includes(permission);
         },
-        [isAuthenticated, isSystem, permissions],
+        [isAuthenticated, isAdmin, permissions],
     );
 
     const canAny = useCallback(
@@ -45,7 +44,6 @@ export function usePermissions() {
             isLoading,
             isInitialized,
             isAuthenticated,
-            isSystem,
             isAdmin,
             refreshUser,
             can,
@@ -55,7 +53,7 @@ export function usePermissions() {
         [
             user, roles, permissions,
             isLoading, isInitialized, isAuthenticated,
-            isSystem, isAdmin,
+            isAdmin,
             refreshUser, can, canAny, hasRole,
         ],
     );
