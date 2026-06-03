@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { RBAC_ROLES } from '@/constants/rbac';
 import { useAuthStore } from '@/stores/auth-store';
 import type { PermissionCode } from '@/utils/permissions';
 
@@ -19,7 +18,7 @@ export function usePermissions() {
     const permissions = user?.permissions ?? EMPTY_LIST;
     const isAuthenticated = Boolean(user);
     const isSystem = (user?.is_system ?? false) || permissions.includes('*');
-    const isAdmin = isSystem || roles.includes(RBAC_ROLES.ADMIN);
+    const isAdmin = isSystem || roles.includes('admin');
 
     const can = useCallback(
         (permission: PermissionInput) => {

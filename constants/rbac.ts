@@ -1,29 +1,3 @@
-export const ROLES = {
-    ADMIN: 'admin',
-    EDITOR: 'editor',
-    VIEWER: 'viewer',
-} as const;
-
-export type RoleCode = (typeof ROLES)[keyof typeof ROLES];
-
-// Tương thích ngược alias cũ
-export const RBAC_ROLES = {
-    ADMIN: 'admin',
-    EDITOR: 'editor',
-    VIEWER: 'viewer',
-} as const;
-
-export const AUTH_ROLE_CODES = RBAC_ROLES;
-
-// Định nghĩa ngắn gọn danh sách các Modules và Actions
-export const SYSTEM_MODULES = [
-    'dashboard', 'file', 'user', 'role', 'permission', 'audit_log',
-    'news', 'product', 'project', 'recruitment', 'application', 'comment', 'contact', 'setting'
-] as const;
-
-export const SYSTEM_ACTIONS = [
-    'view', 'create', 'update', 'delete', 'upload', 'assign_permission'
-] as const;
 
 export const PERMISSIONS = {
     ALL: '*',
