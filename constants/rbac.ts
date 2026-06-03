@@ -18,35 +18,6 @@ export const AUTH_ROLE_CODE_VALUES = [
 
 export type AuthRoleCode = (typeof AUTH_ROLE_CODE_VALUES)[number];
 
-export const MODULE_CODES = {
-    DASHBOARD: 'DASHBOARD',
-    PRODUCTS: 'PRODUCTS',
-    BLOG: 'BLOG',
-    PROJECTS: 'PROJECTS',
-    RECRUITMENT: 'RECRUITMENT',
-    APPLICATIONS: 'APPLICATIONS',
-    COMMENTS: 'COMMENTS',
-    MEDIA: 'MEDIA',
-    CONTACTS: 'CONTACTS',
-    USERS: 'USERS',
-    ROLES: 'ROLES',
-    MODULES: 'MODULES',
-    NOTIFICATIONS: 'NOTIFICATIONS',
-    LOGS: 'LOGS',
-    SETTINGS: 'SETTINGS',
-} as const;
-
-export type ModuleCode = (typeof MODULE_CODES)[keyof typeof MODULE_CODES];
-
-export const PERMISSION_ACTIONS = {
-    VIEW: 'VIEW',
-    CREATE: 'CREATE',
-    UPDATE: 'UPDATE',
-    DELETE: 'DELETE',
-} as const;
-
-export type PermissionAction = (typeof PERMISSION_ACTIONS)[keyof typeof PERMISSION_ACTIONS];
-
 
 // Định nghĩa ngắn gọn danh sách các Modules và Actions
 export const SYSTEM_MODULES = [

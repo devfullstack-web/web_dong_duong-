@@ -67,7 +67,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (!user) return [];
         return SIDEBAR_ITEMS.filter((item) => {
             if (!item.permission) return true;
-            return can(`${item.permission.toLowerCase()}.view`);
+            return can(item.permission);
         });
     }, [user, can]);
 

@@ -34,7 +34,7 @@ export const GET = withAuth(
             const allModules = SIDEBAR_ITEMS
                 .filter((item) => item.permission !== null)
                 .map((item) => {
-                    const moduleCode = item.permission!.toLowerCase();
+                    const moduleCode = item.permission!.split('.')[0];
                     return {
                         id: moduleCode,
                         code: moduleCode,

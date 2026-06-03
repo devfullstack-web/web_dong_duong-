@@ -1,103 +1,102 @@
 import { PORTAL_ROUTES } from './routes';
-import { MODULE_CODES, type ModuleCode } from './rbac';
 
 export interface SidebarItem {
-    code: ModuleCode;
+    code: string;
     name: string;
     icon: string;
     route: string;
-    /** Permission prefix — user cần có `${permission}:VIEW` để thấy menu item.
+    /** Permission code — user cần có permission này để thấy menu item.
      *  null = luôn hiển thị (ví dụ Dashboard, Settings) */
     permission: string | null;
 }
 
 export const SIDEBAR_ITEMS: SidebarItem[] = [
     {
-        code: MODULE_CODES.DASHBOARD,
+        code: 'dashboard',
         name: 'Bảng điều khiển',
         icon: 'LayoutDashboard',
         route: PORTAL_ROUTES.dashboard,
-        permission: null, // luôn hiện
+        permission: 'dashboard.view',
     },
     {
-        code: MODULE_CODES.PRODUCTS,
+        code: 'products',
         name: 'Quản lý Sản phẩm',
         icon: 'Box',
         route: PORTAL_ROUTES.cms.products.list,
-        permission: 'product',
+        permission: 'product.view',
     },
     {
-        code: MODULE_CODES.BLOG,
+        code: 'blog',
         name: 'Quản lý Tin tức',
         icon: 'FileText',
         route: PORTAL_ROUTES.cms.news.list,
-        permission: 'news',
+        permission: 'news.view',
     },
     {
-        code: MODULE_CODES.PROJECTS,
+        code: 'projects',
         name: 'Quản lý Dự án',
         icon: 'Briefcase',
         route: PORTAL_ROUTES.cms.projects.list,
-        permission: 'project',
+        permission: 'project.view',
     },
     {
-        code: MODULE_CODES.RECRUITMENT,
+        code: 'recruitment',
         name: 'Quản lý Tuyển dụng',
         icon: 'UserRoundSearch',
         route: PORTAL_ROUTES.cms.jobs.list,
-        permission: 'recruitment',
+        permission: 'recruitment.view',
     },
     {
-        code: MODULE_CODES.APPLICATIONS,
+        code: 'applications',
         name: 'Danh sách Ứng viên',
         icon: 'ClipboardList',
         route: PORTAL_ROUTES.cms.applications.list,
-        permission: 'application',
+        permission: 'application.view',
     },
     {
-        code: MODULE_CODES.COMMENTS,
+        code: 'comments',
         name: 'Quản lý Bình luận',
         icon: 'MessageSquare',
         route: PORTAL_ROUTES.cms.comments.list,
-        permission: 'comment',
+        permission: 'comment.view',
     },
     {
-        code: MODULE_CODES.MEDIA,
+        code: 'media',
         name: 'Thư viện Media',
         icon: 'Images',
         route: PORTAL_ROUTES.cms.media,
-        permission: 'file',
+        permission: 'file.view',
     },
     {
-        code: MODULE_CODES.CONTACTS,
+        code: 'contacts',
         name: 'Quản lý Liên hệ',
         icon: 'Mail',
         route: PORTAL_ROUTES.contacts,
-        permission: 'contact',
+        permission: 'contact.view',
     },
     {
-        code: MODULE_CODES.USERS,
+        code: 'users',
         name: 'Quản lý Tài khoản',
         icon: 'ShieldCheck',
         route: PORTAL_ROUTES.users.list,
-        permission: 'user',
+        permission: 'user.view',
     },
     {
-        code: MODULE_CODES.ROLES,
+        code: 'roles',
         name: 'Phân quyền & Vai trò',
         icon: 'Lock',
         route: PORTAL_ROUTES.users.roles.list,
-        permission: 'role',
+        permission: 'role.view',
     },
     {
-        code: MODULE_CODES.LOGS,
+        code: 'logs',
         name: 'Nhật ký hệ thống',
         icon: 'History',
         route: '/portal/audit-logs',
-        permission: 'audit_log',
+        permission: 'audit_log.view',
     },
     {
-        code: MODULE_CODES.SETTINGS,
+        code: 'settings',
         name: 'Cài đặt hệ thống',
         icon: 'Settings',
         route: PORTAL_ROUTES.settings,

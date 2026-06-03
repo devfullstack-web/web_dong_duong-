@@ -31,7 +31,7 @@ export const GET = withAuth(
             const moduleMap = new Map();
             for (const raw of rawRolePermissions) {
                 const moduleCode = raw.moduleCode;
-                const sidebarItem = SIDEBAR_ITEMS.find((item) => item.permission === moduleCode);
+                const sidebarItem = SIDEBAR_ITEMS.find((item) => item.permission?.startsWith(moduleCode + '.'));
                 const moduleInfo = {
                     id: moduleCode,
                     code: moduleCode,
