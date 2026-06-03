@@ -108,29 +108,6 @@ export interface User {
     isSystem?: boolean;
 }
 
-export interface Module {
-    id: string;
-    code: string;
-    name: string;
-    createdAt?: string;
-    updatedAt?: string;
-    deletedAt?: string | null;
-}
-
-export interface Permission {
-    id: string;
-    moduleId: string;
-    roleId: string;
-    module?: Module;
-    canView: boolean;
-    canCreate: boolean;
-    canUpdate: boolean;
-    canDelete: boolean;
-    createdAt?: string;
-    updatedAt?: string;
-    deletedAt?: string | null;
-}
-
 export interface Role {
     id: string;
     code: string;
@@ -138,7 +115,7 @@ export interface Role {
     description: string;
     is_system?: boolean;
     isSystem?: boolean;
-    permissions?: string[] | Permission[];
+    permissions?: string[];
     createdAt?: string;
     updatedAt?: string;
     deletedAt?: string | null;
