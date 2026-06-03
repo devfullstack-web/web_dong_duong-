@@ -21,15 +21,12 @@ export type AuthRoleCode = (typeof AUTH_ROLE_CODE_VALUES)[number];
 
 // Định nghĩa ngắn gọn danh sách các Modules và Actions
 export const SYSTEM_MODULES = [
-    'dashboard', 'asset', 'customer', 'device', 'mapgis', 'file', 'trash', 
-    'user', 'role', 'permission', 'audit_log',
+    'dashboard', 'file', 'user', 'role', 'permission', 'audit_log',
     'news', 'product', 'project', 'recruitment', 'application', 'comment', 'contact', 'setting'
 ] as const;
 
 export const SYSTEM_ACTIONS = [
-    'view', 'create', 'update', 'delete', 
-    'import', 'export', 'upload', 'download', 
-    'restore', 'configure', 'assign_permission'
+    'view', 'create', 'update', 'delete', 'upload', 'assign_permission'
 ] as const;
 
 // Single Source of Truth mapping permissions ngắn gọn
@@ -38,43 +35,10 @@ export enum Permissions {
 
     DASHBOARD_VIEW = 'dashboard.view',
 
-    ASSET_ALL = 'asset.*',
-    ASSET_VIEW = 'asset.view',
-    ASSET_CREATE = 'asset.create',
-    ASSET_UPDATE = 'asset.update',
-    ASSET_DELETE = 'asset.delete',
-    ASSET_IMPORT = 'asset.import',
-    ASSET_EXPORT = 'asset.export',
-
-    CUSTOMER_ALL = 'customer.*',
-    CUSTOMER_VIEW = 'customer.view',
-    CUSTOMER_CREATE = 'customer.create',
-    CUSTOMER_UPDATE = 'customer.update',
-    CUSTOMER_DELETE = 'customer.delete',
-
-    DEVICE_ALL = 'device.*',
-    DEVICE_VIEW = 'device.view',
-    DEVICE_CREATE = 'device.create',
-    DEVICE_UPDATE = 'device.update',
-    DEVICE_DELETE = 'device.delete',
-    DEVICE_CONFIGURE = 'device.configure',
-
-    MAPGIS_ALL = 'mapgis.*',
-    MAPGIS_VIEW = 'mapgis.view',
-    MAPGIS_UPDATE = 'mapgis.update',
-    MAPGIS_IMPORT = 'mapgis.import',
-    MAPGIS_EXPORT = 'mapgis.export',
-
     FILE_ALL = 'file.*',
     FILE_VIEW = 'file.view',
     FILE_UPLOAD = 'file.upload',
-    FILE_DOWNLOAD = 'file.download',
     FILE_DELETE = 'file.delete',
-
-    TRASH_ALL = 'trash.*',
-    TRASH_VIEW = 'trash.view',
-    TRASH_RESTORE = 'trash.restore',
-    TRASH_DELETE = 'trash.delete',
 
     USER_ALL = 'user.*',
     USER_VIEW = 'user.view',
