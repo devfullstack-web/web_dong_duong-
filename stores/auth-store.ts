@@ -21,11 +21,24 @@ interface AuthState {
     user: AuthUser | null;
     isLoading: boolean;
     isInitialized: boolean;
-    setUser: (user: AuthUser | null) => void;
-    setLoading: (isLoading: boolean) => void;
     refreshUser: () => Promise<void>;
     initialize: () => void;
     logout: () => void;
+}
+
+function toAuthUser(data: { user: Record<string, unknown>; roles: string[]; permissions: string[] }): AuthUser {
+    const { user, roles, permissions } = data;
+    return {
+        id: user.id as string,
+        email: user.email as string,
+        username: ((user.email as string) ?? '').split('@')[0],
+        full_name: (user.full_name as string) || '',
+        is_active: user.is_active as boolean,
+        is_system: Boolean(user.is_system),
+        avatar_url: (user.avatar_url as string) || undefined,
+        roles,
+        permissions,
+    };
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -33,64 +46,34 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     isLoading: true,
     isInitialized: false,
 
-    setUser: (user) => set({ user }),
-    setLoading: (isLoading) => set({ isLoading }),
-
     refreshUser: async () => {
         set({ isLoading: true });
 
-        // 1. First try to get initial state from JWT if not initialized
+        // Decode JWT for instant UI (trước khi fetch API)
         if (!get().isInitialized) {
             const token = Cookies.get('accessToken');
             if (token) {
                 try {
-                    const decoded = decodeJwt(token) as { user: AuthUser };
-                    set({ user: decoded.user });
-                } catch (error) {
-                    console.error('Failed to decode token', error);
-                }
+                    const { user } = decodeJwt(token) as { user: AuthUser };
+                    set({ user });
+                } catch { /* token invalid, sẽ fetch API bên dưới */ }
             }
         }
 
-        // 2. Fetch fresh data from server
         try {
-            const response = await $api.get(API_ROUTES.AUTH.PROFILE);
-            if (response.data.success) {
-                const { user, roles, permissions } = response.data.data;
-
-                const roleCodes = Array.isArray(roles)
-                    ? roles.map((r: string | { code: string }) => typeof r === 'string' ? r : r.code)
-                    : [];
-
-                const synchronizedUser: AuthUser = {
-                    id: user.id,
-                    username: user.email.split('@')[0],
-                    full_name: user.full_name || '',
-                    email: user.email,
-                    is_active: user.status === 'active' || user.is_active,
-                    is_system: !!user.is_system,
-                    avatar_url: user.avatar_url || undefined,
-                    roles: roleCodes,
-                    permissions: permissions || [],
-                };
-
-                set({ user: synchronizedUser, isInitialized: true });
-
-                // Resync server-side session cookie so API middleware has fresh permissions
-                await $api.post(API_ROUTES.AUTH.REFRESH).catch(() => {
-                    // Non-fatal — session will self-refresh on next token expiry
-                });
-            } else {
+            const res = await $api.get(API_ROUTES.AUTH.PROFILE);
+            if (!res.data.success) {
                 await get().logout();
+                return;
             }
-        } catch (error: unknown) {
-            console.error('Auth check failed:', error);
-            if (
-                axios.isAxiosError(error) &&
-                (error.response?.status === 401 ||
-                    error.response?.status === 404 ||
-                    error.response?.status === 403)
-            ) {
+
+            set({ user: toAuthUser(res.data.data), isInitialized: true });
+
+            // Sync server session
+            $api.post(API_ROUTES.AUTH.REFRESH).catch(() => {});
+        } catch (err) {
+            const status = axios.isAxiosError(err) ? err.response?.status : null;
+            if (status === 401 || status === 403 || status === 404) {
                 await get().logout();
             } else {
                 set({ user: null, isInitialized: true });
@@ -101,9 +84,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     initialize: () => {
-        if (!get().isInitialized) {
-            get().refreshUser();
-        }
+        if (!get().isInitialized) get().refreshUser();
     },
 
     logout: async () => {
@@ -112,9 +93,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
         try {
             await $api.post(API_ROUTES.AUTH.LOGOUT);
-        } catch (error) {
-            console.error('Logout API failed:', error);
-        }
+        } catch { /* ignore */ }
 
         if (typeof window !== 'undefined' && window.location.pathname.startsWith('/portal')) {
             window.location.href = '/login';
