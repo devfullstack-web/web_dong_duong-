@@ -8,12 +8,11 @@ import { API_ROUTES } from '@/constants/routes';
 export interface AuthUser {
     id: string;
     username: string;
-    fullName?: string;
+    full_name?: string;
     email?: string;
-    isActive?: boolean;
+    is_active?: boolean;
     is_system?: boolean;
-    avatarUrl?: string;
-    phone?: string;
+    avatar_url?: string;
     roles: string[];
     permissions: string[];
 }
@@ -64,11 +63,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 const synchronizedUser: AuthUser = {
                     id: user.id,
                     username: user.email.split('@')[0],
-                    fullName: user.fullName || '',
+                    full_name: user.full_name || '',
                     email: user.email,
-                    isActive: user.status === 'active',
+                    is_active: user.status === 'active' || user.is_active,
                     is_system: !!user.is_system,
-                    avatarUrl: user.avatarUrl || undefined,
+                    avatar_url: user.avatar_url || undefined,
                     roles: roleCodes,
                     permissions: permissions || [],
                 };

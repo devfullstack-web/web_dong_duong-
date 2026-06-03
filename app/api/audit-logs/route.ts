@@ -58,16 +58,16 @@ export const GET = withAuth(async (request, session) => {
                 id: auditLogs.id,
                 action: auditLogs.action,
                 module: auditLogs.module,
-                targetId: auditLogs.target_id,
+                target_id: auditLogs.target_id,
                 description: auditLogs.description,
                 changes: auditLogs.changes,
-                ipAddress: auditLogs.ip_address,
-                userAgent: auditLogs.user_agent,
-                createdAt: auditLogs.created_at,
+                ip_address: auditLogs.ip_address,
+                user_agent: auditLogs.user_agent,
+                created_at: auditLogs.created_at,
                 user: {
                     id: users.id,
                     username: users.email,
-                    fullName: users.full_name,
+                    full_name: users.full_name,
                 },
             })
             .from(auditLogs)

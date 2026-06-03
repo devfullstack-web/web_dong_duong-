@@ -89,23 +89,16 @@ export interface User {
     username: string;
     email?: string;
     full_name?: string;
-    fullName?: string; // CamelCase from API
+    avatar_url?: string;
     is_active?: boolean;
-    isActive?: boolean; // CamelCase from API
     is_locked?: boolean;
-    isLocked?: boolean; // CamelCase from API
-    avatarUrl?: string; // Image URL for profile
     role?: string; // Legacy field
     roles?: Role[]; // For list/detail views
     permissions?: string[]; // Flattened permission strings
     created_at?: string;
-    createdAt?: string; // CamelCase from API
     updated_at?: string;
-    updatedAt?: string; // CamelCase from API
     deleted_at?: string | null;
-    deletedAt?: string | null; // CamelCase from API
     is_system?: boolean;
-    isSystem?: boolean;
 }
 
 export interface Role {
@@ -114,9 +107,8 @@ export interface Role {
     name: string;
     description: string;
     is_system?: boolean;
-    isSystem?: boolean;
     permissions?: string[];
-    createdAt?: string;
-    updatedAt?: string;
-    deletedAt?: string | null;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string | null;
 }

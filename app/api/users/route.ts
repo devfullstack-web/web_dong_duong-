@@ -18,11 +18,11 @@ export const GET = withAuth(
                 .select({
                     id: users.id,
                     username: users.username,
-                    fullName: users.full_name,
+                    full_name: users.full_name,
                     email: users.email,
-                    isActive: users.is_active,
-                    isLocked: users.is_locked,
-                    createdAt: users.created_at,
+                    is_active: users.is_active,
+                    is_locked: users.is_locked,
+                    created_at: users.created_at,
                     roles: sql<{ id: string; name: string; code: string }[]>`
           COALESCE(
             json_agg(
@@ -51,18 +51,18 @@ export const GET = withAuth(
 export const POST = withAuth(
     async (request: NextRequest, session) => {
         try {
-            const { email, password, fullName, roleIds } = await request.json();
+            const { email, password, full_name, role_ids } = await request.json();
 
             if (!email || !password) {
                 return apiError('Email and password are required', 400);
             }
 
             // Security check: Only SuperAdmin can assign system/superadmin roles
-            if (roleIds && Array.isArray(roleIds) && roleIds.length > 0) {
+            if (role_ids && Array.isArray(role_ids) && role_ids.length > 0) {
                 const requestedRoles = await db
                     .select({ is_system: roles.is_system, code: roles.code })
                     .from(roles)
-                    .where(inArray(roles.id, roleIds));
+                    .where(inArray(roles.id, role_ids));
 
                 const assigningSuperAdminRole = requestedRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
                 if (assigningSuperAdminRole && !isSystemAdmin(session.user)) {
@@ -81,17 +81,17 @@ export const POST = withAuth(
                     .values({
                         email: email.toLowerCase().trim(),
                         password_hash: hashedPassword,
-                        full_name: fullName,
+                        full_name: full_name,
                     })
                     .returning({
                         id: users.id,
                         email: users.email,
-                        fullName: users.full_name,
+                        full_name: users.full_name,
                     });
 
-                if (roleIds && Array.isArray(roleIds) && roleIds.length > 0) {
+                if (role_ids && Array.isArray(role_ids) && role_ids.length > 0) {
                     await tx.insert(user_roles).values(
-                        roleIds.map((rId: string) => ({
+                        role_ids.map((rId: string) => ({
                             user_id: user.id,
                             role_id: rId,
                         })),

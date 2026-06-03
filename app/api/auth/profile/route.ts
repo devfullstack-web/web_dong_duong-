@@ -67,9 +67,10 @@ export async function GET() {
             user: {
                 id: user.id,
                 email: user.email,
-                fullName: user.full_name,
-                avatarUrl: user.avatar_url,
-                status: user.is_locked ? 'locked' : user.is_active ? 'active' : 'inactive',
+                full_name: user.full_name,
+                avatar_url: user.avatar_url,
+                is_active: user.is_active,
+                is_locked: user.is_locked,
                 is_system: hasSystemRole || userPermissions.includes('*'),
             },
             roles: userRoles.map(r => ({
@@ -94,13 +95,13 @@ export async function PATCH(request: Request) {
 
         const userId = session.user.id;
         const body = await request.json();
-        const { fullName, avatarUrl } = body;
+        const { full_name, avatar_url } = body;
 
         const [updatedUser] = await db
             .update(users)
             .set({
-                full_name: fullName,
-                avatar_url: avatarUrl,
+                full_name: full_name,
+                avatar_url: avatar_url,
                 updated_at: new Date(),
             })
             .where(eq(users.id, userId))
@@ -113,10 +114,10 @@ export async function PATCH(request: Request) {
         return apiResponse({
             id: updatedUser.id,
             email: updatedUser.email,
-            fullName: updatedUser.full_name,
-            avatarUrl: updatedUser.avatar_url,
-            isActive: updatedUser.is_active,
-            isLocked: updatedUser.is_locked,
+            full_name: updatedUser.full_name,
+            avatar_url: updatedUser.avatar_url,
+            is_active: updatedUser.is_active,
+            is_locked: updatedUser.is_locked,
         });
     } catch (error) {
         console.error('Update Profile Error:', error);

@@ -41,10 +41,10 @@ export default function SettingsPage() {
     const { user, refreshUser } = usePermissions();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
-        fullName: '',
+        full_name: '',
         email: '',
         phone: '',
-        avatarUrl: '',
+        avatar_url: '',
         position: 'System Administrator',
     });
 
@@ -204,10 +204,10 @@ export default function SettingsPage() {
     useEffect(() => {
         if (user) {
             setFormData({
-                fullName: user.fullName || '',
+                full_name: user.full_name || '',
                 email: user.email || '',
                 phone: user.phone || '',
-                avatarUrl: user.avatarUrl || '',
+                avatar_url: user.avatar_url || '',
                 position: 'System Administrator',
             });
         }
@@ -289,9 +289,9 @@ export default function SettingsPage() {
         setIsSubmitting(true);
         try {
             const response = await $api.patch(API_ROUTES.AUTH.PROFILE, {
-                fullName: formData.fullName,
+                full_name: formData.full_name,
                 phone: formData.phone,
-                avatarUrl: formData.avatarUrl,
+                avatar_url: formData.avatar_url,
             });
 
             if (response.data.success) {
@@ -370,8 +370,8 @@ export default function SettingsPage() {
                             <div className="flex flex-col md:flex-row gap-6 md:gap-12">
                                 <div className="w-full md:w-64 mx-auto md:mx-0 max-w-64">
                                     <ImageUploader
-                                        value={formData.avatarUrl}
-                                        onChange={(url) => setFormData({ ...formData, avatarUrl: url })}
+                                        value={formData.avatar_url}
+                                        onChange={(url) => setFormData({ ...formData, avatar_url: url })}
                                         aspectRatio="square"
                                         className="avatar-uploader-portal"
                                     />
@@ -384,11 +384,11 @@ export default function SettingsPage() {
                                                 Họ và tên
                                             </Label>
                                             <Input
-                                                value={formData.fullName}
+                                                value={formData.full_name}
                                                 onChange={(e) =>
                                                     setFormData({
                                                         ...formData,
-                                                        fullName: e.target.value,
+                                                        full_name: e.target.value,
                                                     })
                                                 }
                                                 className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"

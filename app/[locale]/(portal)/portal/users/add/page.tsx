@@ -26,7 +26,7 @@ export default function AddUserPage() {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        fullName: '',
+        full_name: '',
         email: '',
         roleId: '' as string,
     });
@@ -123,8 +123,11 @@ export default function AddUserPage() {
         setIsSubmitting(true);
         try {
             await $api.post(API_ROUTES.USERS, {
-                ...formData,
-                roleIds: [formData.roleId],
+                username: formData.username,
+                password: formData.password,
+                full_name: formData.full_name,
+                email: formData.email,
+                role_ids: [formData.roleId],
             });
             toast.success('Tạo tài khoản thành công');
             router.push(PORTAL_ROUTES.users.list);
@@ -223,9 +226,9 @@ export default function AddUserPage() {
                                 <Input
                                     placeholder="VD: NGUYỄN VĂN A"
                                     className="h-9 bg-slate-50 border-none text-[11px] font-black tracking-widest focus:ring-2 focus:ring-brand-primary/10 rounded-none transition-all"
-                                    value={formData.fullName}
+                                    value={formData.full_name}
                                     onChange={(e) =>
-                                        setFormData({ ...formData, fullName: e.target.value })
+                                        setFormData({ ...formData, full_name: e.target.value })
                                     }
                                     disabled={isSubmitting}
                                 />

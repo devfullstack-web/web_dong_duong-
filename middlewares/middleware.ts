@@ -10,7 +10,7 @@ export interface UserSession {
     user: {
         id: string;
         email: string;
-        fullName?: string | null;
+        full_name?: string | null;
         is_system: boolean;
         roles: string[];
         permissions: string[];
@@ -89,7 +89,7 @@ export async function verifyAuth(request: NextRequest): Promise<UserSession | nu
             user: {
                 id: dbUser.id,
                 email: dbUser.email,
-                fullName: dbUser.full_name,
+                full_name: dbUser.full_name,
                 is_system: isSystem || userPermissions.includes('*'),
                 roles: roleCodes,
                 permissions: userPermissions,

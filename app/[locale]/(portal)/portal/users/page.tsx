@@ -78,11 +78,11 @@ export default function UsersManagementPage() {
 
     // Lock/Unlock mutation
     const lockMutation = useMutation({
-        mutationFn: async ({ id, isLocked }: { id: string; isLocked: boolean }) => {
-            await $api.patch(`${API_ROUTES.USERS}/${id}`, { isLocked });
+        mutationFn: async ({ id, is_locked }: { id: string; is_locked: boolean }) => {
+            await $api.patch(`${API_ROUTES.USERS}/${id}`, { is_locked });
         },
         onSuccess: (_data, variables) => {
-            toast.success(variables.isLocked ? 'Đã khóa tài khoản' : 'Đã mở khóa tài khoản');
+            toast.success(variables.is_locked ? 'Đã khóa tài khoản' : 'Đã mở khóa tài khoản');
             queryClient.invalidateQueries({ queryKey: ['admin-users'] });
             setLockDialogOpen(false);
             setItemToLock(null);
@@ -99,7 +99,7 @@ export default function UsersManagementPage() {
 
     const handleLockConfirm = () => {
         if (!itemToLock) return;
-        lockMutation.mutate({ id: itemToLock.id, isLocked: !(itemToLock.isLocked ?? itemToLock.is_locked) });
+        lockMutation.mutate({ id: itemToLock.id, is_locked: !itemToLock.is_locked });
     };
 
     const handleDeleteClick = (user: User) => {
@@ -117,7 +117,6 @@ export default function UsersManagementPage() {
             (user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
             (user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
             (user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ??
-                user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ??
                 false),
     );
 
@@ -206,8 +205,8 @@ export default function UsersManagementPage() {
                                                         <div className="flex flex-col">
                                                             <span className="text-xs font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
                                                                 {user.username}
-                                                                {(user.isLocked ?? user.is_locked) && (
-                                                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-500 text-[8px] font-black uppercase tracking-widest">
+                                                                {user.is_locked && (
+                                                                    <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-500 text-[8px] font-black uppercase tracking-widest">
                                                                         <Lock size={8} /> Đã khóa
                                                                     </span>
                                                                 )}
@@ -221,7 +220,7 @@ export default function UsersManagementPage() {
                                                 </td>
                                                 <td className="px-4 md:px-6 py-3 hidden lg:table-cell">
                                                     <span className="text-[10px] font-bold text-slate-600 uppercase italic">
-                                                        {user.full_name || user.fullName || '---'}
+                                                        {user.full_name || '---'}
                                                     </span>
                                                 </td>
                                                 <td className="px-4 md:px-6 py-3 hidden md:table-cell">
@@ -258,13 +257,7 @@ export default function UsersManagementPage() {
                                                                   'dd/MM/yyyy',
                                                                   { locale: vi },
                                                               )
-                                                            : user.createdAt
-                                                              ? format(
-                                                                    new Date(user.createdAt),
-                                                                    'dd/MM/yyyy',
-                                                                    { locale: vi },
-                                                                )
-                                                              : '---'}
+                                                            : '---'}
                                                     </span>
                                                 </td>
 
@@ -310,14 +303,14 @@ export default function UsersManagementPage() {
                                                                     <DropdownMenuItem
                                                                         className={cn(
                                                                             'text-[10px] font-black uppercase tracking-tight cursor-pointer gap-2 px-2.5 py-1.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none',
-                                                                            (user.isLocked ?? user.is_locked)
+                                                                            user.is_locked
                                                                                 ? 'text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50 hover:text-emerald-700 focus:text-emerald-700'
                                                                                 : 'text-amber-600 hover:bg-amber-50 focus:bg-amber-50 hover:text-amber-700 focus:text-amber-700',
                                                                         )}
                                                                         onClick={() => handleLockClick(user)}
                                                                         disabled={currentUser?.id === user.id || lockMutation.isPending}
                                                                     >
-                                                                        {(user.isLocked ?? user.is_locked) ? (
+                                                                        {user.is_locked ? (
                                                                             <><LockOpen size={13} className="shrink-0 text-emerald-500" /> Mở khóa tài khoản</>
                                                                         ) : (
                                                                             <><Lock size={13} className="shrink-0 text-amber-500" /> Khóa tài khoản</>
@@ -380,13 +373,13 @@ export default function UsersManagementPage() {
                 onOpenChange={setLockDialogOpen}
                 onConfirm={handleLockConfirm}
                 variant="warning"
-                icon={itemToLock && (itemToLock.isLocked ?? itemToLock.is_locked) ? LockOpen : Lock}
-                title={(itemToLock?.isLocked ?? itemToLock?.is_locked) ? 'Xác nhận mở khóa tài khoản?' : 'Xác nhận khóa tài khoản?'}
-                description={(itemToLock?.isLocked ?? itemToLock?.is_locked)
+                icon={itemToLock && itemToLock.is_locked ? LockOpen : Lock}
+                title={itemToLock?.is_locked ? 'Xác nhận mở khóa tài khoản?' : 'Xác nhận khóa tài khoản?'}
+                description={itemToLock?.is_locked
                     ? `Tài khoản "${itemToLock?.username}" sẽ được mở khóa và có thể đăng nhập trở lại vào hệ thống.`
                     : `Tài khoản "${itemToLock?.username}" sẽ bị khóa và không thể đăng nhập vào hệ thống cho đến khi được mở khóa.`
                 }
-                confirmText={(itemToLock?.isLocked ?? itemToLock?.is_locked) ? 'Mở khóa' : 'Khóa tài khoản'}
+                confirmText={itemToLock?.is_locked ? 'Mở khóa' : 'Khóa tài khoản'}
                 loading={lockMutation.isPending}
             />
         </div>

@@ -18,11 +18,11 @@ export const GET = withAuth(
                 .select({
                     id: users.id,
                     username: users.username,
-                    fullName: users.full_name,
+                    full_name: users.full_name,
                     email: users.email,
-                    isActive: users.is_active,
-                    isLocked: users.is_locked,
-                    createdAt: users.created_at,
+                    is_active: users.is_active,
+                    is_locked: users.is_locked,
+                    created_at: users.created_at,
                 })
                 .from(users)
                 .where(eq(users.id, userId));
@@ -58,7 +58,7 @@ export const PATCH = withAuth(
         try {
             const { id: userId } = await params;
             const body = await request.json();
-            const { password, fullName, email, roleIds, isActive, isLocked } = body;
+            const { password, full_name, email, role_ids, is_active, is_locked } = body;
 
             // 1. Fetch the user being updated
             const [targetUser] = await db
@@ -91,12 +91,12 @@ export const PATCH = withAuth(
             }
 
             // 2. If changing roles, check for SuperAdmin role ganting/revoking
-            if (roleIds && Array.isArray(roleIds)) {
+            if (role_ids && Array.isArray(role_ids)) {
                 // Check if NEW roles include a SuperAdmin role
                 const newRoles = await db
                     .select({ is_system: roles.is_system, code: roles.code })
                     .from(roles)
-                    .where(inArray(roles.id, roleIds));
+                    .where(inArray(roles.id, role_ids));
 
                 const assigningSuperAdminRole = newRoles.some((r) => r.is_system || r.code === 'admin' || r.code === 'superadmin');
                 const revokingSuperAdminRole = targetIsSystemAdmin && !assigningSuperAdminRole;
@@ -109,8 +109,8 @@ export const PATCH = withAuth(
                 }
             }
 
-            // Protection for isLocked flag
-            if (isLocked !== undefined) {
+            // Protection for is_locked flag
+            if (is_locked !== undefined) {
                 // Cannot lock your own account
                 if (userId === session.user.id) {
                     return apiError('Bạn không thể khóa tài khoản của chính mình', 400);
@@ -124,7 +124,7 @@ export const PATCH = withAuth(
             const [oldUser] = await db
                 .select({
                     id: users.id,
-                    fullName: users.full_name,
+                    full_name: users.full_name,
                     email: users.email,
                 })
                 .from(users)
@@ -132,10 +132,10 @@ export const PATCH = withAuth(
 
             const updatedUser = await db.transaction(async (tx) => {
                 const updateData: Record<string, unknown> = {};
-                if (fullName !== undefined) updateData.full_name = fullName;
+                if (full_name !== undefined) updateData.full_name = full_name;
                 if (email !== undefined) updateData.email = email;
-                if (isActive !== undefined) updateData.is_active = isActive;
-                if (isLocked !== undefined) updateData.is_locked = isLocked;
+                if (is_active !== undefined) updateData.is_active = is_active;
+                if (is_locked !== undefined) updateData.is_locked = is_locked;
                 if (password) {
                     updateData.password_hash = await bcrypt.hash(password, AUTH.BCRYPT_SALT_ROUNDS);
                 }
@@ -147,19 +147,19 @@ export const PATCH = withAuth(
                     .where(eq(users.id, userId))
                     .returning({
                         id: users.id,
-                        fullName: users.full_name,
+                        full_name: users.full_name,
                         email: users.email,
-                        isActive: users.is_active,
-                        isLocked: users.is_locked,
+                        is_active: users.is_active,
+                        is_locked: users.is_locked,
                     });
 
                 if (!user) throw new Error('User not found');
 
-                if (roleIds && Array.isArray(roleIds)) {
+                if (role_ids && Array.isArray(role_ids)) {
                     await tx.delete(user_roles).where(eq(user_roles.user_id, userId));
-                    if (roleIds.length > 0) {
+                    if (role_ids.length > 0) {
                         await tx.insert(user_roles).values(
-                            roleIds.map((rId: string) => ({
+                            role_ids.map((rId: string) => ({
                                 user_id: userId,
                                 role_id: rId,
                             })),
@@ -176,8 +176,8 @@ export const PATCH = withAuth(
                 action: AUDIT_ACTIONS.UPDATE,
                 module: AUDIT_MODULES.USERS,
                 targetId: userId,
-                description: isLocked !== undefined
-                    ? `${isLocked ? 'Khóa' : 'Mở khóa'} tài khoản người dùng: ${updatedUser.email}`
+                description: is_locked !== undefined
+                    ? `${is_locked ? 'Khóa' : 'Mở khóa'} tài khoản người dùng: ${updatedUser.email}`
                     : `Cập nhật thông tin người dùng: ${updatedUser.email}`,
 
                 changes: {

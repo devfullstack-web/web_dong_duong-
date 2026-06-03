@@ -206,24 +206,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 className="w-full h-14 items-center gap-3 px-4 bg-black/20 hover:bg-black/30 text-white rounded-none group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center cursor-pointer"
                             >
                                 <div className="flex h-8 w-8  items-center justify-center rounded-none  bg-[#fbbf24] text-[10px] font-black text-brand shrink-0 overflow-hidden">
-                                    {user.avatarUrl ? (
+                                    {user.avatar_url ? (
                                         <Image
-                                            src={user.avatarUrl}
-                                            alt={user.fullName || user.username}
+                                            src={user.avatar_url}
+                                            alt={user.full_name || user.username}
                                             width={32}
                                             height={32}
                                             unoptimized
                                             className="object-cover w-full h-full"
                                         />
                                     ) : (
-                                        (user.fullName || user.username || '?')
+                                        (user.full_name || user.username || '?')
                                             .substring(0, 2)
                                             .toUpperCase()
                                     )}
                                 </div>
                                 <div className="flex flex-col items-start leading-none group-data-[collapsible=icon]:hidden overflow-hidden ms-1">
                                     <span className="text-[10px] font-black uppercase tracking-tight truncate w-full">
-                                        {user.fullName}
+                                        {user.full_name}
                                     </span>
                                     <span className="text-[8px] font-medium text-white/30 lowercase mt-0.5 truncate w-full">
                                         {user.username}@saigonvalve.vn

@@ -25,18 +25,18 @@ import * as React from 'react';
 
 interface AuditLog {
     id: string;
-    createdAt: string;
-    ipAddress: string;
+    created_at: string;
+    ip_address: string;
     user: {
-        fullName: string;
+        full_name: string;
         username: string;
     } | null;
     action: string;
     module: string;
     description: string;
-    targetId: string | null;
+    target_id: string | null;
     changes: Record<string, unknown> | null;
-    userAgent: string;
+    user_agent: string;
 }
 
 export default function AuditLogsPage() {
@@ -145,7 +145,7 @@ export default function AuditLogsPage() {
     // Define table columns
     const columns = React.useMemo<ColumnDef<AuditLog>[]>(() => [
         {
-            accessorKey: 'createdAt',
+            accessorKey: 'created_at',
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title={t('time')} />
             ),
@@ -155,10 +155,10 @@ export default function AuditLogsPage() {
                     <div className="flex flex-col">
                         <span className="text-[11px] font-black text-slate-900 flex items-center gap-1.5">
                             <Clock size={12} className="text-slate-300" />
-                            {formatDate(log.createdAt)}
+                            {formatDate(log.created_at)}
                         </span>
                         <span className="text-[9px] font-mono text-slate-400 mt-0.5 ml-4">
-                            IP: {log.ipAddress}
+                            IP: {log.ip_address}
                         </span>
                     </div>
                 );
@@ -178,7 +178,7 @@ export default function AuditLogsPage() {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-black uppercase tracking-tight text-slate-900">
-                                {log.user?.fullName || log.user?.username || 'SYSTEM'}
+                                {log.user?.full_name || log.user?.username || 'SYSTEM'}
                             </span>
                             <span className="text-[8px] font-bold text-slate-400 lowercase italic">
                                 @{log.user?.username || 'system'}
@@ -392,7 +392,7 @@ export default function AuditLogsPage() {
                                         </label>
                                         <p className="text-sm font-bold text-slate-900">
                                             {format(
-                                                new Date(selectedLog.createdAt),
+                                                new Date(selectedLog.created_at),
                                                 'HH:mm:ss - dd MMMM, yyyy',
                                                 { locale: vi },
                                             )}
@@ -403,7 +403,7 @@ export default function AuditLogsPage() {
                                             Người thực hiện
                                         </label>
                                         <p className="text-sm font-bold text-slate-900">
-                                            {selectedLog.user?.fullName} (@
+                                            {selectedLog.user?.full_name} (@
                                             {selectedLog.user?.username})
                                         </p>
                                     </div>
@@ -412,7 +412,7 @@ export default function AuditLogsPage() {
                                             Địa chỉ IP
                                         </label>
                                         <p className="text-xs font-mono font-bold bg-slate-100 px-2 py-1 w-max">
-                                            {selectedLog.ipAddress}
+                                            {selectedLog.ip_address}
                                         </p>
                                     </div>
                                 </div>
@@ -436,7 +436,7 @@ export default function AuditLogsPage() {
                                             ID Đối tượng
                                         </label>
                                         <p className="text-[10px] font-mono text-slate-500 truncate">
-                                            {selectedLog.targetId || 'N/A'}
+                                            {selectedLog.target_id || 'N/A'}
                                         </p>
                                     </div>
                                 </div>
@@ -469,7 +469,7 @@ export default function AuditLogsPage() {
                                     Thông tin thiết bị (User Agent)
                                 </label>
                                 <p className="text-[10px] text-slate-400 leading-relaxed break-all">
-                                    {selectedLog.userAgent}
+                                    {selectedLog.user_agent}
                                 </p>
                             </div>
                         </div>

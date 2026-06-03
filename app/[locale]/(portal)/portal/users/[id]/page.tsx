@@ -36,9 +36,9 @@ export default function EditUserPage() {
     const [formData, setFormData] = useState({
         username: '',
         password: '', // Optional for edit
-        fullName: '',
+        full_name: '',
         email: '',
-        roleIds: [] as string[],
+        role_ids: [] as string[],
     });
     const [availableRoles, setAvailableRoles] = useState<Role[]>([]);
 
@@ -58,9 +58,9 @@ export default function EditUserPage() {
                 setFormData({
                     username: user.username,
                     password: '',
-                    fullName: user.fullName || user.full_name || '',
+                    full_name: user.full_name || '',
                     email: user.email || '',
-                    roleIds: user.roles?.map((r: { id: string }) => r.id) || [],
+                    role_ids: user.roles?.map((r: { id: string }) => r.id) || [],
                 });
             } catch (error) {
                 console.error(error);
@@ -194,9 +194,9 @@ export default function EditUserPage() {
                                 <Input
                                     placeholder="VD: NGUYỄN VĂN A"
                                     className="h-9 bg-slate-50 border-none text-[11px] font-black uppercase tracking-widest focus:ring-2 focus:ring-fbbf24/20 rounded-none transition-all"
-                                    value={formData.fullName}
+                                    value={formData.full_name}
                                     onChange={(e) =>
-                                        setFormData({ ...formData, fullName: e.target.value })
+                                        setFormData({ ...formData, full_name: e.target.value })
                                     }
                                     disabled={isSubmitting}
                                 />
@@ -229,20 +229,20 @@ export default function EditUserPage() {
                                                     key={role.id}
                                                     className={cn(
                                                         'p-3 border border-slate-100 flex items-center justify-between cursor-pointer transition-all hover:bg-slate-50',
-                                                        formData.roleIds.includes(role.id)
+                                                        formData.role_ids.includes(role.id)
                                                             ? 'bg-indigo-50/50 border-indigo-200'
                                                             : 'bg-white',
                                                     )}
                                                     onClick={() => {
                                                         const newRoleIds =
-                                                            formData.roleIds.includes(role.id)
-                                                                ? formData.roleIds.filter(
+                                                            formData.role_ids.includes(role.id)
+                                                                ? formData.role_ids.filter(
                                                                       (id) => id !== role.id,
                                                                   )
-                                                                : [...formData.roleIds, role.id];
+                                                                : [...formData.role_ids, role.id];
                                                         setFormData({
                                                             ...formData,
-                                                            roleIds: newRoleIds,
+                                                            role_ids: newRoleIds,
                                                         });
                                                     }}
                                                 >
@@ -255,7 +255,7 @@ export default function EditUserPage() {
                                                         </p>
                                                     </div>
                                                     <div className="shrink-0 ms-3">
-                                                        {formData.roleIds.includes(role.id) ? (
+                                                        {formData.role_ids.includes(role.id) ? (
                                                             <CheckCircle2
                                                                 size={16}
                                                                 className="text-indigo-600"
