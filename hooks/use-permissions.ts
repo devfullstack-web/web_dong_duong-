@@ -6,50 +6,35 @@ import type { PermissionCode } from '@/utils/permissions';
 
 export type PermissionInput = PermissionCode | string;
 
-const EMPTY_LIST: string[] = [];
-
 export function usePermissions() {
     const user = useAuthStore((state) => state.user);
     const isLoading = useAuthStore((state) => state.isLoading);
     const isInitialized = useAuthStore((state) => state.isInitialized);
     const refreshUser = useAuthStore((state) => state.refreshUser);
 
-    const roles = user?.roles ?? EMPTY_LIST;
-    const permissions = user?.permissions ?? EMPTY_LIST;
+    const roles = user?.roles ?? [];
+    const permissions = user?.permissions ?? [];
     const isAuthenticated = Boolean(user);
-    const isSystem = (user?.is_system ?? false) || permissions.includes('*');
+    const isSystem = Boolean(user?.is_system) || permissions.includes('*');
     const isAdmin = isSystem || roles.includes('admin');
 
     const can = useCallback(
         (permission: PermissionInput) => {
-            if (!isAuthenticated) return false;
+            if (!isAuthenticated || !permission) return false;
             if (isSystem) return true;
-            if (permissions.includes('*')) return true;
             return permissions.includes(permission);
         },
         [isAuthenticated, isSystem, permissions],
     );
 
     const canAny = useCallback(
-        (items: PermissionInput[]) => items.some((permission) => can(permission)),
+        (items: PermissionInput[]) => items.some(can),
         [can],
     );
 
-    const canAll = useCallback(
-        (items: PermissionInput[]) => items.every((permission) => can(permission)),
-        [can],
-    );
-
-    const hasRole = useCallback((roleCode: string) => roles.includes(roleCode), [roles]);
-
-    const hasAnyRole = useCallback(
-        (items: string[]) => items.some((roleCode) => hasRole(roleCode)),
-        [hasRole],
-    );
-
-    const hasAllRoles = useCallback(
-        (items: string[]) => items.every((roleCode) => hasRole(roleCode)),
-        [hasRole],
+    const hasRole = useCallback(
+        (code: string) => roles.includes(code),
+        [roles],
     );
 
     return useMemo(
@@ -61,32 +46,17 @@ export function usePermissions() {
             isInitialized,
             isAuthenticated,
             isSystem,
-            isSuperAdmin: isSystem,
             isAdmin,
             refreshUser,
             can,
             canAny,
-            canAll,
             hasRole,
-            hasAnyRole,
-            hasAllRoles,
         }),
         [
-            user,
-            roles,
-            permissions,
-            isLoading,
-            isInitialized,
-            isAuthenticated,
-            isSystem,
-            isAdmin,
-            refreshUser,
-            can,
-            canAny,
-            canAll,
-            hasRole,
-            hasAnyRole,
-            hasAllRoles,
+            user, roles, permissions,
+            isLoading, isInitialized, isAuthenticated,
+            isSystem, isAdmin,
+            refreshUser, can, canAny, hasRole,
         ],
     );
 }
