@@ -4,7 +4,6 @@ import { eq, isNull, and, desc } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { NextRequest } from 'next/server';
 import { verifyAuth, isAdmin } from '@/middlewares/middleware';
-import { PORTAL_ROUTES } from '@/constants/routes';
 import { checkRateLimit } from '@/utils/rate-limiter';
 import { sanitizePlainText } from '@/utils/sanitize';
 export async function GET(request: Request, { params }: { params: Promise<{ slug: string }> }) {

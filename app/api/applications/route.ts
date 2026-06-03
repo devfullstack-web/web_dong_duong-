@@ -6,7 +6,6 @@ import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { PAGINATION } from '@/constants/app';
-import { PORTAL_ROUTES } from '@/constants/routes';
 import { jobApplicationSchema } from '@/validations/application.schema';
 import { sendApplicationConfirmationEmail } from '@/services/mail';
 import { writeFile, mkdir } from 'fs/promises';

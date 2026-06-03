@@ -6,7 +6,6 @@ import { desc, ilike, or, gte, lte, and, sql } from 'drizzle-orm';
 import { parsePaginationParams, calculateOffset, createPaginationMeta } from '@/utils/pagination';
 import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
-import { PORTAL_ROUTES } from '@/constants/routes';
 import { PAGINATION } from '@/constants/app';
 import { validateBody } from '@/middlewares/middleware';
 import { contactSchema } from '@/validations/contact.schema';
