@@ -133,19 +133,6 @@ export const PRODUCT_COMMENT_STATUS_VALUES = [
 ] as const;
 export type ProductCommentStatus = (typeof PRODUCT_COMMENT_STATUS_VALUES)[number];
 
-export const NOTIFICATION_TYPE = {
-    COMMENT: 'comment',
-    CONTACT: 'contact',
-    APPLICATION: 'application',
-} as const;
-
-export const NOTIFICATION_TYPE_VALUES = [
-    NOTIFICATION_TYPE.COMMENT,
-    NOTIFICATION_TYPE.CONTACT,
-    NOTIFICATION_TYPE.APPLICATION,
-] as const;
-export type NotificationType = (typeof NOTIFICATION_TYPE_VALUES)[number];
-
 export const FILTER_VALUE = {
     ALL: 'all',
     UNREAD: 'unread',

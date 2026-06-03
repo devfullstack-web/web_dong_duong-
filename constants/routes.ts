@@ -76,7 +76,6 @@ export const PORTAL_ROUTES = {
         },
     },
     contacts: '/portal/contacts',
-    notifications: '/portal/notifications',
     settings: '/portal/settings',
 } as const;
 
@@ -108,7 +107,6 @@ export const API_ROUTES = {
     PERMISSIONS: '/permissions',
     MODULES: '/modules',
     COMMENTS: '/portal/comments',
-    NOTIFICATIONS: '/portal/notifications',
     UPLOAD: '/upload',
     AUDIT_LOGS: '/audit-logs',
     AUDIT_LOGS_CLEANUP: '/audit-logs/cleanup',

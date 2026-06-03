@@ -50,7 +50,7 @@ export async function POST(request: Request) {
             })
             .returning();
 
-        // Send emails and trigger notification asynchronously
+        // Send emails asynchronously
         Promise.all([
             sendThankYouEmail(newContact.email, newContact.name),
             import('@/services/mail').then((m) =>
@@ -60,14 +60,6 @@ export async function POST(request: Request) {
                     phone: newContact.phone || '',
                     address: newContact.address || '',
                     message: newContact.message,
-                }),
-            ),
-            import('@/services/notification-service').then((m) =>
-                m.notificationService.createNotification({
-                    type: 'contact',
-                    title: 'Liên hệ mới',
-                    content: `Khách hàng ${newContact.name} vừa gửi yêu cầu liên hệ.`,
-                    link: PORTAL_ROUTES.contacts,
                 }),
             ),
         ]).catch((error) => {

@@ -100,23 +100,13 @@ export async function POST(request: Request) {
 
         const [newApplication] = await db.insert(jobApplications).values(sanitizedData).returning();
 
-        // 3. Send confirmation email and trigger admin notification (non-blocking)
+        // 3. Send confirmation email (non-blocking)
         try {
-            Promise.all([
-                sendApplicationConfirmationEmail(
-                    sanitizedData.email,
-                    sanitizedData.full_name,
-                    job.title,
-                ),
-                import('@/services/notification-service').then((m) =>
-                    m.notificationService.createNotification({
-                        type: 'application',
-                        title: 'Ứng tuyển mới',
-                        content: `Ứng viên ${sanitizedData.full_name} đã ứng tuyển vị trí ${job.title}.`,
-                        link: PORTAL_ROUTES.cms.applications.list,
-                    }),
-                ),
-            ]).catch((err) => {
+            sendApplicationConfirmationEmail(
+                sanitizedData.email,
+                sanitizedData.full_name,
+                job.title,
+            ).catch((err) => {
                 console.error('Failed to process post-application tasks:', err);
             });
         } catch (error) {
