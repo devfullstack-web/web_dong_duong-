@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { decrypt } from '@/services/auth-edge';
+import { decrypt, encrypt } from '@/services/auth-edge';
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/i18n/routing';
 
@@ -25,16 +25,6 @@ const matchesPath = (value: string, target: string) =>
 
 const localized = (path: string, locale: string | undefined) =>
     locale ? `/${locale}${path}` : path;
-
-async function isValidSession(token: string | undefined): Promise<boolean> {
-    if (!token) return false;
-    try {
-        await decrypt(token);
-        return true;
-    } catch {
-        return false;
-    }
-}
 
 // Reverse proxy may forward upstream ports (e.g. :3000) into the Location
 // header. Strip them so the browser doesn't follow back to the internal port.
@@ -75,34 +65,112 @@ const isStaticAsset = (pathname: string) =>
     pathname.includes('favicon.ico') ||
     (pathname.includes('.') && !pathname.startsWith('/api'));
 
+interface AuthResult {
+    user: { id: string; email: string } | null;
+    newTokens?: { accessToken: string; refreshToken: string };
+}
+
+async function authenticateRequest(request: NextRequest): Promise<AuthResult> {
+    const accessToken = request.cookies.get('accessToken')?.value;
+
+    if (accessToken) {
+        try {
+            const payload = await decrypt(accessToken);
+            if (payload?.user?.id && payload?.user?.email) {
+                return { user: payload.user as { id: string; email: string } };
+            }
+        } catch {
+            // Proceed to check refresh token
+        }
+    }
+
+    const refreshToken = request.cookies.get('refreshToken')?.value;
+    if (refreshToken) {
+        try {
+            const payload = await decrypt(refreshToken);
+            if (payload?.user?.id && payload?.user?.email) {
+                const userPayload = {
+                    id: payload.user.id,
+                    email: payload.user.email,
+                };
+                const newAccessToken = await encrypt({ user: userPayload }, '15m');
+                const newRefreshToken = await encrypt({ user: userPayload }, '7d');
+                return {
+                    user: userPayload,
+                    newTokens: {
+                        accessToken: newAccessToken,
+                        refreshToken: newRefreshToken,
+                    },
+                };
+            }
+        } catch {
+            // Both tokens invalid
+        }
+    }
+
+    return { user: null };
+}
+
 export default async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     if (isStaticAsset(pathname)) return NextResponse.next();
-    if (pathname.startsWith('/api')) return handleApi(request);
 
-    const locale = routing.locales.find(
-        (loc) => pathname === `/${loc}` || pathname.startsWith(`/${loc}/`),
-    );
-    const normalizedPath = locale ? pathname.slice(locale.length + 1) || '/' : pathname;
+    const authResult = await authenticateRequest(request);
 
-    const authRedirect = await checkPageAuth(request, normalizedPath, locale);
-    if (authRedirect) return authRedirect;
+    let response: NextResponse | null = null;
 
-    return fixRedirectPort(intlMiddleware(request));
+    if (pathname.startsWith('/api')) {
+        response = await handleApi(request, authResult);
+    } else {
+        const locale = routing.locales.find(
+            (loc) => pathname === `/${loc}` || pathname.startsWith(`/${loc}/`),
+        );
+        const normalizedPath = locale ? pathname.slice(locale.length + 1) || '/' : pathname;
+
+        response = await checkPageAuth(request, normalizedPath, locale, authResult);
+    }
+
+    if (!response) {
+        response = fixRedirectPort(intlMiddleware(request));
+    }
+
+    if (authResult.newTokens) {
+        const secure = process.env.NODE_ENV === 'production';
+        const { accessToken, refreshToken } = authResult.newTokens;
+
+        response.cookies.set('accessToken', accessToken, {
+            httpOnly: true,
+            maxAge: 15 * 60,
+            path: '/',
+            sameSite: 'lax',
+            secure,
+        });
+
+        response.cookies.set('refreshToken', refreshToken, {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60,
+            path: '/',
+            sameSite: 'lax',
+            secure,
+        });
+    }
+
+    return response;
 }
 
 async function checkPageAuth(
     request: NextRequest,
     normalizedPath: string,
     locale: string | undefined,
+    authResult: AuthResult,
 ): Promise<NextResponse | null> {
-    const session = request.cookies.get('session')?.value;
+    const user = authResult.user;
     const isPublic = PUBLIC_PATHS.some((p) => matchesPath(normalizedPath, p));
 
     if (isPublic) {
         const onLogin = matchesPath(normalizedPath, SITE_ROUTES.LOGIN);
-        if (onLogin && (await isValidSession(session))) {
+        if (onLogin && user) {
             return safeRedirect(localized(ADMIN_ROUTES.DASHBOARD, locale), request);
         }
         return null;
@@ -110,11 +178,11 @@ async function checkPageAuth(
 
     if (!normalizedPath.startsWith(ADMIN_ROUTES.ROOT)) return null;
 
-    if (await isValidSession(session)) return null;
+    if (user) return null;
     return safeRedirect(localized(SITE_ROUTES.LOGIN, locale), request);
 }
 
-async function handleApi(request: NextRequest): Promise<NextResponse> {
+async function handleApi(request: NextRequest, authResult: AuthResult): Promise<NextResponse> {
     const { pathname } = request.nextUrl;
     const { method } = request;
 
@@ -127,9 +195,9 @@ async function handleApi(request: NextRequest): Promise<NextResponse> {
 
     if (!WRITE_METHODS.has(method)) return NextResponse.next();
 
-    const session = request.cookies.get('session')?.value;
-    if (!session) return apiUnauthorized('Authentication required');
-    if (!(await isValidSession(session))) return apiUnauthorized('Invalid session');
+    if (!authResult.user) {
+        return apiUnauthorized('Authentication required');
+    }
     return NextResponse.next();
 }
 

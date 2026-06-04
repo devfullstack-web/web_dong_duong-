@@ -22,14 +22,14 @@ export type RouteHandlerContext = {
 } & Record<string, unknown>;
 
 export async function verifyAuth(request: NextRequest): Promise<UserSession | null> {
-    const session = request.cookies.get('session')?.value;
+    const token = request.cookies.get('accessToken')?.value;
 
-    if (!session) {
+    if (!token) {
         return null;
     }
 
     try {
-        const sessionData = await decrypt(session);
+        const sessionData = await decrypt(token);
         if (!sessionData?.user?.id) return null;
 
         // Fetch fresh user data and auth info from database

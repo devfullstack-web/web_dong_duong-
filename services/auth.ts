@@ -98,20 +98,6 @@ export async function setAuthCookies(accessToken: string, refreshToken: string) 
     });
 }
 
-export async function login(user: { id: string; email: string }) {
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const session = await encrypt({ user, expires });
-    const secure = process.env.NODE_ENV === 'production';
-
-    (await cookies()).set('session', session, {
-        expires,
-        httpOnly: true,
-        sameSite: 'lax',
-        secure,
-        path: '/',
-    });
-}
-
 export async function logout() {
     const cookieStore = await cookies();
     const options = {
@@ -127,9 +113,9 @@ export async function logout() {
 }
 
 export async function getSession() {
-    const session = (await cookies()).get('session')?.value;
-    if (!session) return null;
-    const sessionData = await decrypt(session);
+    const accessToken = (await cookies()).get('accessToken')?.value;
+    if (!accessToken) return null;
+    const sessionData = await decrypt(accessToken);
     if (!sessionData?.user?.id) return null;
 
     const [activeUser] = await db
@@ -146,25 +132,4 @@ export async function getSession() {
         .limit(1);
 
     return activeUser ? sessionData : null;
-}
-
-export async function updateSession(request: NextRequest) {
-    const session = request.cookies.get('session')?.value;
-    if (!session) return;
-
-    const parsed = await decrypt(session);
-    if (!parsed) return;
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    parsed.expires = expires;
-    const res = NextResponse.next();
-    res.cookies.set({
-        name: 'session',
-        value: await encrypt(parsed),
-        httpOnly: true,
-        expires,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-        path: '/',
-    });
-    return res;
 }

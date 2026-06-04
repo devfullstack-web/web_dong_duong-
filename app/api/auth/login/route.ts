@@ -2,7 +2,7 @@ import { db } from '@/db';
 import { users } from '@/db/schemas';
 import { and, eq, isNull, or } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
-import { login, generateTokens } from '@/services/auth';
+import { generateTokens } from '@/services/auth';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { validateBody } from '@/middlewares/middleware';
 import { loginSchema } from '@/validations/auth.schema';
@@ -69,9 +69,6 @@ export async function POST(request: Request) {
         // Set Cookies
         const { setAuthCookies } = await import('@/services/auth');
         await setAuthCookies(accessToken, refreshToken);
-
-        // Prepare session for cookie (backward compatibility for middleware)
-        await login(sessionPayload);
 
         return apiResponse({
             user: sessionPayload,

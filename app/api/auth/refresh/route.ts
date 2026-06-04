@@ -17,10 +17,8 @@ export async function POST() {
     const tokens = await generateTokens(payload.user);
     
     // Set Cookies
-    const { setAuthCookies, login } = await import("@/services/auth");
+    const { setAuthCookies } = await import("@/services/auth");
     await setAuthCookies(tokens.accessToken, tokens.refreshToken);
-    // Cập nhật session cookie để đồng bộ is_super, roles, permissions mới nhất
-    await login(tokens.sessionPayload);
 
     return apiResponse({ user: tokens.sessionPayload });
   } catch (error) {
