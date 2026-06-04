@@ -33,6 +33,7 @@ const getArticle = cache(async (slug: string) => {
             created_at: newsArticles.created_at,
             author_name: authors.name,
             category_name: categories.name,
+            category_localized: categories.name_localized,
         })
         .from(newsArticles)
         .leftJoin(authors, eq(newsArticles.author_id, authors.id))
@@ -66,6 +67,7 @@ async function getRelatedArticles(slug: string) {
             image_url: newsArticles.image_url,
             published_at: newsArticles.published_at,
             category_name: categories.name,
+            category_localized: categories.name_localized,
         })
         .from(newsArticles)
         .leftJoin(categories, eq(newsArticles.category_id, categories.id))
@@ -79,6 +81,7 @@ async function getRelatedArticles(slug: string) {
         .orderBy(desc(newsArticles.published_at))
         .limit(5);
 }
+
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug, locale } = await params;
@@ -137,15 +140,20 @@ export default async function NewsDetailPage({ params }: PageProps) {
         summary: activeSummary,
         content: activeContent,
         author: article.author_name || (locale === 'vi' ? 'Sài Gòn Valve' : 'Saigon Valve'),
-        category: article.category_name || (locale === 'vi' ? 'Tin tức' : 'News'),
+        category: getLocalizedValue(article.category_localized, locale as Locale) || article.category_name || (locale === 'vi' ? 'Tin tức' : 'News'),
         readTime,
     };
+
+    const related = relatedArticles.map((item) => ({
+        ...item,
+        category_name: getLocalizedValue(item.category_localized, locale as Locale) || item.category_name || (locale === 'vi' ? 'Tin tức' : 'News'),
+    }));
 
     return (
         <NewsDetailClient
             article={articleWithMeta}
-            relatedArticles={relatedArticles}
-            recentArticles={relatedArticles}
+            relatedArticles={related}
+            recentArticles={related}
         />
     );
 }

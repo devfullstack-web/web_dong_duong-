@@ -23,11 +23,12 @@ interface NewsArticle {
     summary: string;
     summary_localized?: LocalizedText | null;
     category: string;
+    category_localized?: LocalizedText | null;
     published_at: string | null;
     image_url: string;
 }
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 8;
 
 export default function NewsPage() {
     const t = useTranslations('News');
@@ -63,6 +64,7 @@ export default function NewsPage() {
                                 {news.map((article, i) => {
                                     const activeTitle = getLocalizedValue(article.title_localized, locale as Locale) || article.title;
                                     const activeSummary = getLocalizedValue(article.summary_localized, locale as Locale) || article.summary;
+                                    const activeCat = getLocalizedValue(article.category_localized, locale as Locale) || article.category;
                                     return (
                                         <motion.div
                                             key={article.id}
@@ -88,7 +90,7 @@ export default function NewsPage() {
                                             <div className="space-y-2">
                                                 <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
                                                     <span>
-                                                        {article.category || t('grid.defaultCategory')}
+                                                        {activeCat || t('grid.defaultCategory')}
                                                     </span>
                                                     <div className="flex items-center gap-1">
                                                         <Calendar size={8} />
