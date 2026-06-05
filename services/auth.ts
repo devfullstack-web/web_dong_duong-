@@ -66,7 +66,6 @@ export async function generateTokens(user: Pick<AuthUser, 'id'>) {
         throw new Error('USER_INACTIVE_OR_LOCKED');
     }
 
-    // JWT chỉ chứa user_id và email
     const sessionPayload = {
         id: currentUser.id,
         email: currentUser.email,
