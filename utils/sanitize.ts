@@ -20,6 +20,9 @@ const ALLOWED_TAGS = new Set([
     'pre',
     'code',
     'span',
+    'mark',
+    'sup',
+    'sub',
     'a',
     'img',
     'table',
@@ -31,7 +34,7 @@ const ALLOWED_TAGS = new Set([
 ]);
 
 const VOID_TAGS = new Set(['br', 'img']);
-const GLOBAL_ATTRS = new Set(['class', 'colspan', 'rowspan', 'data-align']);
+const GLOBAL_ATTRS = new Set(['class', 'colspan', 'rowspan', 'data-align', 'style']);
 const ATTRS_BY_TAG: Record<string, Set<string>> = {
     a: new Set(['href', 'title', 'target', 'rel']),
     img: new Set(['src', 'alt', 'title', 'width', 'height']),
@@ -40,6 +43,15 @@ const ATTRS_BY_TAG: Record<string, Set<string>> = {
 };
 
 const URL_ATTRS = new Set(['href', 'src']);
+const ALLOWED_FONT_FAMILIES = new Set([
+    'Arial',
+    'Helvetica',
+    'Times New Roman',
+    'Georgia',
+    'Courier New',
+    'Verdana',
+    'Tahoma',
+]);
 const DANGEROUS_BLOCKS =
     /<\s*(script|style|iframe|object|embed|svg|math|meta|link|base|form|input|button|textarea|select)\b[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi;
 const DANGEROUS_SINGLE_TAGS =
@@ -89,6 +101,10 @@ function isSafeUrl(value: string, attrName: string): boolean {
 function sanitizeAttributeValue(attrName: string, value: string): string | null {
     if (URL_ATTRS.has(attrName) && !isSafeUrl(value, attrName)) return null;
 
+    if (attrName === 'style') {
+        return sanitizeInlineStyle(value);
+    }
+
     if ((attrName === 'width' || attrName === 'height' || attrName === 'colspan' || attrName === 'rowspan') && !/^\d{1,4}$/.test(value)) {
         return null;
     }
@@ -98,6 +114,67 @@ function sanitizeAttributeValue(attrName: string, value: string): string | null 
     }
 
     return escapeHtml(value);
+}
+
+function isSafeCssColor(value: string): boolean {
+    return (
+        /^#[0-9a-f]{3,8}$/i.test(value) ||
+        /^rgba?\(\s*(?:\d{1,3}\s*,\s*){2}\d{1,3}(?:\s*,\s*(?:0|1|0?\.\d+))?\s*\)$/i.test(value) ||
+        /^hsla?\(\s*\d{1,3}\s*,\s*\d{1,3}%\s*,\s*\d{1,3}%(?:\s*,\s*(?:0|1|0?\.\d+))?\s*\)$/i.test(value) ||
+        /^[a-z]+$/i.test(value)
+    );
+}
+
+function isSafeCssSize(value: string): boolean {
+    if (value.toLowerCase() === 'auto') return true;
+    return /^(?:0|[1-9]\d{0,3}(?:\.\d{1,2})?)(px|em|rem|%)$/i.test(value);
+}
+
+function sanitizeCssFontFamily(value: string): string | null {
+    const normalized = value
+        .split(',')
+        .map((font) => font.trim().replace(/^['"]|['"]$/g, ''))
+        .filter(Boolean);
+
+    if (normalized.length === 0) return null;
+
+    const safeFonts = normalized.filter((font) => ALLOWED_FONT_FAMILIES.has(font));
+    return safeFonts.length > 0 ? safeFonts.join(', ') : null;
+}
+
+function sanitizeInlineStyle(value: string): string | null {
+    const sanitizedRules: string[] = [];
+
+    value.split(';').forEach((rule) => {
+        const separatorIndex = rule.indexOf(':');
+        if (separatorIndex === -1) return;
+
+        const property = rule.slice(0, separatorIndex).trim().toLowerCase();
+        const rawValue = rule.slice(separatorIndex + 1).trim();
+        if (!property || !rawValue || /url\s*\(|expression\s*\(|!important/i.test(rawValue)) return;
+
+        if ((property === 'color' || property === 'background-color') && isSafeCssColor(rawValue)) {
+            sanitizedRules.push(`${property}: ${rawValue}`);
+            return;
+        }
+
+        if ((property === 'font-size' || property === 'width' || property === 'height') && isSafeCssSize(rawValue)) {
+            sanitizedRules.push(`${property}: ${rawValue}`);
+            return;
+        }
+
+        if (property === 'text-align' && ['left', 'center', 'right', 'justify'].includes(rawValue.toLowerCase())) {
+            sanitizedRules.push(`${property}: ${rawValue.toLowerCase()}`);
+            return;
+        }
+
+        if (property === 'font-family') {
+            const fontFamily = sanitizeCssFontFamily(rawValue);
+            if (fontFamily) sanitizedRules.push(`${property}: ${fontFamily}`);
+        }
+    });
+
+    return sanitizedRules.length > 0 ? escapeHtml(sanitizedRules.join('; ')) : null;
 }
 
 function sanitizeAttributes(tagName: string, attrs: string): string {
@@ -112,7 +189,6 @@ function sanitizeAttributes(tagName: string, attrs: string): string {
 
         if (
             attrName.startsWith('on') ||
-            attrName === 'style' ||
             attrName === 'srcdoc' ||
             (attrName.startsWith('data-') && attrName !== 'data-align')
         ) {

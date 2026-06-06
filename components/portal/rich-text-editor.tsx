@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -63,6 +63,16 @@ import {
 import { MediaSelectorDialog } from "./media-selector-dialog";
 
 // Custom Font Size Extension
+const FONT_FAMILIES = [
+  { label: "Arial", value: "Arial" },
+  { label: "Helvetica", value: "Helvetica" },
+  { label: "Times", value: "Times New Roman" },
+  { label: "Georgia", value: "Georgia" },
+  { label: "Courier", value: "Courier New" },
+  { label: "Verdana", value: "Verdana" },
+  { label: "Tahoma", value: "Tahoma" },
+];
+
 const FontSize = Extension.create({
   name: "fontSize",
   addOptions() {
@@ -98,6 +108,46 @@ const FontSize = Extension.create({
       },
       unsetFontSize: () => ({ chain }) => {
         return chain().setMark("textStyle", { fontSize: null }).run();
+      },
+    };
+  },
+});
+
+const FontFamily = Extension.create({
+  name: "fontFamily",
+  addOptions() {
+    return {
+      types: ["textStyle"],
+    };
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          fontFamily: {
+            default: null,
+            parseHTML: (element) => element.style.fontFamily.replace(/['"]+/g, ""),
+            renderHTML: (attributes) => {
+              if (!attributes.fontFamily) {
+                return {};
+              }
+              return {
+                style: `font-family: ${attributes.fontFamily}`,
+              };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setFontFamily: (fontFamily: string) => ({ chain }) => {
+        return chain().setMark("textStyle", { fontFamily }).run();
+      },
+      unsetFontFamily: () => ({ chain }) => {
+        return chain().setMark("textStyle", { fontFamily: null }).run();
       },
     };
   },
@@ -311,6 +361,7 @@ const Separator = () => <div className="w-px h-5 bg-slate-200 mx-1" />;
 
 export function RichTextEditor({ content, onChange, placeholder, className }: RichTextEditorProps) {
   const [isMediaSelectorOpen, setIsMediaSelectorOpen] = useState(false);
+  const savedSelectionRef = useRef<{ from: number; to: number } | null>(null);
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -349,6 +400,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
       }),
       CharacterCount,
       FontSize,
+      FontFamily,
     ],
     immediatelyRender: false,
     content,
@@ -371,6 +423,21 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
   });
 
   if (!editor) return null;
+
+  const saveSelection = () => {
+    const { from, to } = editor.state.selection;
+    savedSelectionRef.current = { from, to };
+  };
+
+  const applyTextStyle = (attributes: Record<string, string | null>) => {
+    const selection = savedSelectionRef.current;
+
+    if (selection) {
+      editor.chain().focus().setTextSelection(selection).setMark("textStyle", attributes).run();
+    } else {
+      editor.chain().focus().setMark("textStyle", attributes).run();
+    }
+  };
 
   const addLink = () => {
     const previousUrl = editor.getAttributes("link").href;
@@ -437,10 +504,53 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
 
         <Separator />
 
+        {/* Font Family Group */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 gap-1 text-slate-600"
+              onMouseDown={saveSelection}
+            >
+              <BookType size={16} />
+              <span className="text-xs font-bold uppercase tracking-tighter">Font</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="min-w-[140px]">
+            {FONT_FAMILIES.map((font) => (
+              <DropdownMenuItem
+                key={font.value}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => applyTextStyle({ fontFamily: font.value })}
+                className={cn((editor.getAttributes("textStyle").fontFamily === font.value) && "bg-slate-100 text-brand-primary")}
+                style={{ fontFamily: font.value }}
+              >
+                {font.label}
+              </DropdownMenuItem>
+            ))}
+            <Separator />
+            <DropdownMenuItem
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => applyTextStyle({ fontFamily: null })}
+              className="text-xs font-bold text-red-500"
+            >
+              Mặc định
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <Separator />
+
         {/* Font Size Group */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 px-2 gap-1 text-slate-600">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2 gap-1 text-slate-600"
+              onMouseDown={saveSelection}
+            >
               <BookType size={16} />
               <span className="text-xs font-bold uppercase tracking-tighter">Cỡ chữ</span>
             </Button>
@@ -449,14 +559,19 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
             {["12px", "14px", "16px", "18px", "20px", "24px", "30px", "36px", "48px"].map(size => (
               <DropdownMenuItem 
                 key={size} 
-                onClick={() => (editor.commands as Record<string, (size: string) => boolean>).setFontSize(size)}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => applyTextStyle({ fontSize: size })}
                 className={cn("text-xs font-bold", (editor.getAttributes("textStyle").fontSize === size) && "bg-slate-100 text-brand-primary")}
               >
                 {size}
               </DropdownMenuItem>
             ))}
             <Separator />
-            <DropdownMenuItem onClick={() => (editor.commands as Record<string, () => boolean>).unsetFontSize()} className="text-xs font-bold text-red-500">
+            <DropdownMenuItem
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => applyTextStyle({ fontSize: null })}
+              className="text-xs font-bold text-red-500"
+            >
               Mặc định
             </DropdownMenuItem>
           </DropdownMenuContent>
