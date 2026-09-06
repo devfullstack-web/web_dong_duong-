@@ -10,6 +10,7 @@ import { notFound } from 'next/navigation';
 import { COMPANY_INFO } from '@/constants/site-info';
 import { Bai_Jamjuree } from 'next/font/google';
 
+
 const baiJamjuree = Bai_Jamjuree({
     subsets: ['vietnamese', 'latin'],
     weight: ['200', '300', '400', '500', '600', '700'],
@@ -107,6 +108,7 @@ export default async function RootLayout({
     // Providing all messages to the client
     // side is the easiest way to get started
     const messages = await getMessages({ locale });
+    console.log("okeee")
 
     return (
         <html lang={locale} suppressHydrationWarning className={baiJamjuree.variable}>
