@@ -69,7 +69,7 @@ export default function FloatingContact() {
                     {contact.icon}
 
                     {/* Tooltip on hover */}
-                    <span className="absolute right-full mr-3 px-2 py-1 bg-[#002d6b] text-[#fbbf24] text-[9px] font-black uppercase tracking-[0.2em] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-[#fbbf24]/20 shadow-xl">
+                    <span className="absolute right-full mr-3 px-2.5 py-1 bg-[#002d6b] text-[#fbbf24] text-xs font-bold uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-[#fbbf24]/20 shadow-xl">
                         {contact.name}
                     </span>
                 </motion.a>

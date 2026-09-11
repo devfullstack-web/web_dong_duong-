@@ -92,14 +92,14 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
 
                     <div className="max-w-4xl space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-brand-primary bg-brand-accent px-3 py-1.5 rounded-full">
+                            <span className="text-xs font-bold uppercase tracking-wider text-brand-primary bg-brand-accent px-3 py-1.5 rounded-full">
                                 {job.department || 'Tổng hợp'}
                             </span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-white border border-white/20 px-3 py-1.5 rounded-full bg-white/5">
+                            <span className="text-xs font-bold uppercase tracking-wider text-white border border-white/20 px-3 py-1.5 rounded-full bg-white/5">
                                 {EMPLOYMENT_TYPE_LABELS[job.employment_type]}
                             </span>
                             {job.status === JOB_STATUS.CLOSED && (
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-white bg-red-500 px-3 py-1.5 rounded-full">
+                                <span className="text-xs font-bold uppercase tracking-wider text-white bg-red-500 px-3 py-1.5 rounded-full">
                                     Đã đóng
                                 </span>
                             )}
@@ -114,7 +114,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                             {job.title}
                         </motion.h1>
 
-                        <div className="flex flex-wrap items-center gap-y-4 gap-x-8 text-sm font-medium text-slate-300">
+                        <div className="flex flex-wrap items-center gap-y-4 gap-x-8 text-sm sm:text-base font-medium text-slate-300">
                             <span className="flex items-center gap-2">
                                 <MapPin size={18} className="text-brand-accent" />
                                 {job.location || 'Việt Nam'}
@@ -144,20 +144,20 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                         <div className="sm:hidden grid grid-cols-2 gap-4 pt-4 mt-4 border-t border-white/10">
                             {job.salary_range && (
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                                    <span className="text-xs text-slate-300 uppercase font-bold tracking-wider">
                                         Mức lương
                                     </span>
-                                    <span className="text-white text-sm font-bold">
+                                    <span className="text-white text-sm sm:text-base font-bold">
                                         {job.salary_range}
                                     </span>
                                 </div>
                             )}
                             {job.deadline && (
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                                    <span className="text-xs text-slate-300 uppercase font-bold tracking-wider">
                                         Hạn nộp
                                     </span>
-                                    <span className="text-white text-sm font-bold">
+                                    <span className="text-white text-sm sm:text-base font-bold">
                                         {format(new Date(job.deadline), 'dd/MM/yyyy', {
                                             locale: vi,
                                         })}
@@ -277,7 +277,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                 <ApplyForm jobId={job.id} />
 
                                 <div className="pt-4 border-t border-slate-50 text-center">
-                                    <p className="text-[11px] text-slate-400 font-medium">
+                                    <p className="text-xs text-slate-500 font-medium">
                                         Cần hỗ trợ? Gửi email tới <br />
                                         <a
                                             href="mailto:hr@saigonvalve.vn"
@@ -419,58 +419,58 @@ function ApplyForm({ jobId }: { jobId: string }) {
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-                <Label className="text-xs font-bold text-slate-700">Họ và tên *</Label>
+                <Label className="text-xs sm:text-sm font-bold text-slate-700">Họ và tên *</Label>
                 <Input
                     required
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    className="bg-slate-50 border-slate-200 h-11 focus:ring-brand-primary placeholder:text-slate-400 text-sm"
+                    className="bg-slate-50 border-slate-200 h-11 focus:ring-brand-primary placeholder:text-slate-400 text-sm sm:text-base font-medium"
                     placeholder="Ví dụ: Nguyễn Văn A"
                 />
             </div>
 
             <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                    <Label className="text-xs font-bold text-slate-700">Email *</Label>
+                    <Label className="text-xs sm:text-sm font-bold text-slate-700">Email *</Label>
                     <Input
                         required
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="bg-slate-50 border-slate-200  h-11 focus:ring-brand-primary placeholder:text-slate-400 text-sm"
+                        className="bg-slate-50 border-slate-200 h-11 focus:ring-brand-primary placeholder:text-slate-400 text-sm sm:text-base font-medium"
                         placeholder="example@mail.com"
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label className="text-xs font-bold text-slate-700">Số điện thoại *</Label>
+                    <Label className="text-xs sm:text-sm font-bold text-slate-700">Số điện thoại *</Label>
                     <Input
                         required
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="bg-slate-50 border-slate-200  h-11 focus:ring-brand-primary placeholder:text-slate-400 text-sm"
+                        className="bg-slate-50 border-slate-200 h-11 focus:ring-brand-primary placeholder:text-slate-400 text-sm sm:text-base font-medium"
                         placeholder="09xx xxx xxx"
                     />
                 </div>
             </div>
 
             <div className="space-y-2">
-                <Label className="text-xs font-bold text-slate-700">
+                <Label className="text-xs sm:text-sm font-bold text-slate-700">
                     Lời nhắn (không bắt buộc)
                 </Label>
                 <Textarea
                     value={formData.cover_letter}
                     onChange={(e) => setFormData({ ...formData, cover_letter: e.target.value })}
-                    className="bg-slate-50 border-slate-200  min-h-[100px] focus:ring-brand-primary placeholder:text-slate-400 text-sm py-3"
+                    className="bg-slate-50 border-slate-200 min-h-[100px] focus:ring-brand-primary placeholder:text-slate-400 text-sm sm:text-base font-medium py-3"
                     placeholder="Giới thiệu ngắn gọn sở trường của bạn..."
                 />
             </div>
 
             <div className="space-y-2">
-                <Label className="text-xs font-bold text-slate-700">Hồ sơ (CV) *</Label>
+                <Label className="text-xs sm:text-sm font-bold text-slate-700">Hồ sơ (CV) *</Label>
                 <div
                     onClick={() => fileInputRef.current?.click()}
                     className={cn(
-                        'border-2 border-dashed border-slate-200  p-6 text-center cursor-pointer transition-all group flex flex-col items-center justify-center',
+                        'border-2 border-dashed border-slate-200 p-6 text-center cursor-pointer transition-all group flex flex-col items-center justify-center',
                         cvFile
                             ? 'bg-brand-primary/5 border-brand-primary'
                             : 'hover:border-brand-primary/50 hover:bg-slate-50',
@@ -481,10 +481,10 @@ function ApplyForm({ jobId }: { jobId: string }) {
                             <div className="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center text-white">
                                 <CheckCircle size={20} />
                             </div>
-                            <p className="text-xs font-bold text-brand-primary truncate max-w-full italic px-2">
+                            <p className="text-xs sm:text-sm font-bold text-brand-primary truncate max-w-full italic px-2">
                                 {cvFile.name}
                             </p>
-                            <span className="text-[10px] text-slate-400">
+                            <span className="text-xs text-slate-400 font-medium">
                                 Click để thay đổi file
                             </span>
                         </div>
@@ -493,8 +493,8 @@ function ApplyForm({ jobId }: { jobId: string }) {
                             <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-brand-primary/10 transition-colors">
                                 <Upload className="size-5 text-slate-400 group-hover:text-brand-primary transition-colors" />
                             </div>
-                            <p className="text-xs font-bold text-slate-600">Bấm để tải lên CV</p>
-                            <p className="text-[10px] text-slate-400 mt-1">
+                            <p className="text-xs sm:text-sm font-bold text-slate-600">Bấm để tải lên CV</p>
+                            <p className="text-xs text-slate-400 mt-1">
                                 Hỗ trợ PDF, DOC, DOCX (Tối đa 5MB)
                             </p>
                         </>
@@ -512,7 +512,7 @@ function ApplyForm({ jobId }: { jobId: string }) {
             <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-brand-primary hover:bg-brand-secondary text-white h-12  text-xs font-bold uppercase tracking-widest shadow-lg shadow-brand-primary/20 disabled:opacity-50 transition-all active:scale-[0.98]"
+                className="w-full bg-brand-primary hover:bg-brand-secondary text-white h-12 text-xs sm:text-sm font-bold uppercase tracking-wider shadow-lg shadow-brand-primary/20 disabled:opacity-50 transition-all active:scale-[0.98]"
             >
                 {isSubmitting ? (
                     <>

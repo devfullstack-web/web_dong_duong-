@@ -55,14 +55,14 @@ export default function TechnologyOverview() {
             <div className="container mx-auto px-4 lg:px-8">
                 {/* Header */}
                 <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary bg-brand-primary/5 px-3 py-1.5 rounded-full inline-block">
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-primary bg-brand-primary/5 px-3.5 py-1.5 rounded-full inline-block">
                         {content.badge}
                     </span>
-                    <h2 className="text-2xl md:text-4.5xl font-black text-slate-900 uppercase tracking-tight leading-none">
+                    <h2 className="text-2xl md:text-4.5xl font-black text-slate-900 uppercase tracking-tight leading-tight">
                         {content.title}
                     </h2>
                     <div className="w-16 h-1 bg-brand-primary mx-auto my-2"></div>
-                    <p className="text-xs md:text-sm text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-base sm:text-lg text-slate-600 font-normal sm:font-medium leading-relaxed max-w-2xl mx-auto">
                         {content.desc}
                     </p>
                 </div>
@@ -84,10 +84,10 @@ export default function TechnologyOverview() {
                                     <div className={`h-12 w-12 flex items-center justify-center ${card.bg} ${card.color} transition-transform duration-300 group-hover:scale-110`}>
                                         <Icon size={24} />
                                     </div>
-                                    <h3 className="text-sm sm:text-base font-bold text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors">
+                                    <h3 className="text-base sm:text-lg font-bold text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors">
                                         {card.title}
                                     </h3>
-                                    <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                    <p className="text-sm sm:text-base text-slate-600 font-normal sm:font-medium leading-relaxed">
                                         {card.desc}
                                     </p>
                                 </div>

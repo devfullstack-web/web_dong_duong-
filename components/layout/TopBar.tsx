@@ -35,8 +35,8 @@ export default function TopBar() {
             <div className="container mx-auto px-8">
                 <div className="flex items-center justify-between text-white/70">
                     <div className="flex items-center gap-10">
-                        <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest leading-none">
-                            <Phone size={12} className="text-brand-accent" />
+                        <div className="flex items-center gap-2 text-xs font-bold tracking-wider leading-none">
+                            <Phone size={13} className="text-brand-accent" />
                             <a
                                 href={`tel:${COMPANY_INFO.hotlineRaw}`}
                                 className="hover:text-white transition-colors"
@@ -44,8 +44,8 @@ export default function TopBar() {
                                 {COMPANY_INFO.hotline}
                             </a>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest leading-none">
-                            <Mail size={12} className="text-brand-accent" />
+                        <div className="flex items-center gap-2 text-xs font-bold tracking-wider leading-none">
+                            <Mail size={13} className="text-brand-accent" />
                             <a
                                 href={`mailto:${COMPANY_INFO.email}`}
                                 className="hover:text-white transition-colors uppercase"
@@ -53,14 +53,14 @@ export default function TopBar() {
                                 {COMPANY_INFO.email}
                             </a>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest leading-none">
-                            <Clock size={12} className="text-brand-accent" />
+                        <div className="flex items-center gap-2 text-xs font-bold tracking-wider leading-none">
+                            <Clock size={13} className="text-brand-accent" />
                             <span>{t('workingHoursWeekdays')}</span>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-6">
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">
+                        <span className="text-xs font-black uppercase tracking-[0.15em] opacity-60">
                             Follow us:
                         </span>
                         <div className="flex items-center gap-4">
@@ -75,7 +75,7 @@ export default function TopBar() {
                                     {Icon ? (
                                         <Icon size={14} />
                                     ) : (
-                                        <span className="text-[9px] font-black uppercase leading-none">Zalo</span>
+                                        <span className="text-xs font-black uppercase leading-none">Zalo</span>
                                     )}
                                 </Link>
                             ))}

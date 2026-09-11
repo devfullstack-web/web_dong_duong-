@@ -46,7 +46,7 @@ export default function Footer() {
                                 className="object-contain brightness-0 invert group-hover:scale-105 transition-transform"
                             />
                         </Link>
-                        <p className="text-xs text-blue-100/90 font-bold uppercase tracking-widest leading-relaxed">
+                        <p className="text-xs sm:text-sm text-blue-100/90 font-bold uppercase tracking-wider leading-relaxed">
                             {t('slogan')}
                         </p>
                         <div className="flex gap-3">
@@ -62,7 +62,7 @@ export default function Footer() {
                                     {Icon ? (
                                         <Icon size={14} />
                                     ) : (
-                                        <span className="text-[8px] font-black uppercase tracking-tight">Zalo</span>
+                                        <span className="text-xs font-black uppercase tracking-tight">Zalo</span>
                                     )}
                                 </a>
                             ))}
@@ -71,7 +71,7 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div className="space-y-4">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white border-b border-white/10 pb-2">
+                        <h4 className="text-xs sm:text-sm font-black uppercase tracking-[0.15em] text-white border-b border-white/10 pb-2">
                             {t('navigationMenu')}
                         </h4>
                         <ul className="space-y-2">
@@ -86,10 +86,10 @@ export default function Footer() {
                                 <li key={item.label}>
                                     <Link
                                         href={item.href as "/" | "/gioi-thieu" | "/san-pham" | "/du-an" | "/tin-tuc" | "/lien-he"}
-                                        className="text-[11px] font-bold uppercase tracking-widest text-blue-100/80 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
+                                        className="text-xs sm:text-sm font-bold uppercase tracking-wider text-blue-100/80 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
                                     >
                                         <ArrowRight
-                                            size={10}
+                                            size={12}
                                             className="text-white group-hover:text-white transition-colors"
                                         />{' '}
                                         {item.label}
@@ -101,7 +101,7 @@ export default function Footer() {
 
                     {/* Contact Info */}
                     <div className="space-y-4">
-                        <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white border-b border-white/10 pb-2">
+                        <h4 className="text-xs sm:text-sm font-black uppercase tracking-[0.15em] text-white border-b border-white/10 pb-2">
                             {t('contactInfo')}
                         </h4>
                         <ul className="space-y-3">
@@ -110,7 +110,7 @@ export default function Footer() {
                                     className="text-white shrink-0 group-hover:text-white transition-colors"
                                     size={16}
                                 />
-                                <span className="text-[11px] text-blue-100/80 font-bold uppercase tracking-wider leading-relaxed">
+                                <span className="text-xs sm:text-sm text-blue-100/80 font-medium tracking-wide leading-relaxed">
                                     {COMPANY_INFO.address}
                                 </span>
                             </li>
@@ -121,7 +121,7 @@ export default function Footer() {
                                 />
                                 <a
                                     href={`tel:${COMPANY_INFO.hotlineRaw}`}
-                                    className="text-[11px] text-blue-100/90 font-black tracking-widest hover:text-white transition-colors"
+                                    className="text-xs sm:text-sm text-blue-100/90 font-bold tracking-wider hover:text-white transition-colors"
                                 >
                                     {COMPANY_INFO.hotline}
                                 </a>
@@ -133,7 +133,7 @@ export default function Footer() {
                                 />
                                 <a
                                     href={`mailto:${COMPANY_INFO.email}`}
-                                    className="text-[11px] text-blue-100/90 font-black tracking-widest uppercase hover:text-white transition-colors"
+                                    className="text-xs sm:text-sm text-blue-100/90 font-bold tracking-wider uppercase hover:text-white transition-colors"
                                 >
                                     {COMPANY_INFO.email}
                                 </a>
@@ -144,30 +144,30 @@ export default function Footer() {
 
                 <div className="pt-4 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                     <div className="space-y-1">
-                        <p className="text-[10px] font-black text-blue-200/60 uppercase tracking-[0.15em]">
+                        <p className="text-xs font-bold text-blue-200/70 uppercase tracking-wider">
                             {COMPANY_INFO.copyright}
                         </p>
-                        <div className="flex items-center gap-1.5 justify-center md:justify-start text-[10px] font-bold text-blue-200/70 uppercase tracking-widest">
-                            <ShieldCheck size={12} className="text-white/80" />{' '}
+                        <div className="flex items-center gap-1.5 justify-center md:justify-start text-xs font-medium text-blue-200/80 tracking-wide">
+                            <ShieldCheck size={14} className="text-white/80" />{' '}
                             {t('securityWarning')}
                         </div>
                     </div>
                     <div className="flex flex-wrap justify-center gap-6">
                         <Link
                             href="#"
-                            className="text-[10px] font-black uppercase tracking-widest text-blue-200/60 hover:text-white transition-colors"
+                            className="text-xs font-bold uppercase tracking-wider text-blue-200/70 hover:text-white transition-colors"
                         >
                             {t('terms')}
                         </Link>
                         <Link
                             href="#"
-                            className="text-[10px] font-black uppercase tracking-widest text-blue-200/60 hover:text-white transition-colors"
+                            className="text-xs font-bold uppercase tracking-wider text-blue-200/70 hover:text-white transition-colors"
                         >
                             {t('privacy')}
                         </Link>
                         <Link
                             href={PORTAL_ROUTES.dashboard as string}
-                            className="text-[10px] font-black uppercase tracking-widest text-blue-200/60 hover:text-white transition-colors"
+                            className="text-xs font-bold uppercase tracking-wider text-blue-200/70 hover:text-white transition-colors"
                         >
                             {t('admin')}
                         </Link>

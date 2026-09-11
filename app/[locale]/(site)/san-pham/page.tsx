@@ -200,7 +200,7 @@ export default function ProductArchive() {
                                     {/* Mobile Collapsible Category Selector Button */}
                                     <button
                                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                        className="w-full bg-brand-primary text-white py-3.5 px-5 flex items-center justify-between uppercase tracking-widest text-[10px] font-black lg:hidden rounded-none shadow-md"
+                                        className="w-full bg-brand-primary text-white py-3.5 px-5 flex items-center justify-between uppercase tracking-wider text-xs sm:text-sm font-black lg:hidden rounded-none shadow-md"
                                     >
                                         <span className="flex items-center gap-2">
                                             {t('sidebar.categoryTitle')}:{' '}
@@ -258,7 +258,7 @@ export default function ProductArchive() {
                                             {selectedCategoryId && (
                                                 <button
                                                     onClick={handleAllCategoriesClick}
-                                                    className="text-[9px] font-bold text-brand-primary lowercase hover:underline hover:cursor-pointer normal-case tracking-wide"
+                                                    className="text-xs font-bold text-brand-primary lowercase hover:underline hover:cursor-pointer normal-case tracking-wide"
                                                 >
                                                     {locale === 'vi' ? '[Bỏ lọc]' : '[Clear]'}
                                                 </button>
@@ -273,14 +273,14 @@ export default function ProductArchive() {
                                                     setIsMobileMenuOpen(false);
                                                 }}
                                                 className={cn(
-                                                    'w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between',
+                                                    'w-full px-3 py-2 text-left text-xs sm:text-sm font-bold uppercase tracking-wider transition-all hover:cursor-pointer border-l-2 flex items-center justify-between',
                                                     selectedCategoryId === null
                                                         ? 'text-brand-primary border-brand-primary bg-slate-50 font-black'
                                                         : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
                                                 )}
                                             >
                                                 <span>{t('sidebar.all')}</span>
-                                                <span className="text-[10px] opacity-60 font-medium">
+                                                <span className="text-xs opacity-70 font-medium">
                                                     ({total})
                                                 </span>
                                             </button>
@@ -348,7 +348,7 @@ export default function ProductArchive() {
                                                                                     );
                                                                                 }}
                                                                                 className={cn(
-                                                                                    'w-full px-3 py-1.5 text-left text-[10px] font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2',
+                                                                                    'w-full px-3 py-1.5 text-left text-xs font-bold uppercase tracking-wider transition-all hover:cursor-pointer border-l-2',
                                                                                     selectedCategoryId ===
                                                                                         child.id
                                                                                         ? 'text-brand-secondary border-brand-secondary bg-slate-100/50 font-black'
@@ -376,7 +376,7 @@ export default function ProductArchive() {
                         {/* Grid */}
                         <div className="flex-1 space-y-10">
                             <div className="flex items-center justify-between border-b border-slate-100 pb-8">
-                                <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest italic">
+                                <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider italic">
                                     {t('grid.resultCount', {
                                         start: products.length > 0 ? startIndex + 1 : 0,
                                         end: Math.min(startIndex + ITEMS_PER_PAGE, total),
@@ -386,7 +386,7 @@ export default function ProductArchive() {
                                 <div className="flex items-center gap-4 md:gap-6">
                                     {/* Sort Dropdown */}
                                     <div className="flex items-center gap-2">
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
+                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
                                             {locale === 'vi' ? 'Sắp xếp:' : 'Sort by:'}
                                         </span>
                                         <select
@@ -399,7 +399,7 @@ export default function ProductArchive() {
                                                         | 'name-desc',
                                                 )
                                             }
-                                            className="bg-white border border-slate-200 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-700 outline-none focus:border-brand-primary transition-colors rounded-none hover:cursor-pointer"
+                                            className="bg-white border border-slate-200 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 outline-none focus:border-brand-primary transition-colors rounded-none hover:cursor-pointer"
                                         >
                                             <option value="default">
                                                 {locale === 'vi' ? 'Mặc định' : 'Default'}
@@ -448,12 +448,12 @@ export default function ProductArchive() {
                                 <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 border border-dashed border-slate-200">
                                     <Info size={32} className="text-slate-300" />
                                     <div className="space-y-1">
-                                        <p className="text-xs font-bold text-slate-800 uppercase tracking-widest">
+                                        <p className="text-sm font-bold text-slate-800 uppercase tracking-wider">
                                             {locale === 'vi'
                                                 ? 'Không tìm thấy sản phẩm'
                                                 : 'No products found'}
                                         </p>
-                                        <p className="text-[10px] text-slate-400 font-medium">
+                                        <p className="text-xs sm:text-sm text-slate-500 font-medium">
                                             {locale === 'vi'
                                                 ? 'Vui lòng thử lại với từ khóa khác hoặc bộ lọc khác.'
                                                 : 'Please try again with a different search query or filter.'}
@@ -517,20 +517,20 @@ export default function ProductArchive() {
                                                     </div>
                                                     <div className="space-y-3 flex-1 flex flex-col justify-between">
                                                         <div className="space-y-1.5">
-                                                            <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
-                                                                <Shield size={9} />{' '}
+                                                            <div className="text-xs font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1.5">
+                                                                <Shield size={12} />{' '}
                                                                 {getLocalizedValue(
                                                                     product.category_localized,
                                                                     locale,
                                                                 ) || product.category}
                                                             </div>
-                                                            <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-[2rem]">
+                                                            <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-[2rem]">
                                                                 {getLocalizedValue(
                                                                     product.name_localized,
                                                                     locale,
                                                                 ) || product.name}
                                                             </h3>
-                                                            <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
+                                                            <p className="text-xs sm:text-sm text-slate-600 font-normal sm:font-medium line-clamp-2 leading-relaxed">
                                                                 {getLocalizedValue(
                                                                     product.tech_summary_localized,
                                                                     locale,
@@ -541,11 +541,11 @@ export default function ProductArchive() {
                                                         </div>
                                                         <LocalizedLink
                                                             href={`/san-pham/${product.slug}`}
-                                                            className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-3 border-t border-slate-100 w-full mt-2"
+                                                            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-brand-secondary transition-colors pt-3 border-t border-slate-100 w-full mt-2"
                                                         >
                                                             {t('grid.viewDetail')}{' '}
                                                             <ArrowRight
-                                                                size={10}
+                                                                size={12}
                                                                 className="ml-auto group-hover:translate-x-0.5 transition-transform"
                                                             />
                                                         </LocalizedLink>
@@ -614,20 +614,20 @@ export default function ProductArchive() {
                                                     </div>
                                                     <div className="flex-1 space-y-2 flex flex-col justify-between">
                                                         <div className="space-y-1">
-                                                            <div className="text-[9px] font-black uppercase tracking-widest text-brand-primary flex items-center gap-1.5">
-                                                                <Shield size={9} />{' '}
+                                                            <div className="text-xs font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1.5">
+                                                                <Shield size={12} />{' '}
                                                                 {getLocalizedValue(
                                                                     product.category_localized,
                                                                     locale,
                                                                 ) || product.category}
                                                             </div>
-                                                            <h3 className="text-xs font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-1">
+                                                            <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-1">
                                                                 {getLocalizedValue(
                                                                     product.name_localized,
                                                                     locale,
                                                                 ) || product.name}
                                                             </h3>
-                                                            <p className="text-[10px] text-muted-foreground font-medium line-clamp-2 leading-relaxed">
+                                                            <p className="text-xs sm:text-sm text-slate-600 font-normal sm:font-medium line-clamp-2 leading-relaxed">
                                                                 {getLocalizedValue(
                                                                     product.tech_summary_localized,
                                                                     locale,
@@ -636,10 +636,10 @@ export default function ProductArchive() {
                                                                     t('grid.defaultSummary')}
                                                             </p>
                                                         </div>
-                                                        <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-100 w-full mt-1">
+                                                        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-100 w-full mt-1">
                                                             {t('grid.viewDetail')}{' '}
                                                             <ArrowRight
-                                                                size={10}
+                                                                size={12}
                                                                 className="ml-auto group-hover:translate-x-0.5 transition-transform"
                                                             />
                                                         </div>
@@ -654,7 +654,7 @@ export default function ProductArchive() {
                             <SitePagination
                                 numbered
                                 className="pt-12"
-                                linkClassName="text-[9px] font-black"
+                                linkClassName="text-xs font-bold"
                                 currentPage={currentPage}
                                 totalPages={totalPages}
                                 onPageChange={handlePageChange}

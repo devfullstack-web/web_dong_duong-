@@ -75,27 +75,27 @@ export default function RecruitmentHub() {
                                     >
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary">
+                                                <span className="text-xs font-bold uppercase tracking-wider text-brand-primary">
                                                     {job.department || t('list.defaultDepartment')}
                                                 </span>
                                             </div>
-                                            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors">
+                                            <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors">
                                                 {job.title}
                                             </h3>
-                                            <div className="flex flex-wrap gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                            <div className="flex flex-wrap gap-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
                                                 <div className="flex items-center gap-1.5">
-                                                    <MapPin size={12} />
+                                                    <MapPin size={14} className="text-slate-400" />
                                                     {job.location || t('list.defaultLocation')}
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
-                                                    <Briefcase size={12} />
+                                                    <Briefcase size={14} className="text-slate-400" />
                                                     {t(
                                                         `employmentTypes.${job.employment_type?.toLowerCase() || EMPLOYMENT_TYPE.FULL_TIME}`,
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary">
-                                                {t('list.viewDetail')} <ArrowRight size={14} />
+                                            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 group-hover:text-brand-primary">
+                                                {t('list.viewDetail')} <ArrowRight size={16} />
                                             </div>
                                         </div>
                                     </LocalizedLink>

@@ -52,7 +52,7 @@ export default function News({ articles = [] }: NewsProps) {
                         {t('title')}
                     </h2>
                     <div className="mx-auto h-1 w-20 bg-brand-primary"></div>
-                    <p className="mx-auto max-w-2xl text-muted-foreground font-medium">
+                    <p className="mx-auto max-w-2xl text-base sm:text-lg text-slate-600 font-normal sm:font-medium leading-relaxed">
                         {t('description')}
                     </p>
                 </div>
@@ -88,12 +88,12 @@ export default function News({ articles = [] }: NewsProps) {
                                     <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-transparent"></div>
 
                                     <div className="absolute bottom-6 left-6 right-6 space-y-3">
-                                        <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest text-brand-primary">
+                                        <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-brand-primary">
                                             {t('grid.defaultCategory')}
                                             <span className="h-1 w-1 rounded-full bg-brand-primary/20"></span>
                                             {formatDate(item.published_at || item.created_at, locale)}
                                         </div>
-                                        <h3 className="text-[15px] font-bold text-white leading-tight transition-colors group-hover:text-white line-clamp-2 uppercase" title={activeSummary}>
+                                        <h3 className="text-base sm:text-lg font-bold text-white leading-snug transition-colors group-hover:text-white line-clamp-2 uppercase" title={activeSummary}>
                                             {activeTitle}
                                         </h3>
                                     </div>

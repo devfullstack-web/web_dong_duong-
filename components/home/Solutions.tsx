@@ -69,7 +69,7 @@ export default function Solutions() {
             <div className="container mx-auto px-4 lg:px-8">
                 {/* Section Header - Same style as SystemHighlight */}
                 <div className="mb-14 space-y-3">
-                    <p className="text-[10px] font-black tracking-[0.2em] text-brand-primary uppercase flex items-center gap-2">
+                    <p className="text-xs font-black tracking-[0.2em] text-brand-primary uppercase flex items-center gap-2">
                         <span className="w-6 h-px bg-brand-primary inline-block" />
                         {t('digitalEcosystem')}
                     </p>
@@ -89,13 +89,13 @@ export default function Solutions() {
                                 onClick={() => setActiveIndex(i)}
                                 onMouseEnter={() => setActiveIndex(i)}
                                 className={cn(
-                                    "flex items-center gap-2 px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-all border-b-2 -mb-px",
+                                    "flex items-center gap-2 px-5 py-3.5 text-xs font-bold uppercase tracking-wider transition-all border-b-2 -mb-px",
                                     isActive
                                         ? "text-brand-primary border-brand-primary bg-slate-50"
-                                        : "text-slate-400 border-transparent hover:text-slate-700 hover:border-slate-300"
+                                        : "text-slate-500 border-transparent hover:text-slate-700 hover:border-slate-300"
                                 )}
                             >
-                                <Icon size={14} className="shrink-0" />
+                                <Icon size={16} className="shrink-0" />
                                 <span className="hidden sm:inline">{item.title}</span>
                                 <span className="sm:hidden">{item.brand.split(' ')[1]}</span>
                             </button>
@@ -122,7 +122,7 @@ export default function Solutions() {
                     {/* Info */}
                     <div className="w-full lg:w-2/5 p-8 lg:p-12 flex flex-col justify-center space-y-6">
                         <div className="space-y-1">
-                            <span className="text-[9px] font-black tracking-[0.2em] text-brand-primary uppercase">
+                            <span className="text-xs font-black tracking-[0.2em] text-brand-primary uppercase">
                                 {active.brand}
                             </span>
                             <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
@@ -130,14 +130,14 @@ export default function Solutions() {
                             </h3>
                         </div>
 
-                        <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                        <p className="text-base sm:text-lg text-slate-600 font-normal sm:font-medium leading-relaxed">
                             {active.desc}
                         </p>
 
                         <div className="pt-2">
                             <Link
                                 href={active.href}
-                                className="inline-flex items-center gap-4 px-8 py-3.5 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 group"
+                                className="inline-flex items-center gap-4 px-8 py-3.5 bg-brand-primary text-white text-xs sm:text-sm font-black uppercase tracking-widest hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 group"
                             >
                                 {commonT('exploreNow')}
                                 <ArrowRight

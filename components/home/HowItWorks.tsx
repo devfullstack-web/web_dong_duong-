@@ -83,14 +83,14 @@ export default function HowItWorks() {
             <div className="container relative z-10 mx-auto px-4 lg:px-8">
                 {/* Header */}
                 <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary bg-brand-primary/5 px-3 py-1.5 rounded-full inline-block">
+                    <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-primary bg-brand-primary/5 px-3.5 py-1.5 rounded-full inline-block">
                         {content.badge}
                     </span>
-                    <h2 className="text-2xl md:text-4.5xl font-black text-slate-900 uppercase tracking-tight leading-none">
+                    <h2 className="text-2xl md:text-4.5xl font-black text-slate-900 uppercase tracking-tight leading-tight">
                         {content.title}
                     </h2>
                     <div className="w-16 h-1 bg-brand-primary mx-auto my-2"></div>
-                    <p className="text-xs md:text-sm text-slate-500 font-medium leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-base sm:text-lg text-slate-600 font-normal sm:font-medium leading-relaxed max-w-2xl mx-auto">
                         {content.desc}
                     </p>
                 </div>
@@ -123,7 +123,7 @@ export default function HowItWorks() {
                                     )}
 
                                     {/* Step badge */}
-                                    <span className="absolute top-3 right-3 text-[10px] font-black text-slate-300 group-hover:text-brand-primary transition-colors">
+                                    <span className="absolute top-3 right-3 text-xs font-black text-slate-300 group-hover:text-brand-primary transition-colors">
                                         {step.step}
                                     </span>
 
@@ -139,14 +139,14 @@ export default function HowItWorks() {
                                     {/* Content Info */}
                                     <div className="space-y-1.5 flex-1 flex flex-col justify-between pt-2">
                                         <div>
-                                            <span className="text-[9px] font-black uppercase tracking-wider text-slate-400 block leading-none">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block leading-tight">
                                                 {step.subtitle}
                                             </span>
-                                            <h3 className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-tight pt-1">
+                                            <h3 className="text-base sm:text-lg font-bold text-slate-900 uppercase tracking-tight pt-1">
                                                 {step.title}
                                             </h3>
                                         </div>
-                                        <p className="text-[11px] text-slate-500 font-medium leading-relaxed pt-2">
+                                        <p className="text-sm sm:text-base text-slate-600 font-normal sm:font-medium leading-relaxed pt-2">
                                             {step.desc}
                                         </p>
                                     </div>

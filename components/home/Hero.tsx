@@ -62,17 +62,17 @@ export default function Hero() {
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                                 <Link
                                     href="#technology-overview"
-                                    className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary w-full sm:w-auto"
+                                    className="group relative overflow-hidden inline-flex items-center justify-center gap-3 px-8 py-3.5 lg:py-4 bg-brand-primary text-white text-xs sm:text-sm font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all rounded-sm shadow-lg shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:bg-brand-secondary w-full sm:w-auto"
                                 >
                                     <span className="relative z-10">{tc('exploreNow')}</span>
                                     <MoveRight
-                                        size={14}
+                                        size={15}
                                         className="relative z-10 transition-transform group-hover:translate-x-1"
                                     />
                                 </Link>
                                 <Link
                                     href="#contact"
-                                    className="inline-flex items-center justify-center gap-3 px-8 py-3 lg:py-4 bg-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm w-full sm:w-auto"
+                                    className="inline-flex items-center justify-center gap-3 px-8 py-3.5 lg:py-4 bg-white/10 text-white text-xs sm:text-sm font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all backdrop-blur-sm rounded-sm w-full sm:w-auto"
                                 >
                                     {t('actionAdvice')}
                                 </Link>

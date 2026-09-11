@@ -88,21 +88,21 @@ export default function NewsPage() {
                                             </LocalizedLink>
 
                                             <div className="space-y-2">
-                                                <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
+                                                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-brand-primary">
                                                     <span>
                                                         {activeCat || t('grid.defaultCategory')}
                                                     </span>
-                                                    <div className="flex items-center gap-1">
-                                                        <Calendar size={8} />
+                                                    <div className="flex items-center gap-1.5 text-slate-500">
+                                                        <Calendar size={13} />
                                                         <span>{formatViDate(article.published_at)}</span>
                                                     </div>
                                                 </div>
-                                                <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                                                <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
                                                     <LocalizedLink href={`/tin-tuc/${article.slug}`}>
                                                         {activeTitle}
                                                     </LocalizedLink>
                                                 </h3>
-                                                <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                                                <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
                                                     {activeSummary}
                                                 </p>
                                             </div>

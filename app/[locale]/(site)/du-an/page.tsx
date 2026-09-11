@@ -88,7 +88,7 @@ export default function ProjectsPage() {
                                         </LocalizedLink>
 
                                         <div className="space-y-2">
-                                            <div className="flex items-center justify-between text-[8px] font-black uppercase tracking-widest text-brand-primary opacity-60">
+                                            <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-brand-primary">
                                                 <span>
                                                     {getLocalizedValue(
                                                         project.category_localized,
@@ -97,9 +97,9 @@ export default function ProjectsPage() {
                                                         project.category ||
                                                         t('grid.defaultCategory')}
                                                 </span>
-                                                <span>{getYear(project.start_date)}</span>
+                                                <span className="text-slate-400 font-semibold">{getYear(project.start_date)}</span>
                                             </div>
-                                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                                            <h3 className="text-sm sm:text-base font-bold text-slate-900 uppercase tracking-tight leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
                                                 <LocalizedLink href={`/du-an/${project.slug}`}>
                                                     {getLocalizedValue(
                                                         project.name_localized,
@@ -107,8 +107,8 @@ export default function ProjectsPage() {
                                                     ) || project.name}
                                                 </LocalizedLink>
                                             </h3>
-                                            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase">
-                                                <MapPin size={10} />
+                                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 uppercase">
+                                                <MapPin size={12} />
                                                 {project.client_name || t('grid.defaultLocation')}
                                             </div>
                                         </div>

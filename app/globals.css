@@ -224,3 +224,49 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ==========================================================================
+   MOBILE TYPOGRAPHY SYSTEM (UI/UX Standards for Mobile Readability)
+   Centralized font-size configuration for all small text across the site on mobile (<768px).
+   Easily adjust these tokens here to scale mobile readability globally.
+   ========================================================================== */
+:root {
+  --mobile-font-min-badge: 0.8125rem;  /* 13px: Badges, pills, tags */
+  --mobile-font-min-meta: 0.875rem;    /* 14px: Metadata, dates, steps */
+  --mobile-font-min-desc: 1rem;        /* 16px: Subtitles and descriptions under titles */
+  --mobile-font-min-body: 1rem;        /* 16px: Full readable body content */
+}
+
+@media (max-width: 767.98px) {
+  /* Elevate micro arbitrary font classes on mobile to ensure crisp readability */
+  [class*="text-[8px]"],
+  [class*="text-\[8px\]"] {
+    font-size: var(--mobile-font-min-badge) !important;
+    line-height: 1.4 !important;
+  }
+  [class*="text-[9px]"],
+  [class*="text-\[9px\]"] {
+    font-size: var(--mobile-font-min-badge) !important;
+    line-height: 1.4 !important;
+  }
+  [class*="text-[10px]"],
+  [class*="text-\[10px\]"] {
+    font-size: var(--mobile-font-min-badge) !important;
+    line-height: 1.4 !important;
+  }
+  [class*="text-[11px]"],
+  [class*="text-\[11px\]"] {
+    font-size: var(--mobile-font-min-meta) !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Descriptions under titles on mobile */
+  .mobile-desc {
+    font-size: var(--mobile-font-min-desc) !important;
+    line-height: 1.65 !important;
+  }
+  .mobile-badge {
+    font-size: var(--mobile-font-min-badge) !important;
+    line-height: 1.4 !important;
+  }
+}

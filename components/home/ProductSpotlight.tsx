@@ -50,7 +50,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                 {/* Section Header - Highly Polished & Structured */}
                 <div className="flex items-end justify-between gap-4 mb-10 border-b border-slate-100 pb-6">
                     <div className="space-y-1.5">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
                             {commonT('featuredProducts', {
                                 defaultValue: 'SẢN PHẨM TIÊU BIỂU',
                             })}
@@ -62,11 +62,11 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
 
                     <Link
                         href="/san-pham"
-                        className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary transition-colors group pb-1"
+                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-400 hover:text-brand-primary transition-colors group pb-1"
                     >
                         <span>{commonT('viewAll')}</span>
                         <ArrowRight
-                            size={12}
+                            size={14}
                             className="transition-transform group-hover:translate-x-0.5"
                         />
                     </Link>
@@ -132,26 +132,26 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                                         <div className="p-4 flex flex-col justify-between">
                                             <div className="space-y-1.5">
                                                 {/* Micro Subtitle Tag for context */}
-                                                <div className="text-[9px] font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1">
-                                                    <ShieldCheck size={10} className="text-brand-accent shrink-0" />
+                                                <div className="text-xs font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1">
+                                                    <ShieldCheck size={12} className="text-brand-accent shrink-0" />
                                                     <span>SAIGON VALVE STANDARD</span>
                                                 </div>
 
                                                 {/* Product Title - Distinct & Clear */}
-                                                <h3 className="text-xs md:text-sm font-bold text-slate-800 uppercase tracking-tight line-clamp-1 leading-snug group-hover:text-brand-primary transition-colors">
+                                                <h3 className="text-sm md:text-base font-bold text-slate-800 uppercase tracking-tight line-clamp-1 leading-snug group-hover:text-brand-primary transition-colors">
                                                     {activeName}
                                                 </h3>
 
                                                 {/* Compact Single-line Description with HTML stripped */}
-                                                <p className="text-[10px] text-slate-500 font-medium line-clamp-1 leading-relaxed">
+                                                <p className="text-sm sm:text-base text-slate-500 font-medium line-clamp-1 leading-relaxed">
                                                     {cleanDescription || fallbackDescription}
                                                 </p>
                                             </div>
 
                                             {/* Action link with border top */}
-                                            <div className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-brand-primary transition-colors pt-3 border-t border-slate-100 w-full mt-3">
+                                            <div className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-400 group-hover:text-brand-primary transition-colors pt-3 border-t border-slate-100 w-full mt-3">
                                                 <span>{commonT('viewDetails')}</span>
-                                                <ArrowRight size={10} className="ml-auto transition-transform group-hover:translate-x-0.5" />
+                                                <ArrowRight size={14} className="ml-auto transition-transform group-hover:translate-x-0.5" />
                                             </div>
                                         </div>
                                     </Link>

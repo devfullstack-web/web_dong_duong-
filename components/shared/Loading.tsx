@@ -29,9 +29,9 @@ export default function Loading({
     
     // Text size mapping
     const textSizes = {
-        sm: 'text-[9px]',
-        md: 'text-[10px]',
-        lg: 'text-xs',
+        sm: 'text-xs',
+        md: 'text-xs sm:text-sm',
+        lg: 'text-xs sm:text-sm',
     };
 
     // Dynamic stroke width mapping based on size for elegant proportions

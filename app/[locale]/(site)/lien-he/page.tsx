@@ -32,7 +32,7 @@ export default function ContactPage() {
                                 <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">
                                     {t('infoTitle')}
                                 </h2>
-                                <p className="text-slate-500 font-medium max-w-sm text-sm">
+                                <p className="text-slate-600 font-medium max-w-sm text-sm sm:text-base leading-relaxed">
                                     {t('infoDesc')}
                                 </p>
                             </div>
@@ -58,11 +58,11 @@ export default function ContactPage() {
                                     <div key={i} className="space-y-2">
                                         <div className="flex items-center gap-3">
                                             <item.icon size={18} className="text-brand-primary" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                                 {item.label}
                                             </span>
                                         </div>
-                                        <div className="text-sm font-bold text-slate-900 leading-relaxed">
+                                        <div className="text-sm sm:text-base font-bold text-slate-900 leading-relaxed">
                                             {item.value}
                                         </div>
                                     </div>
@@ -93,7 +93,7 @@ export default function ContactPage() {
                             <form className="space-y-6" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                                             {tc('labels.name')}
                                         </label>
                                         <input
@@ -102,11 +102,11 @@ export default function ContactPage() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm font-bold text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                                             {tc('labels.phone')}
                                         </label>
                                         <input
@@ -115,14 +115,14 @@ export default function ContactPage() {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm font-bold text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                                             {tc('labels.email')}
                                         </label>
                                         <input
@@ -131,11 +131,11 @@ export default function ContactPage() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm font-bold text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                                             {tc('labels.address')}
                                         </label>
                                         <input
@@ -144,13 +144,13 @@ export default function ContactPage() {
                                             value={formData.address}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm font-bold text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                                         {tc('labels.message')}
                                     </label>
                                     <textarea
@@ -159,14 +159,14 @@ export default function ContactPage() {
                                         onChange={handleChange}
                                         required
                                         rows={3}
-                                        className="w-full bg-white rounded-lg px-4 py-3 text-sm font-bold text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors resize-none"
+                                        className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors resize-none"
                                     ></textarea>
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="flex w-full items-center justify-center gap-3 bg-brand-primary py-4 rounded-lg text-xs font-black uppercase tracking-widest text-white hover:bg-brand-secondary transition-all disabled:opacity-50"
+                                    className="flex w-full items-center justify-center gap-3 bg-brand-primary py-4 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider text-white hover:bg-brand-secondary transition-all disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
                                         <Loader2 size={16} className="animate-spin" />

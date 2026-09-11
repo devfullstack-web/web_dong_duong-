@@ -43,8 +43,8 @@ export function SitePagination({
                             href="#"
                             onClick={(event) => goToPage(event, currentPage - 1)}
                             className={cn(
-                                'font-bold uppercase tracking-widest',
-                                linkClassName || 'text-[10px]',
+                                'font-bold uppercase tracking-wider',
+                                linkClassName || 'text-xs',
                                 currentPage === 1 && 'opacity-30 pointer-events-none',
                             )}
                         />
@@ -57,7 +57,7 @@ export function SitePagination({
                                     href="#"
                                     onClick={(event) => goToPage(event, page)}
                                     isActive={currentPage === page}
-                                    className="text-[11px] font-black"
+                                    className="text-xs sm:text-sm font-black"
                                 >
                                     {page}
                                 </PaginationLink>
@@ -65,7 +65,7 @@ export function SitePagination({
                         ))
                     ) : (
                         <PaginationItem>
-                            <span className="text-[10px] font-black px-4">
+                            <span className="text-xs sm:text-sm font-black px-4">
                                 {currentPage} / {totalPages}
                             </span>
                         </PaginationItem>
@@ -76,8 +76,8 @@ export function SitePagination({
                             href="#"
                             onClick={(event) => goToPage(event, currentPage + 1)}
                             className={cn(
-                                'font-bold uppercase tracking-widest',
-                                linkClassName || 'text-[10px]',
+                                'font-bold uppercase tracking-wider',
+                                linkClassName || 'text-xs',
                                 currentPage === totalPages && 'opacity-30 pointer-events-none',
                             )}
                         />

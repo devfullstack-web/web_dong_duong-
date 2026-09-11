@@ -12,7 +12,7 @@ export default function SolutionDetailClient({ data }: { data: Record<string, un
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-widest leading-tight">
                         {data.headerTitle}
                     </h1>
-                    <nav className="flex items-center justify-center gap-2 text-[10px] font-bold text-white/50 uppercase tracking-[0.2em]">
+                    <nav className="flex items-center justify-center gap-2 text-xs font-bold text-white/70 uppercase tracking-wider">
                         <Link href="/" className="hover:text-brand-accent transition-colors">
                             Trang chủ
                         </Link>

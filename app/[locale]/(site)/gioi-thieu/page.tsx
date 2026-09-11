@@ -32,7 +32,7 @@ export default function AboutPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
                         <div className="space-y-12">
                             <div className="space-y-4">
-                                <div className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
+                                <div className="text-xs font-black uppercase tracking-wider text-brand-primary">
                                     {t('intro.who')}
                                 </div>
                                 <h2 className="text-4xl font-bold text-brand-secondary uppercase tracking-tight">
@@ -57,7 +57,7 @@ export default function AboutPage() {
                                     <h4 className="text-lg font-black uppercase tracking-tight text-slate-900">
                                         {t('intro.mission.title')}
                                     </h4>
-                                    <p className="text-xs font-medium text-slate-600 leading-relaxed">
+                                    <p className="text-base font-medium text-slate-600 leading-relaxed">
                                         {t('intro.mission.desc')}
                                     </p>
                                 </motion.div>
@@ -69,7 +69,7 @@ export default function AboutPage() {
                                     <h4 className="text-lg font-black uppercase tracking-tight text-white">
                                         {t('intro.vision.title')}
                                     </h4>
-                                    <p className="text-xs font-medium text-slate-300 leading-relaxed">
+                                    <p className="text-base font-medium text-slate-300 leading-relaxed">
                                         {t('intro.vision.desc')}
                                     </p>
                                 </motion.div>
@@ -97,7 +97,7 @@ export default function AboutPage() {
             <section className="py-24 bg-slate-50">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="text-center mb-20 space-y-6">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
+                        <div className="text-xs font-black uppercase tracking-wider text-brand-primary">
                             {t('values.badge')}
                         </div>
                         <h2 className="text-4xl font-bold text-brand-secondary uppercase tracking-tight">
@@ -152,7 +152,7 @@ export default function AboutPage() {
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row items-end justify-between gap-8 mb-20">
                         <div className="space-y-4 text-left">
-                            <div className="text-[10px] font-black uppercase tracking-widest text-brand-primary">
+                            <div className="text-xs font-black uppercase tracking-wider text-brand-primary">
                                 {t('pillars.badge')}
                             </div>
                             <h2 className="text-4xl sm:text-5xl font-bold text-brand-secondary uppercase tracking-tight leading-none">
@@ -223,7 +223,7 @@ export default function AboutPage() {
                 />
                 <div className="container mx-auto px-4 lg:px-8 relative z-10">
                     <div className="max-w-4xl mb-20 space-y-6">
-                        <div className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-accent">
+                        <div className="text-xs font-black uppercase tracking-[0.2em] text-brand-accent">
                             {t('scada.badge')}
                         </div>
                         <h2 className="text-4xl sm:text-6xl font-bold uppercase tracking-tighter leading-none">
@@ -348,12 +348,12 @@ export default function AboutPage() {
                                         <Phone size={18} />
                                     </div>
                                     <div>
-                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('cta.hotline')}
                                         </div>
                                         <a
                                             href={`tel:${COMPANY_INFO.phoneRaw}`}
-                                            className="text-sm font-bold hover:text-brand-accent transition-colors"
+                                            className="text-sm sm:text-base font-bold hover:text-brand-accent transition-colors"
                                         >
                                             {COMPANY_INFO.phone}
                                         </a>
@@ -364,12 +364,12 @@ export default function AboutPage() {
                                         <Mail size={18} />
                                     </div>
                                     <div>
-                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('cta.email')}
                                         </div>
                                         <a
                                             href={`mailto:${COMPANY_INFO.email}`}
-                                            className="text-sm font-bold hover:text-brand-accent transition-colors"
+                                            className="text-sm sm:text-base font-bold hover:text-brand-accent transition-colors"
                                         >
                                             {COMPANY_INFO.email}
                                         </a>

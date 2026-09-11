@@ -98,7 +98,7 @@ export default function NewsDetailClient({
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage className="max-w-[200px] truncate">
+                                    <BreadcrumbPage className="max-w-[200px] truncate text-xs sm:text-sm font-medium">
                                         {article.title}
                                     </BreadcrumbPage>
                                 </BreadcrumbItem>
@@ -107,7 +107,7 @@ export default function NewsDetailClient({
 
                         <button
                             onClick={() => router.back()}
-                            className="hidden md:flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-brand-primary transition-colors"
+                            className="hidden md:flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-500 hover:text-brand-primary transition-colors"
                         >
                             <ArrowLeft size={14} /> {isVi ? 'Quay lại' : 'Back'}
                         </button>
@@ -119,7 +119,7 @@ export default function NewsDetailClient({
             <section className="py-12 sm:py-16">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="space-y-6">
-                        <div className="inline-flex items-center bg-brand-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-brand-primary rounded-none">
+                        <div className="inline-flex items-center bg-brand-primary/10 px-3 py-1.5 text-xs font-black uppercase tracking-wider text-brand-primary rounded-none">
                             {article.category}
                         </div>
 
@@ -133,10 +133,10 @@ export default function NewsDetailClient({
                                     <User size={20} />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                         {isVi ? 'Tác giả' : 'Author'}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-900">
+                                    <div className="text-xs sm:text-sm font-bold text-slate-900">
                                         {article.author}
                                     </div>
                                 </div>
@@ -147,10 +147,10 @@ export default function NewsDetailClient({
                                     <CalendarDays size={20} />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                         {isVi ? 'Ngày đăng' : 'Publish date'}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-900">
+                                    <div className="text-xs sm:text-sm font-bold text-slate-900">
                                         {article.published_at
                                             ? format(new Date(article.published_at), 'dd/MM/yyyy', {
                                                   locale: dateLocale,
@@ -165,10 +165,10 @@ export default function NewsDetailClient({
                                     <Clock size={20} />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                         {isVi ? 'Thời gian đọc' : 'Read time'}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-900">
+                                    <div className="text-xs sm:text-sm font-bold text-slate-900">
                                         {article.readTime}
                                     </div>
                                 </div>
@@ -217,7 +217,7 @@ export default function NewsDetailClient({
                                 {/* Share & Actions */}
                                 <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8">
                                     <div className="flex gap-4 items-center">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {isVi ? 'Chia sẻ:' : 'Share:'}
                                         </span>
                                         <div className="flex gap-2">
@@ -233,10 +233,10 @@ export default function NewsDetailClient({
                                     </div>
 
                                     <div className="flex gap-3">
-                                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-600 bg-slate-50 px-5 py-2.5 hover:bg-slate-200 transition-all rounded-none border border-slate-100">
+                                        <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 bg-slate-50 px-5 py-2.5 hover:bg-slate-200 transition-all rounded-none border border-slate-100">
                                             <Bookmark size={14} /> {isVi ? 'Lưu bài viết' : 'Save article'}
                                         </button>
-                                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-brand-primary px-5 py-2.5 hover:bg-brand-secondary transition-all rounded-none">
+                                        <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white bg-brand-primary px-5 py-2.5 hover:bg-brand-secondary transition-all rounded-none">
                                             {isVi ? 'Liên hệ tư vấn' : 'Contact Support'} <MoveRight size={14} />
                                         </button>
                                     </div>
@@ -248,7 +248,7 @@ export default function NewsDetailClient({
                         <aside className="lg:col-span-4 space-y-12">
                             {/* Recent News */}
                             <div className="space-y-8">
-                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-3">
+                                <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center gap-3">
                                     <span className="w-8 h-[2px] bg-brand-primary"></span> {isVi ? 'Tin mới nhất' : 'Latest News'}
                                 </h3>
                                 <div className="space-y-6">
@@ -260,7 +260,7 @@ export default function NewsDetailClient({
                                                 href={`/tin-tuc/${news.slug}`}
                                                 className="group block space-y-2"
                                             >
-                                                <div className="text-[10px] font-black text-brand-primary/60 uppercase tracking-widest">
+                                                <div className="text-xs font-bold text-brand-primary/80 uppercase tracking-wider">
                                                     {news.published_at
                                                         ? format(
                                                               new Date(news.published_at),
@@ -269,7 +269,7 @@ export default function NewsDetailClient({
                                                           )
                                                         : (isVi ? 'Đang cập nhật' : 'Updating')}
                                                 </div>
-                                                <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors leading-snug tracking-tight">
+                                                <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors leading-snug tracking-tight">
                                                     {newsTitle}
                                                 </h4>
                                                 <div className="h-px w-0 group-hover:w-full bg-slate-100 transition-all duration-500"></div>
@@ -295,7 +295,7 @@ export default function NewsDetailClient({
                         </div>
                         <Link
                             href="/tin-tuc"
-                            className="text-[10px] font-black uppercase tracking-widest text-brand-primary border-b-2 border-brand-primary/20 pb-1 hover:border-brand-primary transition-all"
+                            className="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-primary border-b-2 border-brand-primary/20 pb-1 hover:border-brand-primary transition-all"
                         >
                             {isVi ? 'TẤT CẢ TIN TỨC' : 'ALL NEWS'}
                         </Link>
@@ -324,24 +324,24 @@ export default function NewsDetailClient({
                                                 <CalendarDays size={32} />
                                             </div>
                                         )}
-                                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2 py-1 text-[8px] font-black uppercase tracking-widest text-brand-primary rounded-none">
+                                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-brand-primary rounded-none">
                                             {news.category_name || (isVi ? 'Tin tức' : 'News')}
                                         </div>
                                     </div>
                                     <div className="p-6 flex flex-col grow">
-                                        <div className="text-[9px] font-bold text-slate-400 mb-2 flex items-center gap-2">
-                                            <CalendarDays size={10} />{' '}
+                                        <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-1.5">
+                                            <CalendarDays size={13} />{' '}
                                             {news.published_at
                                                 ? format(new Date(news.published_at), 'dd/MM/yy', {
                                                       locale: dateLocale,
                                                   })
                                                 : (isVi ? 'Đang cập nhật' : 'Updating')}
                                         </div>
-                                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-tight mb-4 grow tracking-tight">
+                                        <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-tight mb-4 grow tracking-tight">
                                             {newsTitle}
                                         </h4>
-                                        <div className="flex items-center text-[9px] font-black uppercase tracking-widest text-brand-primary gap-1 group-hover:gap-2 transition-all">
-                                            {isVi ? 'Xem chi tiết' : 'View details'} <MoveRight size={12} />
+                                        <div className="flex items-center text-xs font-bold uppercase tracking-wider text-brand-primary gap-1 group-hover:gap-2 transition-all">
+                                            {isVi ? 'Xem chi tiết' : 'View details'} <MoveRight size={14} />
                                         </div>
                                     </div>
                                 </Link>

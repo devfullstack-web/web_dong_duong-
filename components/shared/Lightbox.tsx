@@ -112,7 +112,7 @@ export default function Lightbox({
           </motion.div>
 
           {/* Counter */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-black text-white/60 tracking-[0.2em] uppercase">
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-xs font-bold text-white/90 tracking-widest uppercase">
             {currentIndex + 1} / {images.length}
           </div>
         </motion.div>

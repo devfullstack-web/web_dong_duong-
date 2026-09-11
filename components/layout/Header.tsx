@@ -407,7 +407,7 @@ export default function Header() {
                                     <button
                                         onClick={() => switchLocale('vi')}
                                         className={cn(
-                                            'px-3 py-1 text-[11px] font-bold tracking-widest uppercase rounded-full border transition-all duration-300',
+                                            'px-3 py-1 text-xs font-bold tracking-wider uppercase rounded-full border transition-all duration-300',
                                             activeLocale === 'vi'
                                                 ? 'bg-brand-primary text-white border-brand-primary shadow-md shadow-brand-primary/10'
                                                 : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground hover:text-foreground',
@@ -418,7 +418,7 @@ export default function Header() {
                                     <button
                                         onClick={() => switchLocale('en')}
                                         className={cn(
-                                            'px-3 py-1 text-[11px] font-bold tracking-widest uppercase rounded-full border transition-all duration-300',
+                                            'px-3 py-1 text-xs font-bold tracking-wider uppercase rounded-full border transition-all duration-300',
                                             activeLocale === 'en'
                                                 ? 'bg-brand-primary text-white border-brand-primary shadow-md shadow-brand-primary/10'
                                                 : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground hover:text-foreground',
@@ -448,7 +448,7 @@ export default function Header() {
                                                 <button
                                                     onClick={() => toggleExpand(link.label)}
                                                     className={cn(
-                                                        'flex items-center justify-between w-full text-xs sm:text-sm font-bold uppercase tracking-wider text-left transition-colors py-1.5',
+                                                        'flex items-center justify-between w-full text-sm sm:text-base font-bold uppercase tracking-wider text-left transition-colors py-2',
                                                         isSubmenuActive
                                                             ? 'text-brand-primary!'
                                                             : 'text-foreground hover:text-brand-primary!',
@@ -456,7 +456,7 @@ export default function Header() {
                                                 >
                                                     <span>{link.label}</span>
                                                     <ChevronDown
-                                                        size={16}
+                                                        size={18}
                                                         className={cn(
                                                             'text-muted-foreground/75 transition-transform duration-300',
                                                             isExpanded &&
@@ -470,7 +470,7 @@ export default function Header() {
                                                         href={link.href}
                                                         onClick={() => setMobileMenuOpen(false)}
                                                         className={cn(
-                                                            'flex-1 text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors py-1.5',
+                                                            'flex-1 text-sm sm:text-base font-bold uppercase tracking-wider transition-colors py-2',
                                                             pathname === link.href
                                                                 ? 'text-brand-primary!'
                                                                 : 'text-foreground hover:text-brand-primary!',
@@ -485,7 +485,7 @@ export default function Header() {
                                                             aria-label={`Toggle ${link.label} submenu`}
                                                         >
                                                             <ChevronDown
-                                                                size={16}
+                                                                size={18}
                                                                 className={cn(
                                                                     'transition-transform duration-300',
                                                                     isExpanded &&
@@ -524,7 +524,7 @@ export default function Header() {
                                                                     const subLinkContent = (
                                                                         <span
                                                                             className={cn(
-                                                                                'text-xs sm:text-xs font-semibold transition-colors flex items-center gap-1.5 py-0.5',
+                                                                                'text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 py-1',
                                                                                 isSubActive
                                                                                     ? 'text-brand-primary!'
                                                                                     : 'text-muted-foreground hover:text-brand-primary!',
@@ -532,7 +532,7 @@ export default function Header() {
                                                                         >
                                                                             <span
                                                                                 className={cn(
-                                                                                    'h-1 w-1 rounded-full transition-colors',
+                                                                                    'h-1.5 w-1.5 rounded-full transition-colors',
                                                                                     isSubActive
                                                                                         ? 'bg-brand-primary'
                                                                                         : 'bg-brand-primary/40 group-hover:bg-brand-primary',
@@ -592,10 +592,10 @@ export default function Header() {
                                             <Phone size={14} />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                                                 Hotline
                                             </span>
-                                            <span className="font-bold text-xs sm:text-xs tracking-wider text-foreground">
+                                            <span className="font-bold text-sm tracking-wider text-foreground">
                                                 {COMPANY_INFO.hotline}
                                             </span>
                                         </div>
@@ -608,10 +608,10 @@ export default function Header() {
                                             <Mail size={14} />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                                                 Email
                                             </span>
-                                            <span className="font-bold text-xs sm:text-xs tracking-wider text-foreground truncate max-w-[200px]">
+                                            <span className="font-bold text-sm tracking-wider text-foreground truncate max-w-[200px]">
                                                 {COMPANY_INFO.email}
                                             </span>
                                         </div>
@@ -632,7 +632,7 @@ export default function Header() {
                                                 {Icon ? (
                                                     <Icon size={14} />
                                                 ) : (
-                                                    <span className="text-[8px] font-bold uppercase tracking-wider">
+                                                    <span className="text-xs font-bold uppercase tracking-wider">
                                                         Zalo
                                                     </span>
                                                 )}
@@ -659,7 +659,7 @@ const ListItem = React.forwardRef<
                 {title}
             </div>
             {children && (
-                <p className="line-clamp-2 text-[11px] font-medium leading-relaxed text-muted-foreground/80 italic">
+                <p className="line-clamp-2 text-xs font-medium leading-relaxed text-muted-foreground/80 italic">
                     {children}
                 </p>
             )}

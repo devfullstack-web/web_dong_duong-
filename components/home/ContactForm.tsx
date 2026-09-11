@@ -47,7 +47,7 @@ export default function ContactForm() {
                                     {t('title', { defaultValue: 'Liên Hệ' })} <br />
                                     <span className="text-brand-accent">{t('consultationTitle')}</span>
                                 </h2>
-                                <p className="text-[11px] text-white/60 font-medium leading-relaxed max-w-xs">
+                                <p className="text-sm sm:text-base text-white/90 font-normal sm:font-medium leading-relaxed max-w-sm">
                                     {t('consultationDesc')}
                                 </p>
                             </div>
@@ -62,7 +62,7 @@ export default function ContactForm() {
                                         <div className="h-10 w-10 bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
                                             <item.icon size={16} className="text-brand-accent" />
                                         </div>
-                                        <div className="text-[11px] font-bold tracking-wide leading-relaxed pt-1">
+                                        <div className="text-sm sm:text-base font-medium tracking-wide leading-relaxed pt-1">
                                             {item.label}
                                         </div>
                                     </div>
@@ -75,7 +75,7 @@ export default function ContactForm() {
                             <form className="space-y-6" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
                                             {t('labels.name')}
                                         </label>
                                         <input
@@ -84,12 +84,12 @@ export default function ContactForm() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
+                                            className="w-full bg-slate-50 border-none px-4 py-3.5 text-sm sm:text-base font-medium text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
                                             placeholder={t('placeholders.name')}
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
                                             {t('labels.phone')}
                                         </label>
                                         <input
@@ -98,14 +98,14 @@ export default function ContactForm() {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
+                                            className="w-full bg-slate-50 border-none px-4 py-3.5 text-sm sm:text-base font-medium text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
                                             placeholder={t('placeholders.phone')}
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
                                         {t('labels.email')}
                                     </label>
                                     <input
@@ -114,13 +114,13 @@ export default function ContactForm() {
                                         value={formData.email}
                                         onChange={handleChange}
                                         required
-                                        className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
+                                        className="w-full bg-slate-50 border-none px-4 py-3.5 text-sm sm:text-base font-medium text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all"
                                         placeholder={t('placeholders.email')}
                                     />
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
                                         {t('labels.message')}
                                     </label>
                                     <textarea
@@ -129,7 +129,7 @@ export default function ContactForm() {
                                         onChange={handleChange}
                                         required
                                         rows={4}
-                                        className="w-full bg-slate-50 border-none px-4 py-3.5 text-xs font-bold text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all resize-none"
+                                        className="w-full bg-slate-50 border-none px-4 py-3.5 text-sm sm:text-base font-medium text-slate-800 focus:ring-1 focus:ring-brand-primary outline-none transition-all resize-none"
                                         placeholder={t('placeholders.message')}
                                     ></textarea>
                                 </div>
@@ -137,7 +137,7 @@ export default function ContactForm() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="flex w-full items-center justify-center gap-3 bg-brand-primary py-4 text-[11px] font-black uppercase tracking-[0.2em] text-white hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/5 disabled:opacity-50"
+                                    className="flex w-full items-center justify-center gap-3 bg-brand-primary py-4 text-xs sm:text-sm font-black uppercase tracking-[0.15em] text-white hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/5 disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
                                         <>

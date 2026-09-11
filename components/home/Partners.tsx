@@ -23,7 +23,7 @@ export default function Partners() {
             <div className="container mx-auto px-4 lg:px-8">
                 {/* Header */}
                 <div className="text-center mb-14 space-y-3">
-                    <p className="text-[10px] font-black tracking-[0.2em] text-brand-primary uppercase flex items-center justify-center gap-2">
+                    <p className="text-xs font-black tracking-[0.2em] text-brand-primary uppercase flex items-center justify-center gap-2">
                         <span className="w-6 h-px bg-brand-primary inline-block" />
                         {t('title')}
                         <span className="w-6 h-px bg-brand-primary inline-block" />

@@ -56,21 +56,21 @@ export default function SystemHighlight() {
 
                         {/* Content column */}
                         <div className="w-full lg:w-1/2 space-y-6">
-                            <p className="text-[10px] font-black tracking-[0.2em] text-brand-primary uppercase flex items-center gap-2">
+                            <p className="text-xs font-black tracking-[0.2em] text-brand-primary uppercase flex items-center gap-2">
                                 <span className="w-6 h-px bg-brand-primary inline-block" />
                                 {item.tag}
                             </p>
                             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 uppercase tracking-tight">
                                 {item.title}
                             </h2>
-                            <p className="text-sm lg:text-base text-slate-500 font-medium leading-relaxed">
+                            <p className="text-base sm:text-lg text-slate-600 font-normal sm:font-medium leading-relaxed">
                                 {item.desc}
                             </p>
 
                             <div className="pt-2">
                                 <Link
                                     href={item.url}
-                                    className="inline-flex items-center gap-4 px-10 py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 group"
+                                    className="inline-flex items-center gap-4 px-10 py-4 bg-brand-primary text-white text-xs sm:text-sm font-black uppercase tracking-widest hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 group"
                                 >
                                     {item.btnText}{' '}
                                     <ArrowRight
@@ -82,18 +82,18 @@ export default function SystemHighlight() {
 
                             <div className="grid grid-cols-2 gap-6 pt-8 border-t border-slate-100">
                                 <div>
-                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
                                         {t('technologyLabel')}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-800">
+                                    <div className="text-sm sm:text-base font-bold text-slate-800">
                                         SCADA / IoT Cloud
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
                                         {t('applicationLabel')}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-800">
+                                    <div className="text-sm sm:text-base font-bold text-slate-800">
                                         {t('networkManagement')}
                                     </div>
                                 </div>

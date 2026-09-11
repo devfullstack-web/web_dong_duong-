@@ -89,7 +89,7 @@ export default function ProjectDetailClient({
             <section className="py-12 sm:py-16">
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="space-y-6">
-                        <div className="inline-flex items-center bg-brand-primary/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-brand-primary rounded-none">
+                        <div className="inline-flex items-center bg-brand-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-primary rounded-none">
                             {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || 'DỰ ÁN'}
                         </div>
 
@@ -103,10 +103,10 @@ export default function ProjectDetailClient({
                                     <Building size={20} />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                         {t('info.client')}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-900">
+                                    <div className="text-sm font-bold text-slate-900">
                                         {project.client_name || t('unknown')}
                                     </div>
                                 </div>
@@ -117,10 +117,10 @@ export default function ProjectDetailClient({
                                     <MapPin size={20} />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                         {t('info.location')}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-900">
+                                    <div className="text-sm font-bold text-slate-900">
                                         {project.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
                                     </div>
                                 </div>
@@ -131,10 +131,10 @@ export default function ProjectDetailClient({
                                     <Calendar size={20} />
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                         {t('info.time')}
                                     </div>
-                                    <div className="text-xs font-bold text-slate-900">
+                                    <div className="text-sm font-bold text-slate-900">
                                         {project.start_date
                                             ? new Date(project.start_date as string).getFullYear()
                                             : '2024'}
@@ -206,7 +206,7 @@ export default function ProjectDetailClient({
                                 {/* Share & Actions */}
                                 <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8">
                                     <div className="flex gap-4 items-center">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('shareLabel')}
                                         </span>
                                         <div className="flex gap-2">
@@ -222,12 +222,12 @@ export default function ProjectDetailClient({
                                     </div>
 
                                     <div className="flex gap-3">
-                                        <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-600 bg-slate-50 px-5 py-2.5 hover:bg-slate-200 transition-all rounded-none border border-slate-100">
+                                        <button className="flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-600 bg-slate-50 px-5 py-2.5 hover:bg-slate-200 transition-all rounded-none border border-slate-100">
                                             <Bookmark size={14} /> {t('save')}
                                         </button>
                                         <Link
                                             href="/lien-he"
-                                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-brand-primary px-5 py-2.5 hover:bg-brand-secondary transition-all rounded-none"
+                                            className="flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider text-white bg-brand-primary px-5 py-2.5 hover:bg-brand-secondary transition-all rounded-none"
                                         >
                                             {t('contactAdvice')} <MoveRight size={14} />
                                         </Link>
@@ -246,35 +246,35 @@ export default function ProjectDetailClient({
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('info.category')}
                                         </span>
-                                        <span className="text-xs font-bold text-slate-900">
+                                        <span className="text-sm font-bold text-slate-900">
                                             {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || 'Hạ tầng nước'}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('info.client')}
                                         </span>
-                                        <span className="text-xs font-bold text-slate-900">
+                                        <span className="text-sm font-bold text-slate-900">
                                             {project.client_name || t('unknown')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('info.location')}
                                         </span>
-                                        <span className="text-xs font-bold text-slate-900">
+                                        <span className="text-sm font-bold text-slate-900">
                                             {project.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('info.status')}
                                         </span>
                                         <span
-                                            className={`text-xs font-bold ${project.status === PROJECT_STATUS.COMPLETED ? 'text-green-600' : 'text-amber-600'}`}
+                                            className={`text-sm font-bold ${project.status === PROJECT_STATUS.COMPLETED ? 'text-green-600' : 'text-amber-600'}`}
                                         >
                                             {project.status === PROJECT_STATUS.COMPLETED
                                                 ? t('status.completed')
@@ -282,10 +282,10 @@ export default function ProjectDetailClient({
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                                             {t('info.time')}
                                         </span>
-                                        <span className="text-xs font-bold text-slate-900">
+                                        <span className="text-sm font-bold text-slate-900">
                                             {project.start_date
                                                 ? new Date(project.start_date).getFullYear()
                                                 : '2024'}
@@ -299,17 +299,17 @@ export default function ProjectDetailClient({
 
                             {/* CTA */}
                             <div className="bg-brand-primary p-6 text-white space-y-4">
-                                <h3 className="text-sm font-black uppercase tracking-tight">
+                                <h3 className="text-base font-black uppercase tracking-tight">
                                     {t('cta.title')}
                                 </h3>
-                                <p className="text-xs text-white/80 leading-relaxed">
+                                <p className="text-sm text-white/80 leading-relaxed">
                                     {t('cta.desc')}
                                 </p>
                                 <Link
                                     href="/lien-he"
-                                    className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-white text-brand-primary px-4 py-2 hover:bg-slate-100 transition-all"
+                                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider bg-white text-brand-primary px-5 py-2.5 hover:bg-slate-100 transition-all"
                                 >
-                                    {t('cta.btnText')} <ArrowRight size={12} />
+                                    {t('cta.btnText')} <ArrowRight size={14} />
                                 </Link>
                             </div>
                         </aside>
@@ -330,7 +330,7 @@ export default function ProjectDetailClient({
                             </div>
                             <Link
                                 href="/du-an"
-                                className="text-[10px] font-black uppercase tracking-widest text-brand-primary border-b-2 border-brand-primary/20 pb-1 hover:border-brand-primary transition-all"
+                                className="text-xs sm:text-sm font-black uppercase tracking-wider text-brand-primary border-b-2 border-brand-primary/20 pb-1 hover:border-brand-primary transition-all"
                             >
                                 {t('related.viewAll')}
                             </Link>
@@ -359,19 +359,19 @@ export default function ProjectDetailClient({
                                                     <Building size={32} />
                                                 </div>
                                             )}
-                                            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2 py-1 text-[8px] font-black uppercase tracking-widest text-brand-primary rounded-none">
+                                            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-brand-primary rounded-none">
                                                 {getLocalizedValue(proj.category_localized as LocalizedText, locale as Locale) || (proj.category as string) || 'DỰ ÁN'}
                                             </div>
                                         </div>
                                         <div className="p-6 flex flex-col grow">
-                                            <div className="text-[9px] font-bold text-slate-400 mb-2 flex items-center gap-2">
-                                                <MapPin size={10} /> {proj.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
+                                            <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-2">
+                                                <MapPin size={12} /> {proj.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
                                             </div>
-                                            <h4 className="text-sm font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-tight mb-4 grow tracking-tight">
+                                            <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-snug mb-4 grow tracking-tight">
                                                 {projName}
                                             </h4>
-                                            <div className="flex items-center text-[9px] font-black uppercase tracking-widest text-brand-primary gap-1 group-hover:gap-2 transition-all">
-                                                {t('related.detail')} <MoveRight size={12} />
+                                            <div className="flex items-center text-xs font-bold uppercase tracking-wider text-brand-primary gap-1 group-hover:gap-2 transition-all">
+                                                {t('related.detail')} <MoveRight size={14} />
                                             </div>
                                         </div>
                                     </Link>

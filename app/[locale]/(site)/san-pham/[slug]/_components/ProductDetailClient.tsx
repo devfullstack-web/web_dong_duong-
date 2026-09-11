@@ -62,7 +62,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         <thead>
                             <tr className="bg-slate-50">
                                 {headers.map((h, i) => (
-                                    <th key={i} className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">
+                                    <th key={i} className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">
                                         {h}
                                     </th>
                                 ))}
@@ -88,8 +88,8 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-slate-100 border border-slate-100">
                     {entries.map(([label, value], i) => (
                         <div key={i} className="bg-white p-5 flex flex-col space-y-1.5">
-                            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">{label}</span>
-                            <span className="text-xs font-bold text-slate-900 leading-tight">{String(value)}</span>
+                            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{label}</span>
+                            <span className="text-sm font-bold text-slate-900 leading-tight">{String(value)}</span>
                         </div>
                     ))}
                 </div>
@@ -102,11 +102,11 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
             {/* Breadcrumbs */}
             <div className="bg-slate-50 border-y border-slate-100 py-3">
                 <div className="container mx-auto px-4 lg:px-8">
-                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-400">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400">
                         <Link href={SITE_ROUTES.HOME} className="hover:text-brand-primary">{t('breadcrumb.home')}</Link>
-                        <ChevronRight size={12} />
+                        <ChevronRight size={14} />
                         <Link href={SITE_ROUTES.PRODUCTS} className="hover:text-brand-primary">{t('breadcrumb.products')}</Link>
-                        <ChevronRight size={12} />
+                        <ChevronRight size={14} />
                         <span className="text-brand-primary">{getLocalizedValue(product.name_localized, locale) || product.name}</span>
                     </div>
                 </div>
@@ -129,7 +129,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                     unoptimized
                                     className="object-contain p-12 transition-transform duration-700 group-hover:scale-105"
                                 />
-                                <div className="absolute top-0 left-0 bg-brand-primary px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white">
+                                <div className="absolute top-0 left-0 bg-brand-primary px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white">
                                     {t('badge')}
                                 </div>
                                 <div className="absolute bottom-4 right-4 h-10 w-10 bg-white/80 backdrop-blur-md flex items-center justify-center text-slate-900 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -162,10 +162,10 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         {/* Right: Product Info */}
                         <div className="lg:col-span-7 space-y-8">
                             <div className="space-y-4">
-                                <div className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary">
+                                <div className="text-xs font-black uppercase tracking-[0.2em] text-brand-primary">
                                     {getLocalizedValue(product.category_name_localized, locale) || product.category_name}
                                 </div>
-                                <h1 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight uppercase leading-none">
+                                <h1 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight uppercase leading-tight">
                                     {getLocalizedValue(product.name_localized, locale) || product.name}
                                 </h1>
                                 <div className="h-1 w-16 bg-brand-primary"></div>
@@ -175,15 +175,15 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                 <div className="bg-white p-4 flex items-center gap-4">
                                     <Warehouse size={20} className="text-brand-primary shrink-0" />
                                     <div>
-                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('status.label')}</div>
-                                        <div className="text-xs font-bold text-slate-900 uppercase">{product.availability || t('status.default')}</div>
+                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('status.label')}</div>
+                                        <div className="text-sm font-bold text-slate-900 uppercase">{product.availability || t('status.default')}</div>
                                     </div>
                                 </div>
                                 <div className="bg-white p-4 flex items-center gap-4">
                                     <Truck size={20} className="text-brand-primary shrink-0" />
                                     <div>
-                                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-400">{t('delivery.label')}</div>
-                                        <div className="text-xs font-bold text-slate-900 uppercase">{product.delivery_info || t('delivery.default')}</div>
+                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('delivery.label')}</div>
+                                        <div className="text-sm font-bold text-slate-900 uppercase">{product.delivery_info || t('delivery.default')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -193,13 +193,13 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                 const features = getLocalizedArray(product.features_localized, locale);
                                 return features.length > 0 && (
                                     <div className="space-y-4">
-                                        <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">
+                                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
                                             {t('features')}
                                         </h4>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
                                             {features.slice(0, 8).map((item: string, i: number) => (
-                                                <div key={i} className="flex items-center gap-3 text-xs font-bold text-slate-600">
-                                                    <CheckCircle2 size={14} className="text-brand-primary shrink-0" />
+                                                <div key={i} className="flex items-center gap-3 text-sm font-medium text-slate-700">
+                                                    <CheckCircle2 size={16} className="text-brand-primary shrink-0" />
                                                     {item}
                                                 </div>
                                             ))}
@@ -212,7 +212,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                             <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <Link
                                     href={SITE_ROUTES.CONTACT}
-                                    className="flex-1 bg-brand-primary py-4 text-[10px] font-black uppercase tracking-widest text-white text-center hover:bg-brand-secondary transition-all"
+                                    className="flex-1 bg-brand-primary py-4 text-xs sm:text-sm font-black uppercase tracking-wider text-white text-center hover:bg-brand-secondary transition-all"
                                 >
                                     {t('getQuote')}
                                 </Link>
@@ -220,9 +220,9 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                     <a
                                         href={product.catalog_url}
                                         target="_blank"
-                                        className="flex-1 border border-slate-200 py-4 text-[10px] font-black uppercase tracking-widest text-slate-900 text-center hover:border-brand-primary transition-all flex items-center justify-center gap-3"
+                                        className="flex-1 border border-slate-200 py-4 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900 text-center hover:border-brand-primary transition-all flex items-center justify-center gap-3"
                                     >
-                                        {t('downloadCatalog')} <Download size={14} />
+                                        {t('downloadCatalog')} <Download size={16} />
                                     </a>
                                 )}
                             </div>
@@ -239,24 +239,24 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         <button
                             onClick={() => setActiveTab('description')}
                             className={cn(
-                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer",
+                                "flex items-center gap-3 px-10 py-5 text-xs sm:text-sm font-black uppercase tracking-wider transition-all hover:cursor-pointer",
                                 activeTab === 'description' 
                                     ? "bg-brand-primary text-white" 
                                     : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                             )}
                         >
-                            <FileText size={14} /> {t('description')}
+                            <FileText size={16} /> {t('description')}
                         </button>
                         <button
                             onClick={() => setActiveTab('specs')}
                             className={cn(
-                                "flex items-center gap-3 px-10 py-5 text-[10px] font-black uppercase tracking-widest transition-all hover:cursor-pointer",
+                                "flex items-center gap-3 px-10 py-5 text-xs sm:text-sm font-black uppercase tracking-wider transition-all hover:cursor-pointer",
                                 activeTab === 'specs' 
                                     ? "bg-brand-primary text-white" 
                                     : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                             )}
                         >
-                            <Settings2 size={14} /> {t('techSpecs')}
+                            <Settings2 size={16} /> {t('techSpecs')}
                         </button>
                     </div>
 
@@ -270,8 +270,8 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                             prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight
                                             prose-p:text-slate-600 prose-p:leading-relaxed
                                             prose-img:border prose-img:border-slate-100 prose-img:p-2
-                                            prose-table:border prose-table:border-slate-100 prose-th:bg-slate-50 prose-th:text-[10px] prose-th:font-black prose-th:uppercase prose-th:p-3
-                                            prose-td:p-3 prose-td:text-xs prose-td:font-medium
+                                            prose-table:border prose-table:border-slate-100 prose-th:bg-slate-50 prose-th:text-xs prose-th:font-bold prose-th:uppercase prose-th:p-3
+                                            prose-td:p-3 prose-td:text-xs sm:prose-td:text-sm prose-td:font-medium
                                         "
                                         dangerouslySetInnerHTML={{
                                             __html: sanitizeRichText(
@@ -311,7 +311,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                 <div className="container mx-auto px-4 lg:px-8 space-y-8">
                     <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">{t('cta.title')}</h2>
                     <div className="flex justify-center gap-4">
-                        <Link href={SITE_ROUTES.CONTACT} className="px-10 py-4 bg-brand-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-brand-secondary transition-all">
+                        <Link href={SITE_ROUTES.CONTACT} className="px-10 py-4 bg-brand-primary text-white text-xs sm:text-sm font-black uppercase tracking-wider hover:bg-brand-secondary transition-all">
                             {t('cta.submit')}
                         </Link>
                     </div>

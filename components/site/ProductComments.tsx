@@ -152,12 +152,12 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-px w-8 bg-brand-primary"></div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-primary">Hỏi đáp & Thảo luận</span>
+                        <span className="text-xs font-black uppercase tracking-[0.3em] text-brand-primary">Hỏi đáp & Thảo luận</span>
                     </div>
                     <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight leading-none">
                         CHIA SẺ <span className="text-brand-primary">THẮC MẮC</span> CỦA BẠN
                     </h2>
-                    <p className="text-xs text-slate-500 font-medium italic">
+                    <p className="text-sm text-slate-500 font-medium italic">
                         Chúng tôi sẽ phản hồi các câu hỏi kỹ thuật trong thời gian sớm nhất.
                     </p>
                 </div>
@@ -165,7 +165,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 {!showForm && (
                     <button 
                         onClick={() => setShowForm(true)}
-                        className="inline-flex items-center gap-3 px-8 py-3 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-brand-primary transition-all shadow-xl shadow-slate-900/10 group"
+                        className="inline-flex items-center gap-3 px-8 py-3 bg-slate-900 text-white text-xs sm:text-sm font-black uppercase tracking-wider hover:bg-brand-primary transition-all shadow-xl shadow-slate-900/10 group"
                     >
                         <Plus size={14} className="group-hover:rotate-90 transition-transform" /> Đặt câu hỏi
                     </button>
@@ -182,7 +182,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                         <X size={18} />
                     </button>
                     <div className="max-w-3xl">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-6 flex items-center gap-3">
+                        <h3 className="text-sm font-black uppercase tracking-wider text-slate-900 mb-6 flex items-center gap-3">
                             <Send size={14} className="text-brand-primary" /> Thông tin câu hỏi
                         </h3>
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -191,7 +191,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                     placeholder="Họ và tên *"
                                     value={formData.guest_name}
                                     onChange={(e) => setFormData({ ...formData, guest_name: e.target.value })}
-                                    className="bg-white border-slate-200 h-11 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                    className="bg-white border-slate-200 h-11 text-sm font-medium rounded-none focus:ring-brand-primary"
                                     required
                                 />
                                 <Input
@@ -199,7 +199,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                     placeholder="Email liên hệ *"
                                     value={formData.guest_email}
                                     onChange={(e) => setFormData({ ...formData, guest_email: e.target.value })}
-                                    className="bg-white border-slate-200 h-11 text-xs font-bold rounded-none focus:ring-brand-primary"
+                                    className="bg-white border-slate-200 h-11 text-sm font-medium rounded-none focus:ring-brand-primary"
                                     required
                                 />
                             </div>
@@ -207,17 +207,17 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                 placeholder="Nội dung thắc mắc của bạn... *"
                                 value={formData.content}
                                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                className="bg-white border-slate-200 min-h-[100px] text-xs font-bold rounded-none focus:ring-brand-primary resize-none"
+                                className="bg-white border-slate-200 min-h-[100px] text-sm font-medium rounded-none focus:ring-brand-primary resize-none"
                                 required
                             />
                             <div className="flex items-center justify-between gap-4">
-                                <p className="text-[9px] text-slate-400 italic">
+                                <p className="text-xs text-slate-500 italic">
                                     * Câu hỏi của bạn sẽ được kiểm duyệt trước khi hiển thị công khai.
                                 </p>
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="bg-brand-primary hover:bg-brand-secondary text-white px-10 h-11 text-[10px] font-black uppercase tracking-widest transition-all rounded-none"
+                                    className="bg-brand-primary hover:bg-brand-secondary text-white px-10 h-11 text-xs sm:text-sm font-black uppercase tracking-wider transition-all rounded-none"
                                 >
                                     {isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu'}
                                 </Button>
@@ -232,12 +232,12 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-12 opacity-40">
                         <div className="size-8 border-4 border-brand-primary border-t-transparent animate-spin mb-4" />
-                        <p className="text-[9px] font-black uppercase tracking-widest">Đang tải thảo luận...</p>
+                        <p className="text-xs font-black uppercase tracking-wider">Đang tải thảo luận...</p>
                     </div>
                 ) : comments.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 bg-slate-50/50 border border-dashed border-slate-200">
                         <MessageSquare size={32} className="text-slate-200 mb-3" />
-                        <p className="text-slate-400 text-xs font-bold italic">Chưa có thảo luận nào cho sản phẩm này.</p>
+                        <p className="text-slate-400 text-sm font-medium italic">Chưa có thảo luận nào cho sản phẩm này.</p>
                     </div>
                 ) : (
                     <div className="space-y-6">
@@ -249,23 +249,23 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                     </div>
                                     <div className="flex-1 space-y-2">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xs font-black text-slate-900 uppercase tracking-tight">{comment.guest_name}</span>
+                                            <span className="text-sm font-black text-slate-900 uppercase tracking-tight">{comment.guest_name}</span>
                                             {(comment.is_pending || (isAdmin && !comment.is_approved)) && (
-                                                <span className="text-[8px] bg-amber-50 text-amber-600 px-2 py-0.5 font-black uppercase tracking-tighter border border-amber-100">Đang chờ duyệt</span>
+                                                <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 font-bold uppercase tracking-wider border border-amber-100">Đang chờ duyệt</span>
                                             )}
-                                            <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 ml-auto">
-                                                <Clock size={10} /> {format(new Date(comment.created_at), 'dd/MM/yyyy', { locale: vi })}
+                                            <span className="text-xs font-medium text-slate-400 flex items-center gap-1.5 ml-auto">
+                                                <Clock size={12} /> {format(new Date(comment.created_at), 'dd/MM/yyyy', { locale: vi })}
                                             </span>
                                             {isAdmin && (
                                                 <button 
                                                     onClick={() => { setReplyingToId(comment.id); setAdminReply(comment.reply_content || ''); }}
-                                                    className="text-[9px] font-black uppercase text-brand-primary hover:underline flex items-center gap-1.5"
+                                                    className="text-xs font-bold uppercase text-brand-primary hover:underline flex items-center gap-1.5"
                                                 >
                                                     <Reply size={12} /> {comment.reply_content ? 'Sửa' : 'Trả lời'}
                                                 </button>
                                             )}
                                         </div>
-                                        <div className="text-xs font-medium text-slate-600 leading-relaxed max-w-4xl">
+                                        <div className="text-sm sm:text-base font-normal text-slate-700 leading-relaxed max-w-4xl">
                                             {comment.content}
                                         </div>
 
@@ -274,8 +274,8 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                             <div className="mt-4 flex gap-4 pl-6 border-l-2 border-brand-primary/20 bg-slate-50/50 p-4">
                                                 <CheckCircle2 size={14} className="text-brand-primary shrink-0 mt-0.5" />
                                                 <div className="space-y-1">
-                                                    <div className="text-[10px] font-black text-brand-primary uppercase tracking-widest italic">SG - VAL Phản hồi:</div>
-                                                    <div className="text-xs font-medium text-slate-700 leading-relaxed italic">{comment.reply_content}</div>
+                                                    <div className="text-xs font-black text-brand-primary uppercase tracking-wider italic">SG - VAL Phản hồi:</div>
+                                                    <div className="text-sm font-medium text-slate-700 leading-relaxed italic">{comment.reply_content}</div>
                                                 </div>
                                             </div>
                                         )}
@@ -284,17 +284,17 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                         {isAdmin && replyingToId === comment.id && (
                                             <div className="mt-4 p-5 bg-white border border-brand-primary/20 space-y-3">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-[9px] font-black uppercase text-brand-primary tracking-widest">Phản hồi của chuyên gia:</span>
+                                                    <span className="text-xs font-black uppercase text-brand-primary tracking-wider">Phản hồi của chuyên gia:</span>
                                                     <button onClick={() => setReplyingToId(null)}><X size={14} className="text-slate-400 hover:text-rose-500" /></button>
                                                 </div>
                                                 <Textarea 
                                                     value={adminReply} 
                                                     onChange={(e) => setAdminReply(e.target.value)}
                                                     placeholder="Nhập nội dung phản hồi..."
-                                                    className="text-xs font-bold min-h-[80px] border-slate-100 rounded-none focus:ring-brand-primary"
+                                                    className="text-sm font-medium min-h-[80px] border-slate-100 rounded-none focus:ring-brand-primary"
                                                 />
                                                 <div className="flex justify-end gap-2">
-                                                    <Button size="sm" onClick={() => handleAdminReply(comment.id)} disabled={isReplying || !adminReply.trim()} className="bg-brand-primary text-white text-[9px] font-black uppercase tracking-widest rounded-none">
+                                                    <Button size="sm" onClick={() => handleAdminReply(comment.id)} disabled={isReplying || !adminReply.trim()} className="bg-brand-primary text-white text-xs font-black uppercase tracking-wider rounded-none">
                                                         {isReplying ? 'Đang gửi...' : 'Gửi phản hồi'}
                                                     </Button>
                                                 </div>
@@ -308,9 +308,9 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                         {comments.length > 5 && (
                             <button 
                                 onClick={() => setShowAll(!showAll)}
-                                className="w-full py-4 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-brand-primary transition-all flex items-center justify-center gap-2"
+                                className="w-full py-4 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-400 hover:text-brand-primary transition-all flex items-center justify-center gap-2"
                             >
-                                {showAll ? <>Thu gọn <ChevronUp size={12} /></> : <>Xem thêm {comments.length - 5} thảo luận <ChevronDown size={12} /></>}
+                                {showAll ? <>Thu gọn <ChevronUp size={14} /></> : <>Xem thêm {comments.length - 5} thảo luận <ChevronDown size={14} /></>}
                             </button>
                         )}
                     </div>
