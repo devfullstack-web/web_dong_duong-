@@ -90,8 +90,8 @@ async function authenticateRequest(request: NextRequest): Promise<AuthResult> {
             const payload = await decrypt(refreshToken);
             if (payload?.user?.id && payload?.user?.email) {
                 const userPayload = {
-                    id: payload.user.id,
-                    email: payload.user.email,
+                    id: String(payload.user.id),
+                    email: String(payload.user.email),
                 };
                 const newAccessToken = await encrypt({ user: userPayload }, '15m');
                 const newRefreshToken = await encrypt({ user: userPayload }, '7d');

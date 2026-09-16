@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RichTextEditor } from '@/components/portal/rich-text-editor';
+import { LocalizedInput } from '@/components/portal/LocalizedInput';
+import { LocalizedRichTextEditor } from '@/components/portal/LocalizedRichTextEditor';
+import { createEmptyLocalizedText, toLocalizedText, type LocalizedText } from '@/types/i18n';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
@@ -38,11 +41,11 @@ export default function EditJobPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
-        title: '',
+        title_localized: createEmptyLocalizedText(),
         slug: '',
-        description: '',
-        requirements: '',
-        benefits: '',
+        description_localized: createEmptyLocalizedText(),
+        requirements_localized: createEmptyLocalizedText(),
+        benefits_localized: createEmptyLocalizedText(),
         location: '',
         employment_type: EMPLOYMENT_TYPE.FULL_TIME as EmploymentType,
         salary_range: '',
@@ -60,11 +63,11 @@ export default function EditJobPage() {
                 const job = res.data.data;
                 if (job) {
                     setFormData({
-                        title: job.title || '',
+                        title_localized: job.title_localized || toLocalizedText(job.title),
                         slug: job.slug || '',
-                        description: job.description || '',
-                        requirements: job.requirements || '',
-                        benefits: job.benefits || '',
+                        description_localized: job.description_localized || toLocalizedText(job.description),
+                        requirements_localized: job.requirements_localized || toLocalizedText(job.requirements),
+                        benefits_localized: job.benefits_localized || toLocalizedText(job.benefits),
                         location: job.location || '',
                         employment_type: job.employment_type || EMPLOYMENT_TYPE.FULL_TIME,
                         salary_range: job.salary_range || '',
@@ -87,26 +90,40 @@ export default function EditJobPage() {
         }
     }, [jobId]);
 
-    const handleTitleChange = (title: string) => {
-        const slug = generateSlug(title);
+    const handleTitleChange = (title_localized: LocalizedText) => {
+        const slug = generateSlug(title_localized.vi);
         setFormData((prev) => ({
             ...prev,
-            title,
-            slug: prev.slug === '' || prev.slug === generateSlug(prev.title) ? slug : prev.slug,
+            title_localized,
+            slug: prev.slug === '' || prev.slug === generateSlug(prev.title_localized.vi) ? slug : prev.slug,
         }));
     };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!formData.title || !formData.slug || !formData.description) {
-            toast.error('Vui lòng điền đầy đủ thông tin bắt buộc');
+        if (!formData.title_localized.vi || !formData.slug || !formData.description_localized.vi) {
+            toast.error('Vui lòng điền đầy đủ thông tin bắt buộc (Tiêu đề, Đường dẫn, Mô tả)');
             return;
         }
 
         setIsSubmitting(true);
         try {
             const submissionData = {
-                ...formData,
+                title: formData.title_localized.vi,
+                title_localized: formData.title_localized,
+                slug: formData.slug,
+                description: formData.description_localized.vi,
+                description_localized: formData.description_localized,
+                requirements: formData.requirements_localized.vi,
+                requirements_localized: formData.requirements_localized,
+                benefits: formData.benefits_localized.vi,
+                benefits_localized: formData.benefits_localized,
+                location: formData.location,
+                employment_type: formData.employment_type,
+                salary_range: formData.salary_range,
+                experience_level: formData.experience_level,
+                department: formData.department,
+                status: formData.status,
                 deadline: formData.deadline ? formData.deadline.toISOString() : null,
             };
             await $api.patch(`${API_ROUTES.JOBS}/${jobId}`, submissionData);
@@ -116,8 +133,8 @@ export default function EditJobPage() {
             router.push(PORTAL_ROUTES.cms.jobs.list);
         } catch (error: unknown) {
             console.error(error);
-            const message =
-                error.response?.data?.error || error.message || 'Lỗi khi cập nhật tin tuyển dụng';
+            const err = error as { response?: { data?: { error?: string } }; message?: string };
+            const message = err.response?.data?.error || err.message || 'Lỗi khi cập nhật tin tuyển dụng';
             toast.error(message);
         } finally {
             setIsSubmitting(false);
@@ -175,21 +192,18 @@ export default function EditJobPage() {
                             Thông tin cơ bản
                         </h3>
                         <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label
-                                    htmlFor="title"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Tiêu đề *
-                                </Label>
-                                <Input
-                                    id="title"
-                                    placeholder="VD: Kỹ sư Tự động hóa"
-                                    className="h-11 bg-slate-50 border-none text-sm font-bold rounded-none"
-                                    value={formData.title}
-                                    onChange={(e) => handleTitleChange(e.target.value)}
-                                />
-                            </div>
+                            <LocalizedInput
+                                id="title"
+                                label="Tiêu đề tin tuyển dụng"
+                                value={formData.title_localized}
+                                onChange={handleTitleChange}
+                                required
+                                placeholder={{
+                                    vi: 'VD: Kỹ sư Tự động hóa...',
+                                    en: 'E.g.: Automation Engineer...',
+                                    zh: '例如: 自动化工程师...',
+                                }}
+                            />
                             <div className="space-y-2">
                                 <Label
                                     htmlFor="slug"
@@ -207,46 +221,34 @@ export default function EditJobPage() {
                                     }
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <Label
-                                    htmlFor="description"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Mô tả công việc *
-                                </Label>
-                                <RichTextEditor
-                                    content={formData.description}
-                                    onChange={(val) =>
-                                        setFormData({ ...formData, description: val })
-                                    }
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label
-                                    htmlFor="requirements"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Yêu cầu ứng viên
-                                </Label>
-                                <RichTextEditor
-                                    content={formData.requirements}
-                                    onChange={(val) =>
-                                        setFormData({ ...formData, requirements: val })
-                                    }
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label
-                                    htmlFor="benefits"
-                                    className="text-[10px] font-black uppercase tracking-widest text-slate-500"
-                                >
-                                    Quyền lợi
-                                </Label>
-                                <RichTextEditor
-                                    content={formData.benefits}
-                                    onChange={(val) => setFormData({ ...formData, benefits: val })}
-                                />
-                            </div>
+                            <LocalizedRichTextEditor
+                                id="description"
+                                label="Mô tả công việc"
+                                value={formData.description_localized}
+                                onChange={(val) =>
+                                    setFormData({ ...formData, description_localized: val })
+                                }
+                                required
+                                placeholder="Mô tả chi tiết công việc..."
+                            />
+                            <LocalizedRichTextEditor
+                                id="requirements"
+                                label="Yêu cầu ứng viên"
+                                value={formData.requirements_localized}
+                                onChange={(val) =>
+                                    setFormData({ ...formData, requirements_localized: val })
+                                }
+                                placeholder="Yêu cầu năng lực, kinh nghiệm..."
+                            />
+                            <LocalizedRichTextEditor
+                                id="benefits"
+                                label="Quyền lợi & Đãi ngộ"
+                                value={formData.benefits_localized}
+                                onChange={(val) =>
+                                    setFormData({ ...formData, benefits_localized: val })
+                                }
+                                placeholder="Chế độ bảo hiểm, thưởng, đào tạo..."
+                            />
                         </div>
                     </div>
                 </div>

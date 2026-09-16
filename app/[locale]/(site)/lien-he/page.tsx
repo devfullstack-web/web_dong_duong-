@@ -3,10 +3,11 @@
 import { Phone, Mail, MapPin, Send, Facebook, Linkedin, Youtube, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { PageBanner } from '@/components/site/PageBanner';
-import { COMPANY_INFO } from '@/constants/site-info';
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 import { useContactForm } from '@/hooks/use-contact-form';
 
 export default function ContactPage() {
+    const COMPANY_INFO = useSiteInfo();
     const t = useTranslations('Contact');
     const tc = useTranslations('ContactForm');
     const { formData, isSubmitting, handleChange, handleSubmit } = useContactForm({
@@ -27,12 +28,12 @@ export default function ContactPage() {
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Info Column */}
-                        <div className="space-y-12">
+                        <div className="space-y-10">
                             <div className="space-y-4">
-                                <h2 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">
+                                <h2 className="text-3xl sm:text-4xl font-black text-slate-900 uppercase tracking-tight">
                                     {t('infoTitle')}
                                 </h2>
-                                <p className="text-slate-600 font-medium max-w-sm text-sm sm:text-base leading-relaxed">
+                                <p className="text-slate-700 font-medium max-w-md text-base sm:text-lg leading-relaxed">
                                     {t('infoDesc')}
                                 </p>
                             </div>
@@ -43,11 +44,13 @@ export default function ContactPage() {
                                         icon: Phone,
                                         label: t('labels.sales'),
                                         value: COMPANY_INFO.hotline,
+                                        isPhone: true,
                                     },
                                     {
                                         icon: Mail,
                                         label: t('labels.office'),
                                         value: COMPANY_INFO.email,
+                                        isEmail: true,
                                     },
                                     {
                                         icon: MapPin,
@@ -57,19 +60,29 @@ export default function ContactPage() {
                                 ].map((item, i) => (
                                     <div key={i} className="space-y-2">
                                         <div className="flex items-center gap-3">
-                                            <item.icon size={18} className="text-brand-primary" />
-                                            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                            <item.icon size={20} className="text-[#C29236]" />
+                                            <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-500">
                                                 {item.label}
                                             </span>
                                         </div>
-                                        <div className="text-sm sm:text-base font-bold text-slate-900 leading-relaxed">
-                                            {item.value}
+                                        <div className="text-base sm:text-lg font-bold text-slate-900 leading-relaxed">
+                                            {item.isPhone ? (
+                                                <a href={`tel:${COMPANY_INFO.hotlineRaw}`} className="text-xl sm:text-2xl font-black text-[#0A2958] hover:text-amber-600 transition-colors">
+                                                    {item.value}
+                                                </a>
+                                            ) : item.isEmail ? (
+                                                <a href={`mailto:${item.value}`} className="hover:text-amber-600 transition-colors">
+                                                    {item.value}
+                                                </a>
+                                            ) : (
+                                                <span>{item.value}</span>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="flex gap-4 pt-6">
+                            <div className="flex gap-4 pt-4">
                                 {[
                                     { Icon: Facebook, href: COMPANY_INFO.social.facebook },
                                     { Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
@@ -80,20 +93,20 @@ export default function ContactPage() {
                                         href={href}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="h-10 w-10 flex items-center justify-center rounded-full border border-slate-100 text-slate-400 hover:bg-brand-primary hover:text-white transition-all"
+                                        className="h-12 w-12 flex items-center justify-center rounded-full border border-slate-200 text-slate-600 hover:bg-[#0A2958] hover:text-[#E5B869] transition-all"
                                     >
-                                        <Icon size={16} />
+                                        <Icon size={20} />
                                     </a>
                                 ))}
                             </div>
                         </div>
 
                         {/* Form Column */}
-                        <div className="bg-slate-50 p-8 sm:p-12 rounded-2xl">
+                        <div className="bg-slate-50 p-8 sm:p-12 rounded-2xl border border-slate-200/80">
                             <form className="space-y-6" onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
+                                        <label className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-700">
                                             {tc('labels.name')}
                                         </label>
                                         <input
@@ -102,11 +115,11 @@ export default function ContactPage() {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-xl px-4 py-3.5 text-base sm:text-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400 transition-colors"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
+                                        <label className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-700">
                                             {tc('labels.phone')}
                                         </label>
                                         <input
@@ -115,14 +128,14 @@ export default function ContactPage() {
                                             value={formData.phone}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-xl px-4 py-3.5 text-base sm:text-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400 transition-colors"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
+                                        <label className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-700">
                                             {tc('labels.email')}
                                         </label>
                                         <input
@@ -131,11 +144,11 @@ export default function ContactPage() {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-xl px-4 py-3.5 text-base sm:text-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400 transition-colors"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
+                                        <label className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-700">
                                             {tc('labels.address')}
                                         </label>
                                         <input
@@ -144,13 +157,13 @@ export default function ContactPage() {
                                             value={formData.address}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors"
+                                            className="w-full bg-white rounded-xl px-4 py-3.5 text-base sm:text-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400 transition-colors"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
+                                    <label className="text-sm sm:text-base font-bold uppercase tracking-wider text-slate-700">
                                         {tc('labels.message')}
                                     </label>
                                     <textarea
@@ -159,20 +172,20 @@ export default function ContactPage() {
                                         onChange={handleChange}
                                         required
                                         rows={3}
-                                        className="w-full bg-white rounded-lg px-4 py-3 text-sm sm:text-base font-medium text-slate-900 border border-slate-200 focus:outline-none focus:border-brand-primary transition-colors resize-none"
+                                        className="w-full bg-white rounded-xl px-4 py-3.5 text-base sm:text-lg font-medium text-slate-900 border border-slate-300 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-400 transition-colors resize-none"
                                     ></textarea>
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="flex w-full items-center justify-center gap-3 bg-brand-primary py-4 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wider text-white hover:bg-brand-secondary transition-all disabled:opacity-50"
+                                    className="flex w-full items-center justify-center gap-3 bg-[#0A2958] hover:bg-[#123B7A] py-4 rounded-xl text-base sm:text-lg font-black uppercase tracking-wider text-white transition-all shadow-md active:scale-[0.99] disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
-                                        <Loader2 size={16} className="animate-spin" />
+                                        <Loader2 size={20} className="animate-spin" />
                                     ) : (
                                         <>
-                                            {t('submit')} <Send size={16} />
+                                            {t('submit')} <Send size={20} />
                                         </>
                                     )}
                                 </button>

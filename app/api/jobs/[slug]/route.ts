@@ -55,10 +55,14 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     const updates: Record<string, unknown> = {};
     const allowedFields = [
       'title',
+      'title_localized',
       'slug',
       'description',
+      'description_localized',
       'requirements',
+      'requirements_localized',
       'benefits',
+      'benefits_localized',
       'location',
       'employment_type',
       'salary_range',
@@ -71,9 +75,40 @@ export const PATCH = withAuth(async (request, session, { params }) => {
       if (body[field] !== undefined) updates[field] = body[field];
     }
     updates.updated_at = new Date();
-    if (updates.description !== undefined) updates.description = sanitizeRichText(updates.description);
-    if (updates.requirements !== undefined) updates.requirements = sanitizeRichText(updates.requirements);
-    if (updates.benefits !== undefined) updates.benefits = sanitizeRichText(updates.benefits);
+    if (updates.description !== undefined) updates.description = sanitizeRichText(updates.description as string);
+    if (updates.requirements !== undefined) updates.requirements = sanitizeRichText(updates.requirements as string);
+    if (updates.benefits !== undefined) updates.benefits = sanitizeRichText(updates.benefits as string);
+    if (updates.title_localized && typeof updates.title_localized === 'object') {
+      const loc = updates.title_localized as { vi?: string };
+      if (loc.vi) updates.title = loc.vi;
+    }
+    if (updates.description_localized && typeof updates.description_localized === 'object') {
+      const loc = updates.description_localized as { vi?: string; en?: string; zh?: string };
+      if (loc.vi) updates.description = sanitizeRichText(loc.vi);
+      updates.description_localized = {
+        vi: sanitizeRichText(loc.vi || ''),
+        en: sanitizeRichText(loc.en || ''),
+        zh: sanitizeRichText(loc.zh || ''),
+      };
+    }
+    if (updates.requirements_localized && typeof updates.requirements_localized === 'object') {
+      const loc = updates.requirements_localized as { vi?: string; en?: string; zh?: string };
+      if (loc.vi) updates.requirements = sanitizeRichText(loc.vi);
+      updates.requirements_localized = {
+        vi: sanitizeRichText(loc.vi || ''),
+        en: sanitizeRichText(loc.en || ''),
+        zh: sanitizeRichText(loc.zh || ''),
+      };
+    }
+    if (updates.benefits_localized && typeof updates.benefits_localized === 'object') {
+      const loc = updates.benefits_localized as { vi?: string; en?: string; zh?: string };
+      if (loc.vi) updates.benefits = sanitizeRichText(loc.vi);
+      updates.benefits_localized = {
+        vi: sanitizeRichText(loc.vi || ''),
+        en: sanitizeRichText(loc.en || ''),
+        zh: sanitizeRichText(loc.zh || ''),
+      };
+    }
     if (updates.status !== undefined && !isConstantValue(JOB_STATUS_VALUES, updates.status)) {
       return apiError("Invalid status", 400);
     }
@@ -102,6 +137,8 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     return apiError("Internal Server Error", 500);
   }
 }, { requiredPermissions: [PERMISSIONS.RECRUITMENT_UPDATE] });
+
+export const PUT = PATCH;
 
 // DELETE /api/jobs/[slug] - Delete a job posting
 export const DELETE = withAuth(async (request, session, { params }) => {

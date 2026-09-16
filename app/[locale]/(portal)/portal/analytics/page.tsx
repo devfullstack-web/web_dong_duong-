@@ -104,7 +104,7 @@ export default function AnalyticsPage() {
                         Phân tích & Thống kê
                     </h1>
                     <p className="text-slate-500 font-medium italic text-xs max-w-2xl leading-relaxed">
-                        Hệ thống phân tích dữ liệu chuyên sâu cho Sài Gòn Valve CMS. Theo dõi hiệu
+                        Hệ thống phân tích dữ liệu chuyên sâu cho Đông Dương Corporation CMS. Theo dõi hiệu
                         suất nội dung, phân bổ sản phẩm và xu hướng hoạt động trong thời gian thực.
                     </p>
                 </div>
@@ -263,7 +263,7 @@ export default function AnalyticsPage() {
                             Ghi chú phân tích
                         </div>
                         <p className="text-[10px] font-medium italic text-slate-500 leading-relaxed uppercase tracking-tight">
-                            Dữ liệu được tổng hợp từ SQL Engine của Sài Gòn Valve. Các biểu đồ đang
+                            Dữ liệu được tổng hợp từ SQL Engine của Đông Dương Corporation. Các biểu đồ đang
                             hiển thị hiệu năng đỉnh của hệ thống trong chu kỳ 30 ngày gần nhất.
                         </p>
                     </div>

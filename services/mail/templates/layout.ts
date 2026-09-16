@@ -6,7 +6,7 @@ export const getBaseLayout = (content: string) => `
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sài Gòn Valve</title>
+  <title>Đông Dương Corporation</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: ${MAIL_BRAND.background}; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
@@ -17,9 +17,9 @@ export const getBaseLayout = (content: string) => `
           <tr>
             <td align="center" style="padding: 40px 40px 30px; background-color: ${MAIL_BRAND.secondary}; border-bottom: 4px solid ${MAIL_BRAND.accent};">
               <a href="${MAIL_ASSETS.website}" target="_blank">
-                <img src="${MAIL_ASSETS.logo}" alt="Sài Gòn Valve" width="70" style="display: block; margin-bottom: 15px;">
+                <img src="${MAIL_ASSETS.logo}" alt="Đông Dương Corporation" width="70" style="display: block; margin-bottom: 15px;">
               </a>
-              <h1 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Sài Gòn Valve</h1>
+              <h1 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase;">Đông Dương Corporation</h1>
             </td>
           </tr>
           

@@ -83,10 +83,11 @@ export default function AddProductPage() {
         delivery_info: 'Toàn quốc',
         catalog_url: '',
         tech_summary_localized: createEmptyLocalizedText(),
-        features_localized: { vi: [''], en: [''] } as LocalizedFeatures,
+        features_localized: { vi: [''], en: [''], zh: [''] } as LocalizedFeatures,
         tech_specs_localized: {
             vi: [{ key: '', value: '' }],
             en: [{ key: '', value: '' }],
+            zh: [{ key: '', value: '' }],
         } as LocalizedTechSpecs,
         gallery: [] as string[],
     });
@@ -139,6 +140,7 @@ export default function AddProductPage() {
             const featuresLocalized = {
                 vi: formData.features_localized.vi.filter((f) => f.trim() !== ''),
                 en: formData.features_localized.en.filter((f) => f.trim() !== ''),
+                zh: (formData.features_localized.zh || []).filter((f) => f.trim() !== ''),
             };
 
             // Filter empty tech specs
@@ -147,6 +149,9 @@ export default function AddProductPage() {
                     (s) => s.key.trim() !== '' || s.value.trim() !== '',
                 ),
                 en: formData.tech_specs_localized.en.filter(
+                    (s) => s.key.trim() !== '' || s.value.trim() !== '',
+                ),
+                zh: (formData.tech_specs_localized.zh || []).filter(
                     (s) => s.key.trim() !== '' || s.value.trim() !== '',
                 ),
             };
@@ -254,6 +259,7 @@ export default function AddProductPage() {
                                 placeholder={{
                                     vi: 'Nhập tên sản phẩm...',
                                     en: 'Enter product name...',
+                                    zh: '输入产品名称...',
                                 }}
                             />
                         </div>
@@ -343,6 +349,7 @@ export default function AddProductPage() {
                             placeholder={{
                                 vi: 'Ví dụ: Cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi...',
                                 en: 'E.g.: Full CO/CQ certification and on-site technical support...',
+                                zh: '例如: 提供完整CO/CQ证书并支持现场技术指导...',
                             }}
                             rows={3}
                         />

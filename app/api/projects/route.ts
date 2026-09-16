@@ -55,6 +55,7 @@ export const GET = withHybridAuth(
                         ilike(projects.client_name, `%${search}%`),
                         ilike(sql<string>`(${projects.name_localized}->>'vi')`, `%${search}%`),
                         ilike(sql<string>`(${projects.name_localized}->>'en')`, `%${search}%`),
+                        ilike(sql<string>`(${projects.name_localized}->>'zh')`, `%${search}%`),
                     ),
                 );
             }
@@ -147,10 +148,16 @@ export const POST = withAuth(
                 .insert(projects)
                 .values({
                     name,
-                    name_localized: name_localized || { vi: name, en: '' },
+                    name_localized: name_localized || { vi: name, en: '', zh: '' },
                     slug,
                     description: sanitizeRichText(description),
-                    description_localized: description_localized || { vi: sanitizeRichText(description), en: '' },
+                    description_localized: description_localized
+                        ? {
+                            vi: sanitizeRichText(description_localized.vi || ''),
+                            en: sanitizeRichText(description_localized.en || ''),
+                            zh: sanitizeRichText(description_localized.zh || ''),
+                        }
+                        : { vi: sanitizeRichText(description), en: '', zh: '' },
                     client_name: client_name || null,
                     start_date: start_date ? new Date(start_date) : null,
                     end_date: end_date ? new Date(end_date) : null,

@@ -13,7 +13,7 @@ export const getApplicationConfirmationTemplate = (name: string, jobTitle: strin
       </p>
       
       <p style="margin-bottom: 20px;">
-        Cảm ơn bạn đã quan tâm và nộp hồ sơ ứng tuyển vào vị trí <span style="color: ${MAIL_BRAND.primary}; font-weight: 700; text-transform: uppercase;">${jobTitle}</span> tại <strong>Sài Gòn Valve</strong>.
+        Cảm ơn bạn đã quan tâm và nộp hồ sơ ứng tuyển vào vị trí <span style="color: ${MAIL_BRAND.primary}; font-weight: 700; text-transform: uppercase;">${jobTitle}</span> tại <strong>Đông Dương Corporation</strong>.
       </p>
       
       <div style="background-color: ${MAIL_BRAND.background}; border-left: 4px solid ${MAIL_BRAND.primary}; padding: 20px; margin-bottom: 25px;">
@@ -33,7 +33,7 @@ export const getApplicationConfirmationTemplate = (name: string, jobTitle: strin
       
       <p style="margin-bottom: 5px;">Trân trọng,</p>
       <p style="margin: 0; font-weight: 900; color: ${MAIL_BRAND.secondary}; text-transform: uppercase; letter-spacing: 1px;">
-        Ban Tuyển dụng Sài Gòn Valve
+        Ban Tuyển dụng Đông Dương Corporation
       </p>
     </div>
   `;

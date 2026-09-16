@@ -173,7 +173,7 @@ export default function AddProjectPage() {
                             value={formData.name_localized}
                             onChange={handleNameLocalizedChange}
                             required
-                            placeholder={{ vi: 'Nhập tên dự án...', en: 'Enter project name...' }}
+                            placeholder={{ vi: 'Nhập tên dự án...', en: 'Enter project name...', zh: '输入项目名称...' }}
                         />
 
                         <div className="space-y-3">

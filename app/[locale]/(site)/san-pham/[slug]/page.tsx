@@ -67,6 +67,7 @@ const getProduct = cache(async (slug: string) => {
                         ...product.features_localized,
                         vi: sanitizeStringArray(product.features_localized.vi),
                         en: sanitizeStringArray(product.features_localized.en),
+                        zh: sanitizeStringArray(product.features_localized.zh),
                     }
                   : product.features_localized,
           }
@@ -74,27 +75,31 @@ const getProduct = cache(async (slug: string) => {
 });
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { slug } = await params;
+    const { slug, locale } = await params;
     const product = await getProduct(slug);
 
     if (!product) {
-        return { title: 'Không tìm thấy sản phẩm' };
+        return {
+            title: locale === 'zh' ? '未找到产品' : locale === 'en' ? 'Product Not Found' : 'Không tìm thấy sản phẩm',
+        };
     }
 
-    const description = stripHtml(product.description);
+    const activeName = (locale === 'zh' ? (product.name_localized as any)?.zh : locale === 'en' ? (product.name_localized as any)?.en : null) || product.name;
+    const rawDesc = (locale === 'zh' ? (product.description_localized as any)?.zh : locale === 'en' ? (product.description_localized as any)?.en : null) || product.description;
+    const description = stripHtml(rawDesc);
 
     return {
-        title: product.name,
+        title: activeName,
         description,
         openGraph: {
-            title: `${product.name} | ${COMPANY_INFO.name}`,
+            title: `${activeName} | ${COMPANY_INFO.name}`,
             description,
             images: product.image_url ? [{ url: product.image_url }] : undefined,
             type: 'website',
         },
         twitter: {
             card: 'summary_large_image',
-            title: product.name,
+            title: activeName,
             description,
             images: product.image_url ? [product.image_url] : undefined,
         },

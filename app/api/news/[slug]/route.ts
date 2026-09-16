@@ -117,6 +117,26 @@ export const PATCH = withAuth(async (request, session, { params }) => {
       updates.content = sanitizeRichText(updates.content);
     }
 
+    if (updates.title_localized && typeof updates.title_localized === 'object') {
+      const loc = updates.title_localized as { vi?: string };
+      if (loc.vi) updates.title = loc.vi;
+    }
+
+    if (updates.summary_localized && typeof updates.summary_localized === 'object') {
+      const loc = updates.summary_localized as { vi?: string };
+      if (loc.vi) updates.summary = sanitizePlainText(loc.vi, 1000);
+    }
+
+    if (updates.content_localized && typeof updates.content_localized === 'object') {
+      const loc = updates.content_localized as { vi?: string; en?: string; zh?: string };
+      if (loc.vi) updates.content = sanitizeRichText(loc.vi);
+      updates.content_localized = {
+        vi: sanitizeRichText(loc.vi || ''),
+        en: sanitizeRichText(loc.en || ''),
+        zh: sanitizeRichText(loc.zh || ''),
+      };
+    }
+
     if (
       updates.status !== undefined &&
       !isConstantValue(NEWS_STATUS_VALUES, updates.status)
@@ -154,6 +174,8 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     return apiError("Internal Server Error", 500);
   }
 }, { requiredPermissions: [PERMISSIONS.BLOG_UPDATE] });
+
+export const PUT = PATCH;
 
 // DELETE /api/news/[slug] - Delete an article by ID or slug
 export const DELETE = withAuth(async (request, session, { params }) => {

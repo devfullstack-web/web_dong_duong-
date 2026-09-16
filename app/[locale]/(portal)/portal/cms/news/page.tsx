@@ -38,7 +38,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
-import { vi, enUS } from 'date-fns/locale';
+import { vi, enUS, zhCN } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { usePermissions } from '@/hooks/use-permissions';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -192,7 +192,9 @@ export default function NewsManagementPage() {
     const formatDate = React.useCallback((dateStr?: string) => {
         if (!dateStr) return t('notPublished');
         try {
-            return format(new Date(dateStr), 'dd/MM/yyyy', { locale: localeStr === 'vi' ? vi : enUS });
+            return format(new Date(dateStr), 'dd/MM/yyyy', {
+                locale: localeStr === 'vi' ? vi : localeStr === 'zh' ? zhCN : enUS,
+            });
         } catch {
             return dateStr;
         }

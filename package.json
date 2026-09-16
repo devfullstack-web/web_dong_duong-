@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev --turbopack",
-        "build": "next build --turbopack",
+        "build": "next build",
         "start": "node .next/standalone/server.js",
         "lint": "eslint",
         "db:push": "drizzle-kit push",
@@ -84,6 +84,7 @@
         "zustand": "^5.0.10"
     },
     "devDependencies": {
+        "@eslint/eslintrc": "^3.3.7",
         "@tailwindcss/postcss": "^4",
         "@types/bcryptjs": "^3.0.0",
         "@types/js-cookie": "^3.0.6",

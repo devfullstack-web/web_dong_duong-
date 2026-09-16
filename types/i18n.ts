@@ -1,12 +1,13 @@
 // Supported locales
-export type Locale = 'vi' | 'en';
+export type Locale = 'vi' | 'en' | 'zh';
 export const DEFAULT_LOCALE: Locale = 'vi';
-export const SUPPORTED_LOCALES: Locale[] = ['vi', 'en'];
+export const SUPPORTED_LOCALES: Locale[] = ['vi', 'en', 'zh'];
 
 // Generic multilingual text type
 export type LocalizedText = {
     vi: string;
     en: string;
+    zh?: string;
 };
 
 // Partial localized text (for forms where not all languages are required)
@@ -16,6 +17,7 @@ export type PartialLocalizedText = Partial<LocalizedText>;
 export type LocalizedArray = {
     vi: string[];
     en: string[];
+    zh?: string[];
 };
 
 /**
@@ -46,14 +48,14 @@ export function getLocalizedArray(
  * Create empty localized text
  */
 export function createEmptyLocalizedText(): LocalizedText {
-    return { vi: '', en: '' };
+    return { vi: '', en: '', zh: '' };
 }
 
 /**
  * Create empty localized array
  */
 export function createEmptyLocalizedArray(): LocalizedArray {
-    return { vi: [], en: [] };
+    return { vi: [], en: [], zh: [] };
 }
 
 /**
@@ -75,6 +77,11 @@ export function toLocalizedText(
     value: string | LocalizedText | null | undefined
 ): LocalizedText {
     if (!value) return createEmptyLocalizedText();
-    if (typeof value === 'string') return { vi: value, en: '' };
-    return value;
+    if (typeof value === 'string') return { vi: value, en: '', zh: '' };
+    return {
+        vi: value.vi || '',
+        en: value.en || '',
+        zh: value.zh || '',
+    };
 }
+

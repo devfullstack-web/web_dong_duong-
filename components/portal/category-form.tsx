@@ -118,6 +118,12 @@ export function CategoryForm({
     [CATEGORY_TYPE.PRODUCT]: "product",
   };
 
+  const typeLabelsZh = {
+    [CATEGORY_TYPE.NEWS]: "新闻资讯",
+    [CATEGORY_TYPE.PROJECT]: "工程项目",
+    [CATEGORY_TYPE.PRODUCT]: "产品分类",
+  };
+
   return (
     <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-10">
       <div className="lg:col-span-2 space-y-6">
@@ -138,6 +144,7 @@ export function CategoryForm({
               placeholder={{
                 vi: `VD: Danh mục ${typeLabels[type]} mẫu`,
                 en: `E.g.: Sample ${typeLabelsEn[type]} category`,
+                zh: `例: ${typeLabelsZh[type]}示例`,
               }}
             />
 
@@ -210,7 +217,7 @@ export function CategoryForm({
             <span className="text-[10px] font-black uppercase tracking-widest">Sẵn sàng để lưu</span>
           </div>
           <p className="text-[10px] text-slate-500 leading-relaxed italic">
-            Nhập tên danh mục cho cả tiếng Việt và tiếng Anh để hỗ trợ đa ngôn ngữ.
+            Nhập tên danh mục cho cả 3 ngôn ngữ (Tiếng Việt, Tiếng Anh, Tiếng Trung) để chuẩn hóa dữ liệu.
           </p>
           <div className="pt-2">
             <Button type="submit" className="w-full bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest h-10 transition-all rounded-none">

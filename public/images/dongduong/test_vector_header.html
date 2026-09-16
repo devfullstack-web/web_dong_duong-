@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { margin: 0; background: #3270B8; font-family: sans-serif; }
+</style>
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="relative bg-[#0A2958] text-white py-3 px-8 flex items-center justify-between">
+    <div class="flex items-center gap-4 relative">
+      <!-- Emblem Container with Hanging Chevron -->
+      <div class="relative flex items-center justify-center">
+        <!-- Pure 3D Gold Emblem (hangs slightly below navbar) -->
+        <div class="relative z-20 w-16 h-16 translate-y-3 drop-shadow-md">
+          <img src="/images/dongduong/new_emblem_clean.png" class="w-full h-full object-contain" />
+        </div>
+
+        <!-- Hanging Chevron SVG attached to bottom of navbar -->
+        <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] z-10 filter drop-shadow-lg pointer-events-none">
+          <svg width="92" height="28" viewBox="0 0 92 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 0 0 L 46 27 L 92 0 Z" fill="#0A2958" />
+            <path d="M 0 0 L 46 27 L 92 0" stroke="#E5B869" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+            <path d="M 1.5 0.5 L 46 26.5 L 90.5 0.5" stroke="#FFF2CE" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" opacity="0.7" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- 3D Gold Text -->
+      <div class="h-8 flex items-center">
+        <img src="/images/dongduong/new_text_clean.png" class="h-8 object-contain" />
+      </div>
+    </div>
+  </header>
+</body>
+</html>

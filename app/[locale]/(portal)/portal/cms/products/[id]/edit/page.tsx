@@ -54,6 +54,43 @@ function flattenCategories(cats: Category[], level = 0): (Category & { _level: n
     return result;
 }
 
+function parseSpecsToArray(rawSpecs: unknown): { key: string; value: string }[] {
+    if (Array.isArray(rawSpecs) && rawSpecs.length > 0) {
+        const mapped = rawSpecs
+            .map((item: unknown) => {
+                if (typeof item === 'object' && item !== null && 'key' in item) {
+                    const typed = item as { key?: unknown; value?: unknown };
+                    return { key: String(typed.key ?? ''), value: String(typed.value ?? '') };
+                }
+                return { key: '', value: '' };
+            })
+            .filter((item) => item.key.trim() !== '' || item.value.trim() !== '');
+        if (mapped.length > 0) return mapped;
+    }
+    if (rawSpecs && typeof rawSpecs === 'object' && !Array.isArray(rawSpecs)) {
+        const entries = Object.entries(rawSpecs as Record<string, unknown>)
+            .map(([key, value]) => ({
+                key: String(key),
+                value: String(value ?? ''),
+            }))
+            .filter((item) => item.key.trim() !== '' || item.value.trim() !== '');
+        if (entries.length > 0) return entries;
+    }
+    return [{ key: '', value: '' }];
+}
+
+function parseFeaturesToArray(rawFeatures: unknown, fallback: unknown[] = []): string[] {
+    if (Array.isArray(rawFeatures) && rawFeatures.length > 0) {
+        const filtered = rawFeatures.map(String).filter((s) => s.trim() !== '');
+        if (filtered.length > 0) return filtered;
+    }
+    if (Array.isArray(fallback) && fallback.length > 0) {
+        const filtered = fallback.map(String).filter((s) => s.trim() !== '');
+        if (filtered.length > 0) return filtered;
+    }
+    return [''];
+}
+
 export default function EditProductPage() {
     const params = useParams();
     const router = useRouter();
@@ -82,10 +119,11 @@ export default function EditProductPage() {
         delivery_info: 'Toàn quốc',
         catalog_url: '',
         tech_summary_localized: createEmptyLocalizedText(),
-        features_localized: { vi: [''], en: [''] } as LocalizedFeatures,
+        features_localized: { vi: [''], en: [''], zh: [''] } as LocalizedFeatures,
         tech_specs_localized: {
             vi: [{ key: '', value: '' }],
             en: [{ key: '', value: '' }],
+            zh: [{ key: '', value: '' }],
         } as LocalizedTechSpecs,
         gallery: [] as string[],
     });
@@ -122,27 +160,17 @@ export default function EditProductPage() {
                         catalog_url: product.catalog_url || '',
                         tech_summary_localized: product.tech_summary_localized || toLocalizedText(product.tech_summary),
                         features_localized: {
-                            vi: Array.isArray(product.features_localized?.vi)
-                                ? product.features_localized.vi
-                                : Array.isArray(product.features) && product.features.length > 0
-                                  ? product.features
-                                  : [''],
-                            en: Array.isArray(product.features_localized?.en)
-                                ? product.features_localized.en
-                                : [''],
+                            vi: parseFeaturesToArray(
+                                product.features_localized?.vi,
+                                Array.isArray(product.features) ? product.features : [],
+                            ),
+                            en: parseFeaturesToArray(product.features_localized?.en),
+                            zh: parseFeaturesToArray(product.features_localized?.zh),
                         },
                         tech_specs_localized: {
-                            vi: Array.isArray(product.tech_specs_localized?.vi)
-                                ? product.tech_specs_localized.vi
-                                : product.tech_specs
-                                  ? Object.entries(product.tech_specs).map(([key, value]) => ({
-                                        key,
-                                        value: String(value),
-                                    }))
-                                  : [{ key: '', value: '' }],
-                            en: Array.isArray(product.tech_specs_localized?.en)
-                                ? product.tech_specs_localized.en
-                                : [{ key: '', value: '' }],
+                            vi: parseSpecsToArray(product.tech_specs_localized?.vi ?? product.tech_specs),
+                            en: parseSpecsToArray(product.tech_specs_localized?.en),
+                            zh: parseSpecsToArray(product.tech_specs_localized?.zh),
                         },
                         gallery: Array.isArray(product.gallery) ? product.gallery : [],
                     });
@@ -196,6 +224,9 @@ export default function EditProductPage() {
                 en: Array.isArray(formData.features_localized?.en)
                     ? formData.features_localized.en.filter((f) => typeof f === 'string' && f.trim() !== '')
                     : [],
+                zh: Array.isArray(formData.features_localized?.zh)
+                    ? formData.features_localized.zh.filter((f) => typeof f === 'string' && f.trim() !== '')
+                    : [],
             };
 
             // Filter empty tech specs
@@ -205,6 +236,9 @@ export default function EditProductPage() {
                     : [],
                 en: Array.isArray(formData.tech_specs_localized?.en)
                     ? formData.tech_specs_localized.en.filter((s) => s?.key?.trim() !== '' || s?.value?.trim() !== '')
+                    : [],
+                zh: Array.isArray(formData.tech_specs_localized?.zh)
+                    ? formData.tech_specs_localized.zh.filter((s) => s?.key?.trim() !== '' || s?.value?.trim() !== '')
                     : [],
             };
 
@@ -328,6 +362,7 @@ export default function EditProductPage() {
                                 placeholder={{
                                     vi: 'Nhập tên sản phẩm...',
                                     en: 'Enter product name...',
+                                    zh: '输入产品名称...',
                                 }}
                             />
                             <div className="space-y-3 hidden">
@@ -430,6 +465,7 @@ export default function EditProductPage() {
                             placeholder={{
                                 vi: 'Ví dụ: Cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi...',
                                 en: 'E.g.: Full CO/CQ certification and on-site technical support...',
+                                zh: '例如: 提供完整CO/CQ证书并支持现场技术指导...',
                             }}
                             rows={3}
                         />
@@ -624,7 +660,7 @@ export default function EditProductPage() {
 
                     <div className="p-6 bg-brand-primary/5 border border-brand-primary/10">
                         <p className="text-[10px] text-slate-500 leading-relaxed italic">
-                            Thông tin sản phẩm được đồng bộ với database CMS Sài Gòn Valve.
+                            Thông tin sản phẩm được đồng bộ với database CMS Đông Dương Corporation.
                         </p>
                     </div>
                 </div>

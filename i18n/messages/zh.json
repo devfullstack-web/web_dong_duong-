@@ -1,0 +1,833 @@
+{
+  "Company": {
+    "address": "越南胡志明市守德市隆长坊武文喝街124/16-18号",
+    "workingHoursWeekdays": "周一至周六：08:00 - 17:30",
+    "slogan": "越南领先的高端陶瓷地砖、马赛克装饰砖与大金、格力、美的商用中央空调 (VRV/VRF)、冷水机组 (Chiller) 总代理商。"
+  },
+  "Header": {
+    "home": "首页",
+    "about": "关于我们",
+    "solutions": "服务方案",
+    "products": "产品中心",
+    "projects": "工程案例",
+    "news": "新闻资讯",
+    "recruitment": "人才招聘",
+    "careers": "招贤纳士",
+    "contact": "联系我们",
+    "search": "搜索",
+    "searchPlaceholder": "搜索产品、型号、规格...",
+    "register": "注册",
+    "login": "登录",
+    "language": "语言",
+    "logoAlt": "东洋集团标志",
+    "vi": "TIẾNG VIỆT",
+    "en": "ENGLISH",
+    "zh": "中文 (简体)",
+    "iotControlSoftware": "智能控制系统"
+  },
+  "Footer": {
+    "companyTitle": "东洋集团 (ĐÔNG DƯƠNG CORPORATION)",
+    "productsAndServices": "产品与服务",
+    "commoditiesTrading": "高端地砖与瓷砖",
+    "materialsSupply": "分体式商用空调",
+    "logisticsServices": "VRV/VRF 多联机与冷水机组",
+    "training": "艺术马赛克与大板岩板",
+    "processAndTerms": "服务流程与条款",
+    "careers": "招贤纳士",
+    "faqs": "常见问题",
+    "techSupport": "技术支持",
+    "standards": "质量认证标准",
+    "connectWithUs": "关注我们",
+    "newsletterDesc": "订阅获取最新建材与暖通行业动态及工程特惠报价",
+    "newsletterPlaceholder": "请输入您的电子邮箱...",
+    "send": "提交订阅",
+    "copyright": "© 2026 东洋集团 (Đông Dương Corporation). 版权所有，翻印必究。",
+    "slogan": "东洋集团 | 高端陶瓷地砖 · VRV-Chiller 中央空调系统总代理",
+    "navigationMenu": "快捷导航",
+    "contactInfo": "联系方式",
+    "home": "首页",
+    "about": "关于我们",
+    "products": "产品中心",
+    "projects": "工程案例",
+    "news": "新闻动态",
+    "contact": "联系我们",
+    "securityWarning": "严格保障工程项目商业信息保密",
+    "terms": "服务条款",
+    "privacy": "隐私政策",
+    "admin": "管理后台"
+  },
+  "Home": {
+    "whyChooseTitle": "为何选择东洋集团？",
+    "coreCategoriesTitle": "核心业务产品分类",
+    "featuredProductsTitle": "明星推荐产品",
+    "workflowProcessTitle": "工程服务标准流程",
+    "equipmentGridTitle": "设备与建材精品",
+    "quoteFormTitle": "工程报价预约",
+    "quoteFormSubtitle": "获取最具竞争力的设备方案与出厂批发特惠报价",
+    "quoteFormName": "贵姓/姓名 *",
+    "quoteFormPhone": "联系电话 *",
+    "quoteFormEmail": "电子邮箱 *",
+    "quoteFormMessage": "采购需求描述 *",
+    "quoteFormMessagePlaceholder": "请说明所需产品类型、品牌偏好、预估采购数量、工程规模等...",
+    "quoteFormSubmit": "立即提交咨询",
+    "quoteFormSending": "正在提交您的需求...",
+    "quoteFormSuccess": "需求提交成功！我们的专业工程顾问将在24小时内与您取得联系。",
+    "quoteFormError": "提交失败，请检查网络后重试或直接拨打热线电话。",
+    "quoteFormNote": "我们的资深技术与造价工程师将在24小时内为您提供专属方案。",
+    "latestNewsTitle": "行业资讯与动态",
+    "viewAllNews": "查看全部资讯",
+    "requestQuote": "获取工程报价",
+    "quote": "询价",
+    "details": "详情",
+    "price": "参考价格",
+    "seeDetail": "查看详细参数",
+    "updatingNews": "正在加载最新资讯...",
+    "slide1": {
+      "title": "专业工程方案",
+      "highlight": "高端瓷砖与中央空调",
+      "titleSuffix": "筑造时代标杆建筑",
+      "description": "东洋集团是越南领先的高端建筑陶瓷、艺术马赛克地砖以及格力、美的、大金、LG正品空调机电系统一级总代理商。",
+      "accent": "建筑建材 · 暖通机电"
+    },
+    "slide2": {
+      "title": "节能高效系统",
+      "highlight": "VRV/VRF & CHILLER",
+      "titleSuffix": "大幅降低运营能耗",
+      "description": "提供商业级 VRV/VRF 多联机中央空调及离心式、螺杆式工业冷水机组全面解决方案，助力工厂与大厦实现卓越能效。",
+      "accent": "商用暖通与工业制冷"
+    },
+    "slide3": {
+      "title": "臻品建材合集",
+      "highlight": "高端瓷砖与艺术装饰",
+      "titleSuffix": "雕琢尊贵空间美学",
+      "description": "董心 (Dongtam)、维格拉塞拉 (Viglacera)、卡塔兰 (Catalan)、大马 (Taicera) 正品直供，涵盖全抛釉地砖、岩板大板与高端泳池马赛克。",
+      "accent": "原厂品质 · 权威认证"
+    },
+    "fixed": {
+      "title": "东洋集团 CORPORATION",
+      "highlight": "建筑建材 & 暖通制冷",
+      "titleSuffix": "全方位工程解决方案"
+    },
+    "actionAdvice": "工程项目咨询",
+    "iotSolutions": "暖通与建筑陶瓷一体化",
+    "platformTitle": "全越南专业供货网络",
+    "platformSubTitle": "为全国大型商业地产、工业厂房、高端住宅及五星级酒店提供一站式建材与空调设备配供服务。",
+    "learnMore": "浏览产品系列"
+  },
+  "Solutions": {
+    "title": "专业解决方案",
+    "breadcrumbHome": "首页",
+    "breadcrumbSolutions": "解决方案",
+    "waterManagement": "智能建筑水暖一体化",
+    "waterManagementDesc": "集成化楼宇机电与水暖管网智能控制方案，有效优化能源消耗并降低系统故障率。",
+    "agriculture": "现代化农业恒温与冷链",
+    "agricultureDesc": "应用精准温湿度控制技术，赋能现代高效温室农业及保鲜冷库仓储。",
+    "aquaculture": "水体环境恒温控制",
+    "aquacultureDesc": "针对高端水产养殖与生态园区的水温调节与空气循环专业制冷解决方案。",
+    "hydrology": "工业防腐排污管网配套",
+    "hydrologyDesc": "提供工业级防腐耐磨管道、瓷砖铺衬与高效水处理机房系统。",
+    "building": "智慧楼宇暖通节能管理",
+    "buildingDesc": "集成中央空调集中监控、新风净化、温湿度分区平衡与能耗优化管理方案。",
+    "digitalEcosystem": "数字机电生态"
+  },
+  "Common": {
+    "exploreNow": "立即探索",
+    "viewDetails": "查看详情",
+    "viewAll": "查看全部",
+    "loading": "正在加载...",
+    "noData": "暂无相关数据。",
+    "orderNow": "立即订购",
+    "featuredProducts": "明星精选"
+  },
+  "Hero": {
+    "slide1": {
+      "title": "专业工程方案",
+      "highlight": "高端瓷砖与中央空调",
+      "titleSuffix": "筑造时代标杆建筑",
+      "description": "东洋集团 (Đông Dương Corporation) - 越南领先的高端建筑陶瓷、艺术马赛克地砖以及格力、美的、大金、LG正品空调机电系统一级总代理商。",
+      "accent": "建筑建材 · 暖通机电"
+    },
+    "slide2": {
+      "title": "节能高效系统",
+      "highlight": "VRV/VRF & CHILLER",
+      "titleSuffix": "大幅降低运营能耗",
+      "description": "提供商业级 VRV/VRF 多联机中央空调及离心式、螺杆式工业冷水机组全面解决方案，助力工厂与大厦实现卓越能效。",
+      "accent": "商用暖通与工业制冷"
+    },
+    "slide3": {
+      "title": "臻品建材合集",
+      "highlight": "高端瓷砖与艺术装饰",
+      "titleSuffix": "雕琢尊贵空间美学",
+      "description": "董心 (Dongtam)、维格拉塞拉 (Viglacera)、卡塔兰 (Catalan)、大马 (Taicera) 正品直供，涵盖全抛釉地砖、岩板大板与高端泳池马赛克。",
+      "accent": "原厂品质 · 权威认证"
+    },
+    "fixed": {
+      "title": "东洋集团 CORPORATION",
+      "highlight": "建筑建材 & 暖通制冷",
+      "titleSuffix": "全方位工程解决方案"
+    },
+    "actionAdvice": "工程方案咨询",
+    "iotSolutions": "暖通与建筑陶瓷一体化",
+    "platformTitle": "全越南专业供货网络",
+    "platformSubTitle": "为全国大型商业地产、工业厂房、高端住宅及五星级酒店提供一站式建材与空调设备配供服务。",
+    "learnMore": "浏览方案",
+    "liveDemo": "查看实景"
+  },
+  "FeaturedProjects": {
+    "title": "工程",
+    "titleAccent": "实绩案例",
+    "description": "见证东洋集团高品质供货与专业技术服务的重点标杆工程项目。",
+    "viewAllProjects": "查看全部工程案例",
+    "mobileViewAll": "全部工程",
+    "loading": "正在加载工程案例...",
+    "noProjects": "暂无展示的工程案例。"
+  },
+  "News": {
+    "title": "新闻与行业动态",
+    "description": "紧跟建筑装饰建材与前沿暖通机电技术最新资讯",
+    "loading": "正在加载文章...",
+    "noNews": "未找到相关文章。",
+    "hero": {
+      "badge": "资讯中心",
+      "title": "新闻动态与",
+      "titleAccent": "技术前沿",
+      "desc": "掌握建筑瓷砖流行趋势、大型中央空调选型指南以及行业最新工程动态。"
+    },
+    "grid": {
+      "defaultCategory": "新闻资讯",
+      "viewDetail": "阅读全文"
+    },
+    "date": {
+      "month": "月"
+    },
+    "empty": {
+      "title": "暂无资讯",
+      "desc": "当前暂无发布的新闻资讯，敬请期待。"
+    }
+  },
+  "ProductSpotlight": {
+    "title": "精选主打产品",
+    "productDetail": "产品技术详情"
+  },
+  "SystemHighlight": {
+    "banners": {
+      "featured": {
+        "tag": "建筑饰面建材",
+        "title": "高端地砖 · 墙砖 · 艺术马赛克",
+        "desc": "董心 (Dongtam)、维格拉塞拉 (Viglacera)、卡塔兰 (Catalan)、顺海 (Thuan Hai)、河清 (Ha Thanh) 正品代理。提供防滑耐磨砖、超大规格岩板及艺术拼花马赛克，满足酒店、别墅及商场高端要求。",
+        "btnText": "浏览瓷砖合集"
+      },
+      "video": {
+        "tag": "暖通制冷系统",
+        "title": "VRV/VRF 多联机 · 水冷离心机组",
+        "desc": "全品类格力 (Gree)、美的 (Midea)、大金 (Daikin)、LG 原装机电：从家用变频壁挂机到大型商用 VRV 多联机系统及工业螺杆/离心式冷水机组。",
+        "btnText": "浏览暖通设备"
+      }
+    },
+    "technologyLabel": "核心技术",
+    "applicationLabel": "适用领域",
+    "networkManagement": "系统集中控制"
+  },
+  "Partners": {
+    "badge": "战略合作品牌",
+    "title": "全球知名战略品牌伙伴",
+    "description": "携手全球及越南顶尖建材与暖通空调品牌，确保原厂正品与顶格优惠",
+    "all": "全部品牌",
+    "tiles": "建筑瓷砖与地砖",
+    "hvac": "中央空调与暖通",
+    "steel": "结构钢材 (VNSTEEL)",
+    "partner": "战略伙伴",
+    "officialBadge": "100% 正品保障",
+    "viewPartner": "访问品牌官网"
+  },
+  "ContactForm": {
+    "title": "获取工程专属方案与报价",
+    "subtitle": "我们的专业工程师将在24小时内给您答复",
+    "consultationTitle": "联系东洋集团资深工程顾问",
+    "consultationDesc": "东洋集团专业技术团队随时待命，为您提供从图纸深化、设备选型、技术核算到出厂直供的最佳性价比方案。",
+    "labels": {
+      "name": "贵姓/姓名 *",
+      "phone": "联系电话 *",
+      "email": "电子邮箱 *",
+      "address": "工程地址/公司名称 *",
+      "message": "需求详情描述 *"
+    },
+    "placeholders": {
+      "name": "例如：陈经理 / 李工",
+      "phone": "例如：090 695 54 59",
+      "email": "example@company.com",
+      "address": "请输入工程所在城市、项目地址或单位名称...",
+      "message": "请详述所需设备型号、规格、预估面积、采购数量等..."
+    },
+    "security": "严格履行商业信息保密协议",
+    "submit": "确认提交询价",
+    "submitting": "正在安全提交...",
+    "errors": {
+      "required": "请完整填写标有星号 (*) 的必填信息",
+      "general": "提交过程中出现异常，请稍后重试或直接电话联系。"
+    },
+    "success": "提交成功！我们会在2小时内安排专属销售工程师对接。",
+    "hotlineLabel": "服务热线",
+    "hotlineSub": "24小时/7天响应",
+    "emailLabel": "官方邮箱",
+    "emailSub": "2小时内极速回复",
+    "addressLabel": "公司地址",
+    "addressSub": "总部运营中心",
+    "zaloLabel": "ZALO / WECHAT",
+    "zaloSub": "即时技术沟通"
+  },
+  "Contact": {
+    "headerBadge": "战略客户服务中心",
+    "headerTitle": "携手共赢",
+    "headerTitleAccent": "东洋集团 CORPORATION",
+    "infoTitle": "商务对接信息",
+    "infoDesc": "欢迎直接联系各业务板块专属负责人，享受快速高质响应。",
+    "labels": {
+      "sales": "工程销售热线",
+      "tech": "暖通与建材技术支持",
+      "office": "商务与采购邮箱",
+      "headquarters": "公司总部地址"
+    },
+    "subs": {
+      "sales": "批发与大宗工程咨询",
+      "tech": "深化设计与选型 24/7",
+      "office": "标书与正式函件对接",
+      "headquarters": "胡志明市守德市"
+    },
+    "workingHours": "办公时间：周一至周六 (08:00 - 17:30)",
+    "formTitle": "在线提交工程需求",
+    "security": "严格保护所有合作项目的图纸与报价数据隐私。",
+    "submit": "立即发送需求单",
+    "submitting": "系统处理中...",
+    "faqTitle": "常见业务问答",
+    "faqs": [
+      {
+        "q": "如何获取大型工程项目的批发采购报价？",
+        "a": "您可以通过下方在线表格提交项目图纸与物料清单，或直接拨打热线 090 695 54 59。我们的造价工程师将在 2-4 个工作小时内提供精准详细的工程清单报价。"
+      },
+      {
+        "q": "东洋集团是否提供现场送货与工程师现场指导？",
+        "a": "是的，我们拥有完善的物流配送网络，可直运全越南各省市施工现场。同时指派资深机电与施工工程师实地勘察、协助设备定位与调试。"
+      },
+      {
+        "q": "产品的原厂质保与售后保障政策是怎样的？",
+        "a": "东洋集团所经销的所有建筑陶瓷（董心、维格拉塞拉、卡塔兰、大马）与空调机电设备（格力、美的、大金、LG）均享有一级原厂质量保证，随货附带完整的出厂合格证及 CO/CQ 权威认证。"
+      }
+    ]
+  },
+  "About": {
+    "hero": {
+      "badge": "越南东洋集团",
+      "title": "东洋实业集团",
+      "titleAccent": "高端建筑建材 · 暖通机电",
+      "desc": "“东洋集团 (Đông Dương Corporation) —— 越南领先的知名品牌陶瓷地砖、艺术马赛克及大金、格力、美的商用中央空调 (VRV/VRF)、冷水机组 (Chiller) 总代理商。”"
+    },
+    "intro": {
+      "who": "企业概述",
+      "title": "走进东洋集团",
+      "content1": "东洋集团 (Đông Dương Corporation) 秉承诚信立业与卓越创新的理念，已成长为越南建筑装饰建材与高端暖通机电领域最具影响力的综合供应链服务商之一。",
+      "content2": "我们紧扣现代建筑对于“美学质感”与“高效节能”的双重需求，战略聚焦两大核心产业板块：其一为高端陶瓷地砖、岩板及马赛克装饰材料（战略合作董心 Dongtam、维格拉塞拉 Viglacera、卡塔兰 Catalan、顺海 Thuan Hai、河清 Ha Thanh 等名厂）；其二为全系列暖通空调制冷系统，涵盖壁挂机、天花机、风管机等多联机 (VRV/VRF) 及大型水冷/风冷冷水机组（格力 Gree、美的 Midea、大金 Daikin、LG 原装保障）。",
+      "mission": {
+        "title": "企业使命",
+        "desc": "以国际一流的建材艺术美感与领先的暖通节能科技，为越南每一座现代建筑注入非凡价值与舒适体验。"
+      },
+      "vision": {
+        "title": "企业愿景",
+        "desc": "打造越南工程建筑建材与商用空调系统第一首选品牌，成为广大投资业主、知名建筑设计院及总包承建商最信赖的长期战略合伙人。"
+      }
+    },
+    "values": {
+      "badge": "经营哲学",
+      "title": "核心价值体系",
+      "items": [
+        {
+          "title": "100% 正品原装",
+          "desc": "坚持原厂直供，坚决杜绝假冒劣质产品，随货提供全套出厂检测合格证明 (CO/CQ) 及原厂保修凭证。"
+        },
+        {
+          "title": "卓越性价比方案",
+          "desc": "资深机电与材料工程师结合工程实际，为业主量身定制最经济高效的设备选型与排版方案，显著削减综合造价。"
+        },
+        {
+          "title": "终身伙伴式服务",
+          "desc": "自前期勘测、图纸深化、安全送达现场到安装调试指导与全生命周期维保，全程无忧保驾护航。"
+        }
+      ]
+    },
+    "pillars": {
+      "badge": "核心业务矩阵",
+      "title": "两大主干",
+      "titleAccent": "优势业务",
+      "desc": "东洋集团专业承接各类大型商业综合体、工业园区厂房、星级酒店与高端住宅楼盘物资配供：",
+      "items": [
+        {
+          "tag": "01",
+          "title": "高端陶瓷与建筑装饰砖",
+          "desc": "官方代理董心集团 (Dongtam Group)、维格拉塞拉 (Viglacera)、卡塔兰 (Catalan)、大马 (Taicera)、顺海 (Thuan Hai)、河清 (Ha Thanh)。主营全抛釉地砖、耐磨石英砖、微晶石、泳池艺术玻璃马赛克及超大规格岩板 (Big Slab)。",
+          "footer": "董心 • 维格拉塞拉 • 卡塔兰 • 大马 • 顺海 • 河清"
+        },
+        {
+          "tag": "02",
+          "title": "轻型商用与家用空调系统",
+          "desc": "格力 (Gree) 与美的 (Midea) 变频空调：分体壁挂式 (Wall Mounted)、四面出风嵌入式天花机 (Cassette)、超薄静音风管机 (Duct) 及一拖多家用多联机系统。",
+          "footer": "壁挂机 • 天花嵌入机 • 风管隐藏机 • MULTI 多联机"
+        },
+        {
+          "tag": "03",
+          "title": "VRV/VRF 多联机与工业冷水机组",
+          "desc": "大金 VRV、格力 GMV、美的 VC 系列大型多联机中央空调，搭配离心式 (Centrifugal) 与螺杆式 (Screw) 水冷/风冷机组及组合式空气处理机组 (AHU/FCU)。",
+          "footer": "VRV / VRF • CHILLER 冷水机组 • AHU / FCU 末端"
+        }
+      ]
+    },
+    "tech": {
+      "badge": "技术与品质标准",
+      "title": "先进暖通制冷",
+      "titleAccent": "技术优势",
+      "desc": "全面引进全球领先暖通制冷品牌的核心科技，保障系统运行稳定、静音、高效：",
+      "items": [
+        {
+          "title": "轻型商用：壁挂 / 嵌入天花 / 风管",
+          "desc": "360° 全维立体送风，智能全直流变频技术，极速制冷制热，超低噪音运行，契合高雅室内装潢。"
+        },
+        {
+          "title": "大型多联机 VRV / VRF 中央空调",
+          "desc": "一台室外主机并联数十台室内机，智能分区独立温控，负荷自适应调节，综合能效比 (IPLV) 表现优异。"
+        },
+        {
+          "title": "水冷离心式与螺杆式冷水机组",
+          "desc": "超高能效大冷量制冷系统，采用新型环保冷媒，机械耐久度极高，专为大型购物中心、医院及现代工厂打造。"
+        },
+        {
+          "title": "洁净空气末端 AHU / FCU 组合设备",
+          "desc": "多级精密空气过滤、恒温恒湿精准调控，达标电子无尘车间、医药GMP厂房及手术室高洁净度标准。"
+        }
+      ]
+    },
+    "certs": {
+      "title": "战略合作品牌与官方认证",
+      "quote": "“东洋集团荣膺国际知名暖通与建材巨头在越南的一级授权总代理商，信誉见证实力。”",
+      "items": [
+        "董心集团 (Dongtam Group) 官方一级授权代理商",
+        "维格拉塞拉 (Viglacera) 与卡塔兰 (Catalan) 核心经销商",
+        "格力 (Gree) 与美的 (Midea) 中央空调战略合作伙伴",
+        "大金 (Daikin) 与 LG 商用空调系统指定供货服务商"
+      ]
+    },
+    "cta": {
+      "title": "工程采购合作 · 立即询价",
+      "desc": "欢迎广大开发商、建筑工程总承包商 (EPC)、机电安装公司 (M&E) 及室内设计团队来电垂询，尊享项目特批折扣。",
+      "hotline": "24小时项目专线",
+      "email": "商务方案与标书投递",
+      "btnText": "立即联系洽谈"
+    }
+  },
+  "Projects": {
+    "hero": {
+      "badge": "重点标杆案例",
+      "title": "卓越品质",
+      "titleAccent": "实力见证",
+      "desc": "东洋集团已成功为全越南数百个标志性工程项目供应优质陶瓷建材与中央空调制冷系统。"
+    },
+    "grid": {
+      "defaultCategory": "建设工程",
+      "defaultLocation": "越南",
+      "viewDetail": "查看工程详情"
+    },
+    "empty": {
+      "title": "暂无案例",
+      "desc": "当前暂无展示的项目案例，请稍后再试。"
+    }
+  },
+  "Products": {
+    "hero": {
+      "badge": "产品与系统",
+      "title": "工程建材 &",
+      "titleAccent": "暖通设备",
+      "desc": "越南领先的高端陶瓷地砖、马赛克装饰砖与大金、格力、美的商用中央空调 (VRV/VRF)、冷水机组 (Chiller) 原厂直供中心。",
+      "searchPlaceholder": "输入产品型号、规格或品牌进行搜索..."
+    },
+    "sidebar": {
+      "categoryTitle": "产品分类",
+      "all": "全部产品"
+    },
+    "grid": {
+      "resultCount": "显示第 {start} - {end} 条，共 {total} 项结果",
+      "defaultSummary": "原厂正品直供，符合国际与越南国家质量技术标准。",
+      "viewDetail": "查看产品参数"
+    },
+    "empty": "未检索到匹配的产品，请尝试调整筛选条件。"
+  },
+  "ProductDetail": {
+    "breadcrumb": {
+      "home": "首页",
+      "products": "产品中心"
+    },
+    "badge": "原装正品",
+    "status": {
+      "label": "供货状态",
+      "default": "现货直供"
+    },
+    "delivery": {
+      "label": "物流配送",
+      "default": "全越南直达工区"
+    },
+    "features": "核心亮点与优势",
+    "getQuote": "获取工程专属报价",
+    "downloadCatalog": "下载产品画册 (PDF)",
+    "techSpecs": "详细技术规格参数",
+    "description": "产品详细说明",
+    "projectSupport": {
+      "title": "工程配套保障",
+      "defaultDesc": "东洋集团随货提供完整的出厂检验报告、CO/CQ 质量认证，并提供工程师现场技术支持。",
+      "warranty": "原厂质保 {months}",
+      "warrantyDefault": "12-24 个月",
+      "certificate": "出厂原装 CO/CQ 证书齐全",
+      "origin": "产地来源: {origin}",
+      "originDefault": "原厂出品"
+    },
+    "cta": {
+      "title": "需要深入了解方案或定制选型？",
+      "desc": "“请留下您的采购需求或直接拨打工程师专线，我们将为您提供最匹配的技术选型与预算方案。”",
+      "submit": "立即提交需求",
+      "hotline": "拨打咨询热线"
+    }
+  },
+  "ProjectDetail": {
+    "breadcrumb": {
+      "home": "首页",
+      "projects": "工程案例"
+    },
+    "back": "返回上一页",
+    "info": {
+      "client": "建设业主/客户",
+      "location": "工程地址",
+      "time": "竣工交付时间",
+      "category": "项目类型",
+      "status": "实施状态",
+      "title": "项目基本档案"
+    },
+    "status": {
+      "completed": "已交付验收",
+      "ongoing": "正在履约供货"
+    },
+    "unknown": "更新中",
+    "share": "分享此案例",
+    "shareLabel": "分享至:",
+    "print": "打印项目资料",
+    "save": "收藏该项目",
+    "contactAdvice": "洽谈类似项目合作",
+    "cta": {
+      "title": "您是否有相似的工程规划？",
+      "desc": "立即联系东洋集团，获取专属的建材与机电系统深化方案及投标支持。",
+      "btnText": "立即联系咨询"
+    },
+    "related": {
+      "title": "相关代表工程",
+      "viewAll": "浏览所有工程",
+      "detail": "查看详情"
+    }
+  },
+  "Careers": {
+    "hero": {
+      "badge": "诚聘英才",
+      "title": "携手同行",
+      "titleAccent": "加入东洋集团",
+      "desc": "在这里探索广阔的职业舞台，与建材及暖通工程领域的行业精英共铸非凡事业。"
+    },
+    "list": {
+      "title": "热招职位一览",
+      "count": "正在热招 {total} 个岗位",
+      "defaultDepartment": "综合部",
+      "defaultLocation": "越南胡志明市",
+      "deadlinePrefix": "截止日期:",
+      "viewDetail": "查看岗位职责"
+    },
+    "employmentTypes": {
+      "full_time": "全职",
+      "part_time": "兼职",
+      "contract": "合同制",
+      "internship": "实习"
+    },
+    "empty": {
+      "title": "暂无匹配岗位",
+      "desc": "暂无开放招聘职位。欢迎将个人简历发送至公司人事邮箱，纳入企业储备人才库。"
+    },
+    "companyName": "东洋实业集团 (ĐÔNG DƯƠNG CORPORATION)"
+  },
+  "Portal": {
+    "Sidebar": {
+      "dashboard": "控制台仪表盘",
+      "products": "产品管理",
+      "blog": "新闻动态管理",
+      "projects": "工程项目管理",
+      "recruitment": "招聘岗位管理",
+      "applications": "求职简历管理",
+      "comments": "客户留言评论",
+      "media": "多媒体素材库",
+      "contacts": "客户询价管理",
+      "users": "系统用户管理",
+      "roles": "角色与权限配置",
+      "logs": "系统审计日志",
+      "settings": "系统全局配置",
+      "system": "系统设置",
+      "account": "账号中心",
+      "profile": "个人资料",
+      "logout": "退出登录",
+      "logoutSuccess": "已成功安全退出",
+      "logoutError": "退出登录时出现异常",
+      "companyName": "东洋集团 (ĐÔNG DƯƠNG CORPORATION)"
+    },
+    "Layout": {
+      "system": "系统核心",
+      "dashboard": "控制台",
+      "searchPlaceholder": "全局快速检索...",
+      "help": "帮助中心"
+    },
+    "Dashboard": {
+      "title": "经营全景概览",
+      "subtitle": "欢迎回来。以下是当前系统的运行与交互统计数据。",
+      "visitors": "访问人次",
+      "news": "新闻资讯",
+      "projects": "工程案例",
+      "products": "上架产品",
+      "contacts": "客户询盘",
+      "totalContacts": "询价总量",
+      "total": "总计",
+      "newsArticles": "篇新闻资讯",
+      "completedProjects": "项标杆工程",
+      "catalogProducts": "款在线商品",
+      "newContacts": "条待跟进询价",
+      "loading": "正在加载报表数据...",
+      "all": "全部数据",
+      "newsCaps": "资讯",
+      "projectsCaps": "案例",
+      "productsCaps": "产品",
+      "filterDate": "按日期筛选",
+      "updatedAt": "最后更新时间: {time}",
+      "content": "内容量",
+      "turns": "次",
+      "pending": "待处理",
+      "charts": {
+        "growthTitle": "业务数据增长趋势",
+        "growthDesc": "过去6个月内容发布与数据扩增曲线",
+        "growthFooterTitle": "数字化推进速度",
+        "growthFooterDesc": "汇聚核心业务模块发布动态",
+        "totalSizeTitle": "内容资源总量",
+        "totalSizeDesc": "资讯、案例与产品数据全景",
+        "resources": "资源项",
+        "growthRate": "环比增长 7.2%",
+        "growthRateDesc": "基于近30天内容与询盘活跃度",
+        "distTitle": "模块内容结构分布",
+        "distDesc": "各核心数据模块占比",
+        "distFooterTitle": "资源结构稳定",
+        "distFooterDesc": "产品与技术方案占据主要权重",
+        "feedbackTitle": "客户服务响应指标",
+        "feedbackDesc": "工程询价及在线互动",
+        "support": "24/7 全天候响应",
+        "supportDesc": "平均响应耗时：15 分钟"
+      }
+    },
+    "Common": {
+      "actions": "操作",
+      "search": "搜索",
+      "add": "新建",
+      "edit": "编辑修改",
+      "delete": "删除",
+      "cancel": "取消",
+      "confirm": "确认",
+      "save": "保存",
+      "loading": "数据加载中...",
+      "noData": "暂无数据。",
+      "export": "导出 Excel",
+      "filter": "筛选器",
+      "all": "全部",
+      "status": "状态",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间",
+      "action": "操作动作",
+      "checkingPermissions": "正在校验操作权限..."
+    },
+    "AuditLogs": {
+      "title": "操作安全审计日志",
+      "time": "操作时间 / IP",
+      "user": "操作用户",
+      "module": "业务模块",
+      "action": "动作类型",
+      "description": "详细记录",
+      "changes": "数据变更",
+      "noChanges": "无关键数据变更明细",
+      "detailTitle": "审计日志详情",
+      "actionTypes": {
+        "CREATE": "新建创建",
+        "UPDATE": "更新修改",
+        "DELETE": "删除操作",
+        "LOGIN": "用户登录",
+        "AUTH_FAILURE": "鉴权失败"
+      },
+      "filterModule": "全部模块",
+      "filterAction": "全部动作"
+    },
+    "Contacts": {
+      "title": "客户询价与留言管理",
+      "name": "客户姓名/单位",
+      "info": "联系方式",
+      "subject": "需求主题",
+      "message": "留言详述",
+      "date": "提交时间",
+      "status": {
+        "new": "待处理",
+        "read": "已查阅",
+        "replied": "已答复",
+        "archived": "已归档",
+        "spam": "垃圾垃圾"
+      },
+      "detailTitle": "客户询价工单详情",
+      "updateStatusSuccess": "工单状态更新成功",
+      "deleteSuccess": "询盘记录已删除",
+      "exportSuccess": "Excel 数据导出成功",
+      "subtitle": "来自前台网站工程客户提交的询价与合作意向清单。",
+      "totalContacts": "询价工单总计",
+      "loading": "正在读取客户询价清单...",
+      "empty": "暂无待处理客户询盘。",
+      "searchPlaceholder": "搜索客户名、电话、邮箱、需求关键词...",
+      "filterDate": "按日期范围筛选",
+      "itemLabel": "条记录",
+      "ticket": "询价工单号",
+      "ticketDesc": "系统已自动同步登记客户提交的商务合作需求。",
+      "email": "客户邮箱",
+      "phone": "联系电话",
+      "notProvided": "未提供",
+      "address": "项目所在地",
+      "messageDetail": "客户详细需求内容：",
+      "currentStatus": "当前跟进状态",
+      "markAsReplied": "标为已答复",
+      "markAsSpam": "标为垃圾信息",
+      "deleteTitle": "删除此记录",
+      "deleteConfirm": "确定永久删除此客户工单记录？删除后将无法恢复。",
+      "itemLabelCap": "询盘记录",
+      "adminStatus": "状态更新"
+    },
+    "Applications": {
+      "title": "应聘候选人管理",
+      "candidate": "候选人姓名",
+      "info": "联络信息",
+      "job": "应聘岗位",
+      "date": "投递日期",
+      "cv": "个人简历",
+      "viewCv": "在线查阅简历",
+      "status": {
+        "pending": "待初筛",
+        "reviewed": "已通过初审",
+        "interviewed": "已安排面试",
+        "rejected": "不匹配",
+        "accepted": "已录用"
+      },
+      "updateStatusSuccess": "应聘状态已更新",
+      "deleteSuccess": "简历记录已删除"
+    },
+    "Jobs": {
+      "title": "招聘职位发布管理",
+      "position": "招聘岗位",
+      "department": "所属部门",
+      "type": "雇佣性质",
+      "deadline": "截止投递日期",
+      "status": "发布状态",
+      "active": "正在招聘",
+      "inactive": "暂停招募",
+      "deleteSuccess": "招聘职位删除成功",
+      "viewLive": "在前台预览"
+    },
+    "Products": {
+      "title": "产品目录管理",
+      "product": "产品名称",
+      "category": "所属分类",
+      "status": "销售状态",
+      "active": "正常上架",
+      "inactive": "下架暂售",
+      "deleteSuccess": "产品已成功移除",
+      "exportSuccess": "产品目录已导出 Excel",
+      "companyName": "东洋集团 (Đông Dương Corporation)",
+      "deleteProduct": "删除产品",
+      "subtitle": "东洋集团建筑陶瓷材料与暖通空调机电设备产品线管理。",
+      "categories": "产品分类",
+      "addProduct": "添加新产品",
+      "loading": "正在加载产品数据...",
+      "empty": "未找到符合条件的产品。",
+      "searchPlaceholder": "输入产品名称、型号 SKU 或分类搜索...",
+      "filterCategory": "按类别筛选",
+      "allCategories": "全部产品类别",
+      "allInCategory": "所有 {category}",
+      "filterStatus": "按状态筛选",
+      "allStatuses": "所有状态",
+      "filterDate": "按上架日期筛选",
+      "clearFilter": "重置筛选",
+      "itemLabel": "款产品",
+      "deleteTitle": "删除商品",
+      "deleteConfirm": "确定从系统数据库中软删除此产品？删除后将不再于前台展示。",
+      "itemLabelCap": "产品",
+      "uncategorized": "未归类",
+      "loadingProduct": "正在加载产品详情..."
+    },
+    "News": {
+      "title": "新闻文章管理",
+      "article": "文章标题",
+      "author": "发布作者",
+      "date": "发布日期",
+      "status": "文章状态",
+      "published": "已正式发布",
+      "draft": "草稿箱",
+      "deleteSuccess": "文章已成功删除",
+      "notPublished": "待发布",
+      "uncategorized": "未分类",
+      "articleOptions": "文章操作",
+      "editArticle": "编辑文章",
+      "deleteArticle": "删除文章",
+      "subtitle": "发布和维护企业新闻、工程纪实及行业专业技术干货文章。",
+      "categories": "文章栏目",
+      "addArticle": "撰写新文章",
+      "loading": "正在读取资讯文章...",
+      "empty": "暂无匹配的文章记录。",
+      "searchPlaceholder": "按文章标题或所属分类检索...",
+      "filterStatus": "按发布状态筛选",
+      "allStatuses": "所有状态",
+      "filterDate": "按日期筛选",
+      "clearFilter": "清空筛选",
+      "itemLabel": "篇文章",
+      "deleteTitle": "删除此文章",
+      "deleteConfirm": "确定永久删除此篇资讯？操作不可撤销。",
+      "itemLabelCap": "文章",
+      "loadingCategories": "正在加载分类...",
+      "loadingArticle": "正在加载文章内容..."
+    },
+    "Projects": {
+      "title": "标杆工程案例管理",
+      "project": "项目名称",
+      "category": "工程类型",
+      "client": "建设业主",
+      "date": "工期",
+      "to": "至",
+      "status": "履约状态",
+      "ongoing": "在建履约中",
+      "completed": "已竣工交付",
+      "deleteSuccess": "工程案例已删除",
+      "uncategorized": "未归类",
+      "options": "案例操作",
+      "deleteProject": "删除工程案例",
+      "subtitle": "录入与维护代表企业综合实力的重点工程业绩库。",
+      "categories": "项目类型",
+      "add": "新建工程案例",
+      "loading": "正在加载工程案例...",
+      "empty": "暂无符合条件的案例记录。",
+      "searchPlaceholder": "输入项目名称、地点或工程类型检索...",
+      "filterStatus": "按工程状态筛选",
+      "allStatuses": "所有状态",
+      "filterDate": "按日期筛选",
+      "clearFilter": "重置条件",
+      "itemLabel": "个项目",
+      "deleteTitle": "删除工程案例",
+      "deleteConfirm": "确定从案例库中移除此工程？操作后前台将不再展示。",
+      "itemLabelCap": "工程案例"
+    }
+  }
+}

@@ -90,7 +90,7 @@ export default function ProjectDetailClient({
                 <div className="container mx-auto px-4 lg:px-8">
                     <div className="space-y-6">
                         <div className="inline-flex items-center bg-brand-primary/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-brand-primary rounded-none">
-                            {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || 'DỰ ÁN'}
+                            {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || (locale === 'zh' ? '重点工程' : locale === 'en' ? 'FEATURED PROJECT' : 'DỰ ÁN TIÊU BIỂU')}
                         </div>
 
                         <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-[1.1]">
@@ -121,7 +121,7 @@ export default function ProjectDetailClient({
                                         {t('info.location')}
                                     </div>
                                     <div className="text-sm font-bold text-slate-900">
-                                        {project.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
+                                        {project.location as string || (locale === 'vi' ? 'Việt Nam' : locale === 'zh' ? '越南' : 'Vietnam')}
                                     </div>
                                 </div>
                             </div>
@@ -147,14 +147,14 @@ export default function ProjectDetailClient({
 
                             <div className="ml-auto flex items-center gap-2">
                                 <button
-                                    title="Chia sẻ"
-                                    className="h-9 w-9 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all rounded-none"
+                                    title={locale === 'zh' ? '分享' : locale === 'en' ? 'Share' : 'Chia sẻ'}
+                                    className="h-9 w-9 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all rounded-none cursor-pointer"
                                 >
                                     <Share2 size={16} />
                                 </button>
                                 <button
-                                    title="In"
-                                    className="h-9 w-9 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all rounded-none"
+                                    title={locale === 'zh' ? '打印' : locale === 'en' ? 'Print' : 'In'}
+                                    className="h-9 w-9 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all rounded-none cursor-pointer"
                                 >
                                     <Printer size={16} />
                                 </button>
@@ -187,14 +187,14 @@ export default function ProjectDetailClient({
 
                                 {/* Project Summary */}
                                 {project.summary && (
-                                    <p className="text-lg text-slate-600 font-medium leading-relaxed italic border-l-4 border-brand-primary pl-8">
+                                    <p className="text-xl sm:text-2xl text-slate-700 font-semibold leading-relaxed italic border-l-4 border-brand-primary pl-8">
                                         {project.summary}
                                     </p>
                                 )}
 
                                 {/* Project Content */}
                                 <div
-                                    className="prose prose-slate max-w-none prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-primary hover:prose-a:text-brand-secondary prose-img:rounded-none"
+                                    className="prose prose-slate prose-lg sm:prose-xl max-w-none prose-p:text-base sm:prose-p:text-lg prose-p:leading-relaxed text-slate-800 prose-headings:text-slate-900 prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-brand-primary hover:prose-a:text-brand-secondary prose-img:rounded-none"
                                     dangerouslySetInnerHTML={{
                                         __html: sanitizeRichText(
                                             activeDescription ||
@@ -206,30 +206,30 @@ export default function ProjectDetailClient({
                                 {/* Share & Actions */}
                                 <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8">
                                     <div className="flex gap-4 items-center">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                        <span className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                             {t('shareLabel')}
                                         </span>
                                         <div className="flex gap-2">
                                             {[Facebook, Linkedin, Twitter].map((Icon, i) => (
                                                 <button
                                                     key={i}
-                                                    className="h-8 w-8 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-brand-primary hover:text-white transition-all rounded-none border border-slate-100"
+                                                    className="h-10 w-10 flex items-center justify-center bg-slate-50 text-slate-500 hover:bg-brand-primary hover:text-white transition-all rounded-none border border-slate-200"
                                                 >
-                                                    <Icon size={14} />
+                                                    <Icon size={16} />
                                                 </button>
                                             ))}
                                         </div>
                                     </div>
 
                                     <div className="flex gap-3">
-                                        <button className="flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-600 bg-slate-50 px-5 py-2.5 hover:bg-slate-200 transition-all rounded-none border border-slate-100">
-                                            <Bookmark size={14} /> {t('save')}
+                                        <button className="flex items-center gap-2 text-sm sm:text-base font-black uppercase tracking-wider text-slate-700 bg-slate-100 px-6 py-3.5 hover:bg-slate-200 transition-all rounded-none border border-slate-200">
+                                            <Bookmark size={16} /> {t('save')}
                                         </button>
                                         <Link
                                             href="/lien-he"
-                                            className="flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider text-white bg-brand-primary px-5 py-2.5 hover:bg-brand-secondary transition-all rounded-none"
+                                            className="flex items-center gap-2 text-sm sm:text-base font-black uppercase tracking-wider text-white bg-brand-primary px-6 py-3.5 hover:bg-brand-secondary transition-all rounded-none shadow-md"
                                         >
-                                            {t('contactAdvice')} <MoveRight size={14} />
+                                            {t('contactAdvice')} <MoveRight size={16} />
                                         </Link>
                                     </div>
                                 </div>
@@ -239,42 +239,42 @@ export default function ProjectDetailClient({
                         {/* Sidebar */}
                         <aside className="lg:col-span-4 space-y-12">
                             {/* Project Info Card */}
-                            <div className="bg-slate-50 border border-slate-100 p-6 space-y-6">
-                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-3">
+                            <div className="bg-slate-50 border border-slate-200 p-6 sm:p-8 space-y-6">
+                                <h3 className="text-sm sm:text-base font-black uppercase tracking-widest text-slate-600 flex items-center gap-3">
                                     <span className="w-8 h-[2px] bg-brand-primary"></span> {t('info.title')}
                                 </h3>
 
                                 <div className="space-y-4">
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                        <span className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                             {t('info.category')}
                                         </span>
-                                        <span className="text-sm font-bold text-slate-900">
-                                            {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || 'Hạ tầng nước'}
+                                        <span className="text-base sm:text-lg font-black text-slate-900">
+                                            {getLocalizedValue(project.category_localized as LocalizedText, locale as Locale) || (project.category as string) || (locale === 'zh' ? '代表性工程' : locale === 'en' ? 'Featured Project' : 'Dự án tiêu biểu')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                        <span className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                             {t('info.client')}
                                         </span>
-                                        <span className="text-sm font-bold text-slate-900">
+                                        <span className="text-base sm:text-lg font-black text-slate-900">
                                             {project.client_name || t('unknown')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                        <span className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                             {t('info.location')}
                                         </span>
-                                        <span className="text-sm font-bold text-slate-900">
-                                            {project.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
+                                        <span className="text-base sm:text-lg font-black text-slate-900">
+                                            {project.location as string || (locale === 'vi' ? 'Việt Nam' : locale === 'zh' ? '越南' : 'Vietnam')}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3 border-b border-slate-200">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                        <span className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                             {t('info.status')}
                                         </span>
                                         <span
-                                            className={`text-sm font-bold ${project.status === PROJECT_STATUS.COMPLETED ? 'text-green-600' : 'text-amber-600'}`}
+                                            className={`text-base sm:text-lg font-black ${project.status === PROJECT_STATUS.COMPLETED ? 'text-green-600' : 'text-amber-600'}`}
                                         >
                                             {project.status === PROJECT_STATUS.COMPLETED
                                                 ? t('status.completed')
@@ -282,10 +282,10 @@ export default function ProjectDetailClient({
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center py-3">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                                        <span className="text-sm font-bold uppercase tracking-wider text-slate-500">
                                             {t('info.time')}
                                         </span>
-                                        <span className="text-sm font-bold text-slate-900">
+                                        <span className="text-base sm:text-lg font-black text-slate-900">
                                             {project.start_date
                                                 ? new Date(project.start_date).getFullYear()
                                                 : '2024'}
@@ -298,18 +298,18 @@ export default function ProjectDetailClient({
                             </div>
 
                             {/* CTA */}
-                            <div className="bg-brand-primary p-6 text-white space-y-4">
-                                <h3 className="text-base font-black uppercase tracking-tight">
+                            <div className="bg-brand-primary p-6 sm:p-8 text-white space-y-4 shadow-lg">
+                                <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight">
                                     {t('cta.title')}
                                 </h3>
-                                <p className="text-sm text-white/80 leading-relaxed">
+                                <p className="text-base text-white/90 leading-relaxed font-medium">
                                     {t('cta.desc')}
                                 </p>
                                 <Link
                                     href="/lien-he"
-                                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-black uppercase tracking-wider bg-white text-brand-primary px-5 py-2.5 hover:bg-slate-100 transition-all"
+                                    className="inline-flex items-center gap-2 text-sm sm:text-base font-black uppercase tracking-wider bg-white text-brand-primary px-6 py-3.5 hover:bg-slate-100 transition-all shadow"
                                 >
-                                    {t('cta.btnText')} <ArrowRight size={14} />
+                                    {t('cta.btnText')} <ArrowRight size={16} />
                                 </Link>
                             </div>
                         </aside>
@@ -360,12 +360,12 @@ export default function ProjectDetailClient({
                                                 </div>
                                             )}
                                             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-brand-primary rounded-none">
-                                                {getLocalizedValue(proj.category_localized as LocalizedText, locale as Locale) || (proj.category as string) || 'DỰ ÁN'}
+                                                {getLocalizedValue(proj.category_localized as LocalizedText, locale as Locale) || (proj.category as string) || (locale === 'zh' ? '重点工程' : locale === 'en' ? 'FEATURED PROJECT' : 'DỰ ÁN TIÊU BIỂU')}
                                             </div>
                                         </div>
                                         <div className="p-6 flex flex-col grow">
                                             <div className="text-xs font-medium text-slate-500 mb-2 flex items-center gap-2">
-                                                <MapPin size={12} /> {proj.location as string || (locale === 'vi' ? 'Việt Nam' : 'Vietnam')}
+                                                <MapPin size={12} /> {proj.location as string || (locale === 'vi' ? 'Việt Nam' : locale === 'zh' ? '越南' : 'Vietnam')}
                                             </div>
                                             <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-snug mb-4 grow tracking-tight">
                                                 {projName}

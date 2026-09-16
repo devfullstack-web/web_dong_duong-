@@ -87,22 +87,22 @@ export default function NewsPage() {
                                                 />
                                             </LocalizedLink>
 
-                                            <div className="space-y-2">
-                                                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-brand-primary">
+                                            <div className="space-y-2.5">
+                                                <div className="flex items-center justify-between text-xs sm:text-sm font-black uppercase tracking-wider text-amber-700">
                                                     <span>
                                                         {activeCat || t('grid.defaultCategory')}
                                                     </span>
-                                                    <div className="flex items-center gap-1.5 text-slate-500">
-                                                        <Calendar size={13} />
-                                                        <span>{formatViDate(article.published_at)}</span>
+                                                    <div className="flex items-center gap-1.5 text-slate-500 font-semibold">
+                                                        <Calendar size={15} className="text-amber-500" />
+                                                        <span>{formatViDate(article.published_at, locale)}</span>
                                                     </div>
                                                 </div>
-                                                <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug line-clamp-2 group-hover:text-brand-primary transition-colors">
+                                                <h3 className="text-base sm:text-lg lg:text-xl font-black text-slate-900 leading-snug line-clamp-2 group-hover:text-amber-600 transition-colors">
                                                     <LocalizedLink href={`/tin-tuc/${article.slug}`}>
                                                         {activeTitle}
                                                     </LocalizedLink>
                                                 </h3>
-                                                <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed">
+                                                <p className="text-sm sm:text-base text-slate-600 font-medium line-clamp-3 leading-relaxed">
                                                     {activeSummary}
                                                 </p>
                                             </div>

@@ -6,6 +6,29 @@ import { withAuth } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
 import { sanitizePlainText } from '@/utils/sanitize';
 
+// GET /api/portal/comments/[id] - Get single comment
+export const GET = withAuth(
+    async (request, session, context) => {
+        try {
+            const { id } = await (context as { params: Promise<{ id: string }> }).params;
+            const [comment] = await db
+                .select()
+                .from(productComments)
+                .where(eq(productComments.id, id));
+
+            if (!comment) {
+                return apiError('Comment not found', 404);
+            }
+
+            return apiResponse(comment);
+        } catch (error) {
+            console.error('Error fetching comment:', error);
+            return apiError('Internal Server Error', 500);
+        }
+    },
+    { requiredPermissions: [PERMISSIONS.COMMENTS_VIEW] },
+);
+
 // PATCH /api/portal/comments/[id] - Update comment (Approve/Reply)
 export const PATCH = withAuth(
     async (request, session, context) => {
@@ -48,6 +71,8 @@ export const PATCH = withAuth(
     },
     { requiredPermissions: [PERMISSIONS.COMMENTS_UPDATE] },
 );
+
+export const PUT = PATCH;
 
 // DELETE /api/portal/comments/[id] - Soft delete comment
 export const DELETE = withAuth(

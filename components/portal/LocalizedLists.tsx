@@ -9,12 +9,14 @@ import type { Locale } from '@/types/i18n';
 const LOCALE_LABELS: Record<Locale, string> = {
     vi: '🇻🇳 Tiếng Việt',
     en: '🇬🇧 English',
+    zh: '🇨🇳 中文',
 };
 
 // Localized Features List
 export type LocalizedFeatures = {
     vi: string[];
     en: string[];
+    zh?: string[];
 };
 
 interface LocalizedFeaturesListProps {
@@ -28,19 +30,31 @@ export function LocalizedFeaturesList({
     value,
     onChange,
 }: LocalizedFeaturesListProps) {
-    const updateFeature = (locale: Locale, index: number, newValue: string) => {
-        const updated = [...(value[locale] || [''])];
-        updated[index] = newValue;
-        onChange({ ...value, [locale]: updated });
+    const featuresForLocale = (loc: Locale): string[] => {
+        const arr = value[loc];
+        return Array.isArray(arr) ? arr : [];
     };
 
-    const addFeature = (locale: Locale) => {
-        onChange({ ...value, [locale]: [...(value[locale] || []), ''] });
+    const updateFeature = (loc: Locale, index: number, text: string) => {
+        const current = featuresForLocale(loc);
+        const updated = [...(current.length ? current : [''])];
+        updated[index] = text;
+        onChange({ ...value, [loc]: updated });
     };
 
-    const removeFeature = (locale: Locale, index: number) => {
-        const filtered = (value[locale] || []).filter((_, i) => i !== index);
-        onChange({ ...value, [locale]: filtered.length ? filtered : [''] });
+    const addFeature = (loc: Locale) => {
+        onChange({
+            ...value,
+            [loc]: [...featuresForLocale(loc), ''],
+        });
+    };
+
+    const removeFeature = (loc: Locale, index: number) => {
+        const filtered = featuresForLocale(loc).filter((_, i) => i !== index);
+        onChange({
+            ...value,
+            [loc]: filtered.length ? filtered : [''],
+        });
     };
 
     return (
@@ -49,41 +63,43 @@ export function LocalizedFeaturesList({
                 {label}
             </Label>
             <Tabs defaultValue="vi" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-10 bg-slate-100 rounded-none">
-                    {(['vi', 'en'] as Locale[]).map((locale) => (
+                <TabsList className="grid w-full grid-cols-3 h-10 bg-slate-100 rounded-none">
+                    {(['vi', 'en', 'zh'] as Locale[]).map((loc) => (
                         <TabsTrigger
-                            key={locale}
-                            value={locale}
+                            key={loc}
+                            value={loc}
                             className="text-[10px] font-bold uppercase tracking-widest rounded-none data-[state=active]:bg-white data-[state=active]:shadow-sm"
                         >
-                            {LOCALE_LABELS[locale]}
-                            {value[locale]?.some((f) => f.trim()) && (
+                            {LOCALE_LABELS[loc]}
+                            {featuresForLocale(loc).some((f: string) => f.trim()) && (
                                 <span className="ml-1 text-green-500">●</span>
                             )}
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {(['vi', 'en'] as Locale[]).map((locale) => (
-                    <TabsContent key={locale} value={locale} className="mt-3 space-y-4">
-                        {(value[locale] || ['']).map((feature, index) => (
+                {(['vi', 'en', 'zh'] as Locale[]).map((loc) => (
+                    <TabsContent key={loc} value={loc} className="mt-3 space-y-4">
+                        {(featuresForLocale(loc).length ? featuresForLocale(loc) : ['']).map((feature: string, index: number) => (
                             <div key={index} className="flex gap-2">
                                 <Input
                                     className="h-12 bg-slate-50 border-none text-sm font-medium rounded-none focus:ring-1 focus:ring-brand-primary/20"
                                     value={feature}
                                     onChange={(e) =>
-                                        updateFeature(locale, index, e.target.value)
+                                        updateFeature(loc, index, e.target.value)
                                     }
                                     placeholder={
-                                        locale === 'vi'
+                                        loc === 'vi'
                                             ? 'VD: Tiêu chuẩn Nhật Bản...'
-                                            : 'E.g.: Japanese standard...'
+                                            : loc === 'zh'
+                                              ? '例: 意大利原创连纹设计 / 抗菌环保...'
+                                              : 'E.g.: Japanese standard...'
                                     }
                                 />
                                 <Button
                                     type="button"
                                     variant="ghost"
                                     className="h-12 w-12 rounded-none text-slate-400 hover:text-red-500"
-                                    onClick={() => removeFeature(locale, index)}
+                                    onClick={() => removeFeature(loc, index)}
                                 >
                                     ×
                                 </Button>
@@ -93,13 +109,13 @@ export function LocalizedFeaturesList({
                             type="button"
                             variant="outline"
                             className="w-full h-12 border-dashed border-slate-200 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary hover:border-brand-primary rounded-none"
-                            onClick={() => addFeature(locale)}
+                            onClick={() => addFeature(loc)}
                         >
-                            + {locale === 'vi' ? 'Thêm đặc điểm' : 'Add feature'}
+                            + {loc === 'vi' ? 'Thêm đặc điểm' : loc === 'zh' ? '添加特性' : 'Add feature'}
                         </Button>
-                        {locale === 'en' &&
-                            !value.en?.some((f) => f.trim()) &&
-                            value.vi?.some((f) => f.trim()) && (
+                        {loc !== 'vi' &&
+                            !featuresForLocale(loc).some((f: string) => f.trim()) &&
+                            featuresForLocale('vi').some((f: string) => f.trim()) && (
                                 <p className="text-[9px] text-amber-500 italic">
                                     Sẽ sử dụng bản tiếng Việt nếu để trống
                                 </p>
@@ -115,6 +131,7 @@ export function LocalizedFeaturesList({
 export type LocalizedTechSpecs = {
     vi: { key: string; value: string }[];
     en: { key: string; value: string }[];
+    zh?: { key: string; value: string }[];
 };
 
 interface LocalizedTechSpecsListProps {
@@ -128,33 +145,35 @@ export function LocalizedTechSpecsList({
     value,
     onChange,
 }: LocalizedTechSpecsListProps) {
-    const specsForLocale = (locale: Locale) =>
-        Array.isArray(value[locale]) ? value[locale] : [];
+    const specsForLocale = (loc: Locale): { key: string; value: string }[] => {
+        const arr = value[loc];
+        return Array.isArray(arr) ? arr : [];
+    };
 
     const updateSpec = (
-        locale: Locale,
+        loc: Locale,
         index: number,
         field: 'key' | 'value',
         newValue: string
     ) => {
-        const current = specsForLocale(locale);
+        const current = specsForLocale(loc);
         const updated = [...(current.length ? current : [{ key: '', value: '' }])];
         updated[index] = { ...updated[index], [field]: newValue };
-        onChange({ ...value, [locale]: updated });
+        onChange({ ...value, [loc]: updated });
     };
 
-    const addSpec = (locale: Locale) => {
+    const addSpec = (loc: Locale) => {
         onChange({
             ...value,
-            [locale]: [...specsForLocale(locale), { key: '', value: '' }],
+            [loc]: [...specsForLocale(loc), { key: '', value: '' }],
         });
     };
 
-    const removeSpec = (locale: Locale, index: number) => {
-        const filtered = specsForLocale(locale).filter((_, i) => i !== index);
+    const removeSpec = (loc: Locale, index: number) => {
+        const filtered = specsForLocale(loc).filter((_, i) => i !== index);
         onChange({
             ...value,
-            [locale]: filtered.length ? filtered : [{ key: '', value: '' }],
+            [loc]: filtered.length ? filtered : [{ key: '', value: '' }],
         });
     };
 
@@ -164,62 +183,64 @@ export function LocalizedTechSpecsList({
                 {label}
             </Label>
             <Tabs defaultValue="vi" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-10 bg-slate-100 rounded-none">
-                    {(['vi', 'en'] as Locale[]).map((locale) => (
+                <TabsList className="grid w-full grid-cols-3 h-10 bg-slate-100 rounded-none">
+                    {(['vi', 'en', 'zh'] as Locale[]).map((loc) => (
                         <TabsTrigger
-                            key={locale}
-                            value={locale}
+                            key={loc}
+                            value={loc}
                             className="text-[10px] font-bold uppercase tracking-widest rounded-none data-[state=active]:bg-white data-[state=active]:shadow-sm"
                         >
-                            {LOCALE_LABELS[locale]}
-                            {specsForLocale(locale).some((s) => s.key.trim() || s.value.trim()) && (
+                            {LOCALE_LABELS[loc]}
+                            {specsForLocale(loc).some((s) => s.key.trim() || s.value.trim()) && (
                                 <span className="ml-1 text-green-500">●</span>
                             )}
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {(['vi', 'en'] as Locale[]).map((locale) => (
-                    <TabsContent key={locale} value={locale} className="mt-3 space-y-4">
+                {(['vi', 'en', 'zh'] as Locale[]).map((loc) => (
+                    <TabsContent key={loc} value={loc} className="mt-3 space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-4">
-                                {locale === 'vi' ? 'Tên thông số' : 'Spec name'}
+                                {loc === 'vi' ? 'Tên thông số' : loc === 'zh' ? '参数名称' : 'Spec name'}
                             </div>
                             <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 pl-4">
-                                {locale === 'vi' ? 'Giá trị' : 'Value'}
+                                {loc === 'vi' ? 'Giá trị' : loc === 'zh' ? '参数数值' : 'Value'}
                             </div>
                         </div>
-                        {(specsForLocale(locale).length
-                            ? specsForLocale(locale)
+                        {(specsForLocale(loc).length
+                            ? specsForLocale(loc)
                             : [{ key: '', value: '' }]
                         ).map((spec, index) => (
                             <div key={index} className="flex gap-2">
                                 <Input
                                     placeholder={
-                                        locale === 'vi' ? 'VD: Kích thước' : 'E.g.: Size'
+                                        loc === 'vi' ? 'VD: Kích thước' : loc === 'zh' ? '例: 规格尺寸' : 'E.g.: Size'
                                     }
                                     className="h-12 bg-slate-50 border-none text-sm font-bold rounded-none focus:ring-1 focus:ring-brand-primary/20"
                                     value={spec.key}
                                     onChange={(e) =>
-                                        updateSpec(locale, index, 'key', e.target.value)
+                                        updateSpec(loc, index, 'key', e.target.value)
                                     }
                                 />
                                 <Input
                                     placeholder={
-                                        locale === 'vi'
-                                            ? 'VD: DN50 - DN1200'
-                                            : 'E.g.: DN50 - DN1200'
+                                        loc === 'vi'
+                                            ? 'VD: 800x800 mm'
+                                            : loc === 'zh'
+                                              ? '例: 800x800 mm'
+                                              : 'E.g.: 800x800 mm'
                                     }
                                     className="h-12 bg-slate-100 border-none text-sm font-medium rounded-none focus:ring-1 focus:ring-brand-primary/20"
                                     value={spec.value}
                                     onChange={(e) =>
-                                        updateSpec(locale, index, 'value', e.target.value)
+                                        updateSpec(loc, index, 'value', e.target.value)
                                     }
                                 />
                                 <Button
                                     type="button"
                                     variant="ghost"
                                     className="h-12 w-12 rounded-none text-slate-400 hover:text-red-500"
-                                    onClick={() => removeSpec(locale, index)}
+                                    onClick={() => removeSpec(loc, index)}
                                 >
                                     ×
                                 </Button>
@@ -229,12 +250,12 @@ export function LocalizedTechSpecsList({
                             type="button"
                             variant="outline"
                             className="w-full h-12 border-dashed border-slate-200 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-brand-primary hover:border-brand-primary rounded-none"
-                            onClick={() => addSpec(locale)}
+                            onClick={() => addSpec(loc)}
                         >
-                            + {locale === 'vi' ? 'Thêm thông số' : 'Add spec'}
+                            + {loc === 'vi' ? 'Thêm thông số' : loc === 'zh' ? '添加参数' : 'Add spec'}
                         </Button>
-                        {locale === 'en' &&
-                            !specsForLocale('en').some((s) => s.key.trim()) &&
+                        {loc !== 'vi' &&
+                            !specsForLocale(loc).some((s) => s.key.trim()) &&
                             specsForLocale('vi').some((s) => s.key.trim()) && (
                                 <p className="text-[9px] text-amber-500 italic">
                                     Sẽ sử dụng bản tiếng Việt nếu để trống

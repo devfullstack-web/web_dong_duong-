@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link as LocalizedLink } from '@/i18n/routing';
 import { motion } from 'motion/react';
 import { MapPin, Briefcase, Users, ArrowRight } from 'lucide-react';
@@ -12,12 +12,15 @@ import { SiteEmptyState } from '@/components/site/SiteEmptyState';
 import Loading from '@/components/shared/Loading';
 import { SitePagination } from '@/components/site/SitePagination';
 import { EMPLOYMENT_TYPE, JOB_STATUS, type JobStatus } from '@/constants/content';
+import { getLocalizedValue, type LocalizedText, type Locale } from '@/types/i18n';
 
 interface JobPosting {
     id: string;
     title: string;
+    title_localized?: LocalizedText | null;
     slug: string;
     description: string;
+    description_localized?: LocalizedText | null;
     location: string | null;
     employment_type: string;
     salary_range: string | null;
@@ -31,6 +34,7 @@ interface JobPosting {
 const ITEMS_PER_PAGE = 12;
 
 export default function RecruitmentHub() {
+    const locale = useLocale();
     const t = useTranslations('Careers');
     const tCommon = useTranslations('Common');
     const jobsListRef = useRef<HTMLDivElement>(null);
@@ -75,27 +79,27 @@ export default function RecruitmentHub() {
                                     >
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
-                                                <span className="text-xs font-bold uppercase tracking-wider text-brand-primary">
+                                                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-primary">
                                                     {job.department || t('list.defaultDepartment')}
                                                 </span>
                                             </div>
-                                            <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors">
-                                                {job.title}
+                                            <h3 className="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-tight group-hover:text-brand-primary transition-colors leading-snug">
+                                                {getLocalizedValue(job.title_localized, locale as Locale) || job.title}
                                             </h3>
-                                            <div className="flex flex-wrap gap-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                                <div className="flex items-center gap-1.5">
-                                                    <MapPin size={14} className="text-slate-400" />
+                                            <div className="flex flex-wrap gap-4 text-xs sm:text-sm font-medium text-slate-600 uppercase tracking-wider">
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin size={16} className="text-slate-400 shrink-0" />
                                                     {job.location || t('list.defaultLocation')}
                                                 </div>
-                                                <div className="flex items-center gap-1.5">
-                                                    <Briefcase size={14} className="text-slate-400" />
+                                                <div className="flex items-center gap-2">
+                                                    <Briefcase size={16} className="text-slate-400 shrink-0" />
                                                     {t(
                                                         `employmentTypes.${job.employment_type?.toLowerCase() || EMPLOYMENT_TYPE.FULL_TIME}`,
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 group-hover:text-brand-primary">
-                                                {t('list.viewDetail')} <ArrowRight size={16} />
+                                            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base font-bold uppercase tracking-wider text-slate-600 group-hover:text-brand-primary">
+                                                {t('list.viewDetail')} <ArrowRight size={18} />
                                             </div>
                                         </div>
                                     </LocalizedLink>

@@ -88,7 +88,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const article = await getArticle(slug);
 
     if (!article) {
-        return { title: 'Không tìm thấy bài viết' };
+        return {
+            title: locale === 'zh' ? '未找到文章' : locale === 'en' ? 'Article Not Found' : 'Không tìm thấy bài viết',
+        };
     }
 
     const activeTitle = getLocalizedValue(article.title_localized, locale as Locale) || article.title;
@@ -131,7 +133,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
 
     // Compute readTime server-side
     const wordCount = (activeContent || '').replace(/<[^>]*>/g, '').split(/\s+/).length;
-    const readTimeSuffix = locale === 'vi' ? 'phút' : 'min';
+    const readTimeSuffix = locale === 'vi' ? 'phút' : locale === 'zh' ? '分钟' : 'min';
     const readTime = `${Math.max(1, Math.ceil(wordCount / 200))} ${readTimeSuffix}`;
 
     const articleWithMeta = {
@@ -139,14 +141,14 @@ export default async function NewsDetailPage({ params }: PageProps) {
         title: activeTitle,
         summary: activeSummary,
         content: activeContent,
-        author: article.author_name || (locale === 'vi' ? 'Sài Gòn Valve' : 'Saigon Valve'),
-        category: getLocalizedValue(article.category_localized, locale as Locale) || article.category_name || (locale === 'vi' ? 'Tin tức' : 'News'),
+        author: article.author_name || (locale === 'vi' ? 'Đông Dương Corporation' : locale === 'zh' ? '东洋集团' : 'Dong Duong Corporation'),
+        category: getLocalizedValue(article.category_localized, locale as Locale) || article.category_name || (locale === 'vi' ? 'Tin tức' : locale === 'zh' ? '新闻资讯' : 'News'),
         readTime,
     };
 
     const related = relatedArticles.map((item) => ({
         ...item,
-        category_name: getLocalizedValue(item.category_localized, locale as Locale) || item.category_name || (locale === 'vi' ? 'Tin tức' : 'News'),
+        category_name: getLocalizedValue(item.category_localized, locale as Locale) || item.category_name || (locale === 'vi' ? 'Tin tức' : locale === 'zh' ? '新闻资讯' : 'News'),
     }));
 
     return (

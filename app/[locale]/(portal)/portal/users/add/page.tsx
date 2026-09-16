@@ -140,7 +140,7 @@ export default function AddUserPage() {
                         Cấp tài khoản mới
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-1.5 text-xs pl-4">
-                        Khởi tạo định danh quản trị viên cho hệ thống Sài Gòn Valve.
+                        Khởi tạo định danh quản trị viên cho hệ thống Đông Dương Corporation.
                     </p>
                 </div>
             </div>

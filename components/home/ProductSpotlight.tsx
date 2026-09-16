@@ -134,7 +134,7 @@ export default function ProductSpotlight({ products = [] }: ProductSpotlightProp
                                                 {/* Micro Subtitle Tag for context */}
                                                 <div className="text-xs font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1">
                                                     <ShieldCheck size={12} className="text-brand-accent shrink-0" />
-                                                    <span>SAIGON VALVE STANDARD</span>
+                                                    <span>ĐÔNG DƯƠNG STANDARD</span>
                                                 </div>
 
                                                 {/* Product Title - Distinct & Clear */}

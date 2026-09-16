@@ -168,7 +168,7 @@ export default function ProductArchive() {
                                 {/* Search Box */}
                                 <div className="space-y-3 pb-6 border-b border-slate-100">
                                     <h4 className="text-xs font-black uppercase tracking-widest text-brand-secondary">
-                                        {locale === 'vi' ? 'Tìm kiếm sản phẩm' : 'Search Products'}
+                                        {locale === 'vi' ? 'Tìm kiếm sản phẩm' : locale === 'zh' ? '搜索产品' : 'Search Products'}
                                     </h4>
                                     <div className="relative group">
                                         <input
@@ -178,7 +178,9 @@ export default function ProductArchive() {
                                             placeholder={
                                                 locale === 'vi'
                                                     ? 'Nhập tên sản phẩm...'
-                                                    : 'Enter product name...'
+                                                    : locale === 'zh'
+                                                      ? '输入产品名称...'
+                                                      : 'Enter product name...'
                                             }
                                             className="w-full pl-9 pr-8 py-2.5 bg-slate-50 border border-slate-200 focus:border-brand-primary focus:bg-white text-xs font-medium outline-none transition-all duration-300 rounded-none focus:ring-1 focus:ring-brand-primary"
                                         />
@@ -253,14 +255,14 @@ export default function ProductArchive() {
                                                 : 'hidden lg:block',
                                         )}
                                     >
-                                        <h4 className="hidden lg:flex items-center justify-between text-xs font-black uppercase tracking-widest text-brand-secondary border-b border-slate-100 pb-4 mb-4">
+                                        <h4 className="hidden lg:flex items-center justify-between text-sm font-black uppercase tracking-wider text-brand-secondary border-b border-slate-200 pb-3 mb-4">
                                             <span>{t('sidebar.categoryTitle')}</span>
                                             {selectedCategoryId && (
                                                 <button
                                                     onClick={handleAllCategoriesClick}
-                                                    className="text-xs font-bold text-brand-primary lowercase hover:underline hover:cursor-pointer normal-case tracking-wide"
+                                                    className="text-xs sm:text-sm font-bold text-brand-primary lowercase hover:underline hover:cursor-pointer normal-case tracking-wide"
                                                 >
-                                                    {locale === 'vi' ? '[Bỏ lọc]' : '[Clear]'}
+                                                    {locale === 'vi' ? '[Bỏ lọc]' : locale === 'zh' ? '[清除筛选]' : '[Clear]'}
                                                 </button>
                                             )}
                                         </h4>
@@ -273,14 +275,14 @@ export default function ProductArchive() {
                                                     setIsMobileMenuOpen(false);
                                                 }}
                                                 className={cn(
-                                                    'w-full px-3 py-2 text-left text-xs sm:text-sm font-bold uppercase tracking-wider transition-all hover:cursor-pointer border-l-2 flex items-center justify-between',
+                                                    'w-full px-3.5 py-2.5 text-left text-sm sm:text-base font-bold uppercase tracking-wider transition-all hover:cursor-pointer border-l-2 flex items-center justify-between',
                                                     selectedCategoryId === null
                                                         ? 'text-brand-primary border-brand-primary bg-slate-50 font-black'
-                                                        : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
+                                                        : 'text-slate-700 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
                                                 )}
                                             >
                                                 <span>{t('sidebar.all')}</span>
-                                                <span className="text-xs opacity-70 font-medium">
+                                                <span className="text-xs sm:text-sm opacity-80 font-bold">
                                                     ({total})
                                                 </span>
                                             </button>
@@ -308,10 +310,10 @@ export default function ProductArchive() {
                                                                     handleParentCategoryClick(cat)
                                                                 }
                                                                 className={cn(
-                                                                    'w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest transition-all hover:cursor-pointer border-l-2 flex items-center justify-between gap-2',
+                                                                    'w-full px-3.5 py-2.5 text-left text-sm sm:text-base font-bold uppercase tracking-wide transition-all hover:cursor-pointer border-l-2 flex items-center justify-between gap-2',
                                                                     isCurrent
                                                                         ? 'text-brand-primary border-brand-primary bg-slate-50 font-black'
-                                                                        : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
+                                                                        : 'text-slate-700 hover:text-brand-primary hover:bg-slate-50/50 border-transparent',
                                                                 )}
                                                             >
                                                                 <span>
@@ -322,9 +324,9 @@ export default function ProductArchive() {
                                                                 </span>
                                                                 {hasChildren && (
                                                                     <ChevronDown
-                                                                        size={12}
+                                                                        size={14}
                                                                         className={cn(
-                                                                            'shrink-0 transition-transform duration-200 opacity-60',
+                                                                            'shrink-0 transition-transform duration-200 opacity-70',
                                                                             isExpanded &&
                                                                                 'rotate-180 opacity-100 text-brand-primary',
                                                                         )}
@@ -333,7 +335,7 @@ export default function ProductArchive() {
                                                             </button>
 
                                                             {hasChildren && isExpanded && (
-                                                                <div className="flex flex-col gap-0.5 pl-3 border-l border-slate-100/80 py-0.5 ml-3 my-0.5 animate-fadeIn">
+                                                                <div className="flex flex-col gap-1 pl-3 border-l border-slate-200 py-1 ml-3 my-1 animate-fadeIn">
                                                                     {visibleChildren.map(
                                                                         (child) => (
                                                                             <button
@@ -348,11 +350,11 @@ export default function ProductArchive() {
                                                                                     );
                                                                                 }}
                                                                                 className={cn(
-                                                                                    'w-full px-3 py-1.5 text-left text-xs font-bold uppercase tracking-wider transition-all hover:cursor-pointer border-l-2',
+                                                                                    'w-full px-3 py-2 text-left text-xs sm:text-sm font-bold uppercase tracking-wider transition-all hover:cursor-pointer border-l-2',
                                                                                     selectedCategoryId ===
                                                                                         child.id
                                                                                         ? 'text-brand-secondary border-brand-secondary bg-slate-100/50 font-black'
-                                                                                        : 'text-slate-500 hover:text-brand-primary hover:bg-slate-50/30 border-transparent',
+                                                                                        : 'text-slate-600 hover:text-brand-primary hover:bg-slate-50/30 border-transparent',
                                                                                 )}
                                                                             >
                                                                                 {getLocalizedValue(
@@ -387,7 +389,7 @@ export default function ProductArchive() {
                                     {/* Sort Dropdown */}
                                     <div className="flex items-center gap-2">
                                         <span className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:inline">
-                                            {locale === 'vi' ? 'Sắp xếp:' : 'Sort by:'}
+                                            {locale === 'vi' ? 'Sắp xếp:' : locale === 'zh' ? '排序方式:' : 'Sort by:'}
                                         </span>
                                         <select
                                             value={sortBy}
@@ -402,13 +404,13 @@ export default function ProductArchive() {
                                             className="bg-white border border-slate-200 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 outline-none focus:border-brand-primary transition-colors rounded-none hover:cursor-pointer"
                                         >
                                             <option value="default">
-                                                {locale === 'vi' ? 'Mặc định' : 'Default'}
+                                                {locale === 'vi' ? 'Mặc định' : locale === 'zh' ? '默认排序' : 'Default'}
                                             </option>
                                             <option value="name-asc">
-                                                {locale === 'vi' ? 'Tên: A - Z' : 'Name: A - Z'}
+                                                {locale === 'vi' ? 'Tên: A - Z' : locale === 'zh' ? '名称: A - Z' : 'Name: A - Z'}
                                             </option>
                                             <option value="name-desc">
-                                                {locale === 'vi' ? 'Tên: Z - A' : 'Name: Z - A'}
+                                                {locale === 'vi' ? 'Tên: Z - A' : locale === 'zh' ? '名称: Z - A' : 'Name: Z - A'}
                                             </option>
                                         </select>
                                     </div>
@@ -451,12 +453,16 @@ export default function ProductArchive() {
                                         <p className="text-sm font-bold text-slate-800 uppercase tracking-wider">
                                             {locale === 'vi'
                                                 ? 'Không tìm thấy sản phẩm'
-                                                : 'No products found'}
+                                                : locale === 'zh'
+                                                  ? '未找到相关产品'
+                                                  : 'No products found'}
                                         </p>
                                         <p className="text-xs sm:text-sm text-slate-500 font-medium">
                                             {locale === 'vi'
                                                 ? 'Vui lòng thử lại với từ khóa khác hoặc bộ lọc khác.'
-                                                : 'Please try again with a different search query or filter.'}
+                                                : locale === 'zh'
+                                                  ? '请尝试使用其他关键词或筛选条件。'
+                                                  : 'Please try again with a different search query or filter.'}
                                         </p>
                                     </div>
                                 </div>
@@ -517,20 +523,32 @@ export default function ProductArchive() {
                                                     </div>
                                                     <div className="space-y-3 flex-1 flex flex-col justify-between">
                                                         <div className="space-y-1.5">
-                                                            <div className="text-xs font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1.5">
-                                                                <Shield size={12} />{' '}
+                                                            <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1.5">
+                                                                <Shield size={14} />{' '}
                                                                 {getLocalizedValue(
                                                                     product.category_localized,
                                                                     locale,
                                                                 ) || product.category}
                                                             </div>
-                                                            <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-[2rem]">
+                                                            <h3 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-brand-primary transition-colors line-clamp-2 uppercase min-h-[2.5rem]">
                                                                 {getLocalizedValue(
                                                                     product.name_localized,
                                                                     locale,
                                                                 ) || product.name}
                                                             </h3>
-                                                            <p className="text-xs sm:text-sm text-slate-600 font-normal sm:font-medium line-clamp-2 leading-relaxed">
+
+                                                            {/* Price Highlight for Seniors & Shoppers */}
+                                                            {product.price && Number(product.price) > 0 ? (
+                                                                <div className="text-base sm:text-lg font-black text-[#D49B45] pt-0.5">
+                                                                    {new Intl.NumberFormat('vi-VN').format(Number(product.price))} đ
+                                                                </div>
+                                                            ) : (
+                                                                <div className="text-sm sm:text-base font-bold text-amber-700/80 pt-0.5">
+                                                                    {locale === 'vi' ? 'Liên hệ báo giá' : locale === 'zh' ? '联系获取底价' : 'Contact for quote'}
+                                                                </div>
+                                                            )}
+
+                                                            <p className="text-sm sm:text-base text-slate-700 font-medium line-clamp-2 leading-relaxed">
                                                                 {getLocalizedValue(
                                                                     product.tech_summary_localized,
                                                                     locale,
@@ -541,11 +559,11 @@ export default function ProductArchive() {
                                                         </div>
                                                         <LocalizedLink
                                                             href={`/san-pham/${product.slug}`}
-                                                            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-brand-secondary transition-colors pt-3 border-t border-slate-100 w-full mt-2"
+                                                            className="inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-wider text-slate-600 group-hover:text-brand-secondary transition-colors pt-3 border-t border-slate-100 w-full mt-2"
                                                         >
                                                             {t('grid.viewDetail')}{' '}
                                                             <ArrowRight
-                                                                size={12}
+                                                                size={14}
                                                                 className="ml-auto group-hover:translate-x-0.5 transition-transform"
                                                             />
                                                         </LocalizedLink>
@@ -561,7 +579,7 @@ export default function ProductArchive() {
                                 (productsLoading ? (
                                     <div className="space-y-3 animate-pulse">
                                         {Array.from({ length: 4 }).map((_, i) => (
-                                            <div
+                                             <div
                                                 key={i}
                                                 className="bg-slate-50/50 border border-slate-100 p-4 flex flex-col sm:flex-row gap-4 h-[160px] rounded-none"
                                             >
@@ -578,7 +596,7 @@ export default function ProductArchive() {
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="space-y-3">
+                                    <div className="space-y-4">
                                         {sortedProducts.map((product, i) => (
                                             <motion.div
                                                 key={product.id}
@@ -586,16 +604,16 @@ export default function ProductArchive() {
                                                 whileInView={{ opacity: 1, y: 0 }}
                                                 viewport={{ once: true }}
                                                 transition={{ delay: i * 0.03 }}
-                                                className="group bg-white border border-slate-100 hover:border-brand-accent transition-all duration-500 rounded-none relative overflow-hidden"
+                                                className="group bg-white border border-slate-200 hover:border-amber-400 transition-all duration-300 rounded-xl relative overflow-hidden p-4 sm:p-5 shadow-sm hover:shadow-md"
                                             >
                                                 {/* Animated top accent bar */}
-                                                <div className="absolute top-0 left-0 w-full h-0.5 bg-brand-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+                                                <div className="absolute top-0 left-0 w-full h-1 bg-[#E5B869] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
 
                                                 <LocalizedLink
                                                     href={`/san-pham/${product.slug}`}
-                                                    className="flex flex-col sm:flex-row gap-4 p-4"
+                                                    className="flex flex-col sm:flex-row gap-5"
                                                 >
-                                                    <div className="relative w-full sm:w-32 aspect-square sm:aspect-auto sm:h-32 shrink-0 overflow-hidden bg-slate-50/50 rounded-none border border-slate-100/60">
+                                                    <div className="relative w-full sm:w-40 aspect-square sm:aspect-auto sm:h-40 shrink-0 overflow-hidden bg-slate-50 rounded-lg border border-slate-200/80">
                                                         <Image
                                                             src={
                                                                 product.image_url ||
@@ -613,21 +631,33 @@ export default function ProductArchive() {
                                                         />
                                                     </div>
                                                     <div className="flex-1 space-y-2 flex flex-col justify-between">
-                                                        <div className="space-y-1">
-                                                            <div className="text-xs font-bold uppercase tracking-wider text-brand-primary flex items-center gap-1.5">
-                                                                <Shield size={12} />{' '}
+                                                        <div className="space-y-1.5">
+                                                            <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-amber-700 flex items-center gap-1.5">
+                                                                <Shield size={14} />{' '}
                                                                 {getLocalizedValue(
                                                                     product.category_localized,
                                                                     locale,
                                                                 ) || product.category}
                                                             </div>
-                                                            <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-1">
+                                                            <h3 className="text-base sm:text-lg font-black text-slate-900 group-hover:text-amber-600 transition-colors uppercase line-clamp-1">
                                                                 {getLocalizedValue(
                                                                     product.name_localized,
                                                                     locale,
                                                                 ) || product.name}
                                                             </h3>
-                                                            <p className="text-xs sm:text-sm text-slate-600 font-normal sm:font-medium line-clamp-2 leading-relaxed">
+
+                                                            {/* Price Highlight */}
+                                                            {product.price && Number(product.price) > 0 ? (
+                                                                <div className="text-base sm:text-lg font-black text-[#D49B45]">
+                                                                    {new Intl.NumberFormat('vi-VN').format(Number(product.price))} đ
+                                                                </div>
+                                                            ) : (
+                                                                <div className="text-sm sm:text-base font-bold text-amber-700/80">
+                                                                    {locale === 'vi' ? 'Liên hệ báo giá' : locale === 'zh' ? '联系获取底价' : 'Contact for quote'}
+                                                                </div>
+                                                            )}
+
+                                                            <p className="text-sm sm:text-base text-slate-600 font-medium line-clamp-2 leading-relaxed">
                                                                 {getLocalizedValue(
                                                                     product.tech_summary_localized,
                                                                     locale,
@@ -636,11 +666,11 @@ export default function ProductArchive() {
                                                                     t('grid.defaultSummary')}
                                                             </p>
                                                         </div>
-                                                        <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500 group-hover:text-brand-secondary transition-colors pt-2 border-t border-slate-100 w-full mt-1">
+                                                        <div className="inline-flex items-center gap-2 text-sm sm:text-base font-black uppercase tracking-wider text-slate-700 group-hover:text-amber-600 transition-colors pt-2 border-t border-slate-100 w-full mt-1">
                                                             {t('grid.viewDetail')}{' '}
                                                             <ArrowRight
-                                                                size={12}
-                                                                className="ml-auto group-hover:translate-x-0.5 transition-transform"
+                                                                size={14}
+                                                                className="ml-auto group-hover:translate-x-1 transition-transform"
                                                             />
                                                         </div>
                                                     </div>

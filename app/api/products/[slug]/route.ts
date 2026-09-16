@@ -45,6 +45,7 @@ export async function GET(
             ...product.features_localized,
             vi: sanitizeStringArray(product.features_localized.vi),
             en: sanitizeStringArray(product.features_localized.en),
+            zh: sanitizeStringArray(product.features_localized.zh),
           }
         : product.features_localized,
     });
@@ -135,6 +136,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
         ...featuresLocalized,
         vi: sanitizeStringArray(featuresLocalized.vi),
         en: sanitizeStringArray(featuresLocalized.en),
+        zh: sanitizeStringArray(featuresLocalized.zh),
       };
       if (featuresLocalized.vi) {
         updates.features = sanitizeStringArray(featuresLocalized.vi);
@@ -150,8 +152,14 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     }
 
     if (updates.tech_specs_localized) {
-      // Tech specs localized - legacy tech_specs should already be provided by frontend
-      // Just ensure it's saved to the database
+      const tsl = updates.tech_specs_localized as Record<string, unknown>;
+      if (!updates.tech_specs && Array.isArray(tsl.vi)) {
+        const obj: Record<string, string> = {};
+        for (const item of tsl.vi as { key?: string; value?: string }[]) {
+          if (item?.key && item?.value) obj[item.key] = item.value;
+        }
+        updates.tech_specs = obj;
+      }
     }
 
     const [updatedProduct] = await db.update(products)
@@ -169,6 +177,8 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     return apiError("Internal Server Error", 500);
   }
 }, { requiredPermissions: [PERMISSIONS.PRODUCTS_UPDATE] });
+
+export const PUT = PATCH;
 
 // DELETE /api/products/[id] - Soft delete a product
 export const DELETE = withAuth(async (request, session, { params }) => {

@@ -327,7 +327,7 @@ export default function EditUserPage() {
                                 },
                                 {
                                     label: 'Hệ thống',
-                                    value: 'Sài Gòn Valve CMS',
+                                    value: 'Đông Dương Corporation CMS',
                                     color: 'text-slate-400',
                                 },
                             ].map((item, i) => (

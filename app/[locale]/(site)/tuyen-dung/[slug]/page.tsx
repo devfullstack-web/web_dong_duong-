@@ -9,9 +9,10 @@ import { COMPANY_INFO } from '@/constants/site-info';
 import JobDetailClient from './_components/JobDetailClient';
 import { sanitizeRichText } from '@/utils/sanitize';
 import { JOB_STATUS } from '@/constants/content';
+import { getLocalizedValue } from '@/types/i18n';
 
 type PageProps = {
-    params: Promise<{ slug: string }>;
+    params: Promise<{ locale: string; slug: string }>;
 };
 
 const getJob = cache(async (slug: string) => {
@@ -37,26 +38,35 @@ const getJob = cache(async (slug: string) => {
 });
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { slug } = await params;
+    const { locale, slug } = await params;
     const job = await getJob(slug);
 
+    const isZh = locale === 'zh';
+    const isEn = locale === 'en';
+
     if (!job) {
-        return { title: 'Không tìm thấy tin tuyển dụng' };
+        return {
+            title: isZh ? '未找到招聘岗位' : isEn ? 'Job Not Found' : 'Không tìm thấy tin tuyển dụng',
+        };
     }
 
-    const description = stripHtml(job.description);
+    const title = getLocalizedValue(job.title_localized, locale as any) || job.title;
+    const rawDesc = getLocalizedValue(job.description_localized, locale as any) || job.description;
+    const description = stripHtml(rawDesc);
+    const prefix = isZh ? '诚聘英才: ' : isEn ? 'Careers: ' : 'Tuyển dụng: ';
+    const metaTitle = `${prefix}${title}`;
 
     return {
-        title: `Tuyển dụng: ${job.title}`,
+        title: metaTitle,
         description,
         openGraph: {
-            title: `Tuyển dụng: ${job.title} | ${COMPANY_INFO.name}`,
+            title: `${metaTitle} | ${COMPANY_INFO.name}`,
             description,
             type: 'website',
         },
         twitter: {
             card: 'summary',
-            title: `Tuyển dụng: ${job.title}`,
+            title: metaTitle,
             description,
         },
     };

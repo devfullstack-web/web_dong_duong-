@@ -104,6 +104,8 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
   }
 }, { requiredPermissions: [PERMISSIONS.CMS_UPDATE] });
 
+export const PUT = PATCH;
+
 // DELETE /api/categories/[id] - Delete a category
 export const DELETE = withAuth(async (request: NextRequest, session, { params }) => {
   try {

@@ -131,6 +131,8 @@ export const PATCH = withAuth(
     { requiredPermissions: [PERMISSIONS.ROLES_UPDATE] },
 );
 
+export const PUT = PATCH;
+
 export const DELETE = withAuth(
     async (request, session, { params }) => {
         try {

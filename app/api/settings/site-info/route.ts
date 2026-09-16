@@ -26,3 +26,6 @@ export const PATCH = withAuth(
     },
     { requiredPermissions: [PERMISSIONS.SETTINGS_UPDATE] },
 );
+
+export const PUT = PATCH;
+

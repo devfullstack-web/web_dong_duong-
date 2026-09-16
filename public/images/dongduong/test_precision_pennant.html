@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { margin: 0; background: #2B6CB0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+</style>
+</head>
+<body>
+  <!-- Header Bar -->
+  <header class="relative bg-[#0A2958] text-white px-8 py-3 flex items-center justify-between shadow-md">
+    <div class="flex items-center gap-4">
+      
+      <!-- Brand Link: self-stretch so its height is 100% of header -->
+      <a href="#" class="relative self-stretch flex items-center gap-3.5 group select-none">
+        
+        <!-- Emblem Container: self-stretch so its bottom is 100% flush with header bottom -->
+        <div class="relative self-stretch flex items-center justify-center shrink-0">
+          
+          <!-- 3D Gold Emblem (centered vertically, extends below navbar) -->
+          <div class="relative z-20 w-[78px] h-[86px] translate-y-3 shrink-0 drop-shadow-lg group-hover:scale-[1.03] transition-transform duration-200">
+            <img src="/images/dongduong/dongduong_emblem_tight.png" class="w-full h-full object-contain" />
+          </div>
+
+          <!-- Hanging Chevron SVG (positioned at top-full of self-stretch container = EXACT bottom edge of header) -->
+          <div class="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] z-10 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.45)] pointer-events-none">
+            <svg width="106" height="32" viewBox="0 0 106 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 0 0 L 53 31 L 106 0 Z" fill="#0A2958" />
+              <path d="M 0 0 L 53 31 L 106 0" stroke="#E5B869" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+              <path d="M 1.5 0.5 L 53 30 L 104.5 0.5" stroke="#FFF5D6" stroke-width="1" stroke-linejoin="round" stroke-linecap="round" opacity="0.8" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- 3D Gold Text -->
+        <div class="flex flex-col justify-center">
+          <img src="/images/dongduong/new_text_clean.png" class="h-8 sm:h-9 object-contain group-hover:brightness-110 transition-all" />
+        </div>
+      </a>
+
+      <!-- Navigation links mockup -->
+      <nav class="ml-8 flex items-center gap-6 text-sm font-bold uppercase tracking-wider text-white">
+        <span class="text-[#E5B869]">Trang Chủ</span>
+        <span class="hover:text-[#E5B869]">Giới Thiệu</span>
+        <span class="hover:text-[#E5B869]">Dịch Vụ</span>
+        <span class="hover:text-[#E5B869]">Sản Phẩm</span>
+        <span class="hover:text-[#E5B869]">Dự Án</span>
+      </nav>
+    </div>
+  </header>
+</body>
+</html>

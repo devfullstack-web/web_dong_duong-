@@ -79,6 +79,7 @@ export const GET = withHybridAuth(
                         ilike(products.sku, `%${search}%`),
                         ilike(sql<string>`(${products.name_localized}->>'vi')`, `%${search}%`),
                         ilike(sql<string>`(${products.name_localized}->>'en')`, `%${search}%`),
+                        ilike(sql<string>`(${products.name_localized}->>'zh')`, `%${search}%`),
                     ),
                 );
             }
@@ -114,6 +115,7 @@ export const GET = withHybridAuth(
                     image_url: products.image_url,
                     is_featured: products.is_featured,
                     tech_specs: products.tech_specs,
+                    tech_specs_localized: products.tech_specs_localized,
                     features: products.features,
                     features_localized: products.features_localized,
                     gallery: products.gallery,
@@ -147,6 +149,7 @@ export const GET = withHybridAuth(
                     ...(product.features_localized || {}),
                     vi: sanitizeStringArray(product.features_localized?.vi),
                     en: sanitizeStringArray(product.features_localized?.en),
+                    zh: sanitizeStringArray(product.features_localized?.zh),
                 },
             }));
 
@@ -205,6 +208,7 @@ export const POST = withAuth(
                     ...rawBody.features_localized,
                     vi: sanitizeStringArray(rawBody.features_localized.vi),
                     en: sanitizeStringArray(rawBody.features_localized.en),
+                    zh: sanitizeStringArray(rawBody.features_localized.zh),
                 };
                 localizedFields.features_localized = rawBody.features_localized;
                 if (!rawBody.features && rawBody.features_localized.vi) {

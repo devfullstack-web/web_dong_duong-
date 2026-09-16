@@ -99,6 +99,7 @@ export const PATCH = withAuth(async (request, session, { params }) => {
         updates.description_localized = {
           vi: sanitizeRichText(descLoc.vi || ''),
           en: sanitizeRichText(descLoc.en || ''),
+          zh: sanitizeRichText(descLoc.zh || ''),
         };
       }
     }
@@ -125,6 +126,8 @@ export const PATCH = withAuth(async (request, session, { params }) => {
     return apiError("Internal Server Error", 500);
   }
 }, { requiredPermissions: [PERMISSIONS.PROJECTS_UPDATE] });
+
+export const PUT = PATCH;
 
 // DELETE /api/projects/[slug] - Delete a project by ID or slug
 export const DELETE = withAuth(async (request, session, { params }) => {

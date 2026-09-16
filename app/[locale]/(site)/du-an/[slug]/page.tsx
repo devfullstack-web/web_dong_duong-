@@ -68,7 +68,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const project = await getProject(slug);
 
     if (!project) {
-        return { title: 'Không tìm thấy dự án' };
+        return {
+            title: locale === 'zh' ? '未找到工程项目' : locale === 'en' ? 'Project Not Found' : 'Không tìm thấy dự án',
+        };
     }
 
     const activeTitle = getLocalizedValue(project.name_localized, locale as Locale) || project.name;

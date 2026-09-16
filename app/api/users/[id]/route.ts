@@ -209,6 +209,8 @@ export const PATCH = withAuth(
     { requiredPermissions: [PERMISSIONS.USERS_UPDATE] },
 );
 
+export const PUT = PATCH;
+
 // DELETE /api/users/[id] - Delete a user
 export const DELETE = withAuth(
     async (request: Request, session, { params }) => {

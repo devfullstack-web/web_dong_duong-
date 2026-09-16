@@ -10,7 +10,7 @@ import {
     Mail,
     Phone,
     MapPin,
-    ArrowRight,
+    Instagram,
     ShieldCheck,
 } from 'lucide-react';
 import { useSiteInfo } from '@/components/providers/site-info-provider';
@@ -19,158 +19,192 @@ import { PORTAL_ROUTES } from '@/constants/routes';
 export default function Footer() {
     const COMPANY_INFO = useSiteInfo();
     const t = useTranslations('Footer');
-    const tCompany = useTranslations('Company');
-    const socialLinks = [
-        { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
-        { label: 'LinkedIn', Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
-        { label: 'YouTube', Icon: Youtube, href: COMPANY_INFO.social.youtube },
-        { label: 'Zalo', href: COMPANY_INFO.social.zalo },
-    ].filter((item) => item.href);
 
     return (
-        <footer className="bg-brand-primary pt-10 pb-4 text-white relative overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-full h-px bg-white/10"></div>
-            <div className="absolute bottom-0 right-0 w-48 h-48 bg-brand-secondary/20 rounded-full blur-3xl -translate-y-10 translate-x-10"></div>
+        <footer id="footer" className="bg-[#081E38] text-white pt-14 pb-6 border-t-2 border-amber-500/30 relative overflow-hidden">
+            {/* Top decorative subtle lines */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#E5B869] to-transparent opacity-60" />
 
-            <div className="container mx-auto px-4 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 pb-8 border-b border-white/5">
-                    {/* Brand Column */}
-                    <div className="space-y-4">
-                        <Link href="/" className="relative block h-12 w-44 group">
-                            <Image
-                                src="/images/logo/logo.png"
-                                alt="Sài Gòn Valve Logo"
-                                fill
-                                sizes="176px"
-                                className="object-contain brightness-0 invert group-hover:scale-105 transition-transform"
-                            />
-                        </Link>
-                        <p className="text-xs sm:text-sm text-blue-100/90 font-bold uppercase tracking-wider leading-relaxed">
-                            {t('slogan')}
-                        </p>
-                        <div className="flex gap-3">
-                            {socialLinks.map(({ label, Icon, href }) => (
-                                <a
-                                    key={label}
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={label}
-                                    className="h-8 w-8 flex items-center justify-center bg-white/5 border border-white/10 rounded-sm hover:bg-white hover:text-brand-primary hover:border-white text-white transition-all duration-300"
-                                >
-                                    {Icon ? (
-                                        <Icon size={14} />
-                                    ) : (
-                                        <span className="text-xs font-black uppercase tracking-tight">Zalo</span>
-                                    )}
-                                </a>
-                            ))}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-white/10">
+                    {/* Col 1: Brand & Contact (lg:col-span-4) */}
+                    <div className="lg:col-span-4 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <div className="relative h-14 sm:h-16 w-64 sm:w-72 shrink-0">
+                                <Image
+                                    src="/images/dongduong/dongduong_logo_horizontal.png"
+                                    alt="Đông Dương Corporation Logo"
+                                    fill
+                                    sizes="288px"
+                                    className="object-contain object-left drop-shadow-md"
+                                />
+                            </div>
                         </div>
-                    </div>
+                        <h3 className="text-base sm:text-lg font-black uppercase tracking-wider text-[#E5B869] pt-1">
+                            {t('companyTitle')}
+                        </h3>
 
-                    {/* Quick Links */}
-                    <div className="space-y-4">
-                        <h4 className="text-xs sm:text-sm font-black uppercase tracking-[0.15em] text-white border-b border-white/10 pb-2">
-                            {t('navigationMenu')}
-                        </h4>
-                        <ul className="space-y-2">
-                            {[
-                                { label: t('home'), href: '/' },
-                                { label: t('about'), href: '/gioi-thieu' },
-                                { label: t('products'), href: '/san-pham' },
-                                { label: t('projects'), href: '/du-an' },
-                                { label: t('news'), href: '/tin-tuc' },
-                                { label: t('contact'), href: '/lien-he' },
-                            ].map((item) => (
-                                <li key={item.label}>
-                                    <Link
-                                        href={item.href as "/" | "/gioi-thieu" | "/san-pham" | "/du-an" | "/tin-tuc" | "/lien-he"}
-                                        className="text-xs sm:text-sm font-bold uppercase tracking-wider text-blue-100/80 hover:text-white hover:translate-x-1 transition-all inline-flex items-center gap-1.5 group"
-                                    >
-                                        <ArrowRight
-                                            size={12}
-                                            className="text-white group-hover:text-white transition-colors"
-                                        />{' '}
-                                        {item.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Contact Info */}
-                    <div className="space-y-4">
-                        <h4 className="text-xs sm:text-sm font-black uppercase tracking-[0.15em] text-white border-b border-white/10 pb-2">
-                            {t('contactInfo')}
-                        </h4>
-                        <ul className="space-y-3">
-                            <li className="flex gap-3 group">
-                                <MapPin
-                                    className="text-white shrink-0 group-hover:text-white transition-colors"
-                                    size={16}
-                                />
-                                <span className="text-xs sm:text-sm text-blue-100/80 font-medium tracking-wide leading-relaxed">
-                                    {COMPANY_INFO.address}
-                                </span>
+                        <ul className="space-y-3 text-sm sm:text-base text-slate-200 font-medium">
+                            <li className="flex items-start gap-3">
+                                <MapPin className="w-5 h-5 text-[#E5B869] shrink-0 mt-0.5" />
+                                <span className="leading-relaxed">{COMPANY_INFO.address}</span>
                             </li>
-                            <li className="flex gap-3 items-center group">
-                                <Phone
-                                    className="text-white shrink-0 group-hover:text-white transition-colors"
-                                    size={16}
-                                />
+                            <li className="flex items-center gap-3">
+                                <Phone className="w-5 h-5 text-[#E5B869] shrink-0" />
                                 <a
                                     href={`tel:${COMPANY_INFO.hotlineRaw}`}
-                                    className="text-xs sm:text-sm text-blue-100/90 font-bold tracking-wider hover:text-white transition-colors"
+                                    className="text-base sm:text-lg font-black text-[#E5B869] hover:text-amber-300 transition-colors"
                                 >
                                     {COMPANY_INFO.hotline}
                                 </a>
                             </li>
-                            <li className="flex gap-3 items-center group">
-                                <Mail
-                                    className="text-white shrink-0 group-hover:text-white transition-colors"
-                                    size={16}
-                                />
+                            <li className="flex items-center gap-3">
+                                <Mail className="w-5 h-5 text-[#E5B869] shrink-0" />
                                 <a
                                     href={`mailto:${COMPANY_INFO.email}`}
-                                    className="text-xs sm:text-sm text-blue-100/90 font-bold tracking-wider uppercase hover:text-white transition-colors"
+                                    className="hover:text-amber-300 transition-colors"
                                 >
                                     {COMPANY_INFO.email}
                                 </a>
                             </li>
                         </ul>
                     </div>
+
+                    {/* Col 2: SẢN PHẨM & DỊCH VỤ (lg:col-span-3) */}
+                    <div className="lg:col-span-3 space-y-3.5">
+                        <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-white border-b border-white/10 pb-2.5">
+                            {t('productsAndServices')}
+                        </h4>
+                        <ul className="space-y-2.5 text-sm sm:text-base text-slate-200 font-medium">
+                            <li>
+                                <Link href="/san-pham" className="hover:text-amber-300 transition-colors">
+                                    {t('commoditiesTrading')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/san-pham" className="hover:text-amber-300 transition-colors">
+                                    {t('materialsSupply')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/giai-phap/dieu-hoa-trung-tam-vrv-chiller" className="hover:text-amber-300 transition-colors">
+                                    {t('logisticsServices')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/tin-tuc" className="hover:text-amber-300 transition-colors">
+                                    {t('training')}
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Col 3: QUY TRÌNH & ĐIỀU KHOẢN (lg:col-span-2) */}
+                    <div className="lg:col-span-2 space-y-3.5">
+                        <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-white border-b border-white/10 pb-2.5">
+                            {t('processAndTerms')}
+                        </h4>
+                        <ul className="space-y-2.5 text-sm sm:text-base text-slate-200 font-medium">
+                            <li>
+                                <Link href="/tuyen-dung" className="hover:text-amber-300 transition-colors">
+                                    {t('careers')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/lien-he" className="hover:text-amber-300 transition-colors">
+                                    {t('faqs')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/lien-he" className="hover:text-amber-300 transition-colors">
+                                    {t('techSupport')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/lien-he" className="hover:text-amber-300 transition-colors">
+                                    {t('terms')}
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Col 4: CHỨNG NHẬN (lg:col-span-3) */}
+                    <div className="lg:col-span-3 space-y-3.5">
+                        <h4 className="text-sm sm:text-base font-black uppercase tracking-wider text-white border-b border-white/10 pb-2.5">
+                            {t('standards')}
+                        </h4>
+                        <div className="relative w-full h-18 sm:h-22 bg-white/5 rounded-xl p-2 border border-white/10 overflow-hidden flex items-center justify-center">
+                            <Image
+                                src="/images/dongduong/footer-badges.png"
+                                alt="Chứng nhận ISO 9001, IOTA, Bộ Công Thương, DMCA Protected"
+                                fill
+                                sizes="(max-width: 768px) 100vw, 25vw"
+                                className="object-contain p-1"
+                            />
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-300 font-medium text-center sm:text-left pt-1">
+                            {t('securityWarning')}
+                        </p>
+                    </div>
                 </div>
 
-                <div className="pt-4 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                    <div className="space-y-1">
-                        <p className="text-xs font-bold text-blue-200/70 uppercase tracking-wider">
-                            {COMPANY_INFO.copyright}
-                        </p>
-                        <div className="flex items-center gap-1.5 justify-center md:justify-start text-xs font-medium text-blue-200/80 tracking-wide">
-                            <ShieldCheck size={14} className="text-white/80" />{' '}
-                            {t('securityWarning')}
-                        </div>
-                    </div>
-                    <div className="flex flex-wrap justify-center gap-6">
-                        <Link
-                            href="#"
-                            className="text-xs font-bold uppercase tracking-wider text-blue-200/70 hover:text-white transition-colors"
-                        >
-                            {t('terms')}
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-xs font-bold uppercase tracking-wider text-blue-200/70 hover:text-white transition-colors"
-                        >
-                            {t('privacy')}
-                        </Link>
+                {/* Bottom Bar: Copyright, Admin Portal & Socials */}
+                <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-300 font-medium">
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 sm:gap-4">
+                        <p>{t('copyright')}</p>
+                        <span className="hidden sm:inline text-white/20">•</span>
                         <Link
                             href={PORTAL_ROUTES.dashboard as string}
-                            className="text-xs font-bold uppercase tracking-wider text-blue-200/70 hover:text-white transition-colors"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-[#E5B869]/20 border border-white/10 hover:border-[#E5B869]/50 text-slate-200 hover:text-[#E5B869] text-xs sm:text-sm font-bold transition-all group shadow-sm"
                         >
-                            {t('admin')}
+                            <ShieldCheck className="w-4 h-4 text-[#E5B869] group-hover:scale-110 transition-transform" />
+                            <span>{t('admin')}</span>
                         </Link>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        {COMPANY_INFO.hotlineRaw && (
+                            <a
+                                href={`tel:${COMPANY_INFO.hotlineRaw}`}
+                                aria-label="Hotline"
+                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition-all"
+                            >
+                                <Phone className="w-4 h-4" />
+                            </a>
+                        )}
+                        {COMPANY_INFO.social.facebook && (
+                            <a
+                                href={COMPANY_INFO.social.facebook}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Facebook"
+                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition-all"
+                            >
+                                <Facebook className="w-4 h-4" />
+                            </a>
+                        )}
+                        {COMPANY_INFO.social.linkedin && (
+                            <a
+                                href={COMPANY_INFO.social.linkedin}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="LinkedIn"
+                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition-all"
+                            >
+                                <Linkedin className="w-4 h-4" />
+                            </a>
+                        )}
+                        {COMPANY_INFO.social.youtube && (
+                            <a
+                                href={COMPANY_INFO.social.youtube}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="YouTube"
+                                className="w-8 h-8 rounded-full bg-white/10 hover:bg-amber-400 hover:text-slate-950 text-white flex items-center justify-center transition-all"
+                            >
+                                <Youtube className="w-4 h-4" />
+                            </a>
+                        )}
                     </div>
                 </div>
             </div>

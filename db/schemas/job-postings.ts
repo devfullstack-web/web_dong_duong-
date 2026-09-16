@@ -1,4 +1,5 @@
-import { index, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { index, jsonb, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import type { LocalizedText } from '@/types/i18n';
 import { employmentTypeEnum, jobStatusEnum } from './enums';
 import { EMPLOYMENT_TYPE, JOB_STATUS } from '@/constants/content';
 
@@ -7,10 +8,14 @@ export const jobPostings = pgTable(
     {
         id: uuid('id').primaryKey().defaultRandom(),
         title: varchar('title', { length: 255 }).notNull(),
+        title_localized: jsonb('title_localized').$type<LocalizedText>(),
         slug: varchar('slug', { length: 255 }).notNull().unique(),
         description: text('description').notNull(),
+        description_localized: jsonb('description_localized').$type<LocalizedText>(),
         requirements: text('requirements'), // Can be HTML or plain text
+        requirements_localized: jsonb('requirements_localized').$type<LocalizedText>(),
         benefits: text('benefits'), // Can be HTML or plain text
+        benefits_localized: jsonb('benefits_localized').$type<LocalizedText>(),
         location: varchar('location', { length: 255 }),
         employment_type: employmentTypeEnum('employment_type')
             .default(EMPLOYMENT_TYPE.FULL_TIME)

@@ -7,6 +7,26 @@ import { PERMISSIONS } from "@/constants/rbac";
 import { NextRequest } from "next/server";
 import { CONTACT_STATUS_VALUES, isConstantValue } from "@/constants/content";
 
+// GET /api/contacts/[id] - Get a single contact submission
+export const GET = withAuth(async (request: NextRequest, session, { params }) => {
+  try {
+    const { id } = await params;
+    const [contact] = await db
+      .select()
+      .from(contacts)
+      .where(eq(contacts.id, id));
+
+    if (!contact) {
+      return apiError("Contact not found", 404);
+    }
+
+    return apiResponse(contact);
+  } catch (error) {
+    console.error("Error fetching contact:", error);
+    return apiError("Internal Server Error", 500);
+  }
+}, { requiredPermissions: [PERMISSIONS.CONTACTS_VIEW] });
+
 // PATCH /api/contacts/[id] - Update a contact submission
 export const PATCH = withAuth(async (request: NextRequest, session, { params }) => {
   try {
@@ -37,6 +57,8 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
     return apiError("Internal Server Error", 500);
   }
 }, { requiredPermissions: [PERMISSIONS.CONTACTS_UPDATE] });
+
+export const PUT = PATCH;
 
 // DELETE /api/contacts/[id] - Delete a contact submission
 export const DELETE = withAuth(async (request: NextRequest, session, { params }) => {

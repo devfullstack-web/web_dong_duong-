@@ -28,7 +28,7 @@ interface NewsProps {
 function formatDate(date: Date | string | null, locale: string = 'vi'): string {
     if (!date) return '';
     const d = date instanceof Date ? date : new Date(date);
-    const localeString = locale === 'vi' ? 'vi-VN' : 'en-US';
+    const localeString = locale === 'vi' ? 'vi-VN' : locale === 'zh' ? 'zh-CN' : 'en-US';
     return d.toLocaleDateString(localeString, { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 

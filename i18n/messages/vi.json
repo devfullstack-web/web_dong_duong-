@@ -1,27 +1,48 @@
 {
   "Company": {
-    "address": "Số 122/16-18 Võ Văn Hát, Long Trường, TP. Thủ Đức, TP. Hồ Chí Minh",
+    "address": "Số 124/16-18 Võ Văn Hát, Long Trường, TP. Thủ Đức, TP. Hồ Chí Minh",
     "workingHoursWeekdays": "THỨ 2 - THỨ 7: 08:00 - 17:30",
-    "slogan": "Nhà phân phối độc quyền thiết bị ngành nước và giải pháp quan trắc thông minh từ Nhật Bản & Hàn Quốc tại thị trường Việt Nam."
+    "slogan": "Tổng đại lý phân phối Gạch Men & Gạch Trang Trí, Hệ Thống Máy Lạnh Điều Hòa Trung Tâm VRV - Chiller Hàng Đầu Việt Nam."
   },
   "Header": {
     "home": "TRANG CHỦ",
     "about": "GIỚI THIỆU",
-    "solutions": "GIẢI PHÁP",
+    "solutions": "DỊCH VỤ",
     "products": "SẢN PHẨM",
     "projects": "DỰ ÁN",
     "news": "TIN TỨC",
     "recruitment": "TUYỂN DỤNG",
+    "careers": "TUYỂN DỤNG",
     "contact": "LIÊN HỆ",
     "search": "Tìm kiếm",
+    "searchPlaceholder": "Tìm kiếm...",
+    "register": "Đăng ký",
+    "login": "Đăng nhập",
     "language": "Ngôn ngữ",
-    "logoAlt": "Sài Gòn Valve Logo",
+    "logoAlt": "Đông Dương Logo",
     "vi": "TIẾNG VIỆT",
     "en": "ENGLISH",
+    "zh": "TIẾNG TRUNG",
     "iotControlSoftware": "Phần mềm IoT điều khiển"
   },
   "Footer": {
-    "slogan": "SÀI GÒN VALVE | Professional Industrial Solutions",
+    "companyTitle": "ĐÔNG DƯƠNG CORPORATION",
+    "productsAndServices": "SẢN PHẨM & DỊCH VỤ",
+    "commoditiesTrading": "Gạch Men & Gạch Ốp Lát",
+    "materialsSupply": "Điều Hòa Cục Bộ (Dòng 2 Cục)",
+    "logisticsServices": "Hệ Thống VRV/VRF & Chiller",
+    "training": "Gạch Mosaic & Khổ Lớn Big Slab",
+    "processAndTerms": "QUY TRÌNH & ĐIỀU KHOẢN",
+    "careers": "Tuyển dụng",
+    "faqs": "FAQs",
+    "techSupport": "Hỗ trợ kỹ thuật",
+    "standards": "Tiêu chuẩn chất lượng",
+    "connectWithUs": "KẾT NỐI VỚI CHÚNG TÔI",
+    "newsletterDesc": "Đăng ký nhận thông tin công nghệ & chính sách giá mới nhất",
+    "newsletterPlaceholder": "Email của bạn...",
+    "send": "Gửi",
+    "copyright": "© 2026 Đông Dương Corporation. Bản quyền đã được bảo hộ.",
+    "slogan": "ĐÔNG DƯƠNG CORPORATION | Gạch Men & Máy Lạnh Điều Hòa VRV-Chiller",
     "navigationMenu": "Menu điều hướng",
     "contactInfo": "Thông tin liên hệ",
     "home": "Trang chủ",
@@ -33,7 +54,65 @@
     "securityWarning": "Bảo mật thông tin dự án tuyệt đối",
     "terms": "Điều khoản",
     "privacy": "Bảo mật",
-    "admin": "Quản trị"
+    "admin": "Trang quản trị"
+  },
+  "Home": {
+    "whyChooseTitle": "LÝ DO CHỌN ĐÔNG DƯƠNG?",
+    "coreCategoriesTitle": "DANH MỤC SẢN PHẨM CHỦ LỰC",
+    "featuredProductsTitle": "SẢN PHẨM TIÊU BIỂU",
+    "workflowProcessTitle": "QUY TRÌNH LÀM VIỆC",
+    "equipmentGridTitle": "THIẾT BỊ & SẢN PHẨM",
+    "quoteFormTitle": "ĐĂNG KÝ BÁO GIÁ",
+    "quoteFormSubtitle": "Nhận giải pháp thiết bị & báo giá tốt nhất cho công trình",
+    "quoteFormName": "Họ tên *",
+    "quoteFormPhone": "Số điện thoại *",
+    "quoteFormEmail": "Email *",
+    "quoteFormMessage": "Nội dung yêu cầu *",
+    "quoteFormMessagePlaceholder": "Nhu cầu chủng loại thiết bị, số lượng, quy mô công trình...",
+    "quoteFormSubmit": "ĐĂNG KÝ",
+    "quoteFormSending": "Đang gửi yêu cầu...",
+    "quoteFormSuccess": "Gửi yêu cầu báo giá thành công! Chúng tôi sẽ liên hệ trong 24 giờ.",
+    "quoteFormError": "Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại.",
+    "quoteFormNote": "Đội ngũ chuyên gia của chúng tôi sẽ liên hệ trong vòng 24 giờ.",
+    "latestNewsTitle": "TIN TỨC MỚI NHẤT",
+    "viewAllNews": "Xem tất cả tin tức",
+    "requestQuote": "LIÊN HỆ BÁO GIÁ",
+    "quote": "BÁO GIÁ",
+    "details": "Chi tiết",
+    "price": "Giá",
+    "seeDetail": "Xem chi tiết",
+    "updatingNews": "Đang cập nhật tin tức mới...",
+    "slide1": {
+      "title": "GIẢI PHÁP",
+      "highlight": "GẠCH MEN & ĐIỀU HÒA",
+      "titleSuffix": "ĐẲNG CẤP CÔNG TRÌNH",
+      "description": "Đông Dương Corporation chuyên phân phối gạch ốp lát cao cấp và giải pháp máy lạnh điều hòa không khí chính hãng hàng đầu Việt Nam.",
+      "accent": "Vật Liệu & Điều Hòa Không Khí"
+    },
+    "slide2": {
+      "title": "HỆ THỐNG",
+      "highlight": "VRV/VRF & CHILLER",
+      "titleSuffix": "TIẾT KIỆM NĂNG LƯỢNG",
+      "description": "Giải pháp điều hòa trung tâm VRV/VRF và hệ thống Chiller ly tâm, trục vít từ Gree & Midea tối ưu chi phí vận hành.",
+      "accent": "Hệ thống VRV & Chiller"
+    },
+    "slide3": {
+      "title": "BỘ SƯU TẬP",
+      "highlight": "GẠCH MEN & TRANG TRÍ",
+      "titleSuffix": "KIẾN TẠO KHÔNG GIAN",
+      "description": "Tổng đại lý phân phối chính hãng Đồng Tâm, Viglacera, Catalan, Thuận Hải, Hà Thanh với đa dạng gạch lát nền, ốp tường, porcelain và gạch mosaic nghệ thuật.",
+      "accent": "Gạch Men Chính Hãng"
+    },
+    "fixed": {
+      "title": "ĐÔNG DƯƠNG CORPORATION",
+      "highlight": "VẬT LIỆU & ĐIỆN LẠNH",
+      "titleSuffix": "GIẢI PHÁP TOÀN DIỆN"
+    },
+    "actionAdvice": "TƯ VẤN DỰ ÁN",
+    "iotSolutions": "Giải pháp Điều hòa & Gạch men",
+    "platformTitle": "Hệ Thống Phân Phối Đẳng Cấp",
+    "platformSubTitle": "Cung cấp gạch men trang trí và hệ thống điều hòa không khí trung tâm VRV-Chiller chính hãng trên toàn quốc.",
+    "learnMore": "Khám phá Sản phẩm"
   },
   "Solutions": {
     "title": "GIẢI PHÁP",
@@ -62,42 +141,42 @@
   },
   "Hero": {
     "slide1": {
-      "title": "GIÁM SÁT",
-      "highlight": "QUY TRÌNH THÔNG MINH",
-      "titleSuffix": "CÔNG NGHỆ IOT",
-      "description": "Sài Gòn Valve mang đến giải pháp giám sát lưu lượng và áp suất nước theo thời gian thực, giúp tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
-      "accent": "Công nghệ Quản lý Nước 4.0"
+      "title": "GIẢI PHÁP",
+      "highlight": "GẠCH MEN & ĐIỀU HÒA",
+      "titleSuffix": "ĐẲNG CẤP CÔNG TRÌNH",
+      "description": "Đông Dương Corporation - Tổng đại lý phân phối gạch men cao cấp và giải pháp máy lạnh điều hòa không khí chính hãng hàng đầu Việt Nam.",
+      "accent": "Vật Liệu & Điều Hòa Không Khí"
     },
     "slide2": {
-      "title": "NỀN TẢNG",
-      "highlight": "HẠ TẦNG THÔNG MINH",
-      "titleSuffix": "GIẢI PHÁP SCADA",
-      "description": "Giám sát và điều khiển mạng lưới cấp nước theo thời gian thực với công nghệ IoT — tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
-      "accent": "Giải pháp IoT & SCADA"
+      "title": "HỆ THỐNG",
+      "highlight": "VRV/VRF & CHILLER",
+      "titleSuffix": "TIẾT KIỆM NĂNG LƯỢNG",
+      "description": "Giải pháp điều hòa trung tâm VRV/VRF và hệ thống Chiller ly tâm, trục vít từ Gree & Midea tối ưu chi phí vận hành.",
+      "accent": "Hệ thống VRV & Chiller"
     },
     "slide3": {
-      "title": "HỆ THỐNG SỐ",
-      "highlight": "WATER IOT DASHBOARD",
-      "titleSuffix": "GIÁM SÁT 24/7",
-      "description": "Nền tảng quản lý hạ tầng nước thông minh, thu thập dữ liệu từ cảm biến và hiển thị trực quan theo thời gian thực.",
-      "accent": "Giải pháp thông minh"
+      "title": "BỘ SƯU TẬP",
+      "highlight": "GẠCH MEN & TRANG TRÍ",
+      "titleSuffix": "KIẾN TẠO KHÔNG GIAN",
+      "description": "Tổng đại lý phân phối chính hãng Đồng Tâm, Viglacera, Catalan, Thuận Hải, Hà Thanh với đa dạng gạch lát nền, ốp tường, porcelain và gạch mosaic nghệ thuật.",
+      "accent": "Gạch Men Chính Hãng"
     },
     "fixed": {
-      "title": "NỀN TẢNG WATER IOT",
-      "highlight": "HẠ TẦNG THÔNG MINH",
-      "titleSuffix": "GIẢI PHÁP SCADA"
+      "title": "ĐÔNG DƯƠNG CORPORATION",
+      "highlight": "VẬT LIỆU & ĐIỆN LẠNH",
+      "titleSuffix": "GIẢI PHÁP TOÀN DIỆN"
     },
     "actionAdvice": "TƯ VẤN GIẢI PHÁP",
-    "iotSolutions": "Giải pháp IoT & SCADA",
-    "platformTitle": "Nền tảng Hạ tầng Thông minh",
-    "platformSubTitle": "Giám sát và điều khiển mạng lưới cấp nước theo thời gian thực với công nghệ IoT — tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
+    "iotSolutions": "Giải pháp Điều hòa & Gạch men",
+    "platformTitle": "Hệ Thống Phân Phối Đẳng Cấp",
+    "platformSubTitle": "Cung cấp gạch men trang trí và hệ thống điều hòa không khí trung tâm VRV-Chiller chính hãng trên toàn quốc.",
     "learnMore": "Khám phá Giải pháp",
     "liveDemo": "Xem Demo"
   },
   "FeaturedProjects": {
     "title": "Dự án",
     "titleAccent": "Tiêu biểu",
-    "description": "Những công trình trọng điểm khẳng định uy tín và năng lực kỹ thuật của Sài Gòn Valve.",
+    "description": "Những công trình trọng điểm khẳng định uy tín và chất lượng của Đông Dương Corporation.",
     "viewAllProjects": "XEM TẤT CẢ DỰ ÁN",
     "mobileViewAll": "Tất cả dự án",
     "loading": "Đang tải dự án...",
@@ -112,7 +191,7 @@
       "badge": "Truyền thông & Tin tức",
       "title": "TRUNG TÂM",
       "titleAccent": "TIN TỨC",
-      "desc": "Cập nhật những tin tức mới nhất về công nghệ, dự án và xu hướng trong ngành nước và hạ tầng công nghiệp."
+      "desc": "Cập nhật những tin tức mới nhất về xu hướng vật liệu kiến trúc, giải pháp điều hòa không khí và dự án nổi bật."
     },
     "grid": {
       "defaultCategory": "TIN TỨC",
@@ -133,16 +212,16 @@
   "SystemHighlight": {
     "banners": {
       "featured": {
-        "tag": "THIẾT BỊ NGÀNH NƯỚC",
-        "title": "VAN CÔNG NGHIỆP OKM",
-        "desc": "Nhà phân phối độc quyền thương hiệu Van OKM - Nhật Bản. Cung cấp đa dạng van cổng, van bướm, van xả khí, van một chiều thiết kế cho môi trường khắc nghiệt và các công trình hạ tầng cấp nước quy mô lớn.",
-        "btnText": "Khám phá ngay"
+        "tag": "VẬT LIỆU HOÀN THIỆN",
+        "title": "GẠCH MEN & GẠCH TRANG TRÍ",
+        "desc": "Tổng đại lý phân phối gạch ốp lát chính hãng Đồng Tâm, Viglacera, Catalan, Thuận Hải, Hà Thanh. Đa dạng mẫu mã sang trọng, gạch khổ lớn Big Slab và mosaic nghệ thuật cho mọi công trình.",
+        "btnText": "Xem bộ sưu tập"
       },
       "video": {
-        "tag": "GIẢI PHÁP THÔNG MINH",
-        "title": "HỆ THỐNG QUAN TRẮC IOT & SCADA",
-        "desc": "Giải pháp giám sát và điều khiển mạng lưới cấp nước theo thời gian thực. Tích hợp công nghệ IoT & SCADA, thu thập dữ liệu liên tục, giúp tối ưu hóa vận hành và ngăn ngừa thất thoát tài nguyên.",
-        "btnText": "Xem giải pháp"
+        "tag": "GIẢI PHÁP LÀM MÁT",
+        "title": "ĐIỀU HÒA TRUNG TÂM VRV & CHILLER",
+        "desc": "Cung cấp giải pháp điều hòa không khí toàn diện từ máy lạnh cục bộ Wall/Cassette/Duct đến điều hòa trung tâm VRV/VRF và Chiller chính hãng Gree & Midea.",
+        "btnText": "Xem giải pháp HVAC"
       }
     },
     "technologyLabel": "Công nghệ",
@@ -150,15 +229,22 @@
     "networkManagement": "Quản lý mạng lưới"
   },
   "Partners": {
+    "badge": "MẠNG LƯỚI CHIẾN LƯỢC",
     "title": "ĐỐI TÁC CHIẾN LƯỢC",
-    "description": "SỰ TIN TƯỞNG TỪ CÁC THƯƠNG HIỆU HÀNG ĐẦU TOÀN CẦU",
-    "partner": "Đối tác"
+    "description": "HỢP TÁC VỚI CÁC THƯƠNG HIỆU HÀNG ĐẦU VỀ VẬT LIỆU XÂY DỰNG & ĐIỀU HÒA KHÔNG KHÍ",
+    "all": "Tất Cả",
+    "tiles": "Gạch Men & Ốp Lát",
+    "hvac": "Máy Lạnh & HVAC",
+    "steel": "Sắt Thép VNSTEEL",
+    "partner": "Đối tác",
+    "officialBadge": "Chính Hãng 100%",
+    "viewPartner": "Website đối tác"
   },
   "ContactForm": {
     "title": "GỬI YÊU CẦU TƯ VẤN",
     "subtitle": "CHÚNG TÔI SẼ PHẢN HỒI TRONG VÒNG 24H",
-    "consultationTitle": "TƯ VẤN NGAY",
-    "consultationDesc": "Đội ngũ chuyên gia của SG - VAL luôn sẵn sàng hỗ trợ giải pháp tối ưu nhất cho hệ thống của bạn.",
+    "consultationTitle": "LIÊN HỆ VỚI CHUYÊN GIA ĐÔNG DƯƠNG CORPORATION",
+    "consultationDesc": "Đội ngũ kỹ thuật của Đông Dương Corporation luôn sẵn sàng hỗ trợ tư vấn và cung cấp giải pháp tối ưu cho mọi thách thức hạ tầng của bạn.",
     "labels": {
       "name": "HỌ TÊN *",
       "phone": "SỐ ĐIỆN THOẠI *",
@@ -188,14 +274,12 @@
     "addressLabel": "ĐỊA CHỈ",
     "addressSub": "Văn phòng chính",
     "zaloLabel": "ZALO / VIBER",
-    "zaloSub": "Hỗ trợ kỹ thuật",
-    "consultationTitle": "LIÊN HỆ VỚI CHUYÊN GIA SÀI GÒN VALVE",
-    "consultationDesc": "Đội ngũ kỹ thuật của Sài Gòn Valve luôn sẵn sàng hỗ trợ tư vấn và cung cấp giải pháp tối ưu cho mọi thách thức hạ tầng của bạn."
+    "zaloSub": "Hỗ trợ kỹ thuật"
   },
   "Contact": {
     "headerBadge": "TRUNG TÂM HỖ TRỢ CHIẾN LƯỢC",
     "headerTitle": "KẾT NỐI VỚI",
-    "headerTitleAccent": "SÀI GÒN VALVE",
+    "headerTitleAccent": "ĐÔNG DƯƠNG CORPORATION",
     "infoTitle": "THÔNG TIN ĐẠI DIỆN",
     "infoDesc": "Liên hệ trực tiếp với các bộ phận chuyên trách để được hỗ trợ nhanh nhất.",
     "labels": {
@@ -222,545 +306,528 @@
         "a": "Quý khách có thể gửi yêu cầu trực tiếp qua form liên hệ bên dưới, hoặc gọi hotline {phone}. Đội ngũ kỹ thuật sẽ phản hồi và gửi báo giá chi tiết trong vòng 2-4 giờ làm việc."
       },
       {
-        "q": "SÀI GÒN VALVE CÓ CUNG CẤP DỊCH VỤ LẮP ĐẶT TẬN NƠI KHÔNG?",
-        "a": "Có, chúng tôi sở hữu đội ngũ kỹ sư và kỹ thuật viên chuyên nghiệp, sẵn sàng hỗ trợ lắp đặt, cấu hình thiết bị và chuyển giao công nghệ tận công trình trên toàn quốc."
+        "q": "ĐÔNG DƯƠNG CÓ CUNG CẤP DỊCH VỤ GIAO HÀNG VÀ HỖ TRỢ KỸ THUẬT TẬN NƠI KHÔNG?",
+        "a": "Có, chúng tôi hỗ trợ vận chuyển tận chân công trình trên toàn quốc, đồng thời có đội ngũ kỹ sư khảo sát, tư vấn thiết kế và hỗ trợ kỹ thuật tận nơi."
       },
       {
-        "q": "CHÍNH SÁCH BẢO HÀNH THIẾT BỊ NHƯ THẾ NÀO?",
-        "a": "Tất cả thiết bị chính hãng OKM, Noah, Niigata do SGV phân phối đều được bảo hành tiêu chuẩn 12-24 tháng tùy dòng sản phẩm. Chúng tôi cam kết bảo trì và hỗ trợ kỹ thuật trọn đời."
+        "q": "CHÍNH SÁCH BẢO HÀNH SẢN PHẨM NHƯ THẾ NÀO?",
+        "a": "Tất cả sản phẩm gạch men (Đồng Tâm, Viglacera, Catalan, Thuận Hải, Hà Thanh) và thiết bị máy lạnh (Gree & Midea) do Đông Dương phân phối đều được bảo hành chính hãng theo tiêu chuẩn của nhà sản xuất."
       }
     ]
   },
   "About": {
     "hero": {
-      "badge": "GIẢI PHÁP CÔNG NGHIỆP THÔNG MINH",
-      "title": "SÀI GÒN VALVE",
-      "titleAccent": "GIẢI PHÁP IoT & SCADA",
-      "desc": "\"Giải pháp đáng tin cậy cho cấp thoát nước và xử lý nước thải từ SG-VAL. Kiến tạo hạ tầng ngành nước hiện đại và bền vững.\""
+      "badge": "TẬP ĐOÀN ĐÔNG DƯƠNG",
+      "title": "ĐÔNG DƯƠNG CORPORATION",
+      "titleAccent": "VẬT LIỆU & ĐIỀU HÒA KHÔNG KHÍ",
+      "desc": "\"Đông Dương Corporation - Tổng đại lý phân phối chính hãng Gạch men & Gạch trang trí cao cấp, Hệ thống Máy lạnh và Điều hòa trung tâm VRV - Chiller hàng đầu Việt Nam.\""
     },
     "intro": {
       "who": "CHÚNG TÔI LÀ AI?",
-      "title": "VỀ CHÚNG TÔI",
-      "content1": "Sài Gòn Valve tự hào là một trong những doanh nghiệp tiên phong trong lĩnh vực cung cấp các giải pháp công nghiệp chất lượng cao tại Việt Nam.",
-      "content2": "Mong muốn mang đến các giải pháp thông minh giúp kiểm soát dòng chảy bằng công nghệ hiện đại cho thị trường ngành nước. Bằng kinh nghiệm và nhiệt huyết, SÀI GÒN VALVE luôn mang đến cho khách hàng những giải pháp tối ưu nhất cho các công trình cấp thoát nước và xử lý nước thải.",
+      "title": "VỀ ĐÔNG DƯƠNG CORPORATION",
+      "content1": "Đông Dương Corporation tự hào là một trong những doanh nghiệp uy tín hàng đầu trong lĩnh vực phân phối vật liệu xây dựng hoàn thiện và hệ thống điều hòa không khí chất lượng cao tại Việt Nam.",
+      "content2": "Với định hướng phát triển bền vững và lấy chất lượng làm trọng tâm, Đông Dương tập trung chuyên sâu vào 2 ngành hàng chủ lực: (1) Gạch men & gạch trang trí từ các thương hiệu hàng đầu như Đồng Tâm, Viglacera, Catalan, Thuận Hải, Hà Thanh; (2) Giải pháp điều hòa không khí toàn diện từ máy lạnh cục bộ dòng 2 cục (treo tường, âm trần, nối ống gió) đến hệ thống điều hòa trung tâm VRV/VRF và hệ thống Chiller công suất lớn từ Gree & Midea.",
       "mission": {
         "title": "SỨ MỆNH",
-        "desc": "Kiểm soát dòng chảy bằng công nghệ hiện đại. Cung cấp giải pháp tối ưu cho hạ tầng nước đô thị."
+        "desc": "Cung cấp những giải pháp vật liệu thẩm mỹ vượt trội và hệ thống làm mát tối ưu năng lượng, nâng tầm chất lượng cuộc sống cho mọi công trình Việt."
       },
       "vision": {
         "title": "TẦM NHÌN",
-        "desc": "Trở thành công ty đi đầu trong việc cung cấp các giải pháp kiểm soát dòng chảy trong nước và quốc tế."
+        "desc": "Trở thành tổng đại lý phân phối vật liệu kiến trúc và giải pháp điều hòa không khí hàng đầu, được các chủ đầu tư, kiến trúc sư và nhà thầu tin tưởng số 1."
       }
     },
     "values": {
-      "badge": "TRIẾT LÝ VẬN HÀNH",
+      "badge": "TRIẾT LÝ HOẠT ĐỘNG",
       "title": "GIÁ TRỊ CỐT LÕI",
       "items": [
         {
-          "title": "KHÁCH HÀNG LÀ TRỌNG TÂM",
-          "desc": "Luôn cam kết tạo ra những sản phẩm phù hợp với từng đối tượng khách hàng. Đặt bản thân vào vị trí khách hàng để phục vụ."
+          "title": "CHẤT LƯỢNG CHÍNH HÃNG",
+          "desc": "Cam kết 100% sản phẩm phân phối đạt chuẩn chính hãng từ các thương hiệu lớn thế giới và Việt Nam, đầy đủ chứng chỉ chất lượng CO/CQ."
         },
         {
-          "title": "ĐỒNG HÀNH BỀN VỮNG",
-          "desc": "Đồng hành hỗ trợ khách hàng trước, trong và sau quá trình lắp đặt, vận hành hệ thống một cách tận tâm nhất."
+          "title": "GIẢI PHÁP TỐI ƯU",
+          "desc": "Đội ngũ chuyên gia kỹ thuật tư vấn giải pháp thiết kế phù hợp nhất cho từng dự án, tối đa hóa hiệu suất và tiết kiệm chi phí đầu tư."
         },
         {
-          "title": "BẢO MẬT & TIN CẬY",
-          "desc": "Tuân thủ nghiêm ngặt nguyên tắc hợp tác và bảo mật thông tin để khách hàng an tâm tuyệt đối khi hợp tác."
+          "title": "ĐỒNG HÀNH DÀI LÂU",
+          "desc": "Dịch vụ sau bán hàng chuyên nghiệp, giao hàng nhanh chóng, chính sách bảo hành chính hãng và hỗ trợ kỹ thuật tận nơi trọn đời dự án."
         }
       ]
     },
     "pillars": {
-      "badge": "THẾ MẠNH CẠNH TRANH",
-      "title": "Sản phẩm",
-      "titleAccent": "Chủ lực",
-      "desc": "Chúng tôi cung cấp hệ thống sản phẩm đồng bộ từ van cơ học đến bộ điều khiển thông minh và giám sát số hóa.",
+      "badge": "LĨNH VỰC KINH DOANH",
+      "title": "NGÀNH NGHỀ",
+      "titleAccent": "CHỦ LỰC",
+      "desc": "Đông Dương Corporation chuyên sâu cung cấp 2 mảng sản phẩm & giải pháp cốt lõi cho mọi quy mô công trình:",
       "items": [
         {
           "tag": "01",
-          "title": "VAN CÔNG NGHIỆP",
-          "desc": "Nhà phân phối độc quyền thương hiệu Van OKM - Nhật Bản. Cung cấp đa dạng van cổng, van bướm, van xả khí, van một chiều... thiết kế cho môi trường khắc nghiệt.",
-          "footer": "THƯƠNG HIỆU: OKM JAPAN"
+          "title": "GẠCH MEN & GẠCH TRANG TRÍ",
+          "desc": "Phân phối chính hãng Đồng Tâm (DongTam Group), Viglacera, Catalan, Thuận Hải Vaceramic, Hà Thanh (DHT). Cung cấp đa dạng gạch lát nền, gạch ốp tường, gạch granite porcelain, gạch mosaic trang trí nghệ thuật và gạch khổ lớn Big Slab sang trọng cho biệt thự, khách sạn, resort cao cấp.",
+          "footer": "ĐỒNG TÂM • VIGLACERA • CATALAN • THUẬN HẢI • HÀ THANH"
         },
         {
           "tag": "02",
-          "title": "ACTUATOR",
-          "desc": "Cung cấp độc quyền Actuator NOAH - Hàn Quốc. Tích hợp tủ điều khiển thông minh, cho phép giám sát và vận hành van từ xa thông qua ứng dụng di động Internet.",
-          "footer": "THƯƠNG HIỆU: NOAH KOREA"
+          "title": "ĐIỀU HÒA CỤC BỘ DÒNG 2 CỤC",
+          "desc": "Phân phối máy lạnh dân dụng và thương mại từ Gree & Midea: Máy lạnh treo tường (Wall Mounted), máy lạnh âm trần (Cassette), giấu trần nối ống gió (Duct), Umatch và hệ thống Multi-split tối ưu không gian.",
+          "footer": "WALL • CASSETTE • DUCT • MULTI"
         },
         {
           "tag": "03",
-          "title": "GIẢI PHÁP IOT",
-          "desc": "Thiết bị Datalogger, quan trắc chất lượng nước và Van giảm áp đa hằng số. Giải pháp tự động điều chỉnh áp suất nước giúp tối ưu hóa tài nguyên nước.",
-          "footer": "THIẾT BỊ SỐ HÓA"
+          "title": "ĐIỀU HÒA TRUNG TÂM VRV & CHILLER",
+          "desc": "Giải pháp điều hòa trung tâm VRV/VRF, hệ thống Chiller ly tâm (Centrifugal Chiller), Chiller trục vít (Screw Chiller), tủ đứng Packaged công nghiệp và thiết bị xử lý không khí Terminal AHU/FCU cho nhà máy và cao ốc.",
+          "footer": "VRV / VRF • CHILLER • AHU / FCU"
         }
       ]
     },
-    "scada": {
-      "badge": "CÔNG NGHỆ ĐIỀU KHIỂN",
-      "title": "HỆ THỐNG",
-      "titleAccent": "SCADA",
-      "desc": "Giải pháp quản lý, giám sát và điều khiển tập trung giúp tối ưu hóa hiệu suất vận hành mạng lưới cấp nước đô thị.",
+    "tech": {
+      "badge": "CÔNG NGHỆ & GIẢI PHÁP",
+      "title": "GIẢI PHÁP ĐIỀU HÒA",
+      "titleAccent": "HIỆN ĐẠI",
+      "desc": "Hệ thống làm mát đồng bộ và tiên tiến, ứng dụng các công nghệ điều hòa không khí hàng đầu thế giới từ Gree & Midea:",
       "items": [
         {
-          "title": "Mở ở áp suất cao",
-          "desc": "Điều khiển van/bơm tăng áp tự động khi áp suất hệ thống đạt ngưỡng cài đặt để duy trì lưu lượng."
+          "title": "Dòng Cục Bộ: Wall / Cassette / Duct",
+          "desc": "Làm lạnh nhanh, luồng gió 360 độ, vận hành êm ái và thiết kế tinh tế hài hòa với mọi không gian nội thất."
         },
         {
-          "title": "Giám sát 3G/4G",
-          "desc": "Thu thập dữ liệu và truyền thông tin thời gian thực đến trung tâm điều khiển qua hạ tầng mạng di động."
+          "title": "Điều Hòa Trung Tâm VRV / VRF",
+          "desc": "Một cụm dàn nóng kết nối hàng chục dàn lạnh, điều khiển phân vùng độc lập, công nghệ biến tần tiết kiệm điện năng tối đa."
         },
         {
-          "title": "Mở ở áp suất thấp",
-          "desc": "Cấu hình tự động mở van/bơm khi áp suất nước giảm, đảm bảo cung cấp nước liên tục 24/7."
+          "title": "Hệ Thống Chiller Ly Tâm & Trục Vít",
+          "desc": "Centrifugal Chiller & Screw Chiller công suất giải nhiệt lớn, độ bền cơ học cao phục vụ tòa nhà cao ốc và nhà máy sản xuất."
         },
         {
-          "title": "Cài đặt theo yêu cầu",
-          "desc": "Linh hoạt xác định các điểm đo và lập trình SCADA theo nhu cầu thực tế của từng khách hàng."
-        }
-      ]
-    },
-    "applications": {
-      "title": "ỨNG DỤNG NGÀNH",
-      "items": [
-        {
-          "title": "CÔNG TY CẤP THOÁT NƯỚC",
-          "desc": "Tối ưu quản lý, giảm thất thoát và tăng hiệu quả xử lý nước thải."
-        },
-        {
-          "title": "NHÀ MÁY CÔNG NGHIỆP",
-          "desc": "Nâng cao năng suất vận hành thông qua tự động hóa và quản lý từ xa."
-        },
-        {
-          "title": "DỰ ÁN XÂY DỰNG",
-          "desc": "Giải pháp van và điều khiển cho các công trình quy mô lớn, hạ tầng đô thị."
+          "title": "Thiết Bị Đầu Cuối AHU / FCU & Packaged",
+          "desc": "Xử lý không khí chuyên sâu, lọc bụi mịn, cân bằng nhiệt ẩm tiêu chuẩn cao cho phòng sạch, bệnh viện và trung tâm dữ liệu."
         }
       ]
     },
     "certs": {
-      "title": "Đối tác & Chứng nhận",
-      "quote": "\"Sài Gòn Valve cam kết minh bạch về nguồn gốc và chất lượng thiết bị với đầy đủ giấy tờ pháp lý.\"",
+      "title": "Đối tác Chiến lược & Thương hiệu Uy tín",
+      "quote": "\"Đông Dương Corporation tự hào là đại diện phân phối chính hãng các thương hiệu vật liệu và điện lạnh hàng đầu thế giới và Việt Nam.\"",
       "items": [
-        "Chứng nhận đại lý độc quyền OKM Valve (Nhật Bản)",
-        "Chứng nhận đại lý độc quyền Noah Actuator (Hàn Quốc)",
-        "Đối tác cung cấp hạ tầng nước thông minh hàng đầu",
-        "Hệ thống quản lý chất lượng đạt chuẩn quốc tế"
+        "Tổng đại lý phân phối chính hãng Gạch Đồng Tâm (Dongtam)",
+        "Đại lý phân phối cấp 1 Gạch Viglacera & Catalan",
+        "Đối tác chiến lược điều hòa không khí Gree & Midea",
+        "Nhà phân phối máy lạnh và hệ thống Chiller Midea & LG"
       ]
     },
     "cta": {
-      "title": "HỢP TÁC CHIẾN LƯỢC",
-      "desc": "Hãy liên hệ với chúng tôi ngay hôm nay để khám phá thêm về các sản phẩm và giải pháp tiên tiến mà chúng tôi cung cấp cho doanh nghiệp của bạn.",
-      "hotline": "Hotline Tư vấn",
-      "email": "Email Liên hệ",
-      "btnText": "LIÊN HỆ NGAY"
+      "title": "HỢP TÁC DỰ ÁN & BÁO GIÁ",
+      "desc": "Quý chủ đầu tư, kiến trúc sư và nhà thầu đang tìm kiếm nguồn vật tư gạch men cao cấp hoặc giải pháp điều hòa không khí toàn diện? Hãy liên hệ với Đông Dương Corporation ngay hôm nay.",
+      "hotline": "Hotline Tư vấn 24/7",
+      "email": "Email Nhận Hồ Sơ / Báo Giá",
+      "btnText": "LIÊN HỆ BÁO GIÁ"
     }
+  },
+  "Projects": {
+    "hero": {
+      "badge": "DỰ ÁN TIÊU BIỂU",
+      "title": "KHẲNG ĐỊNH",
+      "titleAccent": "NĂNG LỰC DỰ ÁN",
+      "desc": "Hàng trăm dự án tiêu biểu đã được Đông Dương Corporation cung ứng gạch ốp lát và hệ thống điều hòa không khí trên toàn quốc."
     },
-    "Projects": {
-        "hero": {
-            "badge": "DỰ ÁN TIÊU BIỂU",
-            "title": "KHẲNG ĐỊNH",
-            "titleAccent": "NĂNG LỰC DỰ ÁN",
-            "desc": "Hơn {total}+ dự án đã được triển khai thành công trên toàn quốc trong lĩnh vực cấp thoát nước và tự động hóa."
-        },
-        "grid": {
-            "defaultCategory": "XÂY DỰNG",
-            "defaultLocation": "Việt Nam",
-            "viewDetail": "XEM CHI TIẾT"
-        },
-        "empty": {
-            "title": "CHƯA CÓ DỰ ÁN",
-            "desc": "Hiện tại chưa có dự án nào. Vui lòng quay lại sau."
-        }
+    "grid": {
+      "defaultCategory": "XÂY DỰNG",
+      "defaultLocation": "Việt Nam",
+      "viewDetail": "XEM CHI TIẾT"
+    },
+    "empty": {
+      "title": "CHƯA CÓ DỰ ÁN",
+      "desc": "Hiện tại chưa có dự án nào. Vui lòng quay lại sau."
+    }
+  },
+  "Products": {
+    "hero": {
+      "badge": "Sản phẩm & Giải pháp",
+      "title": "THIẾT BỊ &",
+      "titleAccent": "VẬT LIỆU",
+      "desc": "Tổng đại lý phân phối chính hãng Gạch men, Gạch trang trí (Đồng Tâm, Viglacera, Catalan, Thuận Hải, Hà Thanh) và Máy lạnh điều hòa trung tâm VRV-Chiller (Gree & Midea).",
+      "searchPlaceholder": "Tìm kiếm sản phẩm..."
+    },
+    "sidebar": {
+      "categoryTitle": "DANH MỤC",
+      "all": "Tất cả"
+    },
+    "grid": {
+      "resultCount": "Hiển thị {start} - {end} trong tổng số {total} kết quả",
+      "defaultSummary": "Sản phẩm chính hãng chất lượng cao cho công trình hiện đại.",
+      "viewDetail": "CHI TIẾT SẢN PHẨM"
+    },
+    "empty": "Không tìm thấy sản phẩm nào."
+  },
+  "ProductDetail": {
+    "breadcrumb": {
+      "home": "Trang chủ",
+      "products": "Sản phẩm"
+    },
+    "badge": "CHÍNH HÃNG",
+    "status": {
+      "label": "Tình trạng",
+      "default": "Liên hệ"
+    },
+    "delivery": {
+      "label": "Giao hàng",
+      "default": "Toàn quốc"
+    },
+    "features": "ĐẶC ĐIỂM NỔI BẬT",
+    "getQuote": "NHẬN BÁO GIÁ CHI TIẾT",
+    "downloadCatalog": "TẢI CATALOGUE (PDF)",
+    "techSpecs": "THÔNG SỐ KỸ THUẬT",
+    "description": "CHI TIẾT SẢN PHẨM",
+    "projectSupport": {
+      "title": "Hỗ trợ dự án",
+      "defaultDesc": "Đông Dương Corporation cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi cho các dự án trọng điểm.",
+      "warranty": "Bảo hành {months}",
+      "warrantyDefault": "12 tháng",
+      "certificate": "Đầy đủ CO/CQ chính hãng",
+      "origin": "Xuất xứ: {origin}",
+      "originDefault": "Chính hãng"
+    },
+    "cta": {
+      "title": "BẠN CẦN TƯ VẤN THÊM?",
+      "desc": "\"Để lại thông tin hoặc gọi hotline để được tư vấn giải pháp tối ưu cho hệ thống của bạn.\"",
+      "submit": "GỬI YÊU CẦU NGAY",
+      "hotline": "GỌI HOTLINE"
+    }
+  },
+  "ProjectDetail": {
+    "breadcrumb": {
+      "home": "Trang chủ",
+      "projects": "Dự án"
+    },
+    "back": "Quay lại",
+    "info": {
+      "client": "Khách hàng",
+      "location": "Vị trí",
+      "time": "Thời gian",
+      "category": "Loại dự án",
+      "status": "Trạng thái",
+      "title": "Thông tin dự án"
+    },
+    "status": {
+      "completed": "Đã hoàn thành",
+      "ongoing": "Đang triển khai"
+    },
+    "unknown": "Đang cập nhật",
+    "share": "Chia sẻ",
+    "shareLabel": "Chia sẻ:",
+    "print": "In",
+    "save": "Lưu dự án",
+    "contactAdvice": "Liên hệ tư vấn",
+    "cta": {
+      "title": "Bạn có dự án tương tự?",
+      "desc": "Liên hệ ngay để được tư vấn giải pháp phù hợp nhất cho dự án của bạn.",
+      "btnText": "Liên hệ ngay"
+    },
+    "related": {
+      "title": "DỰ ÁN LIÊN QUAN",
+      "viewAll": "TẤT CẢ DỰ ÁN",
+      "detail": "Xem chi tiết"
+    }
+  },
+  "Careers": {
+    "hero": {
+      "badge": "CƠ HỘI NGHỀ NGHIỆP",
+      "title": "GIA NHẬP",
+      "titleAccent": "ĐỘI NGŨ Đông Dương",
+      "desc": "Khám phá cơ hội nghề nghiệp và phát triển sự nghiệp cùng đội ngũ chuyên gia tại Đông Dương Corporation."
+    },
+    "list": {
+      "title": "Vị trí đang tuyển",
+      "count": "{total} vị trí đang mở",
+      "defaultDepartment": "Tổng hợp",
+      "defaultLocation": "Việt Nam",
+      "deadlinePrefix": "Hạn nộp:",
+      "viewDetail": "Xem chi tiết"
+    },
+    "employmentTypes": {
+      "full_time": "Toàn thời gian",
+      "part_time": "Bán thời gian",
+      "contract": "Hợp đồng",
+      "internship": "Thực tập"
+    },
+    "empty": {
+      "title": "Hiện chưa có vị trí phù hợp",
+      "desc": "Vui lòng kiểm tra lại sau hoặc gửi CV ứng tuyển tự do qua email cho chúng tôi."
+    },
+    "companyName": "ĐÔNG DƯƠNG CORPORATION"
+  },
+  "Portal": {
+    "Sidebar": {
+      "dashboard": "Bảng điều khiển",
+      "products": "Quản lý Sản phẩm",
+      "blog": "Quản lý Tin tức",
+      "projects": "Quản lý Dự án",
+      "recruitment": "Quản lý Tuyển dụng",
+      "applications": "Danh sách Ứng viên",
+      "comments": "Quản lý Bình luận",
+      "media": "Thư viện Media",
+      "contacts": "Quản lý Liên hệ",
+      "users": "Quản lý Tài khoản",
+      "roles": "Phân quyền & Vai trò",
+      "logs": "Nhật ký hệ thống",
+      "settings": "Cài đặt hệ thống",
+      "system": "Hệ thống",
+      "account": "Tài khoản",
+      "profile": "Hồ sơ",
+      "logout": "Đăng xuất",
+      "logoutSuccess": "Đã đăng xuất thành công",
+      "logoutError": "Lỗi khi đăng xuất",
+      "companyName": "ĐÔNG DƯƠNG CORPORATION"
+    },
+    "Layout": {
+      "system": "Hệ thống",
+      "dashboard": "Bảng điều khiển",
+      "searchPlaceholder": "TÌM KIẾM NHANH...",
+      "help": "Trợ giúp"
+    },
+    "Dashboard": {
+      "title": "Tổng quan",
+      "subtitle": "Chào mừng trở lại. Đây là hoạt động của hệ thống.",
+      "visitors": "Số lượng",
+      "news": "Tin tức",
+      "projects": "Dự án",
+      "products": "Sản phẩm",
+      "contacts": "Liên hệ",
+      "totalContacts": "Tổng liên hệ",
+      "total": "Tổng số",
+      "newsArticles": "Bài viết tin tức",
+      "completedProjects": "Dự án đã thực hiện",
+      "catalogProducts": "Sản phẩm catalog",
+      "newContacts": "Liên hệ mới",
+      "loading": "Đang tải dữ liệu báo cáo...",
+      "all": "TẤT CẢ",
+      "newsCaps": "TIN TỨC",
+      "projectsCaps": "DỰ ÁN",
+      "productsCaps": "SẢN PHẨM",
+      "filterDate": "Lọc ngày tháng năm",
+      "updatedAt": "Cập nhật lúc: {time}",
+      "content": "Nội dung",
+      "turns": "Lượt",
+      "pending": "Chưa xử lý",
+      "charts": {
+        "growthTitle": "Tăng trưởng hệ thống",
+        "growthDesc": "Biểu đồ xu hướng cập nhật dữ liệu 6 tháng qua",
+        "growthFooterTitle": "Tốc độ số hóa",
+        "growthFooterDesc": "Dữ liệu tổng hợp từ các module chính",
+        "totalSizeTitle": "Tổng quy mô nội dung",
+        "totalSizeDesc": "Toàn bộ dữ liệu News, Projects & Products",
+        "resources": "Tài nguyên",
+        "growthRate": "Tăng trưởng 7.2%",
+        "growthRateDesc": "Dựa trên tốc độ đăng bài 30 ngày qua",
+        "distTitle": "Tỷ lệ phân bổ tài nguyên",
+        "distDesc": "So sánh khối lượng giữa các danh mục CMS",
+        "distFooterTitle": "Cơ cấu ổn định",
+        "distFooterDesc": "Sản phẩm chiếm tỷ trọng cao nhất hiện tại",
+        "feedbackTitle": "Chỉ số phản hồi",
+        "feedbackDesc": "Liên hệ và tương tác khách hàng",
+        "support": "Hỗ trợ 24/7",
+        "supportDesc": "Thời gian phản hồi trung bình: 15 phút"
+      }
+    },
+    "Common": {
+      "actions": "Thao tác",
+      "search": "Tìm kiếm",
+      "add": "Thêm mới",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "cancel": "Hủy bỏ",
+      "confirm": "Xác nhận",
+      "save": "Lưu lại",
+      "loading": "Đang tải dữ liệu...",
+      "noData": "Không có dữ liệu hiển thị.",
+      "export": "Xuất Excel",
+      "filter": "Bộ lọc",
+      "all": "Tất cả",
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Cập nhật",
+      "action": "Hành động",
+      "checkingPermissions": "Đang kiểm tra quyền truy cập..."
+    },
+    "AuditLogs": {
+      "title": "Nhật ký hệ thống",
+      "time": "Thời gian / IP",
+      "user": "Người thực hiện",
+      "module": "Phân hệ",
+      "action": "Hành động",
+      "description": "Nội dung chi tiết",
+      "changes": "Thay đổi dữ liệu",
+      "noChanges": "Không có thay đổi dữ liệu chi tiết",
+      "detailTitle": "Chi tiết Nhật ký hệ thống",
+      "actionTypes": {
+        "CREATE": "Tạo mới",
+        "UPDATE": "Cập nhật",
+        "DELETE": "Xóa",
+        "LOGIN": "Đăng nhập",
+        "AUTH_FAILURE": "Lỗi Auth"
+      },
+      "filterModule": "Tất cả phân hệ",
+      "filterAction": "Tất cả hành động"
+    },
+    "Contacts": {
+      "title": "Quản lý Liên hệ",
+      "name": "Khách hàng",
+      "info": "Thông tin liên hệ",
+      "subject": "Tiêu đề",
+      "message": "Nội dung",
+      "date": "Ngày gửi",
+      "status": {
+        "new": "Mới",
+        "read": "Đã đọc",
+        "replied": "Đã trả lời",
+        "archived": "Đã lưu trữ",
+        "spam": "Spam"
+      },
+      "detailTitle": "Chi tiết yêu cầu liên hệ",
+      "updateStatusSuccess": "Đã cập nhật trạng thái liên hệ",
+      "deleteSuccess": "Đã xóa liên hệ thành công",
+      "exportSuccess": "Đã xuất dữ liệu Excel thành công",
+      "subtitle": "Danh sách thông tin liên hệ và yêu cầu từ khách hàng.",
+      "totalContacts": "Tổng liên hệ",
+      "loading": "Đang tải danh sách liên hệ...",
+      "empty": "Không có yêu cầu liên hệ nào.",
+      "searchPlaceholder": "TÌM THEO TÊN, EMAIL, SĐT, CHỦ ĐỀ...",
+      "filterDate": "Lọc theo ngày",
+      "itemLabel": "liên hệ",
+      "ticket": "Phiếu yêu cầu",
+      "ticketDesc": "Thông tin liên hệ chi tiết được hệ thống ghi nhận từ Cổng thông tin khách hàng.",
+      "email": "Email liên hệ",
+      "phone": "Số điện thoại",
+      "notProvided": "Chưa cung cấp",
+      "address": "Địa chỉ",
+      "messageDetail": "Nội dung yêu cầu chi tiết:",
+      "currentStatus": "Trạng thái hiện tại",
+      "markAsReplied": "Đánh dấu đã trả lời",
+      "markAsSpam": "Đánh dấu Spam",
+      "deleteTitle": "Xóa liên hệ",
+      "deleteConfirm": "Thông tin liên hệ sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
+      "itemLabelCap": "Liên hệ",
+      "adminStatus": "Quản trị trạng thái"
+    },
+    "Applications": {
+      "title": "Danh sách Ứng viên",
+      "candidate": "Ứng viên",
+      "info": "Thông tin liên hệ",
+      "job": "Vị trí ứng tuyển",
+      "date": "Ngày nộp",
+      "cv": "Hồ sơ CV",
+      "viewCv": "Xem CV trực tiếp",
+      "status": {
+        "pending": "Chờ duyệt",
+        "reviewed": "Đã xem",
+        "interviewed": "Phỏng vấn",
+        "rejected": "Không đạt",
+        "accepted": "Đã tuyển"
+      },
+      "updateStatusSuccess": "Đã cập nhật trạng thái hồ sơ",
+      "deleteSuccess": "Đã xóa hồ sơ ứng viên thành công"
+    },
+    "Jobs": {
+      "title": "Quản lý Tuyển dụng",
+      "position": "Vị trí",
+      "department": "Phòng ban",
+      "type": "Hình thức",
+      "deadline": "Hạn nộp",
+      "status": "Trạng thái",
+      "active": "Đang tuyển",
+      "inactive": "Đóng tuyển",
+      "deleteSuccess": "Đã xóa tin tuyển dụng thành công",
+      "viewLive": "Xem trực tiếp"
     },
     "Products": {
-        "hero": {
-            "badge": "Sản phẩm & Giải pháp",
-            "title": "THIẾT BỊ",
-            "titleAccent": "CHUYÊN DỤNG",
-            "desc": "Van công nghiệp, thiết bị đo lường và giải pháp IoT tiêu chuẩn Nhật Bản & Hàn Quốc cho ngành nước và hạ tầng kỹ thuật.",
-            "searchPlaceholder": "Tìm kiếm sản phẩm..."
-        },
-        "sidebar": {
-            "categoryTitle": "DANH MỤC",
-            "all": "Tất cả"
-        },
-        "grid": {
-            "resultCount": "Hiển thị {start} - {end} trong tổng số {total} kết quả",
-            "defaultSummary": "Thiết bị chuyên dụng cho ngành nước và công nghiệp.",
-            "viewDetail": "CHI TIẾT SẢN PHẨM"
-        },
-        "empty": "Không tìm thấy sản phẩm nào."
+      "title": "Quản lý Sản phẩm",
+      "product": "Sản phẩm",
+      "category": "Danh mục",
+      "status": "Trạng thái",
+      "active": "Đang bán",
+      "inactive": "Ngừng kinh doanh",
+      "deleteSuccess": "Đã xóa sản phẩm thành công",
+      "exportSuccess": "Đã xuất dữ liệu Excel thành công",
+      "companyName": "Đông Dương Corporation",
+      "deleteProduct": "Xóa sản phẩm",
+      "subtitle": "Danh mục van công nghiệp và thiết bị IoT của Đông Dương Corporation.",
+      "categories": "Danh mục",
+      "addProduct": "Thêm sản phẩm mới",
+      "loading": "Đang tải danh sách sản phẩm...",
+      "empty": "Không tìm thấy sản phẩm nào phù hợp.",
+      "searchPlaceholder": "TÌM KIẾM THEO TÊN, SKU HOẶC DANH MỤC...",
+      "filterCategory": "Lọc danh mục",
+      "allCategories": "Tất cả danh mục",
+      "allInCategory": "Tất cả {category}",
+      "filterStatus": "Lọc trạng thái",
+      "allStatuses": "Tất cả trạng thái",
+      "filterDate": "Lọc theo ngày",
+      "clearFilter": "Xóa lọc",
+      "itemLabel": "sản phẩm",
+      "deleteTitle": "Xóa sản phẩm",
+      "deleteConfirm": "Sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
+      "itemLabelCap": "Sản phẩm",
+      "uncategorized": "Chưa phân loại",
+      "loadingProduct": "Đang tải thông tin sản phẩm..."
     },
-
-    "ProductDetail": {
-        "breadcrumb": {
-            "home": "Trang chủ",
-            "products": "Sản phẩm"
-        },
-        "badge": "CHÍNH HÃNG",
-        "status": {
-            "label": "Tình trạng",
-            "default": "Liên hệ"
-        },
-        "delivery": {
-            "label": "Giao hàng",
-            "default": "Toàn quốc"
-        },
-        "features": "ĐẶC ĐIỂM NỔI BẬT",
-        "getQuote": "NHẬN BÁO GIÁ CHI TIẾT",
-        "downloadCatalog": "TẢI CATALOGUE (PDF)",
-        "techSpecs": "THÔNG SỐ KỸ THUẬT",
-        "description": "CHI TIẾT SẢN PHẨM",
-        "projectSupport": {
-            "title": "Hỗ trợ dự án",
-            "defaultDesc": "Sài Gòn Valve cung cấp đầy đủ chứng chỉ CO/CQ và hỗ trợ kỹ thuật tận nơi cho các dự án trọng điểm.",
-            "warranty": "Bảo hành {months}",
-            "warrantyDefault": "12 tháng",
-            "certificate": "Đầy đủ CO/CQ chính hãng",
-            "origin": "Xuất xứ: {origin}",
-            "originDefault": "Chính hãng"
-        },
-        "cta": {
-            "title": "BẠN CẦN TƯ VẤN THÊM?",
-            "desc": "\"Để lại thông tin hoặc gọi hotline để được tư vấn giải pháp tối ưu cho hệ thống của bạn.\"",
-            "submit": "GỬI YÊU CẦU NGAY",
-            "hotline": "GỌI HOTLINE"
-        }
+    "News": {
+      "title": "Quản lý Tin tức",
+      "article": "Bài viết",
+      "author": "Tác giả",
+      "date": "Ngày xuất bản",
+      "status": "Trạng thái",
+      "published": "Đã xuất bản",
+      "draft": "Bản nháp",
+      "deleteSuccess": "Đã xóa bài viết thành công",
+      "notPublished": "Chưa đăng",
+      "uncategorized": "Chưa phân loại",
+      "articleOptions": "Tùy chọn bài viết",
+      "editArticle": "Sửa bài viết",
+      "deleteArticle": "Xóa bài viết",
+      "subtitle": "Cập nhật tin tức, sự kiện và kiến thức kỹ thuật của Đông Dương Corporation.",
+      "categories": "Danh mục",
+      "addArticle": "Viết bài mới",
+      "loading": "Đang tải danh sách tin tức...",
+      "empty": "Không tìm thấy bài viết nào phù hợp.",
+      "searchPlaceholder": "TÌM KIẾM BÀI VIẾT THEO TIÊU ĐỀ HOẶC DANH MỤC...",
+      "filterStatus": "Lọc trạng thái",
+      "allStatuses": "Tất cả trạng thái",
+      "filterDate": "Lọc theo ngày",
+      "clearFilter": "Xóa lọc",
+      "itemLabel": "bài viết",
+      "deleteTitle": "Xóa bài viết",
+      "deleteConfirm": "Bài viết sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
+      "itemLabelCap": "Bài viết",
+      "loadingCategories": "Đang tải danh mục...",
+      "loadingArticle": "Đang tải thông tin bài viết..."
     },
-    "ProjectDetail": {
-        "breadcrumb": {
-            "home": "Trang chủ",
-            "projects": "Dự án"
-        },
-        "back": "Quay lại",
-        "info": {
-            "client": "Khách hàng",
-            "location": "Vị trí",
-            "time": "Thời gian",
-            "category": "Loại dự án",
-            "status": "Trạng thái",
-            "title": "Thông tin dự án"
-        },
-        "status": {
-            "completed": "Đã hoàn thành",
-            "ongoing": "Đang triển khai"
-        },
-        "unknown": "Đang cập nhật",
-        "share": "Chia sẻ",
-        "shareLabel": "Chia sẻ:",
-        "print": "In",
-        "save": "Lưu dự án",
-        "contactAdvice": "Liên hệ tư vấn",
-        "cta": {
-            "title": "Bạn có dự án tương tự?",
-            "desc": "Liên hệ ngay để được tư vấn giải pháp phù hợp nhất cho dự án của bạn.",
-            "btnText": "Liên hệ ngay"
-        },
-        "related": {
-            "title": "DỰ ÁN LIÊN QUAN",
-            "viewAll": "TẤT CẢ DỰ ÁN",
-            "detail": "Xem chi tiết"
-        }
-    },
-    "Careers": {
-        "hero": {
-            "badge": "CƠ HỘI NGHỀ NGHIỆP",
-            "title": "GIA NHẬP",
-            "titleAccent": "ĐỘI NGŨ SGV",
-            "desc": "Khám phá cơ hội nghề nghiệp và phát triển sự nghiệp cùng đội ngũ chuyên gia công nghệ ngành nước hàng đầu tại Sài Gòn Valve."
-        },
-        "list": {
-            "title": "Vị trí đang tuyển",
-            "count": "{total} vị trí đang mở",
-            "defaultDepartment": "Tổng hợp",
-            "defaultLocation": "Việt Nam",
-            "deadlinePrefix": "Hạn nộp:",
-            "viewDetail": "Xem chi tiết"
-        },
-        "employmentTypes": {
-            "full_time": "Toàn thời gian",
-            "part_time": "Bán thời gian",
-            "contract": "Hợp đồng",
-            "internship": "Thực tập"
-        },
-        "empty": {
-            "title": "Hiện chưa có vị trí phù hợp",
-            "desc": "Vui lòng kiểm tra lại sau hoặc gửi CV ứng tuyển tự do qua email cho chúng tôi."
-        }
-    },
-    "Portal": {
-        "Sidebar": {
-            "dashboard": "Bảng điều khiển",
-            "products": "Quản lý Sản phẩm",
-            "blog": "Quản lý Tin tức",
-            "projects": "Quản lý Dự án",
-            "recruitment": "Quản lý Tuyển dụng",
-            "applications": "Danh sách Ứng viên",
-            "comments": "Quản lý Bình luận",
-            "media": "Thư viện Media",
-            "contacts": "Quản lý Liên hệ",
-            "users": "Quản lý Tài khoản",
-            "roles": "Phân quyền & Vai trò",
-            "logs": "Nhật ký hệ thống",
-            "settings": "Cài đặt hệ thống",
-            "system": "Hệ thống",
-            "account": "Tài khoản",
-            "profile": "Hồ sơ",
-            "logout": "Đăng xuất",
-            "logoutSuccess": "Đã đăng xuất thành công",
-            "logoutError": "Lỗi khi đăng xuất",
-            "companyName": "SÀI GÒN VALVE"
-        },
-        "Layout": {
-            "system": "Hệ thống",
-            "dashboard": "Bảng điều khiển",
-            "searchPlaceholder": "TÌM KIẾM NHANH...",
-            "help": "Trợ giúp"
-        },
-        "Dashboard": {
-            "title": "Tổng quan",
-            "subtitle": "Chào mừng trở lại. Đây là hoạt động của hệ thống.",
-            "visitors": "Số lượng",
-            "news": "Tin tức",
-            "projects": "Dự án",
-            "products": "Sản phẩm",
-            "contacts": "Liên hệ",
-            "totalContacts": "Tổng liên hệ",
-            "total": "Tổng số",
-            "newsArticles": "Bài viết tin tức",
-            "completedProjects": "Dự án đã thực hiện",
-            "catalogProducts": "Sản phẩm catalog",
-            "newContacts": "Liên hệ mới",
-            "loading": "Đang tải dữ liệu báo cáo...",
-            "all": "TẤT CẢ",
-            "newsCaps": "TIN TỨC",
-            "projectsCaps": "DỰ ÁN",
-            "productsCaps": "SẢN PHẨM",
-            "filterDate": "Lọc ngày tháng năm",
-            "updatedAt": "Cập nhật lúc: {time}",
-            "content": "Nội dung",
-            "turns": "Lượt",
-            "pending": "Chưa xử lý",
-            "charts": {
-                "growthTitle": "Tăng trưởng hệ thống",
-                "growthDesc": "Biểu đồ xu hướng cập nhật dữ liệu 6 tháng qua",
-                "growthFooterTitle": "Tốc độ số hóa",
-                "growthFooterDesc": "Dữ liệu tổng hợp từ các module chính",
-                "totalSizeTitle": "Tổng quy mô nội dung",
-                "totalSizeDesc": "Toàn bộ dữ liệu News, Projects & Products",
-                "resources": "Tài nguyên",
-                "growthRate": "Tăng trưởng 7.2%",
-                "growthRateDesc": "Dựa trên tốc độ đăng bài 30 ngày qua",
-                "distTitle": "Tỷ lệ phân bổ tài nguyên",
-                "distDesc": "So sánh khối lượng giữa các danh mục CMS",
-                "distFooterTitle": "Cơ cấu ổn định",
-                "distFooterDesc": "Sản phẩm chiếm tỷ trọng cao nhất hiện tại",
-                "feedbackTitle": "Chỉ số phản hồi",
-                "feedbackDesc": "Liên hệ và tương tác khách hàng",
-                "support": "Hỗ trợ 24/7",
-                "supportDesc": "Thời gian phản hồi trung bình: 15 phút"
-            }
-        },
-        "Common": {
-            "actions": "Thao tác",
-            "search": "Tìm kiếm",
-            "add": "Thêm mới",
-            "edit": "Chỉnh sửa",
-            "delete": "Xóa",
-            "cancel": "Hủy bỏ",
-            "confirm": "Xác nhận",
-            "save": "Lưu lại",
-            "loading": "Đang tải dữ liệu...",
-            "noData": "Không có dữ liệu hiển thị.",
-            "export": "Xuất Excel",
-            "filter": "Bộ lọc",
-            "all": "Tất cả",
-            "status": "Trạng thái",
-            "createdAt": "Ngày tạo",
-            "updatedAt": "Cập nhật",
-            "action": "Hành động",
-            "checkingPermissions": "Đang kiểm tra quyền truy cập..."
-        },
-        "AuditLogs": {
-            "title": "Nhật ký hệ thống",
-            "time": "Thời gian / IP",
-            "user": "Người thực hiện",
-            "module": "Phân hệ",
-            "action": "Hành động",
-            "description": "Nội dung chi tiết",
-            "changes": "Thay đổi dữ liệu",
-            "noChanges": "Không có thay đổi dữ liệu chi tiết",
-            "detailTitle": "Chi tiết Nhật ký hệ thống",
-            "actionTypes": {
-                "CREATE": "Tạo mới",
-                "UPDATE": "Cập nhật",
-                "DELETE": "Xóa",
-                "LOGIN": "Đăng nhập",
-                "AUTH_FAILURE": "Lỗi Auth"
-            },
-            "filterModule": "Tất cả phân hệ",
-            "filterAction": "Tất cả hành động"
-        },
-        "Contacts": {
-            "title": "Quản lý Liên hệ",
-            "name": "Khách hàng",
-            "info": "Thông tin liên hệ",
-            "subject": "Tiêu đề",
-            "message": "Nội dung",
-            "date": "Ngày gửi",
-            "status": {
-                "new": "Mới",
-                "read": "Đã đọc",
-                "replied": "Đã trả lời",
-                "archived": "Đã lưu trữ",
-                "spam": "Spam"
-            },
-            "detailTitle": "Chi tiết yêu cầu liên hệ",
-            "updateStatusSuccess": "Đã cập nhật trạng thái liên hệ",
-            "deleteSuccess": "Đã xóa liên hệ thành công",
-            "exportSuccess": "Đã xuất dữ liệu Excel thành công",
-            "subtitle": "Danh sách thông tin liên hệ và yêu cầu từ khách hàng.",
-            "totalContacts": "Tổng liên hệ",
-            "loading": "Đang tải danh sách liên hệ...",
-            "empty": "Không có yêu cầu liên hệ nào.",
-            "searchPlaceholder": "TÌM THEO TÊN, EMAIL, SĐT, CHỦ ĐỀ...",
-            "filterDate": "Lọc theo ngày",
-            "itemLabel": "liên hệ",
-            "ticket": "Phiếu yêu cầu",
-            "ticketDesc": "Thông tin liên hệ chi tiết được hệ thống ghi nhận từ Cổng thông tin khách hàng.",
-            "email": "Email liên hệ",
-            "phone": "Số điện thoại",
-            "notProvided": "Chưa cung cấp",
-            "address": "Địa chỉ",
-            "messageDetail": "Nội dung yêu cầu chi tiết:",
-            "currentStatus": "Trạng thái hiện tại",
-            "markAsReplied": "Đánh dấu đã trả lời",
-            "markAsSpam": "Đánh dấu Spam",
-            "deleteTitle": "Xóa liên hệ",
-            "deleteConfirm": "Thông tin liên hệ sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
-            "itemLabelCap": "Liên hệ",
-            "adminStatus": "Quản trị trạng thái"
-        },
-        "Applications": {
-            "title": "Danh sách Ứng viên",
-            "candidate": "Ứng viên",
-            "info": "Thông tin liên hệ",
-            "job": "Vị trí ứng tuyển",
-            "date": "Ngày nộp",
-            "cv": "Hồ sơ CV",
-            "viewCv": "Xem CV trực tiếp",
-            "status": {
-                "pending": "Chờ duyệt",
-                "reviewed": "Đã xem",
-                "interviewed": "Phỏng vấn",
-                "rejected": "Không đạt",
-                "accepted": "Đã tuyển"
-            },
-            "updateStatusSuccess": "Đã cập nhật trạng thái hồ sơ",
-            "deleteSuccess": "Đã xóa hồ sơ ứng viên thành công"
-        },
-        "Jobs": {
-            "title": "Quản lý Tuyển dụng",
-            "position": "Vị trí",
-            "department": "Phòng ban",
-            "type": "Hình thức",
-            "deadline": "Hạn nộp",
-            "status": "Trạng thái",
-            "active": "Đang tuyển",
-            "inactive": "Đóng tuyển",
-            "deleteSuccess": "Đã xóa tin tuyển dụng thành công",
-            "viewLive": "Xem trực tiếp"
-        },
-        "Products": {
-            "title": "Quản lý Sản phẩm",
-            "product": "Sản phẩm",
-            "category": "Danh mục",
-            "status": "Trạng thái",
-            "active": "Đang bán",
-            "inactive": "Ngừng kinh doanh",
-            "deleteSuccess": "Đã xóa sản phẩm thành công",
-            "exportSuccess": "Đã xuất dữ liệu Excel thành công",
-            "companyName": "Sài Gòn Valve",
-            "deleteProduct": "Xóa sản phẩm",
-            "subtitle": "Danh mục van công nghiệp và thiết bị IoT của Sài Gòn Valve.",
-            "categories": "Danh mục",
-            "addProduct": "Thêm sản phẩm mới",
-            "loading": "Đang tải danh sách sản phẩm...",
-            "empty": "Không tìm thấy sản phẩm nào phù hợp.",
-            "searchPlaceholder": "TÌM KIẾM THEO TÊN, SKU HOẶC DANH MỤC...",
-            "filterCategory": "Lọc danh mục",
-            "allCategories": "Tất cả danh mục",
-            "allInCategory": "Tất cả {category}",
-            "filterStatus": "Lọc trạng thái",
-            "allStatuses": "Tất cả trạng thái",
-            "filterDate": "Lọc theo ngày",
-            "clearFilter": "Xóa lọc",
-            "itemLabel": "sản phẩm",
-            "deleteTitle": "Xóa sản phẩm",
-            "deleteConfirm": "Sản phẩm sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
-            "itemLabelCap": "Sản phẩm",
-            "uncategorized": "Chưa phân loại",
-            "loadingProduct": "Đang tải thông tin sản phẩm..."
-        },
-        "News": {
-            "title": "Quản lý Tin tức",
-            "article": "Bài viết",
-            "author": "Tác giả",
-            "date": "Ngày xuất bản",
-            "status": "Trạng thái",
-            "published": "Đã xuất bản",
-            "draft": "Bản nháp",
-            "deleteSuccess": "Đã xóa bài viết thành công",
-            "notPublished": "Chưa đăng",
-            "uncategorized": "Chưa phân loại",
-            "articleOptions": "Tùy chọn bài viết",
-            "editArticle": "Sửa bài viết",
-            "deleteArticle": "Xóa bài viết",
-            "subtitle": "Cập nhật tin tức, sự kiện và kiến thức kỹ thuật của Sài Gòn Valve.",
-            "categories": "Danh mục",
-            "addArticle": "Viết bài mới",
-            "loading": "Đang tải danh sách tin tức...",
-            "empty": "Không tìm thấy bài viết nào phù hợp.",
-            "searchPlaceholder": "TÌM KIẾM BÀI VIẾT THEO TIÊU ĐỀ HOẶC DANH MỤC...",
-            "filterStatus": "Lọc trạng thái",
-            "allStatuses": "Tất cả trạng thái",
-            "filterDate": "Lọc theo ngày",
-            "clearFilter": "Xóa lọc",
-            "itemLabel": "bài viết",
-            "deleteTitle": "Xóa bài viết",
-            "deleteConfirm": "Bài viết sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
-            "itemLabelCap": "Bài viết",
-            "loadingCategories": "Đang tải danh mục...",
-            "loadingArticle": "Đang tải thông tin bài viết..."
-        },
-        "Projects": {
-            "title": "Quản lý Dự án",
-            "project": "Dự án",
-            "category": "Danh mục",
-            "client": "Chủ đầu tư",
-            "date": "Thời gian",
-            "to": "Đến",
-            "status": "Trạng thái",
-            "ongoing": "Đang triển khai",
-            "completed": "Đã hoàn thành",
-            "deleteSuccess": "Đã xóa dự án thành công",
-            "uncategorized": "Chưa phân loại",
-            "options": "Tùy chọn dự án",
-            "deleteProject": "Xóa dự án",
-            "subtitle": "Danh sách các dự án và công trình trọng điểm đã thực hiện.",
-            "categories": "Danh mục",
-            "add": "Thêm dự án mới",
-            "loading": "Đang tải danh sách dự án...",
-            "empty": "Không tìm thấy dự án nào phù hợp.",
-            "searchPlaceholder": "TÌM KIẾM THEO TÊN DỰ ÁN, ĐỊA ĐIỂM HOẶC LOẠI HÌNH...",
-            "filterStatus": "Lọc trạng thái",
-            "allStatuses": "Tất cả trạng thái",
-            "filterDate": "Lọc theo ngày",
-            "clearFilter": "Xóa lọc",
-            "itemLabel": "dự án",
-            "deleteTitle": "Xóa dự án",
-            "deleteConfirm": "Dự án sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
-            "itemLabelCap": "Dự án"
-        }
+    "Projects": {
+      "title": "Quản lý Dự án",
+      "project": "Dự án",
+      "category": "Danh mục",
+      "client": "Chủ đầu tư",
+      "date": "Thời gian",
+      "to": "Đến",
+      "status": "Trạng thái",
+      "ongoing": "Đang triển khai",
+      "completed": "Đã hoàn thành",
+      "deleteSuccess": "Đã xóa dự án thành công",
+      "uncategorized": "Chưa phân loại",
+      "options": "Tùy chọn dự án",
+      "deleteProject": "Xóa dự án",
+      "subtitle": "Danh sách các dự án và công trình trọng điểm đã thực hiện.",
+      "categories": "Danh mục",
+      "add": "Thêm dự án mới",
+      "loading": "Đang tải danh sách dự án...",
+      "empty": "Không tìm thấy dự án nào phù hợp.",
+      "searchPlaceholder": "TÌM KIẾM THEO TÊN DỰ ÁN, ĐỊA ĐIỂM HOẶC LOẠI HÌNH...",
+      "filterStatus": "Lọc trạng thái",
+      "allStatuses": "Tất cả trạng thái",
+      "filterDate": "Lọc theo ngày",
+      "clearFilter": "Xóa lọc",
+      "itemLabel": "dự án",
+      "deleteTitle": "Xóa dự án",
+      "deleteConfirm": "Dự án sẽ bị xóa vĩnh viễn khỏi hệ thống. Hành động này không thể hoàn tác.",
+      "itemLabelCap": "Dự án"
     }
+  }
 }

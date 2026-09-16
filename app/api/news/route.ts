@@ -56,6 +56,12 @@ export const GET = withHybridAuth(
                     or(
                         ilike(newsArticles.title, `%${search}%`),
                         ilike(newsArticles.summary, `%${search}%`),
+                        ilike(sql<string>`(${newsArticles.title_localized}->>'vi')`, `%${search}%`),
+                        ilike(sql<string>`(${newsArticles.title_localized}->>'en')`, `%${search}%`),
+                        ilike(sql<string>`(${newsArticles.title_localized}->>'zh')`, `%${search}%`),
+                        ilike(sql<string>`(${newsArticles.summary_localized}->>'vi')`, `%${search}%`),
+                        ilike(sql<string>`(${newsArticles.summary_localized}->>'en')`, `%${search}%`),
+                        ilike(sql<string>`(${newsArticles.summary_localized}->>'zh')`, `%${search}%`),
                     ),
                 );
             }
@@ -170,12 +176,24 @@ export const POST = withAuth(
                 .insert(newsArticles)
                 .values({
                     title,
-                    title_localized: title_localized || { vi: title, en: '' },
+                    title_localized: title_localized || { vi: title, en: '', zh: '' },
                     slug,
                     summary: sanitizePlainText(summary, 1000),
-                    summary_localized: summary_localized || { vi: summary, en: '' },
+                    summary_localized: summary_localized
+                        ? {
+                            vi: sanitizePlainText(summary_localized.vi || '', 1000),
+                            en: sanitizePlainText(summary_localized.en || '', 1000),
+                            zh: sanitizePlainText(summary_localized.zh || '', 1000),
+                        }
+                        : { vi: sanitizePlainText(summary, 1000), en: '', zh: '' },
                     content: sanitizeRichText(content),
-                    content_localized: content_localized || { vi: content, en: '' },
+                    content_localized: content_localized
+                        ? {
+                            vi: sanitizeRichText(content_localized.vi || ''),
+                            en: sanitizeRichText(content_localized.en || ''),
+                            zh: sanitizeRichText(content_localized.zh || ''),
+                        }
+                        : { vi: sanitizeRichText(content), en: '', zh: '' },
                     category_id,
                     author_id,
                     status: status || NEWS_STATUS.DRAFT,

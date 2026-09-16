@@ -11,9 +11,21 @@ import { toast } from 'sonner';
 import { motion } from 'motion/react';
 import { API_ROUTES, ADMIN_ROUTES } from '@/constants/routes';
 import { useAuthStore } from '@/stores/auth-store';
+import { useLocale } from 'next-intl';
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 
 export default function LoginPage() {
     const router = useRouter();
+    const locale = useLocale();
+    const COMPANY_INFO = useSiteInfo();
+    const isZh = locale === 'zh';
+    const isEn = locale === 'en';
+    const tL = (viText: string, enText: string, zhText: string) => {
+        if (isZh) return zhText;
+        if (isEn) return enText;
+        return viText;
+    };
+
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
@@ -28,7 +40,7 @@ export default function LoginPage() {
         try {
             await $api.post(API_ROUTES.AUTH.LOGIN, formData);
 
-            toast.success('Đăng nhập thành công! Đang chuyển hướng...');
+            toast.success(tL('Đăng nhập thành công! Đang chuyển hướng...', 'Login successful! Redirecting...', '登录成功！正在跳转...'));
             await useAuthStore.getState().refreshUser();
             router.push(ADMIN_ROUTES.DASHBOARD);
             router.refresh();
@@ -36,7 +48,7 @@ export default function LoginPage() {
             console.error(error);
             const message =
                 (error as { response?: { data?: { error?: string } } }).response?.data?.error ||
-                'Sai tài khoản hoặc mật khẩu';
+                tL('Sai tài khoản hoặc mật khẩu', 'Invalid username or password', '账号或密码错误');
             toast.error(message);
         } finally {
             setIsLoading(false);
@@ -63,16 +75,16 @@ export default function LoginPage() {
                         <ShieldCheck className="text-brand-primary size-6" />
                     </div>
                     <span className="text-xs font-black uppercase tracking-widest text-slate-800 leading-none">
-                        SG VALVE
+                        {COMPANY_INFO.shortName?.toUpperCase() || 'ĐÔNG DƯƠNG'}
                     </span>
                     <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1 mb-5">
-                        MANAGEMENT SYSTEM
+                        {tL('HỆ THỐNG QUẢN TRỊ NỘI BỘ', 'INTERNAL CONTROL SYSTEM', '内部数字化管理控制系统')}
                     </span>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                        Đăng nhập hệ thống
+                        {tL('Đăng nhập hệ thống', 'System Login', '管理系统登录')}
                     </h1>
                     <p className="text-slate-500 text-xs mt-1.5 font-medium">
-                        Vui lòng nhập thông tin tài khoản để bắt đầu làm việc
+                        {tL('Vui lòng nhập thông tin tài khoản để bắt đầu làm việc', 'Please enter your credentials to access the management portal', '请输入您的管理员账号及密码以进入管理控制台')}
                     </p>
                 </div>
 
@@ -81,7 +93,7 @@ export default function LoginPage() {
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <Label className="text-xs font-semibold text-slate-600">
-                                Tên đăng nhập hoặc Email
+                                {tL('Tên đăng nhập hoặc Email', 'Username or Email', '用户名或电子邮箱')}
                             </Label>
                             <div className="relative group">
                                 <User className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-slate-400 group-focus-within:text-brand-primary transition-colors" />
@@ -89,7 +101,7 @@ export default function LoginPage() {
                                     type="text"
                                     required
                                     className="h-12 bg-slate-50 border border-slate-200 pl-11 text-sm font-medium tracking-tight rounded-none focus-visible:ring-2 focus-visible:ring-brand-primary/20 focus-visible:border-brand-primary transition-all"
-                                    placeholder="Username hoặc email@saigonvalve.vn"
+                                    placeholder={tL('Username hoặc email...', 'Username or email...', '请输入用户名或邮箱...')}
                                     value={formData.username}
                                     onChange={(e) =>
                                         setFormData({ ...formData, username: e.target.value })
@@ -101,13 +113,13 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label className="text-xs font-semibold text-slate-600">
-                                    Mật khẩu truy cập
+                                    {tL('Mật khẩu truy cập', 'Password', '登录密码')}
                                 </Label>
                                 <button
                                     type="button"
                                     className="text-xs font-semibold text-brand-primary hover:text-brand-secondary transition-colors"
                                 >
-                                    Quên mật khẩu?
+                                    {tL('Quên mật khẩu?', 'Forgot password?', '忘记密码？')}
                                 </button>
                             </div>
                             <div className="relative group">
@@ -142,7 +154,7 @@ export default function LoginPage() {
                             <Loader2 className="animate-spin size-5 opacity-70" />
                         ) : (
                             <>
-                                Bắt đầu phiên làm việc
+                                {tL('Bắt đầu phiên làm việc', 'Sign In to Portal', '立即登录系统')}
                                 <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
@@ -154,11 +166,11 @@ export default function LoginPage() {
                     <div className="flex items-center gap-2">
                         <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                            Secured by SGV IT
+                            {tL('Bảo mật đa lớp', 'Multi-layer Secured', '多重加密安全')}
                         </span>
                     </div>
                     <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                        v1.2.4 Standard
+                        v1.2.4 Enterprise
                     </span>
                 </div>
             </motion.div>
@@ -171,7 +183,7 @@ export default function LoginPage() {
                 className="absolute bottom-6 left-0 w-full text-center z-10"
             >
                 <p className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.2em]">
-                    Sài Gòn Valve Control System © 2026
+                    Đông Dương Corporation Control System © 2026
                 </p>
             </motion.div>
         </div>

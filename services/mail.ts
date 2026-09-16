@@ -25,7 +25,7 @@ function getTransporter() {
 }
 
 function getMailFrom() {
-  return `"Sài Gòn Valve" <${getRequiredEnv(process.env.MAIL_FROM, "MAIL_FROM")}>`;
+  return `"Đông Dương Corporation" <${getRequiredEnv(process.env.MAIL_FROM, "MAIL_FROM")}>`;
 }
 
 export async function sendEmail({
@@ -57,7 +57,7 @@ export async function sendEmail({
 }
 
 export async function sendThankYouEmail(email: string, name: string) {
-  const subject = "Cảm ơn bạn đã liên hệ với Sài Gòn Valve";
+  const subject = "Cảm ơn bạn đã liên hệ với Đông Dương Corporation";
   const html = getThankYouTemplate(name, email);
 
   return sendEmail({

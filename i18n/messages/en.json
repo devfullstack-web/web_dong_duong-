@@ -1,27 +1,48 @@
 {
   "Company": {
-    "address": "No. 122/16-18 Vo Van Hat Street, Long Truong Ward, Thu Duc City, Ho Chi Minh City",
+    "address": "No. 124/16-18 Vo Van Hat Street, Long Truong Ward, Thu Duc City, Ho Chi Minh City",
     "workingHoursWeekdays": "MONDAY - SATURDAY: 08:00 - 17:30",
-    "slogan": "Exclusive distributor of water industry equipment and smart monitoring solutions from Japan & Korea in Vietnam."
+    "slogan": "Premier distributor of luxury ceramic tiles and centralized air conditioning systems (VRV-Chiller)."
   },
   "Header": {
     "home": "HOME",
-    "about": "ABOUT",
-    "solutions": "SOLUTIONS",
+    "about": "ABOUT US",
+    "solutions": "SERVICES",
     "products": "PRODUCTS",
     "projects": "PROJECTS",
     "news": "NEWS",
     "recruitment": "CAREERS",
+    "careers": "CAREERS",
     "contact": "CONTACT",
     "search": "Search",
+    "searchPlaceholder": "Search...",
+    "register": "Register",
+    "login": "Login",
     "language": "Language",
-    "logoAlt": "Saigon Valve Logo",
+    "logoAlt": "Dong Duong Logo",
     "vi": "VIETNAMESE",
     "en": "ENGLISH",
+    "zh": "CHINESE",
     "iotControlSoftware": "IoT Control Software"
   },
   "Footer": {
-    "slogan": "SÀI GÒN VALVE | Professional Industrial Solutions",
+    "companyTitle": "DONG DUONG CORPORATION",
+    "productsAndServices": "PRODUCTS & SERVICES",
+    "commoditiesTrading": "Ceramic & Porcelain Tiles",
+    "materialsSupply": "Split Air Conditioning Units",
+    "logisticsServices": "VRV/VRF & Chiller Systems",
+    "training": "Decorative Mosaic & Big Slab",
+    "processAndTerms": "PROCESS & TERMS",
+    "careers": "Careers",
+    "faqs": "FAQs",
+    "techSupport": "Technical Support",
+    "standards": "Quality Standards",
+    "connectWithUs": "CONNECT WITH US",
+    "newsletterDesc": "Subscribe to our newsletter for latest updates and pricing policies",
+    "newsletterPlaceholder": "Your email...",
+    "send": "Send",
+    "copyright": "© 2026 Dong Duong Corporation. All rights reserved.",
+    "slogan": "DONG DUONG CORPORATION | Luxury Tiles & HVAC VRV-Chiller Systems",
     "navigationMenu": "Navigation Menu",
     "contactInfo": "Contact Info",
     "home": "Home",
@@ -33,7 +54,65 @@
     "securityWarning": "Absolute confidentiality of project information",
     "terms": "Terms",
     "privacy": "Privacy",
-    "admin": "Admin"
+    "admin": "Admin Portal"
+  },
+  "Home": {
+    "whyChooseTitle": "WHY CHOOSE DONG DUONG?",
+    "coreCategoriesTitle": "CORE PRODUCT CATEGORIES",
+    "featuredProductsTitle": "FEATURED PRODUCTS",
+    "workflowProcessTitle": "WORKFLOW PROCESS",
+    "equipmentGridTitle": "EQUIPMENT & PRODUCTS",
+    "quoteFormTitle": "REQUEST A QUOTE",
+    "quoteFormSubtitle": "Get the best equipment solutions and pricing for your project",
+    "quoteFormName": "Full Name *",
+    "quoteFormPhone": "Phone Number *",
+    "quoteFormEmail": "Email *",
+    "quoteFormMessage": "Project Requirements *",
+    "quoteFormMessagePlaceholder": "Types of equipment, quantities, project scale...",
+    "quoteFormSubmit": "SUBMIT REQUEST",
+    "quoteFormSending": "Submitting...",
+    "quoteFormSuccess": "Quote request submitted successfully! We will contact you within 24 hours.",
+    "quoteFormError": "An error occurred while submitting your request. Please try again.",
+    "quoteFormNote": "Our engineering team will get back to you within 24 hours.",
+    "latestNewsTitle": "LATEST NEWS",
+    "viewAllNews": "View All News",
+    "requestQuote": "REQUEST A QUOTE",
+    "quote": "QUOTE",
+    "details": "Details",
+    "price": "Price",
+    "seeDetail": "View Details",
+    "updatingNews": "Latest news updating...",
+    "slide1": {
+      "title": "SOLUTIONS",
+      "highlight": "TILES & CLIMATE",
+      "titleSuffix": "ARCHITECTURAL EXCELLENCE",
+      "description": "Dong Duong Corporation specializes in premier ceramic tiles and genuine centralized air conditioning systems in Vietnam.",
+      "accent": "Building Materials & HVAC"
+    },
+    "slide2": {
+      "title": "SYSTEMS",
+      "highlight": "VRV/VRF & CHILLER",
+      "titleSuffix": "OPTIMAL ENERGY SAVING",
+      "description": "Centralized VRV/VRF systems and centrifugal/screw chillers from Gree & Midea minimizing operational costs.",
+      "accent": "VRV & Chiller Systems"
+    },
+    "slide3": {
+      "title": "COLLECTION",
+      "highlight": "TILES & MOSAICS",
+      "titleSuffix": "ELEVATING LIVING SPACES",
+      "description": "Authorized master distributor of Dongtam, Viglacera, Catalan, Thuan Hai, Ha Thanh featuring premium floor tiles, wall tiles, porcelain, and artistic mosaic.",
+      "accent": "Genuine Ceramic Tiles"
+    },
+    "fixed": {
+      "title": "DONG DUONG CORPORATION",
+      "highlight": "MATERIALS & HVAC",
+      "titleSuffix": "COMPREHENSIVE SOLUTIONS"
+    },
+    "actionAdvice": "PROJECT INQUIRIES",
+    "iotSolutions": "HVAC & Tile Solutions",
+    "platformTitle": "Premier Distribution Network",
+    "platformSubTitle": "Supplying high-end decorative tiles and genuine central VRV-Chiller air conditioning systems across Vietnam.",
+    "learnMore": "Explore Products"
   },
   "Solutions": {
     "title": "SOLUTIONS",
@@ -62,42 +141,42 @@
   },
   "Hero": {
     "slide1": {
-      "title": "MONITORING",
-      "highlight": "SMART PROCESS",
-      "titleSuffix": "IOT TECHNOLOGY",
-      "description": "Saigon Valve provides real-time monitoring solutions for flow and pressure, optimizing operations and preventing resource loss.",
-      "accent": "Water Management 4.0"
+      "title": "SOLUTIONS",
+      "highlight": "TILES & CLIMATE",
+      "titleSuffix": "ARCHITECTURAL EXCELLENCE",
+      "description": "Dong Duong Corporation specializes in premier ceramic tiles and genuine centralized air conditioning systems in Vietnam.",
+      "accent": "Building Materials & HVAC"
     },
     "slide2": {
-      "title": "SMART",
-      "highlight": "INFRASTRUCTURE",
-      "titleSuffix": "SCADA SOLUTIONS",
-      "description": "Real-time monitoring and control of water supply networks with IoT technology — optimizing operations and preventing resource loss.",
-      "accent": "IoT Solutions & SCADA"
+      "title": "SYSTEMS",
+      "highlight": "VRV/VRF & CHILLER",
+      "titleSuffix": "OPTIMAL ENERGY SAVING",
+      "description": "Centralized VRV/VRF systems and centrifugal/screw chillers from Gree & Midea minimizing operational costs.",
+      "accent": "VRV & Chiller Systems"
     },
     "slide3": {
-      "title": "DIGITAL SYSTEM",
-      "highlight": "WATER IOT DASHBOARD",
-      "titleSuffix": "24/7 MONITORING",
-      "description": "Smart water infrastructure management platform, collecting data from sensors and visualizing in real-time.",
-      "accent": "Smart Solution"
+      "title": "COLLECTION",
+      "highlight": "TILES & MOSAICS",
+      "titleSuffix": "ELEVATING LIVING SPACES",
+      "description": "Authorized master distributor of Dongtam, Viglacera, Catalan, Thuan Hai, Ha Thanh featuring premium floor tiles, wall tiles, porcelain, and artistic mosaic.",
+      "accent": "Genuine Ceramic Tiles"
     },
     "fixed": {
-      "title": "SMART WATER IOT",
-      "highlight": "INFRASTRUCTURE",
-      "titleSuffix": "SCADA SOLUTIONS"
+      "title": "DONG DUONG CORPORATION",
+      "highlight": "MATERIALS & HVAC",
+      "titleSuffix": "COMPREHENSIVE SOLUTIONS"
     },
     "actionAdvice": "SOLUTION CONSULTING",
-    "iotSolutions": "IoT Solutions & SCADA",
-    "platformTitle": "Smart Infrastructure Platform",
-    "platformSubTitle": "Real-time monitoring and control of water supply networks with IoT technology — optimizing operations and preventing resource loss.",
+    "iotSolutions": "HVAC & Tile Solutions",
+    "platformTitle": "Premier Distribution Network",
+    "platformSubTitle": "Supplying high-end decorative tiles and genuine central VRV-Chiller air conditioning systems across Vietnam.",
     "learnMore": "Explore Solutions",
     "liveDemo": "Live Demo"
   },
   "FeaturedProjects": {
     "title": "Featured",
     "titleAccent": "Projects",
-    "description": "Key works confirming the reputation and technical capability of Saigon Valve.",
+    "description": "Key national landmarks confirming the prestige and quality of Dong Duong Corporation.",
     "viewAllProjects": "VIEW ALL PROJECTS",
     "mobileViewAll": "All projects",
     "loading": "Loading projects...",
@@ -112,7 +191,7 @@
       "badge": "Media & News",
       "title": "NEWS",
       "titleAccent": "CENTER",
-      "desc": "Updating the latest news about technology, projects, and trends in the water industry and industrial infrastructure."
+      "desc": "Stay informed with the latest insights on architectural materials, central HVAC innovations, and flagship projects."
     },
     "grid": {
       "defaultCategory": "NEWS",
@@ -133,16 +212,16 @@
   "SystemHighlight": {
     "banners": {
       "featured": {
-        "tag": "WATER INDUSTRY EQUIPMENT",
-        "title": "OKM INDUSTRIAL VALVES",
-        "desc": "Exclusive distributor of OKM Valve — Japan. Supplying a wide range of gate valves, butterfly valves, air release valves and check valves engineered for harsh environments and large-scale water infrastructure projects.",
-        "btnText": "Explore now"
+        "tag": "ARCHITECTURAL MATERIALS",
+        "title": "CERAMIC & DECORATIVE TILES",
+        "desc": "Authorized master distributor of Dongtam, Viglacera, Catalan, Thuận Hải Vaceramic, and Hà Thanh. Wide selection of luxury floor tiles, Big Slabs, and artistic mosaic for high-end projects.",
+        "btnText": "Explore Collection"
       },
       "video": {
-        "tag": "SMART SOLUTIONS",
-        "title": "IOT & SCADA MONITORING SYSTEM",
-        "desc": "Real-time monitoring and control of water distribution networks. Powered by IoT & SCADA technology with continuous data collection to optimize operations and prevent resource loss.",
-        "btnText": "View solutions"
+        "tag": "COOLING SOLUTIONS",
+        "title": "CENTRALIZED VRV & CHILLER SYSTEMS",
+        "desc": "Turnkey air conditioning solutions from split units (Wall/Cassette/Duct) to central VRV/VRF and industrial chillers from Gree and Midea.",
+        "btnText": "Explore HVAC"
       }
     },
     "technologyLabel": "Technology",
@@ -150,15 +229,22 @@
     "networkManagement": "Network Management"
   },
   "Partners": {
+    "badge": "STRATEGIC NETWORK",
     "title": "STRATEGIC PARTNERS",
-    "description": "TRUST FROM LEADING GLOBAL BRANDS",
-    "partner": "Partner"
+    "description": "PARTNERING WITH LEADING NATIONAL BUILDING MATERIALS & HVAC CORPORATIONS",
+    "all": "All",
+    "tiles": "Tiles & Ceramics",
+    "hvac": "AC & HVAC",
+    "steel": "VNSTEEL Steel",
+    "partner": "Partner",
+    "officialBadge": "100% Genuine",
+    "viewPartner": "Visit Website"
   },
   "ContactForm": {
     "title": "REQUEST A CONSULTATION",
     "subtitle": "WE WILL RESPOND WITHIN 24H",
-    "consultationTitle": "CONSULTATION NOW",
-    "consultationDesc": "Our expert team at SG - VAL is always ready to support you with the most optimal system solutions.",
+    "consultationTitle": "Contact with Dong Duong Corporation Expert",
+    "consultationDesc": "Dong Duong Corporation's technical team is always ready to support consulting and provide optimal solutions for all your infrastructure challenges.",
     "labels": {
       "name": "FULL NAME *",
       "phone": "PHONE NUMBER *",
@@ -188,14 +274,12 @@
     "addressLabel": "ADDRESS",
     "addressSub": "Main Office",
     "zaloLabel": "ZALO / VIBER",
-    "zaloSub": "Technical Support",
-    "consultationTitle": "Contact with Saigon Valve Expert",
-    "consultationDesc": "Saigon Valve's technical team is always ready to support consulting and provide optimal solutions for all your infrastructure challenges."
+    "zaloSub": "Technical Support"
   },
   "Contact": {
     "headerBadge": "STRATEGIC SUPPORT CENTER",
     "headerTitle": "CONNECTED WITH",
-    "headerTitleAccent": "SAIGON VALVE",
+    "headerTitleAccent": "DONG DUONG CORPORATION",
     "infoTitle": "REPRESENTATIVE INFORMATION",
     "infoDesc": "Contact our departments directly for the fastest support.",
     "labels": {
@@ -222,137 +306,120 @@
         "a": "You can send a request directly via the contact form below, or call hotline {phone}. The technical team will respond and send a detailed quote within 2-4 working hours."
       },
       {
-        "q": "DOES SAIGON VALVE PROVIDE ONSITE INSTALLATION SERVICES?",
-        "a": "Yes, we own a team of professional engineers and technicians, ready to support installation, equipment configuration, and technology transfer at the site nationwide."
+        "q": "DOES DONG DUONG PROVIDE NATIONWIDE LOGISTICS AND ON-SITE TECHNICAL SUPPORT?",
+        "a": "Yes, we provide direct on-site delivery nationwide, accompanied by dedicated engineers offering survey, design consultation, and technical support."
       },
       {
-        "q": "WHAT IS THE EQUIPMENT WARRANTY POLICY?",
-        "a": "All genuine equipment from OKM, Noah, Niigata distributed by SGV are covered by a standard 12-24 month warranty depending on the product line. We are committed to lifetime maintenance and technical support."
+        "q": "WHAT IS THE WARRANTY POLICY FOR PRODUCTS?",
+        "a": "All ceramic tiles (Dongtam, Viglacera, Catalan, Thuan Hai, Ha Thanh) and air conditioning units (Gree & Midea) distributed by Dong Duong carry full genuine manufacturer warranties."
       }
     ]
   },
   "About": {
     "hero": {
-      "badge": "SMART INDUSTRIAL SOLUTIONS",
-      "title": "SAIGON VALVE",
-      "titleAccent": "SOLUTION IoT & SCADA",
-      "desc": "\"Reliable solutions for water supply, drainage, and wastewater treatment from SG-VAL. Building modern and sustainable water infrastructure.\""
+      "badge": "DONG DUONG CORPORATION",
+      "title": "DONG DUONG CORPORATION",
+      "titleAccent": "BUILDING MATERIALS & HVAC",
+      "desc": "\"Dong Duong Corporation - Authorized premier distributor of luxury ceramic & decorative tiles, residential split air conditioners, and centralized VRV - Chiller HVAC systems in Vietnam.\""
     },
     "intro": {
       "who": "WHO WE ARE?",
-      "title": "ABOUT US",
-      "content1": "Saigon Valve is proud to be one of the pioneering enterprises in providing high-quality industrial solutions in Vietnam.",
-      "content2": "We aspire to deliver smart solutions that control flow with modern technology for the water industry. With experience and enthusiasm, SAIGON VALVE always brings customers the most optimal solutions for water supply, drainage, and wastewater treatment projects.",
+      "title": "ABOUT DONG DUONG CORPORATION",
+      "content1": "Dong Duong Corporation is proud to be a leading and trusted enterprise in supplying luxury architectural finishing materials and high-efficiency air conditioning systems in Vietnam.",
+      "content2": "With sustainable development principles and uncompromised quality, Dong Duong focuses on two primary business sectors: (1) Ceramic and decorative tiles from renowned manufacturers such as Dongtam, Viglacera, Catalan, Thuan Hai, Ha Thanh; (2) Comprehensive HVAC solutions ranging from 2-unit split systems (wall-mounted, ceiling cassette, ducted) to central VRV/VRF systems and industrial Chillers from Gree & Midea. We are committed to aesthetic excellence, ultimate comfort, and energy efficiency for all modern projects.",
       "mission": {
         "title": "MISSION",
-        "desc": "Controlling flow with modern technology. Providing optimal solutions for urban water infrastructure."
+        "desc": "Delivering exceptional aesthetic building materials and energy-saving smart climate solutions, elevating living standards across architectural landmarks."
       },
       "vision": {
         "title": "VISION",
-        "desc": "To become a leading company in providing flow control solutions domestically and internationally."
+        "desc": "To become Vietnam's #1 authorized distributor of architectural materials and HVAC solutions, chosen by investors, architects, and general contractors."
       }
     },
     "values": {
-      "badge": "OPERATING PHILOSOPHY",
-      "title": "CORE VALUES",
+      "badge": "CORE VALUES",
+      "title": "OPERATING PHILOSOPHY",
       "items": [
         {
-          "title": "CUSTOMER FOCUS",
-          "desc": "Always committed to creating products suitable for each customer. Putting ourselves in the customer's shoes to serve."
+          "title": "GENUINE QUALITY",
+          "desc": "100% genuine products sourced from world-class and national brands, supported by full origin and quality certifications (CO/CQ)."
         },
         {
-          "title": "SUSTAINABLE PARTNERSHIP",
-          "desc": "Accompanying and supporting customers before, during, and after the installation and operation of the system with the utmost dedication."
+          "title": "OPTIMAL SOLUTIONS",
+          "desc": "Experienced engineering consultants provide tailored designs for each project, maximizing energy efficiency and optimizing investment costs."
         },
         {
-          "title": "SECURITY & TRUST",
-          "desc": "Strictly adhering to cooperation and information security principles so that customers can have absolute peace of mind."
+          "title": "LONG-TERM PARTNERSHIP",
+          "desc": "Professional after-sales service, prompt logistics, full manufacturer warranty, and lifetime on-site technical support for every project."
         }
       ]
     },
     "pillars": {
-      "badge": "COMPETITIVE STRENGTHS",
-      "title": "Core",
-      "titleAccent": "Products",
-      "desc": "We provide a synchronous product system from mechanical valves to smart controllers and digital monitoring.",
+      "badge": "BUSINESS DIVISIONS",
+      "title": "CORE",
+      "titleAccent": "SECTORS",
+      "desc": "Dong Duong Corporation specializes in 2 strategic divisions serving projects of all scales:",
       "items": [
         {
           "tag": "01",
-          "title": "INDUSTRIAL VALVES",
-          "desc": "Exclusive distributor of OKM Valve - Japan. Providing a variety of gate valves, butterfly valves, air release valves, check valves... designed for harsh environments.",
-          "footer": "BRAND: OKM JAPAN"
+          "title": "CERAMIC & DECORATIVE TILES",
+          "desc": "Authorized distributor of Dongtam (DongTam Group), Viglacera, Catalan, Thuận Hải Vaceramic, and Hà Thanh (DHT). Comprehensive portfolio including floor tiles, wall tiles, porcelain, artistic mosaic, and luxury Big Slabs for villas, resorts, and premium developments.",
+          "footer": "DONGTAM • VIGLACERA • CATALAN • THUAN HAI • HA THANH"
         },
         {
           "tag": "02",
-          "title": "ACTUATOR",
-          "desc": "Exclusive provider of NOAH Actuators - Korea. Integrated with smart control panels, allowing remote monitoring and operation of valves via Internet mobile applications.",
-          "footer": "BRAND: NOAH KOREA"
+          "title": "RESIDENTIAL & COMMERCIAL SPLIT AC",
+          "desc": "Distributing residential and commercial split systems from Gree and Midea: Wall-mounted, ceiling cassette, ducted (duct connected), Umatch, and space-saving Multi-split systems.",
+          "footer": "WALL • CASSETTE • DUCT • MULTI"
         },
         {
           "tag": "03",
-          "title": "IOT SOLUTIONS",
-          "desc": "Datalogger equipment, water quality monitoring, and multi-constant pressure reducing valves. Automated water pressure adjustment solutions to optimize water resources.",
-          "footer": "DIGITAL DEVICES"
+          "title": "CENTRALIZED VRV & CHILLER SYSTEMS",
+          "desc": "Large-scale central VRV/VRF solutions, centrifugal chillers, screw chillers, industrial packaged units, and terminal air handling equipment (AHU/FCU) for high-rises and factories.",
+          "footer": "VRV / VRF • CHILLER • AHU / FCU"
         }
       ]
     },
-    "scada": {
-      "badge": "CONTROL TECHNOLOGY",
-      "title": "SCADA",
-      "titleAccent": "SYSTEM",
-      "desc": "Centralized management, monitoring, and control solutions help optimize the operational efficiency of urban water supply networks.",
+    "tech": {
+      "badge": "TECHNOLOGY & SOLUTIONS",
+      "title": "ADVANCED AIR",
+      "titleAccent": "CONDITIONING",
+      "desc": "Integrated, cutting-edge cooling systems incorporating global engineering innovations from Gree, Gree, Midea, and LG:",
       "items": [
         {
-          "title": "Open at High Pressure",
-          "desc": "Automatically control valves/boost pumps when system pressure reaches the set threshold to maintain flow."
+          "title": "Split Systems: Wall / Cassette / Duct",
+          "desc": "Rapid cooling, 360-degree airflow, whisper-quiet operation, and elegant aesthetic integration into interior architecture."
         },
         {
-          "title": "3G/4G Monitoring",
-          "desc": "Collecting data and transmitting real-time information to the control center via mobile network infrastructure."
+          "title": "Intelligent VRV / VRF Systems",
+          "desc": "A single outdoor condensing unit connects to dozens of indoor units with independent zone climate control and inverter energy savings."
         },
         {
-          "title": "Open at Low Pressure",
-          "desc": "Configure automatic valve/pump opening when water pressure drops, ensuring continuous 24/7 water supply."
+          "title": "Centrifugal & Screw Chillers",
+          "desc": "High-capacity water and air-cooled centrifugal and screw chillers built for robust, continuous operation in skyscrapers and factories."
         },
         {
-          "title": "Custom Settings",
-          "desc": "Flexibly define measuring points and program SCADA based on the actual needs of each customer."
-        }
-      ]
-    },
-    "applications": {
-      "title": "INDUSTRY APPLICATIONS",
-      "items": [
-        {
-          "title": "WATER UTILITIES",
-          "desc": "Optimizing management, reducing losses, and increasing wastewater treatment efficiency."
-        },
-        {
-          "title": "INDUSTRIAL PLANTS",
-          "desc": "Improving operational productivity through automation and remote management."
-        },
-        {
-          "title": "CONSTRUCTION PROJECTS",
-          "desc": "Valve and control solutions for large-scale projects and urban infrastructure."
+          "title": "Terminal Equipment AHU / FCU & Packaged",
+          "desc": "Deep air processing, fine particulate filtration, precise temperature and humidity management for clean rooms, hospitals, and datacenters."
         }
       ]
     },
     "certs": {
-      "title": "Partners & Certifications",
-      "quote": "\"Saigon Valve is committed to transparency regarding the origin and quality of equipment with full legal documentation.\"",
+      "title": "Strategic Partners & Authorized Brands",
+      "quote": "\"Dong Duong Corporation is proud to be the authorized master distributor of world-leading building material and HVAC brands.\"",
       "items": [
-        "Exclusive agent certificate for OKM Valve (Japan)",
-        "Exclusive agent certificate for Noah Actuator (Korea)",
-        "Leading partner in providing smart water infrastructure",
-        "Quality management system meeting international standards"
+        "Authorized Master Distributor of Dongtam Tiles",
+        "Tier-1 Master Partner of Viglacera & Catalan",
+        "Strategic HVAC Solutions Partner of Gree & Midea",
+        "Authorized Distributor of Midea & LG Air Conditioning & Chillers"
       ]
     },
     "cta": {
-      "title": "STRATEGIC PARTNERSHIP",
-      "desc": "Contact us today to discover more about the advanced products and solutions we provide for your business.",
-      "hotline": "Consultation Hotline",
-      "email": "Contact Email",
-      "btnText": "CONTACT NOW"
+      "title": "PROJECT PARTNERSHIP & INQUIRIES",
+      "desc": "Are you an investor, architect, or contractor seeking premium ceramic tiles or comprehensive central air conditioning solutions? Contact Dong Duong Corporation today.",
+      "hotline": "24/7 Consulting Hotline",
+      "email": "Project Quotation Email",
+      "btnText": "REQUEST A QUOTE"
     }
   },
   "Projects": {
@@ -360,7 +427,7 @@
       "badge": "FEATURED PROJECTS",
       "title": "CONFIRMING",
       "titleAccent": "PROJECT CAPABILITY",
-      "desc": "More than {total}+ projects successfully deployed nationwide in the field of water supply, drainage, and automation."
+      "desc": "Hundreds of prestigious projects nationwide supplied with luxury ceramic tiles and centralized air conditioning systems by Dong Duong Corporation."
     },
     "grid": {
       "defaultCategory": "CONSTRUCTION",
@@ -375,9 +442,9 @@
   "Products": {
     "hero": {
       "badge": "Products & Solutions",
-      "title": "SPECIALIZED",
-      "titleAccent": "EQUIPMENT",
-      "desc": "Industrial valves, measurement devices, and IoT solutions with Japanese & Korean standards for the water industry and technical infrastructure.",
+      "title": "EQUIPMENT &",
+      "titleAccent": "MATERIALS",
+      "desc": "Authorized master distributor of genuine ceramic tiles (Dongtam, Viglacera, Catalan, Thuan Hai, Ha Thanh) and central VRV-Chiller air conditioning systems (Gree & Midea).",
       "searchPlaceholder": "Search products..."
     },
     "sidebar": {
@@ -386,7 +453,7 @@
     },
     "grid": {
       "resultCount": "Showing {start} - {end} of {total} results",
-      "defaultSummary": "Specialized equipment for the water and industrial sectors.",
+      "defaultSummary": "High-standard genuine products for modern architectural landmarks.",
       "viewDetail": "PRODUCT DETAIL"
     },
     "empty": "No products found."
@@ -412,7 +479,7 @@
     "description": "PRODUCT DETAILS",
     "projectSupport": {
       "title": "Project Support",
-      "defaultDesc": "Saigon Valve provides complete CO/CQ certificates and on-site technical support for major projects.",
+      "defaultDesc": "Dong Duong Corporation provides complete CO/CQ certificates and on-site technical support for major projects.",
       "warranty": "Warranty {months}",
       "warrantyDefault": "12 months",
       "certificate": "Full genuine CO/CQ certificates",
@@ -465,8 +532,8 @@
     "hero": {
       "badge": "CAREER OPPORTUNITIES",
       "title": "JOIN",
-      "titleAccent": "SGV TEAM",
-      "desc": "Explore career opportunities and grow with our leading team of water technology experts at Saigon Valve."
+      "titleAccent": "Dong Duong TEAM",
+      "desc": "Explore career opportunities and grow with our team of industry professionals at Dong Duong Corporation."
     },
     "list": {
       "title": "Current Openings",
@@ -485,7 +552,8 @@
     "empty": {
       "title": "No positions available right now",
       "desc": "Please check back later or send your self-application CV via email."
-    }
+    },
+    "companyName": "DONG DUONG CORPORATION"
   },
   "Portal": {
     "Sidebar": {
@@ -508,7 +576,7 @@
       "logout": "Log Out",
       "logoutSuccess": "Logged out successfully",
       "logoutError": "Failed to log out",
-      "companyName": "SAIGON VALVE"
+      "companyName": "DONG DUONG CORPORATION"
     },
     "Layout": {
       "system": "System",
@@ -679,9 +747,9 @@
       "inactive": "Inactive",
       "deleteSuccess": "Product deleted successfully",
       "exportSuccess": "Data exported to Excel successfully",
-      "companyName": "Saigon Valve",
+      "companyName": "Dong Duong Corporation",
       "deleteProduct": "Delete Product",
-      "subtitle": "Directory of industrial valves and IoT devices of Saigon Valve.",
+      "subtitle": "Directory of industrial valves and IoT devices of Dong Duong Corporation.",
       "categories": "Categories",
       "addProduct": "Add New Product",
       "loading": "Loading products list...",
@@ -715,7 +783,7 @@
       "articleOptions": "Article Options",
       "editArticle": "Edit Article",
       "deleteArticle": "Delete Article",
-      "subtitle": "Update news, events, and technical knowledge of Saigon Valve.",
+      "subtitle": "Update news, events, and technical knowledge of Dong Duong Corporation.",
       "categories": "Categories",
       "addArticle": "Write New Article",
       "loading": "Loading news articles...",

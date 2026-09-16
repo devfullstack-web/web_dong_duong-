@@ -779,7 +779,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
             <span>Ký tự: {editor.storage.characterCount?.characters() || editor.getText().length}</span>
             <span>Từ: {editor.storage.characterCount?.words() || editor.getText().split(/\s+/).filter(Boolean).length}</span>
          </div>
-         <div>Sài Gòn Valve CMS v2.0</div>
+         <div>Đông Dương Corporation CMS v2.0</div>
       </div>
 
       <MediaSelectorDialog 

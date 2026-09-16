@@ -46,6 +46,23 @@
   --color-sidebar: var(--sidebar);
 }
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 16.5px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 17px;
+  }
+}
+
 :root {
   /* Brand hex colors - Unified with TopBar */
   --brand-primary: #2069c5;

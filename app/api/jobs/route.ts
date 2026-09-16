@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { jobPostings } from '@/db/schemas';
-import { eq, desc, ilike, and, SQL, isNull } from 'drizzle-orm';
+import { eq, desc, ilike, and, SQL, isNull, or, sql } from 'drizzle-orm';
 import { apiResponse, apiError } from '@/utils/api-response';
 import { withAuth, withHybridAuth, hasPermission } from '@/middlewares/middleware';
 import { PERMISSIONS } from '@/constants/rbac';
@@ -40,7 +40,17 @@ export const GET = withHybridAuth(
                 conditions.push(eq(jobPostings.status, status as JobStatus));
             }
             if (search) {
-                conditions.push(ilike(jobPostings.title, `%${search}%`));
+                conditions.push(
+                    or(
+                        ilike(jobPostings.title, `%${search}%`),
+                        ilike(sql<string>`(${jobPostings.title_localized}->>'vi')`, `%${search}%`),
+                        ilike(sql<string>`(${jobPostings.title_localized}->>'en')`, `%${search}%`),
+                        ilike(sql<string>`(${jobPostings.title_localized}->>'zh')`, `%${search}%`),
+                        ilike(sql<string>`(${jobPostings.description_localized}->>'vi')`, `%${search}%`),
+                        ilike(sql<string>`(${jobPostings.description_localized}->>'en')`, `%${search}%`),
+                        ilike(sql<string>`(${jobPostings.description_localized}->>'zh')`, `%${search}%`),
+                    ),
+                );
             }
 
             const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -82,10 +92,14 @@ export const POST = withAuth(
             const body = await request.json();
             const {
                 title,
+                title_localized,
                 slug,
                 description,
+                description_localized,
                 requirements,
+                requirements_localized,
                 benefits,
+                benefits_localized,
                 location,
                 employment_type,
                 salary_range,
@@ -95,18 +109,43 @@ export const POST = withAuth(
                 deadline,
             } = body;
 
-            if (!title || !slug || !description) {
+            const finalTitle = title_localized?.vi || title;
+            const finalDescription = description_localized?.vi || description;
+
+            if (!finalTitle || !slug || !finalDescription) {
                 return apiError('Missing required fields: title, slug, description', 400);
             }
 
             const [newJob] = await db
                 .insert(jobPostings)
                 .values({
-                    title,
+                    title: finalTitle,
+                    title_localized: title_localized || { vi: finalTitle, en: '', zh: '' },
                     slug,
-                    description: sanitizeRichText(description),
-                    requirements: requirements ? sanitizeRichText(requirements) : null,
-                    benefits: benefits ? sanitizeRichText(benefits) : null,
+                    description: sanitizeRichText(finalDescription),
+                    description_localized: description_localized
+                        ? {
+                            vi: sanitizeRichText(description_localized.vi || ''),
+                            en: sanitizeRichText(description_localized.en || ''),
+                            zh: sanitizeRichText(description_localized.zh || ''),
+                        }
+                        : { vi: sanitizeRichText(finalDescription), en: '', zh: '' },
+                    requirements: requirements ? sanitizeRichText(requirements) : (requirements_localized?.vi ? sanitizeRichText(requirements_localized.vi) : null),
+                    requirements_localized: requirements_localized
+                        ? {
+                            vi: sanitizeRichText(requirements_localized.vi || ''),
+                            en: sanitizeRichText(requirements_localized.en || ''),
+                            zh: sanitizeRichText(requirements_localized.zh || ''),
+                        }
+                        : (requirements ? { vi: sanitizeRichText(requirements), en: '', zh: '' } : null),
+                    benefits: benefits ? sanitizeRichText(benefits) : (benefits_localized?.vi ? sanitizeRichText(benefits_localized.vi) : null),
+                    benefits_localized: benefits_localized
+                        ? {
+                            vi: sanitizeRichText(benefits_localized.vi || ''),
+                            en: sanitizeRichText(benefits_localized.en || ''),
+                            zh: sanitizeRichText(benefits_localized.zh || ''),
+                        }
+                        : (benefits ? { vi: sanitizeRichText(benefits), en: '', zh: '' } : null),
                     location: location || null,
                     employment_type: employment_type || EMPLOYMENT_TYPE.FULL_TIME,
                     salary_range: salary_range || null,

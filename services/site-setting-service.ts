@@ -1,6 +1,126 @@
 import { db } from '@/db';
 import { systemSettings } from '@/db/schemas/system-settings';
 import { COMPANY_INFO } from '@/constants/site-info';
+import { eq, or } from 'drizzle-orm';
+
+export interface HeroSlideSetting {
+    id: string;
+    title: string;
+    title_en?: string;
+    title_zh?: string;
+    highlight?: string;
+    highlight_en?: string;
+    highlight_zh?: string;
+    subtitle: string;
+    subtitle_en?: string;
+    subtitle_zh?: string;
+    image_url: string;
+    badge?: string;
+    badge_en?: string;
+    badge_zh?: string;
+    cta_primary?: { text: string; text_en?: string; text_zh?: string; link: string };
+    cta_secondary?: { text: string; text_en?: string; text_zh?: string; link: string };
+}
+
+export interface WhyChooseUsSetting {
+    id: string;
+    iconSrc: string;
+    title: string;
+    title_en?: string;
+    title_zh?: string;
+    desc: string;
+    desc_en?: string;
+    desc_zh?: string;
+}
+
+export interface WorkflowStepSetting {
+    num: number;
+    title: string;
+    title_en?: string;
+    title_zh?: string;
+    icon: string;
+}
+
+export interface HomepageSettingsData {
+    heroSlides: HeroSlideSetting[];
+    whyChooseUs: WhyChooseUsSetting[];
+    workflowSteps: WorkflowStepSetting[];
+}
+
+export interface SolutionItem {
+    title: string;
+    title_en?: string;
+    title_zh?: string;
+    desc: string;
+    desc_en?: string;
+    desc_zh?: string;
+}
+
+export interface SolutionData {
+    brand: string;
+    brand_en?: string;
+    brand_zh?: string;
+    title: string;
+    title_en?: string;
+    title_zh?: string;
+    headerTitle: string;
+    headerTitle_en?: string;
+    headerTitle_zh?: string;
+    description: string;
+    description_en?: string;
+    description_zh?: string;
+    intro: string;
+    intro_en?: string;
+    intro_zh?: string;
+    banner: string;
+    image1: string;
+    image2: string;
+    core: {
+        title: string;
+        title_en?: string;
+        title_zh?: string;
+        intro: string;
+        intro_en?: string;
+        intro_zh?: string;
+        items: SolutionItem[];
+    };
+    benefits: {
+        title: string;
+        title_en?: string;
+        title_zh?: string;
+        intro: string;
+        intro_en?: string;
+        intro_zh?: string;
+        items: SolutionItem[];
+        outro: string;
+        outro_en?: string;
+        outro_zh?: string;
+    };
+}
+
+export interface BrandPartnerSetting {
+    id?: string;
+    name: string;
+    shortName?: string;
+    shortName_en?: string;
+    shortName_zh?: string;
+    sector: string;
+    sector_en?: string;
+    sector_zh?: string;
+    category?: 'tiles' | 'hvac' | 'steel' | string;
+    desc: string;
+    desc_en?: string;
+    desc_zh?: string;
+    badge: string;
+    badge_en?: string;
+    badge_zh?: string;
+    discount?: string;
+    discount_en?: string;
+    discount_zh?: string;
+    logo?: string;
+    website?: string;
+    featured?: boolean;
+}
 
 export interface SiteInfo {
     name: string;
@@ -121,6 +241,10 @@ class SiteSettingService {
         }
     }
 
+    async updateSettings(data: Record<string, string>): Promise<boolean> {
+        return this.updateSiteInfo(data);
+    }
+
     async updateSiteInfo(data: Record<string, string>): Promise<boolean> {
         try {
             const keys = Object.keys(data);
@@ -148,6 +272,172 @@ class SiteSettingService {
             console.error('[SiteSettingService] Error updating settings:', e);
             throw e;
         }
+    }
+
+    async getHomepageData(locale: string = 'vi'): Promise<HomepageSettingsData> {
+        try {
+            const settings = await db
+                .select()
+                .from(systemSettings)
+                .where(
+                    or(
+                        eq(systemSettings.key, 'homepage_hero_slides'),
+                        eq(systemSettings.key, 'homepage_why_choose_us'),
+                        eq(systemSettings.key, 'homepage_workflow_steps'),
+                    ),
+                );
+
+            const map = new Map<string, string>();
+            settings.forEach((s) => map.set(s.key, s.value));
+
+            const rawHeroSlides: HeroSlideSetting[] = map.has('homepage_hero_slides')
+                ? JSON.parse(map.get('homepage_hero_slides') || '[]')
+                : [];
+
+            const rawWhyChooseUs: WhyChooseUsSetting[] = map.has('homepage_why_choose_us')
+                ? JSON.parse(map.get('homepage_why_choose_us') || '[]')
+                : [];
+
+            const rawWorkflowSteps: WorkflowStepSetting[] = map.has('homepage_workflow_steps')
+                ? JSON.parse(map.get('homepage_workflow_steps') || '[]')
+                : [];
+
+            const isEn = locale === 'en';
+            const isZh = locale === 'zh';
+
+            const heroSlides: HeroSlideSetting[] = rawHeroSlides.map((s) => ({
+                id: s.id,
+                title: (isZh && s.title_zh) ? s.title_zh : (isEn && s.title_en) ? s.title_en : s.title,
+                highlight: (isZh && s.highlight_zh) ? s.highlight_zh : (isEn && s.highlight_en) ? s.highlight_en : s.highlight,
+                subtitle: (isZh && s.subtitle_zh) ? s.subtitle_zh : (isEn && s.subtitle_en) ? s.subtitle_en : s.subtitle,
+                image_url: s.image_url,
+                badge: (isZh && s.badge_zh) ? s.badge_zh : (isEn && s.badge_en) ? s.badge_en : s.badge,
+                cta_primary: s.cta_primary ? {
+                    text: (isZh && s.cta_primary.text_zh) ? s.cta_primary.text_zh : (isEn && s.cta_primary.text_en) ? s.cta_primary.text_en : s.cta_primary.text,
+                    link: s.cta_primary.link,
+                } : undefined,
+                cta_secondary: s.cta_secondary ? {
+                    text: (isZh && s.cta_secondary.text_zh) ? s.cta_secondary.text_zh : (isEn && s.cta_secondary.text_en) ? s.cta_secondary.text_en : s.cta_secondary.text,
+                    link: s.cta_secondary.link,
+                } : undefined,
+            }));
+
+            const whyChooseUs: WhyChooseUsSetting[] = rawWhyChooseUs.map((r) => ({
+                id: r.id,
+                iconSrc: r.iconSrc,
+                title: (isZh && r.title_zh) ? r.title_zh : (isEn && r.title_en) ? r.title_en : r.title,
+                desc: (isZh && r.desc_zh) ? r.desc_zh : (isEn && r.desc_en) ? r.desc_en : r.desc,
+            }));
+
+            const workflowSteps: WorkflowStepSetting[] = rawWorkflowSteps.map((st) => ({
+                num: st.num,
+                title: (isZh && st.title_zh) ? st.title_zh : (isEn && st.title_en) ? st.title_en : st.title,
+                icon: st.icon,
+            }));
+
+            return {
+                heroSlides,
+                whyChooseUs,
+                workflowSteps,
+            };
+        } catch (e) {
+            console.error('[SiteSettingService] Error getting homepage data:', e);
+            return {
+                heroSlides: [],
+                whyChooseUs: [],
+                workflowSteps: [],
+            };
+        }
+    }
+
+    async getHeroSlides(locale: string = 'vi'): Promise<HeroSlideSetting[]> {
+        const data = await this.getHomepageData(locale);
+        return data.heroSlides;
+    }
+
+    async getWhyChooseUs(locale: string = 'vi'): Promise<WhyChooseUsSetting[]> {
+        const data = await this.getHomepageData(locale);
+        return data.whyChooseUs;
+    }
+
+    async getWorkflowSteps(locale: string = 'vi'): Promise<WorkflowStepSetting[]> {
+        const data = await this.getHomepageData(locale);
+        return data.workflowSteps;
+    }
+
+    async updateHomepageData(data: Partial<HomepageSettingsData>): Promise<boolean> {
+        const updates: Record<string, string> = {};
+        if (data.heroSlides !== undefined) {
+            updates['homepage_hero_slides'] = JSON.stringify(data.heroSlides);
+        }
+        if (data.whyChooseUs !== undefined) {
+            updates['homepage_why_choose_us'] = JSON.stringify(data.whyChooseUs);
+        }
+        if (data.workflowSteps !== undefined) {
+            updates['homepage_workflow_steps'] = JSON.stringify(data.workflowSteps);
+        }
+        return this.updateSettings(updates);
+    }
+
+    async getSolutions(): Promise<Record<string, SolutionData>> {
+        try {
+            const [row] = await db
+                .select()
+                .from(systemSettings)
+                .where(eq(systemSettings.key, 'site_solutions'));
+
+            if (row && row.value) {
+                return JSON.parse(row.value);
+            }
+            return {};
+        } catch (e) {
+            console.error('[SiteSettingService] Error getting solutions:', e);
+            return {};
+        }
+    }
+
+    async getSolutionBySlug(slug: string): Promise<SolutionData | null> {
+        const solutions = await this.getSolutions();
+        return solutions[slug] || null;
+    }
+
+    async updateSolutions(data: Record<string, SolutionData>): Promise<boolean> {
+        return this.updateSettings({
+            site_solutions: JSON.stringify(data),
+        });
+    }
+
+    async getBrandPartners(locale: string = 'vi'): Promise<BrandPartnerSetting[]> {
+        try {
+            const [row] = await db
+                .select()
+                .from(systemSettings)
+                .where(eq(systemSettings.key, 'site_brand_partners'));
+
+            if (row && row.value) {
+                const list: BrandPartnerSetting[] = JSON.parse(row.value);
+                const isZh = locale === 'zh';
+                const isEn = locale === 'en';
+                return list.map((p) => ({
+                    ...p,
+                    shortName: (isZh && p.shortName_zh) ? p.shortName_zh : (isEn && p.shortName_en) ? p.shortName_en : (p.shortName || p.name),
+                    sector: (isZh && p.sector_zh) ? p.sector_zh : (isEn && p.sector_en) ? p.sector_en : p.sector,
+                    desc: (isZh && p.desc_zh) ? p.desc_zh : (isEn && p.desc_en) ? p.desc_en : p.desc,
+                    badge: (isZh && p.badge_zh) ? p.badge_zh : (isEn && p.badge_en) ? p.badge_en : p.badge,
+                    discount: (isZh && p.discount_zh) ? p.discount_zh : (isEn && p.discount_en) ? p.discount_en : p.discount,
+                }));
+            }
+            return [];
+        } catch (e) {
+            console.error('[SiteSettingService] Error getting brand partners:', e);
+            return [];
+        }
+    }
+
+    async updateBrandPartners(partners: BrandPartnerSetting[]): Promise<boolean> {
+        return this.updateSettings({
+            site_brand_partners: JSON.stringify(partners),
+        });
     }
 }
 

@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { categories, categoryTypes } from "@/db/schemas";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, and } from "drizzle-orm";
 import { apiResponse, apiError } from "@/utils/api-response";
 import { withAuth } from "@/middlewares/middleware";
 import { NextRequest } from "next/server";
@@ -13,6 +13,15 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get("type") as CategoryType | null;
+    const showAll = searchParams.get("all") === "true";
+
+    const baseConditions = [];
+    if (!showAll) {
+      baseConditions.push(eq(categories.is_visible, true));
+    }
+    if (type) {
+      baseConditions.push(eq(categoryTypes.name, type));
+    }
 
     const query = db.select({
       id: categories.id,
@@ -26,14 +35,8 @@ export async function GET(request: Request) {
     })
     .from(categories)
     .innerJoin(categoryTypes, eq(categories.category_type_id, categoryTypes.id))
+    .where(baseConditions.length > 0 ? and(...baseConditions) : undefined)
     .orderBy(asc(categories.display_order));
-
-    if (type) {
-      const results = await query.where(eq(categoryTypes.name, type));
-      // Build tree structure
-      const tree = buildCategoryTree(results);
-      return apiResponse(tree);
-    }
 
     const results = await query;
     const tree = buildCategoryTree(results);
@@ -110,7 +113,7 @@ export const POST = withAuth(async (request: NextRequest) => {
       }
     }
 
-    const localizedName: LocalizedText = name_localized || { vi: name || '', en: '' };
+    const localizedName: LocalizedText = name_localized || { vi: name || '', en: '', zh: '' };
 
     const [newCategory] = await db.insert(categories).values({
       name: nameVi,

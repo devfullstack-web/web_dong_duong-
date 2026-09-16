@@ -17,7 +17,7 @@ import {
     Share2,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { vi, enUS } from 'date-fns/locale';
+import { vi, enUS, zhCN } from 'date-fns/locale';
 import { useLocale } from 'next-intl';
 import { getLocalizedValue, type Locale } from '@/types/i18n';
 import {
@@ -75,7 +75,14 @@ export default function NewsDetailClient({
     const router = useRouter();
     const locale = useLocale();
     const isVi = locale === 'vi';
-    const dateLocale = isVi ? vi : enUS;
+    const isZh = locale === 'zh';
+    const dateLocale = isZh ? zhCN : isVi ? vi : enUS;
+
+    const tLabel = (viText: string, enText: string, zhText: string) => {
+        if (isZh) return zhText;
+        if (isVi) return viText;
+        return enText;
+    };
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
@@ -87,13 +94,13 @@ export default function NewsDetailClient({
                             <BreadcrumbList>
                                 <BreadcrumbItem>
                                     <BreadcrumbLink asChild>
-                                        <Link href="/">{isVi ? 'Trang chủ' : 'Home'}</Link>
+                                        <Link href="/">{tLabel('Trang chủ', 'Home', '首页')}</Link>
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
                                     <BreadcrumbLink asChild>
-                                        <Link href="/tin-tuc">{isVi ? 'Tin tức' : 'News'}</Link>
+                                        <Link href="/tin-tuc">{tLabel('Tin tức', 'News', '新闻资讯')}</Link>
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
@@ -109,7 +116,7 @@ export default function NewsDetailClient({
                             onClick={() => router.back()}
                             className="hidden md:flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-500 hover:text-brand-primary transition-colors"
                         >
-                            <ArrowLeft size={14} /> {isVi ? 'Quay lại' : 'Back'}
+                            <ArrowLeft size={14} /> {tLabel('Quay lại', 'Back', '返回')}
                         </button>
                     </div>
                 </div>
@@ -134,7 +141,7 @@ export default function NewsDetailClient({
                                 </div>
                                 <div>
                                     <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                        {isVi ? 'Tác giả' : 'Author'}
+                                        {tLabel('Tác giả', 'Author', '作者')}
                                     </div>
                                     <div className="text-xs sm:text-sm font-bold text-slate-900">
                                         {article.author}
@@ -148,14 +155,14 @@ export default function NewsDetailClient({
                                 </div>
                                 <div>
                                     <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                        {isVi ? 'Ngày đăng' : 'Publish date'}
+                                        {tLabel('Ngày đăng', 'Publish date', '发布日期')}
                                     </div>
                                     <div className="text-xs sm:text-sm font-bold text-slate-900">
                                         {article.published_at
                                             ? format(new Date(article.published_at), 'dd/MM/yyyy', {
                                                   locale: dateLocale,
                                               })
-                                            : (isVi ? 'Đang cập nhật' : 'Updating')}
+                                            : tLabel('Đang cập nhật', 'Updating', '更新中')}
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +173,7 @@ export default function NewsDetailClient({
                                 </div>
                                 <div>
                                     <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                        {isVi ? 'Thời gian đọc' : 'Read time'}
+                                        {tLabel('Thời gian đọc', 'Read time', '阅读时长')}
                                     </div>
                                     <div className="text-xs sm:text-sm font-bold text-slate-900">
                                         {article.readTime}
@@ -176,13 +183,13 @@ export default function NewsDetailClient({
 
                             <div className="ml-auto flex items-center gap-2">
                                 <button
-                                    title={isVi ? 'Chia sẻ' : 'Share'}
+                                    title={tLabel('Chia sẻ', 'Share', '分享')}
                                     className="h-9 w-9 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all rounded-none"
                                 >
                                     <Share2 size={16} />
                                 </button>
                                 <button
-                                    title={isVi ? 'In' : 'Print'}
+                                    title={tLabel('In', 'Print', '打印')}
                                     className="h-9 w-9 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all rounded-none"
                                 >
                                     <Printer size={16} />
@@ -209,7 +216,7 @@ export default function NewsDetailClient({
                                     dangerouslySetInnerHTML={{
                                         __html: sanitizeRichText(
                                             article.content ||
-                                                `<p>${isVi ? 'Nội dung chi tiết đang được cập nhật...' : 'Detail content is being updated...'}</p>`,
+                                                `<p>${tLabel('Nội dung chi tiết đang được cập nhật...', 'Detail content is being updated...', '详细内容正在持续更新中...')}</p>`,
                                         ),
                                     }}
                                 />
@@ -218,7 +225,7 @@ export default function NewsDetailClient({
                                 <div className="mt-16 pt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-8">
                                     <div className="flex gap-4 items-center">
                                         <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                                            {isVi ? 'Chia sẻ:' : 'Share:'}
+                                            {tLabel('Chia sẻ:', 'Share:', '分享:')}
                                         </span>
                                         <div className="flex gap-2">
                                             {[Facebook, Linkedin, Twitter].map((Icon, i) => (
@@ -234,10 +241,10 @@ export default function NewsDetailClient({
 
                                     <div className="flex gap-3">
                                         <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 bg-slate-50 px-5 py-2.5 hover:bg-slate-200 transition-all rounded-none border border-slate-100">
-                                            <Bookmark size={14} /> {isVi ? 'Lưu bài viết' : 'Save article'}
+                                            <Bookmark size={14} /> {tLabel('Lưu bài viết', 'Save article', '收藏文章')}
                                         </button>
                                         <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white bg-brand-primary px-5 py-2.5 hover:bg-brand-secondary transition-all rounded-none">
-                                            {isVi ? 'Liên hệ tư vấn' : 'Contact Support'} <MoveRight size={14} />
+                                            {tLabel('Liên hệ tư vấn', 'Contact Support', '咨询专家')} <MoveRight size={14} />
                                         </button>
                                     </div>
                                 </div>
@@ -249,7 +256,7 @@ export default function NewsDetailClient({
                             {/* Recent News */}
                             <div className="space-y-8">
                                 <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center gap-3">
-                                    <span className="w-8 h-[2px] bg-brand-primary"></span> {isVi ? 'Tin mới nhất' : 'Latest News'}
+                                    <span className="w-8 h-[2px] bg-brand-primary"></span> {tLabel('Tin mới nhất', 'Latest News', '最新资讯')}
                                 </h3>
                                 <div className="space-y-6">
                                     {recentArticles.map((news) => {
@@ -267,7 +274,7 @@ export default function NewsDetailClient({
                                                               'dd/MM/yyyy',
                                                               { locale: dateLocale },
                                                           )
-                                                        : (isVi ? 'Đang cập nhật' : 'Updating')}
+                                                        : tLabel('Đang cập nhật', 'Updating', '更新中')}
                                                 </div>
                                                 <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors leading-snug tracking-tight">
                                                     {newsTitle}
@@ -289,7 +296,7 @@ export default function NewsDetailClient({
                     <div className="mb-12 flex items-center justify-between">
                         <div>
                             <h2 className="text-2xl font-black uppercase tracking-tight text-slate-900">
-                                {isVi ? 'BÀI VIẾT LIÊN QUAN' : 'RELATED ARTICLES'}
+                                {tLabel('BÀI VIẾT LIÊN QUAN', 'RELATED ARTICLES', '相关文章推荐')}
                             </h2>
                             <div className="h-1 w-20 bg-brand-primary mt-2"></div>
                         </div>
@@ -297,7 +304,7 @@ export default function NewsDetailClient({
                             href="/tin-tuc"
                             className="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-primary border-b-2 border-brand-primary/20 pb-1 hover:border-brand-primary transition-all"
                         >
-                            {isVi ? 'TẤT CẢ TIN TỨC' : 'ALL NEWS'}
+                            {tLabel('TẤT CẢ TIN TỨC', 'ALL NEWS', '查看全部新闻')}
                         </Link>
                     </div>
 
@@ -325,7 +332,7 @@ export default function NewsDetailClient({
                                             </div>
                                         )}
                                         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-brand-primary rounded-none">
-                                            {news.category_name || (isVi ? 'Tin tức' : 'News')}
+                                            {news.category_name || tLabel('Tin tức', 'News', '新闻资讯')}
                                         </div>
                                     </div>
                                     <div className="p-6 flex flex-col grow">
@@ -335,13 +342,13 @@ export default function NewsDetailClient({
                                                 ? format(new Date(news.published_at), 'dd/MM/yy', {
                                                       locale: dateLocale,
                                                   })
-                                                : (isVi ? 'Đang cập nhật' : 'Updating')}
+                                                : tLabel('Đang cập nhật', 'Updating', '更新中')}
                                         </div>
                                         <h4 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-brand-primary transition-colors uppercase line-clamp-2 leading-tight mb-4 grow tracking-tight">
                                             {newsTitle}
                                         </h4>
                                         <div className="flex items-center text-xs font-bold uppercase tracking-wider text-brand-primary gap-1 group-hover:gap-2 transition-all">
-                                            {isVi ? 'Xem chi tiết' : 'View details'} <MoveRight size={14} />
+                                            {tLabel('Xem chi tiết', 'View details', '阅读全文')} <MoveRight size={14} />
                                         </div>
                                     </div>
                                 </Link>

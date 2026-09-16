@@ -72,6 +72,8 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
   }
 }, { requiredPermissions: [PERMISSIONS.APPLICATIONS_UPDATE] });
 
+export const PUT = PATCH;
+
 // DELETE /api/applications/[id] - Delete an application
 export const DELETE = withAuth(async (request: NextRequest, session, { params }) => {
   try {

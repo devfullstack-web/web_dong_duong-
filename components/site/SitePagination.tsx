@@ -1,4 +1,5 @@
 import type * as React from 'react';
+import { useLocale } from 'next-intl';
 import {
     Pagination,
     PaginationContent,
@@ -26,6 +27,10 @@ export function SitePagination({
     linkClassName,
     numbered = false,
 }: SitePaginationProps) {
+    const locale = useLocale();
+    const prevLabel = locale === 'zh' ? '上一页' : locale === 'en' ? 'Previous' : 'Trang trước';
+    const nextLabel = locale === 'zh' ? '下一页' : locale === 'en' ? 'Next' : 'Trang sau';
+
     if (totalPages <= 1) return null;
 
     const goToPage = (event: React.MouseEvent<HTMLAnchorElement>, page: number) => {
@@ -47,7 +52,9 @@ export function SitePagination({
                                 linkClassName || 'text-xs',
                                 currentPage === 1 && 'opacity-30 pointer-events-none',
                             )}
-                        />
+                        >
+                            <span className="hidden sm:block">{prevLabel}</span>
+                        </PaginationPrevious>
                     </PaginationItem>
 
                     {numbered ? (
@@ -80,7 +87,9 @@ export function SitePagination({
                                 linkClassName || 'text-xs',
                                 currentPage === totalPages && 'opacity-30 pointer-events-none',
                             )}
-                        />
+                        >
+                            <span className="hidden sm:block">{nextLabel}</span>
+                        </PaginationNext>
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>

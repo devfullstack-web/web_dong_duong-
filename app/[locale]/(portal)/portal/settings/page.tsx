@@ -80,6 +80,7 @@ export default function SettingsPage() {
         id: string;
         titleVi: string;
         titleEn: string;
+        titleZh?: string;
         href: string;
         isExternal: boolean;
     }[]>([]);
@@ -88,6 +89,7 @@ export default function SettingsPage() {
     const [itemForm, setItemForm] = useState({
         titleVi: '',
         titleEn: '',
+        titleZh: '',
         href: '',
         isExternal: false,
     });
@@ -142,6 +144,7 @@ export default function SettingsPage() {
         setItemForm({
             titleVi: '',
             titleEn: '',
+            titleZh: '',
             href: '',
             isExternal: false,
         });
@@ -157,6 +160,7 @@ export default function SettingsPage() {
         setItemForm({
             titleVi: item.titleVi,
             titleEn: item.titleEn,
+            titleZh: item.titleZh || '',
             href: item.href,
             isExternal: !!item.isExternal,
         });
@@ -167,6 +171,7 @@ export default function SettingsPage() {
         setItemForm({
             titleVi: '',
             titleEn: '',
+            titleZh: '',
             href: '',
             isExternal: false,
         });
@@ -260,6 +265,7 @@ export default function SettingsPage() {
                             id: 'default-1',
                             titleVi: 'Tất cả sản phẩm',
                             titleEn: 'All Products',
+                            titleZh: '全部产品',
                             href: '/san-pham',
                             isExternal: false,
                         },
@@ -267,6 +273,7 @@ export default function SettingsPage() {
                             id: 'default-2',
                             titleVi: 'Phần mềm IoT điều khiển',
                             titleEn: 'IoT Control Software',
+                            titleZh: 'IoT智能控制软件',
                             href: 'https://iot.saigonvalve.vn/login',
                             isExternal: true,
                         }
@@ -472,7 +479,7 @@ export default function SettingsPage() {
                                             value={siteInfo.site_name}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_name: e.target.value })}
                                             className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
-                                            placeholder="Ví dụ: Sài Gòn Valve"
+                                            placeholder="Ví dụ: Đông Dương Corporation"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -494,7 +501,7 @@ export default function SettingsPage() {
                                             value={siteInfo.site_full_name}
                                             onChange={(e) => setSiteInfo({ ...siteInfo, site_full_name: e.target.value })}
                                             className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
-                                            placeholder="Ví dụ: CÔNG TY TNHH SÀI GÒN VALVE"
+                                            placeholder="Ví dụ: CÔNG TY CỔ PHẦN ĐẦU TƯ & THƯƠNG MẠI ĐÔNG DƯƠNG"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -747,7 +754,7 @@ export default function SettingsPage() {
                                                 value={siteInfo.site_copyright_name}
                                                 onChange={(e) => setSiteInfo({ ...siteInfo, site_copyright_name: e.target.value })}
                                                 className="h-9 border-slate-200 text-[11px] font-bold rounded-none focus:ring-brand-primary"
-                                                placeholder="Ví dụ: Sài Gòn Valve"
+                                                placeholder="Ví dụ: Đông Dương Corporation"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -798,7 +805,7 @@ export default function SettingsPage() {
                                         <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">
                                             {editingItem ? 'Chỉnh sửa liên kết' : 'Thêm liên kết mới'}
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                                        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                                             <div className="md:col-span-3 space-y-1.5">
                                                 <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
                                                     Tiêu đề (Tiếng Việt)
@@ -821,7 +828,18 @@ export default function SettingsPage() {
                                                     placeholder="Ví dụ: OKM Ball Valve"
                                                 />
                                             </div>
-                                            <div className="md:col-span-4 space-y-1.5">
+                                            <div className="md:col-span-2 space-y-1.5">
+                                                <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                                    Tiêu đề (Tiếng Trung)
+                                                </Label>
+                                                <Input
+                                                    value={itemForm.titleZh}
+                                                    onChange={(e) => setItemForm({ ...itemForm, titleZh: e.target.value })}
+                                                    className="h-8 border-slate-200 text-[10px] font-bold rounded-none bg-white focus:ring-brand-primary"
+                                                    placeholder="例: OKM球阀"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-3 space-y-1.5">
                                                 <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
                                                     Đường dẫn liên kết (URL)
                                                 </Label>
@@ -832,11 +850,11 @@ export default function SettingsPage() {
                                                     placeholder="Ví dụ: /san-pham?category=id hoặc link ngoài"
                                                 />
                                             </div>
-                                            <div className="md:col-span-2 flex flex-col items-start gap-2 pb-1">
+                                            <div className="md:col-span-1 flex flex-col items-start gap-2 pb-1">
                                                 <Label className="text-[9px] font-black uppercase tracking-widest text-slate-500">
                                                     Tùy chọn
                                                 </Label>
-                                                <div className="flex items-center gap-2 pt-1.5">
+                                                <div className="flex items-center gap-1.5 pt-1.5">
                                                     <Checkbox
                                                         id="isExternalCheckbox"
                                                         checked={itemForm.isExternal}
@@ -847,9 +865,9 @@ export default function SettingsPage() {
                                                     />
                                                     <Label 
                                                         htmlFor="isExternalCheckbox" 
-                                                        className="text-[10px] font-bold text-slate-600 cursor-pointer select-none"
+                                                        className="text-[10px] font-bold text-slate-600 cursor-pointer select-none whitespace-nowrap"
                                                     >
-                                                        Mở tab mới
+                                                        Tab mới
                                                     </Label>
                                                 </div>
                                             </div>
@@ -879,19 +897,20 @@ export default function SettingsPage() {
                                     <div className="border border-slate-200/60 rounded-none overflow-hidden">
                                         <div className="overflow-x-auto">
                                             <table className="w-full text-left border-collapse">
-                                                <thead>
+                                                 <thead>
                                                     <tr className="bg-slate-50 border-b border-slate-200/60 text-[9px] font-black uppercase tracking-widest text-slate-400">
-                                                        <th className="py-2.5 px-4 w-1/4">Tiêu đề (VI)</th>
-                                                        <th className="py-2.5 px-4 w-1/4">Tiêu đề (EN)</th>
-                                                        <th className="py-2.5 px-4 w-1/3">Đường dẫn liên kết</th>
-                                                        <th className="py-2.5 px-4 w-20 text-center">Tab mới</th>
-                                                        <th className="py-2.5 px-4 w-32 text-right">Thao tác</th>
+                                                        <th className="py-2.5 px-4 w-1/5">Tiêu đề (VI)</th>
+                                                        <th className="py-2.5 px-4 w-1/5">Tiêu đề (EN)</th>
+                                                        <th className="py-2.5 px-4 w-1/5">Tiêu đề (ZH)</th>
+                                                        <th className="py-2.5 px-4 w-1/4">Đường dẫn liên kết</th>
+                                                        <th className="py-2.5 px-4 w-16 text-center">Tab mới</th>
+                                                        <th className="py-2.5 px-4 w-28 text-right">Thao tác</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-slate-100 text-[10px] font-bold text-slate-700">
                                                     {submenuItems.length === 0 ? (
                                                         <tr>
-                                                            <td colSpan={5} className="py-8 text-center text-slate-400 italic">
+                                                            <td colSpan={6} className="py-8 text-center text-slate-400 italic">
                                                                 Chưa cấu hình menu nào. Dropdown sẽ hiển thị danh sách mặc định.
                                                             </td>
                                                         </tr>
@@ -900,6 +919,7 @@ export default function SettingsPage() {
                                                             <tr key={item.id} className="hover:bg-slate-50/40 transition-colors">
                                                                 <td className="py-2 px-4 uppercase">{item.titleVi}</td>
                                                                 <td className="py-2 px-4 uppercase text-slate-500">{item.titleEn}</td>
+                                                                <td className="py-2 px-4 uppercase text-slate-500">{item.titleZh || '-'}</td>
                                                                 <td className="py-2 px-4 font-mono text-[9px] text-slate-400 break-all">{item.href}</td>
                                                                 <td className="py-2 px-4 text-center">
                                                                     {item.isExternal ? (

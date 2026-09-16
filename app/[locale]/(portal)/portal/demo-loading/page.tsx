@@ -34,7 +34,7 @@ export default function DemoLoadingPage() {
                         Trang Trải Nghiệm Loading Component
                     </h1>
                     <p className="text-slate-500 font-medium italic mt-2 text-sm">
-                        Demo thực tế các chế độ loading cao cấp dùng chung của Sài Gòn Valve.
+                        Demo thực tế các chế độ loading cao cấp dùng chung của Đông Dương Corporation.
                     </p>
                 </div>
             </div>
@@ -128,7 +128,7 @@ export default function DemoLoadingPage() {
                             <Loading 
                                 variant="section" 
                                 size="md" 
-                                text="Đang đồng bộ dữ liệu kho Sài Gòn Valve..." 
+                                text="Đang đồng bộ dữ liệu kho Đông Dương Corporation..." 
                             />
                         )}
                         

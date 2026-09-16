@@ -8,6 +8,7 @@ import type { LocalizedText, Locale } from '@/types/i18n';
 const LOCALE_LABELS: Record<Locale, string> = {
     vi: '🇻🇳 Tiếng Việt',
     en: '🇬🇧 English',
+    zh: '🇨🇳 中文',
 };
 
 interface LocalizedRichTextEditorProps {
@@ -33,8 +34,8 @@ export function LocalizedRichTextEditor({
                 {label} {required && '*'}
             </Label>
             <Tabs defaultValue="vi" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-10 bg-slate-100 rounded-none">
-                    {(['vi', 'en'] as Locale[]).map((locale) => (
+                <TabsList className="grid w-full grid-cols-3 h-10 bg-slate-100 rounded-none">
+                    {(['vi', 'en', 'zh'] as Locale[]).map((locale) => (
                         <TabsTrigger
                             key={locale}
                             value={locale}
@@ -47,7 +48,7 @@ export function LocalizedRichTextEditor({
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {(['vi', 'en'] as Locale[]).map((locale) => (
+                {(['vi', 'en', 'zh'] as Locale[]).map((locale) => (
                     <TabsContent key={locale} value={locale} className="mt-3">
                         <RichTextEditor
                             content={value[locale] || ''}
@@ -56,7 +57,7 @@ export function LocalizedRichTextEditor({
                             }
                             placeholder={placeholder}
                         />
-                        {locale === 'en' && !value.en && value.vi && (
+                        {locale !== 'vi' && !value[locale] && value.vi && (
                             <p className="text-[9px] text-amber-500 mt-1 italic">
                                 Sẽ sử dụng bản tiếng Việt nếu để trống
                             </p>

@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 const SITE_URL = COMPANY_INFO.website;
 
-const locales = ['vi', 'en'] as const;
+const locales = ['vi', 'en', 'zh'] as const;
 
 // Danh sách các static pages của site
 const staticPages = [

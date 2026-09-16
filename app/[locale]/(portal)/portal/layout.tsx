@@ -38,7 +38,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         setMounted(true);
     }, [initialize]);
 
-    const switchLocale = (nextLocale: 'vi' | 'en') => {
+    const switchLocale = (nextLocale: 'vi' | 'en' | 'zh') => {
         if (nextLocale === activeLocale) return;
         document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
         router.replace(pathname + window.location.search + window.location.hash, {
@@ -110,6 +110,13 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                                         >
                                             <span>English</span>
                                             {activeLocale === 'en' && <Check size={12} className="text-brand-primary" />}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            className="text-[10px] font-black uppercase tracking-widest rounded-none px-3 py-2 cursor-pointer flex justify-between items-center"
+                                            onClick={() => switchLocale('zh')}
+                                        >
+                                            <span>中文 (Chinese)</span>
+                                            {activeLocale === 'zh' && <Check size={12} className="text-brand-primary" />}
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>

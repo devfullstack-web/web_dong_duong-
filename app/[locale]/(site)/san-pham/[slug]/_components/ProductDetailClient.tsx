@@ -52,6 +52,38 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
     };
 
     const renderSpecs = () => {
+        const localizedSpecs = product.tech_specs_localized as Record<string, unknown> | undefined;
+        if (localizedSpecs) {
+            const currentRaw = localizedSpecs[locale] || localizedSpecs.vi;
+            if (Array.isArray(currentRaw) && currentRaw.length > 0) {
+                const validSpecs = currentRaw.filter((s: { key?: string; value?: string }) => s && (s.key?.trim() || s.value?.trim()));
+                if (validSpecs.length > 0) {
+                    return (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-slate-100 border border-slate-100">
+                            {validSpecs.map((spec: { key: string; value: string }, i: number) => (
+                                <div key={i} className="bg-white p-5 flex flex-col space-y-1.5">
+                                    <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">{spec.key}</span>
+                                    <span className="text-base sm:text-lg font-black text-slate-900 leading-snug">{spec.value}</span>
+                                </div>
+                            ))}
+                        </div>
+                    );
+                }
+            } else if (currentRaw && typeof currentRaw === 'object' && Object.keys(currentRaw).length > 0) {
+                const entries = Object.entries(currentRaw);
+                return (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-slate-100 border border-slate-100">
+                        {entries.map(([label, value], i) => (
+                            <div key={i} className="bg-white p-5 flex flex-col space-y-1.5">
+                                <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">{label}</span>
+                                <span className="text-base sm:text-lg font-black text-slate-900 leading-snug">{String(value)}</span>
+                            </div>
+                        ))}
+                    </div>
+                );
+            }
+        }
+
         if (!product.tech_specs) return null;
 
         if (Array.isArray(product.tech_specs)) {
@@ -62,7 +94,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         <thead>
                             <tr className="bg-slate-50">
                                 {headers.map((h, i) => (
-                                    <th key={i} className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-100">
+                                    <th key={i} className="px-4 py-3.5 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-600 border-b border-slate-100">
                                         {h}
                                     </th>
                                 ))}
@@ -72,7 +104,7 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                             {product.tech_specs.map((row: Record<string, unknown>, i: number) => (
                                 <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
                                     {headers.map((h, j) => (
-                                        <td key={j} className="px-4 py-3 text-xs font-bold text-slate-800">
+                                        <td key={j} className="px-4 py-3.5 text-sm sm:text-base font-semibold text-slate-800">
                                             {row[h]}
                                         </td>
                                     ))}
@@ -88,8 +120,8 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-px bg-slate-100 border border-slate-100">
                     {entries.map(([label, value], i) => (
                         <div key={i} className="bg-white p-5 flex flex-col space-y-1.5">
-                            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">{label}</span>
-                            <span className="text-sm font-bold text-slate-900 leading-tight">{String(value)}</span>
+                            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">{label}</span>
+                            <span className="text-base sm:text-lg font-black text-slate-900 leading-snug">{String(value)}</span>
                         </div>
                     ))}
                 </div>
@@ -160,30 +192,49 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         </div>
 
                         {/* Right: Product Info */}
-                        <div className="lg:col-span-7 space-y-8">
-                            <div className="space-y-4">
-                                <div className="text-xs font-black uppercase tracking-[0.2em] text-brand-primary">
+                        <div className="lg:col-span-7 space-y-6 sm:space-y-8">
+                            <div className="space-y-3">
+                                <div className="text-xs sm:text-sm font-black uppercase tracking-[0.18em] text-[#C29236]">
                                     {getLocalizedValue(product.category_name_localized, locale) || product.category_name}
                                 </div>
-                                <h1 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight uppercase leading-tight">
+                                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight uppercase leading-tight">
                                     {getLocalizedValue(product.name_localized, locale) || product.name}
                                 </h1>
-                                <div className="h-1 w-16 bg-brand-primary"></div>
+                                <div className="h-1.5 w-24 bg-[#E5B869] rounded-full"></div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-px bg-slate-100 border border-slate-100">
-                                <div className="bg-white p-4 flex items-center gap-4">
-                                    <Warehouse size={20} className="text-brand-primary shrink-0" />
-                                    <div>
-                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('status.label')}</div>
-                                        <div className="text-sm font-bold text-slate-900 uppercase">{product.availability || t('status.default')}</div>
+                            {/* Price Highlight - Prominent for Elderly & Shoppers */}
+                            <div className="p-4 sm:p-6 bg-gradient-to-r from-amber-50 to-orange-50/60 border-2 border-amber-200/80 rounded-2xl flex items-center justify-between shadow-sm">
+                                <div className="space-y-1">
+                                    <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-slate-600">
+                                        {locale === 'zh' ? '参考工程单价' : locale === 'en' ? 'Reference Price' : 'Đơn giá tham khảo'}
+                                    </span>
+                                    <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#C29236]">
+                                        {product.price && Number(product.price) > 0 ? (
+                                            `${new Intl.NumberFormat('vi-VN').format(Number(product.price))} đ`
+                                        ) : (
+                                            locale === 'zh' ? '联系获取底价' : locale === 'en' ? 'Contact for Quote' : 'Liên hệ báo giá'
+                                        )}
                                     </div>
                                 </div>
-                                <div className="bg-white p-4 flex items-center gap-4">
-                                    <Truck size={20} className="text-brand-primary shrink-0" />
+                                <div className="text-xs sm:text-sm font-bold text-slate-500 text-right max-w-[140px] sm:max-w-none">
+                                    {locale === 'zh' ? '100% 原厂正品联保' : locale === 'en' ? '100% Genuine Brand Warranty' : 'Bảo hành chính hãng 100%'}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-px bg-slate-200/70 border border-slate-200/80 rounded-xl overflow-hidden">
+                                <div className="bg-white p-4 sm:p-5 flex items-center gap-4">
+                                    <Warehouse size={26} className="text-[#0A2958] shrink-0" />
                                     <div>
-                                        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('delivery.label')}</div>
-                                        <div className="text-sm font-bold text-slate-900 uppercase">{product.delivery_info || t('delivery.default')}</div>
+                                        <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">{t('status.label')}</div>
+                                        <div className="text-base sm:text-lg font-black text-slate-900 uppercase mt-0.5">{product.availability || t('status.default')}</div>
+                                    </div>
+                                </div>
+                                <div className="bg-white p-4 sm:p-5 flex items-center gap-4">
+                                    <Truck size={26} className="text-[#0A2958] shrink-0" />
+                                    <div>
+                                        <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500">{t('delivery.label')}</div>
+                                        <div className="text-base sm:text-lg font-black text-slate-900 uppercase mt-0.5">{product.delivery_info || t('delivery.default')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -193,13 +244,13 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                 const features = getLocalizedArray(product.features_localized, locale);
                                 return features.length > 0 && (
                                     <div className="space-y-4">
-                                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-900">
+                                        <h4 className="text-base sm:text-lg font-black uppercase tracking-wider text-slate-900">
                                             {t('features')}
                                         </h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3.5">
                                             {features.slice(0, 8).map((item: string, i: number) => (
-                                                <div key={i} className="flex items-center gap-3 text-sm font-medium text-slate-700">
-                                                    <CheckCircle2 size={16} className="text-brand-primary shrink-0" />
+                                                <div key={i} className="flex items-center gap-3 text-base sm:text-lg font-semibold text-slate-800">
+                                                    <CheckCircle2 size={20} className="text-[#C29236] shrink-0" />
                                                     {item}
                                                 </div>
                                             ))}
@@ -212,17 +263,17 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                             <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <Link
                                     href={SITE_ROUTES.CONTACT}
-                                    className="flex-1 bg-brand-primary py-4 text-xs sm:text-sm font-black uppercase tracking-wider text-white text-center hover:bg-brand-secondary transition-all"
+                                    className="flex-1 bg-[#0A2958] hover:bg-[#123B7A] py-4 sm:py-4.5 text-base sm:text-lg font-black uppercase tracking-wider text-white text-center transition-all shadow-lg rounded-xl active:scale-[0.99]"
                                 >
                                     {t('getQuote')}
                                 </Link>
                                 {product.catalog_url && (
                                     <a
-                                        href={product.catalog_url}
+                                        href={product.catalog_url as string}
                                         target="_blank"
-                                        className="flex-1 border border-slate-200 py-4 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-900 text-center hover:border-brand-primary transition-all flex items-center justify-center gap-3"
+                                        className="flex-1 border-2 border-slate-300 py-4 sm:py-4.5 text-base sm:text-lg font-black uppercase tracking-wider text-slate-900 text-center hover:border-[#E5B869] hover:text-[#C29236] transition-all flex items-center justify-center gap-3 rounded-xl"
                                     >
-                                        {t('downloadCatalog')} <Download size={16} />
+                                        {t('downloadCatalog')} <Download size={20} />
                                     </a>
                                 )}
                             </div>
@@ -239,24 +290,24 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                         <button
                             onClick={() => setActiveTab('description')}
                             className={cn(
-                                "flex items-center gap-3 px-10 py-5 text-xs sm:text-sm font-black uppercase tracking-wider transition-all hover:cursor-pointer",
+                                "flex items-center gap-3 px-6 sm:px-10 py-4 sm:py-5 text-sm sm:text-base font-black uppercase tracking-wider transition-all hover:cursor-pointer",
                                 activeTab === 'description' 
                                     ? "bg-brand-primary text-white" 
                                     : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                             )}
                         >
-                            <FileText size={16} /> {t('description')}
+                            <FileText size={18} /> {t('description')}
                         </button>
                         <button
                             onClick={() => setActiveTab('specs')}
                             className={cn(
-                                "flex items-center gap-3 px-10 py-5 text-xs sm:text-sm font-black uppercase tracking-wider transition-all hover:cursor-pointer",
+                                "flex items-center gap-3 px-6 sm:px-10 py-4 sm:py-5 text-sm sm:text-base font-black uppercase tracking-wider transition-all hover:cursor-pointer",
                                 activeTab === 'specs' 
                                     ? "bg-brand-primary text-white" 
                                     : "bg-slate-50 text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                             )}
                         >
-                            <Settings2 size={16} /> {t('techSpecs')}
+                            <Settings2 size={18} /> {t('techSpecs')}
                         </button>
                     </div>
 
@@ -281,17 +332,19 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
                                         }}
                                     />
                                 ) : (
-                                    <p className="text-sm text-slate-400 italic">Đang cập nhật nội dung chi tiết...</p>
+                                    <p className="text-sm text-slate-400 italic">
+                                        {locale === 'zh' ? '正在更新详细内容...' : locale === 'en' ? 'Updating detailed content...' : 'Đang cập nhật nội dung chi tiết...'}
+                                    </p>
                                 )}
                             </div>
                         )}
 
                         {activeTab === 'specs' && (
                             <div className="animate-in fade-in duration-500">
-                                {product.tech_specs ? (
-                                    renderSpecs()
-                                ) : (
-                                    <p className="text-sm text-slate-400 italic">Đang cập nhật thông số kỹ thuật...</p>
+                                {renderSpecs() || (
+                                    <p className="text-sm text-slate-400 italic">
+                                        {locale === 'zh' ? '正在更新技术参数...' : locale === 'en' ? 'Updating technical specifications...' : 'Đang cập nhật thông số kỹ thuật...'}
+                                    </p>
                                 )}
                             </div>
                         )}
@@ -309,9 +362,9 @@ export default function ProductDetailClient({ product, slug }: ProductDetailClie
             {/* Final CTA */}
             <section className="py-16 bg-slate-50 border-t border-slate-100 text-center">
                 <div className="container mx-auto px-4 lg:px-8 space-y-8">
-                    <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">{t('cta.title')}</h2>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-slate-900">{t('cta.title')}</h2>
                     <div className="flex justify-center gap-4">
-                        <Link href={SITE_ROUTES.CONTACT} className="px-10 py-4 bg-brand-primary text-white text-xs sm:text-sm font-black uppercase tracking-wider hover:bg-brand-secondary transition-all">
+                        <Link href={SITE_ROUTES.CONTACT} className="px-10 py-4 bg-brand-primary text-white text-sm sm:text-base font-black uppercase tracking-wider hover:bg-brand-secondary transition-all shadow-md">
                             {t('cta.submit')}
                         </Link>
                     </div>

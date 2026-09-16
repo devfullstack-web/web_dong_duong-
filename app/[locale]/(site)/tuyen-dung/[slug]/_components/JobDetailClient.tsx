@@ -18,8 +18,10 @@ import {
 import { SITE_ROUTES, API_ROUTES } from '@/constants/routes';
 import $api from '@/utils/axios';
 import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { vi, enUS, zhCN } from 'date-fns/locale';
+import { useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
+import { useSiteInfo } from '@/components/providers/site-info-provider';
 import { Loader2, Upload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -30,22 +32,20 @@ import Image from 'next/image';
 import { motion } from 'motion/react';
 import { sanitizeRichText } from '@/utils/sanitize';
 import { EMPLOYMENT_TYPE, JOB_STATUS, type EmploymentType, type JobStatus } from '@/constants/content';
-
-const EMPLOYMENT_TYPE_LABELS: Record<EmploymentType, string> = {
-    [EMPLOYMENT_TYPE.FULL_TIME]: 'Toàn thời gian',
-    [EMPLOYMENT_TYPE.PART_TIME]: 'Bán thời gian',
-    [EMPLOYMENT_TYPE.CONTRACT]: 'Hợp đồng',
-    [EMPLOYMENT_TYPE.INTERNSHIP]: 'Thực tập',
-};
+import { getLocalizedValue, type LocalizedText, type Locale } from '@/types/i18n';
 
 interface JobDetailClientProps {
     job: {
         id: string;
         title: string;
+        title_localized?: LocalizedText | null;
         slug: string;
         description: string;
+        description_localized?: LocalizedText | null;
         requirements: string | null;
+        requirements_localized?: LocalizedText | null;
         benefits: string | null;
+        benefits_localized?: LocalizedText | null;
         location: string | null;
         employment_type: EmploymentType;
         salary_range: string | null;
@@ -58,6 +58,25 @@ interface JobDetailClientProps {
 }
 
 export default function JobDetailClient({ job }: JobDetailClientProps) {
+    const COMPANY_INFO = useSiteInfo();
+    const locale = useLocale();
+    const isVi = locale === 'vi';
+    const isZh = locale === 'zh';
+    const dateLocale = isZh ? zhCN : isVi ? vi : enUS;
+
+    const tJob = (viText: string, enText: string, zhText: string) => {
+        if (isZh) return zhText;
+        if (isVi) return viText;
+        return enText;
+    };
+
+    const employmentLabel = {
+        [EMPLOYMENT_TYPE.FULL_TIME]: tJob('Toàn thời gian', 'Full Time', '全职'),
+        [EMPLOYMENT_TYPE.PART_TIME]: tJob('Bán thời gian', 'Part Time', '兼职'),
+        [EMPLOYMENT_TYPE.CONTRACT]: tJob('Hợp đồng', 'Contract', '合同工'),
+        [EMPLOYMENT_TYPE.INTERNSHIP]: tJob('Thực tập', 'Internship', '实习生'),
+    }[job.employment_type] || tJob('Toàn thời gian', 'Full Time', '全职');
+
     return (
         <div className="flex flex-col min-h-screen bg-slate-50 pt-20">
             {/* Hero Section */}
@@ -86,21 +105,21 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                 size={16}
                                 className="group-hover:-translate-x-1 transition-transform"
                             />
-                            Quay lại danh sách
+                            {tJob('Quay lại danh sách', 'Back to Jobs', '返回职位列表')}
                         </Link>
                     </motion.div>
 
                     <div className="max-w-4xl space-y-6">
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="text-xs font-bold uppercase tracking-wider text-brand-primary bg-brand-accent px-3 py-1.5 rounded-full">
-                                {job.department || 'Tổng hợp'}
+                                {job.department || tJob('Tổng hợp', 'General', '综合业务部')}
                             </span>
                             <span className="text-xs font-bold uppercase tracking-wider text-white border border-white/20 px-3 py-1.5 rounded-full bg-white/5">
-                                {EMPLOYMENT_TYPE_LABELS[job.employment_type]}
+                                {employmentLabel}
                             </span>
                             {job.status === JOB_STATUS.CLOSED && (
                                 <span className="text-xs font-bold uppercase tracking-wider text-white bg-red-500 px-3 py-1.5 rounded-full">
-                                    Đã đóng
+                                    {tJob('Đã đóng', 'Closed', '已结束招聘')}
                                 </span>
                             )}
                         </div>
@@ -111,13 +130,13 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                             transition={{ delay: 0.1 }}
                             className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]"
                         >
-                            {job.title}
+                            {getLocalizedValue(job.title_localized, locale as Locale) || job.title}
                         </motion.h1>
 
                         <div className="flex flex-wrap items-center gap-y-4 gap-x-8 text-sm sm:text-base font-medium text-slate-300">
                             <span className="flex items-center gap-2">
                                 <MapPin size={18} className="text-brand-accent" />
-                                {job.location || 'Việt Nam'}
+                                {job.location || tJob('Việt Nam', 'Vietnam', '越南')}
                             </span>
                             {job.salary_range && (
                                 <span className="flex items-center gap-2 border-l border-white/10 pl-8 hidden sm:flex">
@@ -134,8 +153,8 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                             {job.deadline && (
                                 <span className="flex items-center gap-2 border-l border-white/10 pl-8 hidden sm:flex">
                                     <Clock size={18} className="text-brand-accent" />
-                                    Hạn:{' '}
-                                    {format(new Date(job.deadline), 'dd/MM/yyyy', { locale: vi })}
+                                    {tJob('Hạn:', 'Deadline:', '截止:')}{' '}
+                                    {format(new Date(job.deadline), 'dd/MM/yyyy', { locale: dateLocale })}
                                 </span>
                             )}
                         </div>
@@ -145,7 +164,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                             {job.salary_range && (
                                 <div className="flex flex-col gap-1">
                                     <span className="text-xs text-slate-300 uppercase font-bold tracking-wider">
-                                        Mức lương
+                                        {tJob('Mức lương', 'Salary', '薪资待遇')}
                                     </span>
                                     <span className="text-white text-sm sm:text-base font-bold">
                                         {job.salary_range}
@@ -155,11 +174,11 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                             {job.deadline && (
                                 <div className="flex flex-col gap-1">
                                     <span className="text-xs text-slate-300 uppercase font-bold tracking-wider">
-                                        Hạn nộp
+                                        {tJob('Hạn nộp', 'Deadline', '截止日期')}
                                     </span>
                                     <span className="text-white text-sm sm:text-base font-bold">
                                         {format(new Date(job.deadline), 'dd/MM/yyyy', {
-                                            locale: vi,
+                                            locale: dateLocale,
                                         })}
                                     </span>
                                 </div>
@@ -187,43 +206,58 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                     <div className="flex items-center gap-3">
                                         <div className="w-1.5 h-8 bg-brand-primary"></div>
                                         <h2 className="text-xl font-bold text-slate-900">
-                                            Mô tả công việc
+                                            {tJob('Mô tả công việc', 'Job Description', '岗位职责与工作描述')}
                                         </h2>
                                     </div>
                                     <div
                                         className="prose prose-slate max-w-none prose-p:text-slate-600 prose-li:text-slate-600 leading-relaxed"
-                                        dangerouslySetInnerHTML={{ __html: sanitizeRichText(job.description) }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: sanitizeRichText(
+                                                getLocalizedValue(job.description_localized, locale as Locale) ||
+                                                    job.description,
+                                            ),
+                                        }}
                                     />
                                 </div>
 
                                 {/* Requirements */}
-                                {job.requirements && (
+                                {(getLocalizedValue(job.requirements_localized, locale as Locale) || job.requirements) && (
                                     <div className="space-y-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-1.5 h-8 bg-brand-primary"></div>
                                             <h2 className="text-xl font-bold text-slate-900">
-                                                Yêu cầu ứng viên
+                                                {tJob('Yêu cầu ứng viên', 'Job Requirements', '任职资格与能力要求')}
                                             </h2>
                                         </div>
                                         <div
                                             className="prose prose-slate max-w-none prose-p:text-slate-600 prose-li:text-slate-600 leading-relaxed"
-                                            dangerouslySetInnerHTML={{ __html: sanitizeRichText(job.requirements) }}
+                                            dangerouslySetInnerHTML={{
+                                                __html: sanitizeRichText(
+                                                    getLocalizedValue(job.requirements_localized, locale as Locale) ||
+                                                        (job.requirements as string),
+                                                ),
+                                            }}
                                         />
                                     </div>
                                 )}
 
                                 {/* Benefits */}
-                                {job.benefits && (
+                                {(getLocalizedValue(job.benefits_localized, locale as Locale) || job.benefits) && (
                                     <div className="space-y-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-1.5 h-8 bg-brand-primary"></div>
                                             <h2 className="text-xl font-bold text-slate-900">
-                                                Quyền lợi ứng viên
+                                                {tJob('Quyền lợi ứng viên', 'Benefits & Perks', '薪酬福利与发展晋升')}
                                             </h2>
                                         </div>
                                         <div
                                             className="prose prose-slate max-w-none prose-p:text-slate-600 prose-li:text-slate-600 leading-relaxed"
-                                            dangerouslySetInnerHTML={{ __html: sanitizeRichText(job.benefits) }}
+                                            dangerouslySetInnerHTML={{
+                                                __html: sanitizeRichText(
+                                                    getLocalizedValue(job.benefits_localized, locale as Locale) ||
+                                                        (job.benefits as string),
+                                                ),
+                                            }}
                                         />
                                     </div>
                                 )}
@@ -235,19 +269,19 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                             variant="outline"
                                             className="gap-2 border-slate-200"
                                         >
-                                            <Bookmark size={18} /> Lưu tin
+                                            <Bookmark size={18} /> {tJob('Lưu tin', 'Save Job', '收藏职位')}
                                         </Button>
                                         <Button
                                             variant="outline"
                                             className="gap-2 border-slate-200"
                                         >
-                                            <Share2 size={18} /> Chia sẻ
+                                            <Share2 size={18} /> {tJob('Chia sẻ', 'Share', '分享')}
                                         </Button>
                                     </div>
                                     <div className="text-sm text-slate-400 font-medium italic">
-                                        Đăng ngày:{' '}
+                                        {tJob('Đăng ngày:', 'Posted on:', '发布日期:')}{' '}
                                         {format(new Date(job.created_at), 'dd/MM/yyyy', {
-                                            locale: vi,
+                                            locale: dateLocale,
                                         })}
                                     </div>
                                 </div>
@@ -266,24 +300,23 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                             >
                                 <div className="space-y-2">
                                     <h3 className="text-xl font-bold text-slate-900">
-                                        Ứng tuyển nhanh
+                                        {tJob('Ứng tuyển nhanh', 'Quick Apply', '快速投递简历')}
                                     </h3>
                                     <p className="text-sm text-slate-500">
-                                        Hãy điền thông tin và đính kèm CV để chuyên viên tuyển dụng
-                                        liên hệ với bạn.
+                                        {tJob('Hãy điền thông tin và đính kèm CV để chuyên viên tuyển dụng liên hệ với bạn.', 'Fill in your details and attach your CV to apply.', '请填写个人信息并上传简历，我们的人力资源团队将尽快与您联系。')}
                                     </p>
                                 </div>
 
-                                <ApplyForm jobId={job.id} />
+                                <ApplyForm jobId={job.id} locale={locale} />
 
                                 <div className="pt-4 border-t border-slate-50 text-center">
                                     <p className="text-xs text-slate-500 font-medium">
-                                        Cần hỗ trợ? Gửi email tới <br />
+                                        {tJob('Cần hỗ trợ? Gửi email tới', 'Need help? Send email to', '如有疑问请发送邮件至')} <br />
                                         <a
-                                            href="mailto:hr@saigonvalve.vn"
+                                            href={`mailto:${COMPANY_INFO.email}`}
                                             className="text-brand-primary font-bold hover:underline"
                                         >
-                                            hr@saigonvalve.vn
+                                            {COMPANY_INFO.email}
                                         </a>
                                     </p>
                                 </div>
@@ -297,10 +330,10 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                     </div>
                                     <div>
                                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-                                            Sài Gòn Valve
+                                            {COMPANY_INFO.name}
                                         </h3>
                                         <p className="text-xs text-slate-500 font-medium">
-                                            Since 2010
+                                            Since {COMPANY_INFO.foundedYear || 2015}
                                         </p>
                                     </div>
                                 </div>
@@ -312,7 +345,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                             className="text-brand-primary shrink-0 mt-0.5"
                                         />
                                         <span className="leading-relaxed">
-                                            120 Nguyễn Thị Thập, Tân Phú, Quận 7, TP. Hồ Chí Minh
+                                            {COMPANY_INFO.address}
                                         </span>
                                     </div>
                                     <div className="flex items-start gap-3">
@@ -320,14 +353,14 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                             size={18}
                                             className="text-brand-primary shrink-0 mt-0.5"
                                         />
-                                        <span>50 - 100 nhân viên</span>
+                                        <span>{tJob('50 - 100 nhân sự', '50 - 100 employees', '50 - 100 名员工')}</span>
                                     </div>
                                     <div className="flex items-start gap-3">
                                         <Clock
                                             size={18}
                                             className="text-brand-primary shrink-0 mt-0.5"
                                         />
-                                        <span>Thứ 2 - Thứ 6 (08:00 - 17:30)</span>
+                                        <span>{COMPANY_INFO.workingHours?.weekdays || tJob('Thứ 2 - Thứ 6 (08:00 - 17:30)', 'Mon - Fri (08:00 - 17:30)', '周一至周五 (08:00 - 17:30)')}</span>
                                     </div>
                                 </div>
 
@@ -336,7 +369,7 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
                                         variant="ghost"
                                         className="w-full text-brand-primary hover:text-brand-secondary hover:bg-white text-xs font-bold uppercase tracking-widest"
                                     >
-                                        Tìm hiểu thêm về chúng tôi
+                                        {tJob('Tìm hiểu thêm về chúng tôi', 'Learn more about us', '了解更多企业信息')}
                                     </Button>
                                 </Link>
                             </div>
@@ -348,7 +381,15 @@ export default function JobDetailClient({ job }: JobDetailClientProps) {
     );
 }
 
-function ApplyForm({ jobId }: { jobId: string }) {
+function ApplyForm({ jobId, locale }: { jobId: string; locale: string }) {
+    const isZh = locale === 'zh';
+    const isEn = locale === 'en';
+    const tForm = (viText: string, enText: string, zhText: string) => {
+        if (isZh) return zhText;
+        if (isEn) return enText;
+        return viText;
+    };
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         full_name: '',
@@ -364,7 +405,7 @@ function ApplyForm({ jobId }: { jobId: string }) {
         const file = e.target.files?.[0];
         if (file) {
             if (file.size > 5 * 1024 * 1024) {
-                toast.error('File quá lớn. Tối đa 5MB');
+                toast.error(tForm('File quá lớn. Tối đa 5MB', 'File too large. Max 5MB', '文件过大，最大限制 5MB'));
                 return;
             }
             const allowed = [
@@ -373,7 +414,7 @@ function ApplyForm({ jobId }: { jobId: string }) {
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ];
             if (!allowed.includes(file.type)) {
-                toast.error('Chỉ chấp nhận file PDF, DOC, DOCX');
+                toast.error(tForm('Chỉ chấp nhận file PDF, DOC, DOCX', 'Only PDF, DOC, DOCX files are allowed', '仅支持上传 PDF, DOC, DOCX 文件'));
                 return;
             }
             setCvFile(file);
@@ -383,7 +424,7 @@ function ApplyForm({ jobId }: { jobId: string }) {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!formData.full_name || !formData.email || !formData.phone || !cvFile) {
-            toast.error('Vui lòng điền đủ thông tin và đính kèm CV');
+            toast.error(tForm('Vui lòng điền đủ thông tin và đính kèm CV', 'Please fill in all required fields and attach your CV', '请完整填写必填信息并上传简历文件'));
             return;
         }
 
@@ -404,13 +445,13 @@ function ApplyForm({ jobId }: { jobId: string }) {
             });
 
             if (response.data.success) {
-                toast.success('Nộp hồ sơ thành công! Chúng tôi sẽ liên hệ sớm.');
+                toast.success(tForm('Nộp hồ sơ thành công! Chúng tôi sẽ liên hệ sớm.', 'Application submitted successfully! We will contact you soon.', '简历投递成功！我们将尽快与您取得联系。'));
                 setFormData({ full_name: '', email: '', phone: '', cv_url: '', cover_letter: '' });
                 setCvFile(null);
             }
         } catch (error) {
             console.error(error);
-            toast.error('Gặp lỗi khi nộp hồ sơ. Vui lòng thử lại.');
+            toast.error(tForm('Gặp lỗi khi nộp hồ sơ. Vui lòng thử lại.', 'Failed to submit application. Please try again.', '投递失败，请稍后重试。'));
         } finally {
             setIsSubmitting(false);
         }
@@ -419,19 +460,19 @@ function ApplyForm({ jobId }: { jobId: string }) {
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-                <Label className="text-xs sm:text-sm font-bold text-slate-700">Họ và tên *</Label>
+                <Label className="text-xs sm:text-sm font-bold text-slate-700">{tForm('Họ và tên *', 'Full name *', '姓名 *')}</Label>
                 <Input
                     required
                     value={formData.full_name}
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                     className="bg-slate-50 border-slate-200 h-11 focus:ring-brand-primary placeholder:text-slate-400 text-sm sm:text-base font-medium"
-                    placeholder="Ví dụ: Nguyễn Văn A"
+                    placeholder={tForm('Ví dụ: Nguyễn Văn A', 'e.g. John Doe', '例如：张先生 / 李女士')}
                 />
             </div>
 
             <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                    <Label className="text-xs sm:text-sm font-bold text-slate-700">Email *</Label>
+                    <Label className="text-xs sm:text-sm font-bold text-slate-700">{tForm('Email *', 'Email *', '电子邮箱 *')}</Label>
                     <Input
                         required
                         type="email"
@@ -442,7 +483,7 @@ function ApplyForm({ jobId }: { jobId: string }) {
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label className="text-xs sm:text-sm font-bold text-slate-700">Số điện thoại *</Label>
+                    <Label className="text-xs sm:text-sm font-bold text-slate-700">{tForm('Số điện thoại *', 'Phone number *', '联系电话 *')}</Label>
                     <Input
                         required
                         value={formData.phone}
@@ -455,18 +496,18 @@ function ApplyForm({ jobId }: { jobId: string }) {
 
             <div className="space-y-2">
                 <Label className="text-xs sm:text-sm font-bold text-slate-700">
-                    Lời nhắn (không bắt buộc)
+                    {tForm('Lời nhắn (không bắt buộc)', 'Cover letter (optional)', '求职留言（选填）')}
                 </Label>
                 <Textarea
                     value={formData.cover_letter}
                     onChange={(e) => setFormData({ ...formData, cover_letter: e.target.value })}
                     className="bg-slate-50 border-slate-200 min-h-[100px] focus:ring-brand-primary placeholder:text-slate-400 text-sm sm:text-base font-medium py-3"
-                    placeholder="Giới thiệu ngắn gọn sở trường của bạn..."
+                    placeholder={tForm('Giới thiệu ngắn gọn sở trường của bạn...', 'Briefly introduce your strengths and expectations...', '简要介绍您的工作经验与专长...')}
                 />
             </div>
 
             <div className="space-y-2">
-                <Label className="text-xs sm:text-sm font-bold text-slate-700">Hồ sơ (CV) *</Label>
+                <Label className="text-xs sm:text-sm font-bold text-slate-700">{tForm('Hồ sơ (CV) *', 'Curriculum Vitae (CV) *', '个人简历 (CV) *')}</Label>
                 <div
                     onClick={() => fileInputRef.current?.click()}
                     className={cn(
@@ -485,7 +526,7 @@ function ApplyForm({ jobId }: { jobId: string }) {
                                 {cvFile.name}
                             </p>
                             <span className="text-xs text-slate-400 font-medium">
-                                Click để thay đổi file
+                                {tForm('Click để thay đổi file', 'Click to change file', '点击更换文件')}
                             </span>
                         </div>
                     ) : (
@@ -493,9 +534,9 @@ function ApplyForm({ jobId }: { jobId: string }) {
                             <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-brand-primary/10 transition-colors">
                                 <Upload className="size-5 text-slate-400 group-hover:text-brand-primary transition-colors" />
                             </div>
-                            <p className="text-xs sm:text-sm font-bold text-slate-600">Bấm để tải lên CV</p>
+                            <p className="text-xs sm:text-sm font-bold text-slate-600">{tForm('Bấm để tải lên CV', 'Click to upload CV', '点击上传简历')}</p>
                             <p className="text-xs text-slate-400 mt-1">
-                                Hỗ trợ PDF, DOC, DOCX (Tối đa 5MB)
+                                {tForm('Hỗ trợ PDF, DOC, DOCX (Tối đa 5MB)', 'Supports PDF, DOC, DOCX (Max 5MB)', '支持 PDF, DOC, DOCX 格式 (最大 5MB)')}
                             </p>
                         </>
                     )}
@@ -516,11 +557,11 @@ function ApplyForm({ jobId }: { jobId: string }) {
             >
                 {isSubmitting ? (
                     <>
-                        <Loader2 className="mr-2 size-4 animate-spin" /> Đang gửi hồ sơ...
+                        <Loader2 className="mr-2 size-4 animate-spin" /> {tForm('Đang gửi hồ sơ...', 'Submitting application...', '正在投递简历...')}
                     </>
                 ) : (
                     <>
-                        Nộp hồ sơ ngay <Send size={16} className="ml-2" />
+                        {tForm('Nộp hồ sơ ngay', 'Submit Application', '立即投递')} <Send size={16} className="ml-2" />
                     </>
                 )}
             </Button>

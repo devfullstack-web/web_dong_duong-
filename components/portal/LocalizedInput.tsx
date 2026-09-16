@@ -9,6 +9,7 @@ import type { LocalizedText, Locale } from '@/types/i18n';
 const LOCALE_LABELS: Record<Locale, string> = {
     vi: '🇻🇳 Tiếng Việt',
     en: '🇬🇧 English',
+    zh: '🇨🇳 中文',
 };
 
 interface LocalizedInputProps {
@@ -17,7 +18,7 @@ interface LocalizedInputProps {
     value: LocalizedText;
     onChange: (value: LocalizedText) => void;
     required?: boolean;
-    placeholder?: { vi?: string; en?: string };
+    placeholder?: { vi?: string; en?: string; zh?: string };
     disabled?: boolean;
 }
 
@@ -39,8 +40,8 @@ export function LocalizedInput({
                 {label} {required && '*'}
             </Label>
             <Tabs defaultValue="vi" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-10 bg-slate-100 rounded-none">
-                    {(['vi', 'en'] as Locale[]).map((locale) => (
+                <TabsList className="grid w-full grid-cols-3 h-10 bg-slate-100 rounded-none">
+                    {(['vi', 'en', 'zh'] as Locale[]).map((locale) => (
                         <TabsTrigger
                             key={locale}
                             value={locale}
@@ -53,7 +54,7 @@ export function LocalizedInput({
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {(['vi', 'en'] as Locale[]).map((locale) => (
+                {(['vi', 'en', 'zh'] as Locale[]).map((locale) => (
                     <TabsContent key={locale} value={locale} className="mt-3">
                         <Input
                             id={`${id}-${locale}`}
@@ -66,7 +67,7 @@ export function LocalizedInput({
                             placeholder={placeholder?.[locale]}
                             disabled={disabled}
                         />
-                        {locale === 'en' && !value.en && value.vi && (
+                        {locale !== 'vi' && !value[locale] && value.vi && (
                             <p className="text-[9px] text-amber-500 mt-1 italic">
                                 Sẽ sử dụng bản tiếng Việt nếu để trống
                             </p>
@@ -84,7 +85,7 @@ interface LocalizedTextareaProps {
     value: LocalizedText;
     onChange: (value: LocalizedText) => void;
     required?: boolean;
-    placeholder?: { vi?: string; en?: string };
+    placeholder?: { vi?: string; en?: string; zh?: string };
     rows?: number;
     disabled?: boolean;
 }
@@ -108,8 +109,8 @@ export function LocalizedTextarea({
                 {label} {required && '*'}
             </Label>
             <Tabs defaultValue="vi" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 h-10 bg-slate-100 rounded-none">
-                    {(['vi', 'en'] as Locale[]).map((locale) => (
+                <TabsList className="grid w-full grid-cols-3 h-10 bg-slate-100 rounded-none">
+                    {(['vi', 'en', 'zh'] as Locale[]).map((locale) => (
                         <TabsTrigger
                             key={locale}
                             value={locale}
@@ -122,7 +123,7 @@ export function LocalizedTextarea({
                         </TabsTrigger>
                     ))}
                 </TabsList>
-                {(['vi', 'en'] as Locale[]).map((locale) => (
+                {(['vi', 'en', 'zh'] as Locale[]).map((locale) => (
                     <TabsContent key={locale} value={locale} className="mt-3">
                         <Textarea
                             id={`${id}-${locale}`}
@@ -136,7 +137,7 @@ export function LocalizedTextarea({
                             rows={rows}
                             disabled={disabled}
                         />
-                        {locale === 'en' && !value.en && value.vi && (
+                        {locale !== 'vi' && !value[locale] && value.vi && (
                             <p className="text-[9px] text-amber-500 mt-1 italic">
                                 Sẽ sử dụng bản tiếng Việt nếu để trống
                             </p>

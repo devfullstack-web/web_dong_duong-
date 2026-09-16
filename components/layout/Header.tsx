@@ -4,43 +4,21 @@ import * as React from 'react';
 import { useParams, usePathname as useNextPathname } from 'next/navigation';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
 import {
-    Check,
-    Facebook,
-    Globe,
-    Linkedin,
-    Mail,
+    Search,
     Menu,
-    Phone,
     X,
-    Youtube,
     ChevronDown,
+    Check,
+    Phone,
 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
-import { motion, AnimatePresence } from 'motion/react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
-
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
-
-import { SITE_ROUTES } from '@/constants/routes';
 import { useSiteInfo } from '@/components/providers/site-info-provider';
 
-type Locale = 'vi' | 'en';
+type Locale = 'vi' | 'en' | 'zh';
 
-const isLocale = (value: string | undefined): value is Locale => value === 'vi' || value === 'en';
-
-interface NavLink {
-    label: string;
-    href: string;
-    submenu?: { title: string; href: string; external?: boolean }[];
-    featured?: { title: string; desc: string; href: string }[];
-}
+const isLocale = (value: string | undefined): value is Locale => value === 'vi' || value === 'en' || value === 'zh';
 
 export default function Header() {
     const COMPANY_INFO = useSiteInfo();
@@ -48,127 +26,28 @@ export default function Header() {
     const ts = useTranslations('Solutions');
     const intlLocale = useLocale();
     const router = useRouter();
-    const params = useParams<{ locale?: string | string[] }>();
-
-
-    const [isScrolled, setIsScrolled] = React.useState(false);
-    const [mounted, setMounted] = React.useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-    const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false);
-    const [expandedLinks, setExpandedLinks] = React.useState<Record<string, boolean>>({});
-    const languageMenuRef = React.useRef<HTMLDivElement>(null);
-
-    const toggleExpand = (label: string) => {
-        setExpandedLinks((prev) => ({
-            ...prev,
-            [label]: !prev[label],
-        }));
-    };
-
-    React.useEffect(() => {
-        if (!mobileMenuOpen) {
-            setExpandedLinks({});
-        }
-    }, [mobileMenuOpen]);
-    const mobileSocialLinks = [
-        { label: 'Facebook', Icon: Facebook, href: COMPANY_INFO.social.facebook },
-        { label: 'LinkedIn', Icon: Linkedin, href: COMPANY_INFO.social.linkedin },
-        { label: 'YouTube', Icon: Youtube, href: COMPANY_INFO.social.youtube },
-        { label: 'Zalo', href: COMPANY_INFO.social.zalo },
-    ].filter((item) => item.href);
     const pathname = usePathname();
     const nextPathname = useNextPathname();
+    const params = useParams<{ locale?: string | string[] }>();
+
+    const [isScrolled, setIsScrolled] = React.useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+    const [languageMenuOpen, setLanguageMenuOpen] = React.useState(false);
+    const [searchQuery, setSearchQuery] = React.useState('');
+    const desktopLangRef = React.useRef<HTMLDivElement>(null);
+    const mobileLangRef = React.useRef<HTMLDivElement>(null);
+
     const routeLocale = Array.isArray(params.locale) ? params.locale[0] : params.locale;
     const activeLocale = React.useMemo<Locale>(() => {
-        if (isLocale(routeLocale)) {
-            return routeLocale;
-        }
-
+        if (isLocale(routeLocale)) return routeLocale;
         const localeFromPath = nextPathname.split('/')[1];
-
-        if (isLocale(localeFromPath)) {
-            return localeFromPath;
-        }
-
-        if (isLocale(intlLocale)) {
-            return intlLocale;
-        }
-
+        if (isLocale(localeFromPath)) return localeFromPath;
+        if (isLocale(intlLocale)) return intlLocale;
         return 'vi';
     }, [intlLocale, nextPathname, routeLocale]);
 
-    // Build dynamic product submenu based on Portal settings
-    const productSubmenu = React.useMemo(() => {
-        const rawJson = COMPANY_INFO.raw?.site_product_submenu;
-        if (rawJson && rawJson.trim() !== '') {
-            try {
-                const parsed = JSON.parse(rawJson) as {
-                    id: string;
-                    titleVi: string;
-                    titleEn: string;
-                    href: string;
-                    isExternal?: boolean;
-                }[];
-
-                if (Array.isArray(parsed) && parsed.length > 0) {
-                    return parsed.map((item) => ({
-                        title: activeLocale === 'vi' ? item.titleVi : item.titleEn,
-                        href: item.href,
-                        external: item.isExternal,
-                    }));
-                }
-            } catch (e) {
-                console.error('[Header] Failed to parse site_product_submenu', e);
-            }
-        }
-
-        // Fallback to defaults
-        return [
-            {
-                title: t('products'),
-                href: SITE_ROUTES.PRODUCTS,
-            },
-            {
-                title: t('iotControlSoftware'),
-                href: 'https://event.saigonvalve.vn/login',
-                external: true,
-            },
-        ];
-    }, [COMPANY_INFO.raw?.site_product_submenu, activeLocale, t]);
-
-    const NAV_LINKS = React.useMemo<NavLink[]>(() => [
-        { label: t('home'), href: SITE_ROUTES.HOME },
-        { label: t('about'), href: SITE_ROUTES.ABOUT },
-        {
-            label: t('solutions'),
-            href: '#',
-            featured: [
-                {
-                    title: ts('waterManagement'),
-                    desc: ts('waterManagementDesc'),
-                    href: SITE_ROUTES.SOLUTIONS.WATER_MANAGEMENT,
-                },
-                {
-                    title: ts('agriculture'),
-                    desc: ts('agricultureDesc'),
-                    href: SITE_ROUTES.SOLUTIONS.AGRICULTURE,
-                },
-            ],
-        },
-        {
-            label: t('products'),
-            href: SITE_ROUTES.PRODUCTS,
-            submenu: productSubmenu,
-        },
-        { label: t('projects'), href: SITE_ROUTES.PROJECTS },
-        { label: t('news'), href: SITE_ROUTES.NEWS },
-        { label: t('recruitment'), href: SITE_ROUTES.RECRUITMENT },
-        { label: t('contact'), href: SITE_ROUTES.CONTACT },
-    ], [t, ts, productSubmenu]);
-
     React.useEffect(() => {
-        setMounted(true);
-        const handleScroll = () => setIsScrolled(window.scrollY > 40);
+        const handleScroll = () => setIsScrolled(window.scrollY > 20);
         handleScroll();
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
@@ -176,526 +55,366 @@ export default function Header() {
 
     React.useEffect(() => {
         if (!languageMenuOpen) return;
-
         const handlePointerDown = (event: PointerEvent) => {
-            if (!languageMenuRef.current?.contains(event.target as Node)) {
-                setLanguageMenuOpen(false);
-            }
-        };
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                setLanguageMenuOpen(false);
-            }
-        };
-
-        document.addEventListener('pointerdown', handlePointerDown);
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('pointerdown', handlePointerDown);
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [languageMenuOpen]);
-
-    const switchLocale = React.useCallback(
-        (nextLocale: Locale) => {
-            setLanguageMenuOpen(false);
-
-            if (nextLocale === activeLocale) {
-                setMobileMenuOpen(false);
+            const target = event.target as Node;
+            if (
+                desktopLangRef.current?.contains(target) ||
+                mobileLangRef.current?.contains(target)
+            ) {
                 return;
             }
+            setLanguageMenuOpen(false);
+        };
+        document.addEventListener('pointerdown', handlePointerDown);
+        return () => document.removeEventListener('pointerdown', handlePointerDown);
+    }, [languageMenuOpen]);
 
-            document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
+    const getLocalizedUrl = React.useCallback((nextLocale: Locale) => {
+        if (typeof window === 'undefined') return `/${nextLocale}`;
+        const curPath = window.location.pathname;
+        let nextPath = curPath;
+        if (
+            curPath === '/vi' || curPath === '/vi/' ||
+            curPath === '/en' || curPath === '/en/' ||
+            curPath === '/zh' || curPath === '/zh/' ||
+            curPath === '/'
+        ) {
+            nextPath = `/${nextLocale}`;
+        } else if (curPath.startsWith('/vi/')) {
+            nextPath = `/${nextLocale}/${curPath.slice(4)}`;
+        } else if (curPath.startsWith('/en/')) {
+            nextPath = `/${nextLocale}/${curPath.slice(4)}`;
+        } else if (curPath.startsWith('/zh/')) {
+            nextPath = `/${nextLocale}/${curPath.slice(4)}`;
+        } else {
+            nextPath = `/${nextLocale}${curPath.startsWith('/') ? curPath : `/${curPath}`}`;
+        }
+        return nextPath + window.location.search + window.location.hash;
+    }, []);
+
+    const switchLocale = React.useCallback((nextLocale: Locale) => {
+        setLanguageMenuOpen(false);
+        document.cookie = `NEXT_LOCALE=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`;
+        if (typeof window !== 'undefined') {
+            const targetUrl = getLocalizedUrl(nextLocale);
+            window.location.href = targetUrl;
+        }
+    }, [getLocalizedUrl]);
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/san-pham?search=${encodeURIComponent(searchQuery.trim())}` as "/san-pham");
             setMobileMenuOpen(false);
-            router.replace(pathname + window.location.search + window.location.hash, {
-                locale: nextLocale,
-                scroll: false,
-            });
-        },
-        [activeLocale, pathname, router],
-    );
+        }
+    };
+
+    const navItems = [
+        { label: t('home'), href: '/' },
+        { label: t('about'), href: '/gioi-thieu' },
+        { label: t('solutions'), href: '/giai-phap/dieu-hoa-trung-tam-vrv-chiller' },
+        { label: t('products'), href: '/san-pham' },
+        { label: t('projects'), href: '/du-an' },
+        { label: t('news'), href: '/tin-tuc' },
+        { label: t('careers'), href: '/tuyen-dung' },
+        { label: t('contact'), href: '/lien-he' },
+    ];
 
     return (
         <header
             className={cn(
-                'fixed top-0 lg:top-8 left-0 right-0 z-50 transition-all duration-500',
-                isScrolled
-                    ? 'lg:top-0 bg-white dark:bg-background shadow-md py-1.5 lg:py-2'
-                    : 'bg-white dark:bg-background border-b border-border py-2.5 lg:py-3.5',
+                'fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-[#0A2958] text-white overflow-visible',
+                isScrolled ? 'shadow-2xl' : ''
             )}
         >
-            <div className="container mx-auto px-4 lg:px-3 xl:px-8">
-                <nav className="flex items-center justify-between">
-                    {/* Logo */}
-                    <Link
-                        href={SITE_ROUTES.HOME}
-                        className="relative h-11 lg:h-12 xl:h-14 w-36 lg:w-40 xl:w-48 shrink-0 group flex items-center"
-                    >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src="/images/logo/logo.png"
-                            alt={t('logoAlt')}
-                            className="object-contain group-hover:scale-105 transition-transform h-9 lg:h-10 xl:h-12.5 w-auto"
-                        />
-                    </Link>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1340px] overflow-visible min-h-[64px] sm:min-h-[70px] lg:min-h-[76px] flex items-center justify-between gap-4">
+                {/* Brand Logo with Hanging Triangular Pennant Pointing Down into Hero */}
+                <Link
+                    href="/"
+                    className="relative self-stretch flex items-center gap-2.5 sm:gap-3.5 shrink-0 group z-30 select-none overflow-visible"
+                >
+                    {/* Emblem Container (Emblem + Hanging Chevron attached to bottom of navbar) */}
+                    <div className="relative self-stretch flex items-center justify-center shrink-0">
+                        {/* 3D Gold Emblem (centered vertically, extends below navbar deep into chevron) */}
+                        <div className="relative z-20 w-[54px] h-[60px] sm:w-[66px] sm:h-[74px] lg:w-[78px] lg:h-[86px] translate-y-3 sm:translate-y-4 lg:translate-y-5 shrink-0 drop-shadow-lg group-hover:scale-[1.03] transition-transform duration-200">
+                            <Image
+                                src="/images/dongduong/dongduong_emblem_tight.png"
+                                alt="Đông Dương Emblem"
+                                fill
+                                priority
+                                sizes="(max-width: 640px) 54px, (max-width: 1024px) 66px, 78px"
+                                className="object-contain"
+                            />
+                        </div>
 
-                    {/* Desktop Nav */}
-                    <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
-                        <NavigationMenu viewport={false}>
-                            <NavigationMenuList className="gap-1 xl:gap-2">
-                                {mounted &&
-                                    NAV_LINKS.map((link) => (
-                                        <NavigationMenuItem key={link.label} className="relative">
-                                            {'submenu' in link || 'featured' in link ? (
-                                                <>
-                                                    <NavigationMenuTrigger
-                                                        className={cn(
-                                                            'h-9 xl:h-10 px-2 xl:px-4 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest bg-transparent hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[state=open]:bg-transparent! data-[active]:bg-transparent! hover:text-brand-primary! active:bg-transparent data-[state=open]:text-brand-primary! transition-colors relative after:absolute after:bottom-0 after:left-2 after:right-6 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
-                                                            pathname === link.href ||
-                                                                (link.href === '#' &&
-                                                                    (
-                                                                        link.submenu ||
-                                                                        link.featured
-                                                                    )?.some(
-                                                                        (sub) =>
-                                                                            pathname === sub.href,
-                                                                    ))
-                                                                ? 'text-brand-primary! after:scale-x-100'
-                                                                : 'text-foreground after:scale-x-0 hover:after:scale-x-100',
-                                                        )}
-                                                    >
-                                                        {link.label}
-                                                    </NavigationMenuTrigger>
-                                                    <NavigationMenuContent className="p-0 border border-slate-100 dark:border-white/10 shadow-lg w-auto!">
-                                                        <ul className="grid w-[280px] gap-1 p-2 grid-cols-1 bg-white dark:bg-background rounded-md">
-                                                            {(link.submenu || link.featured)?.map(
-                                                                (item: {
-                                                                    title: string;
-                                                                    href: string;
-                                                                    desc?: string;
-                                                                    external?: boolean;
-                                                                }) => (
-                                                                    <ListItem
-                                                                        key={item.title}
-                                                                        title={item.title}
-                                                                        href={item.href}
-                                                                        external={item.external}
-                                                                    >
-                                                                        {item.desc}
-                                                                    </ListItem>
-                                                                ),
-                                                            )}
-                                                        </ul>
-                                                    </NavigationMenuContent>
-                                                </>
-                                            ) : (
-                                                <NavigationMenuLink
-                                                    asChild
-                                                    active={pathname === link.href}
-                                                    className="bg-transparent! hover:bg-transparent! focus:bg-transparent! active:bg-transparent! data-[active=true]:bg-transparent! data-[active=true]:text-brand-primary!"
-                                                >
-                                                    <Link
-                                                        href={link.href}
-                                                        className={cn(
-                                                            'group inline-flex h-max w-max items-center justify-center rounded-sm bg-transparent px-2 xl:px-4 py-1.5 xl:py-2 text-[12px] xl:text-[13px] font-bold xl:font-black uppercase tracking-widest transition-colors hover:text-brand-primary! focus:outline-none relative after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[2px] after:bg-brand-primary after:transition-transform after:duration-300 after:origin-left',
-                                                            pathname === link.href
-                                                                ? 'text-brand-primary! after:scale-x-100'
-                                                                : 'text-foreground after:scale-x-0 hover:after:scale-x-100',
-                                                        )}
-                                                    >
-                                                        {link.label}
-                                                    </Link>
-                                                </NavigationMenuLink>
-                                            )}
-                                        </NavigationMenuItem>
-                                    ))}
-                            </NavigationMenuList>
-                        </NavigationMenu>
+                        {/* Hanging Chevron SVG (positioned at top-full of self-stretch container = EXACT bottom edge of header) */}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] z-10 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.45)] pointer-events-none">
+                            <svg
+                                className="w-[76px] h-[23px] sm:w-[90px] sm:h-[27px] lg:w-[104px] lg:h-[31px]"
+                                viewBox="0 0 104 31"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="M 0 0 L 52 30 L 104 0 Z" fill="#0A2958" />
+                                <path
+                                    d="M 0 0 L 52 30 L 104 0"
+                                    stroke="#E5B869"
+                                    strokeWidth="2.5"
+                                    strokeLinejoin="round"
+                                    strokeLinecap="round"
+                                />
+                                <path
+                                    d="M 1.5 0.5 L 52 29.5 L 102.5 0.5"
+                                    stroke="#FFF5D6"
+                                    strokeWidth="1"
+                                    strokeLinejoin="round"
+                                    strokeLinecap="round"
+                                    opacity="0.8"
+                                />
+                            </svg>
+                        </div>
+                    </div>
 
-                        {/* Actions */}
-                        <div className="flex items-center gap-1.5 xl:gap-6 pl-1.5 xl:pl-8 dark:border-white/10">
-                            <div ref={languageMenuRef} className="relative ml-1">
+                    {/* Brand Name: 3D Gold 'ĐÔNG DƯƠNG' */}
+                    <div className="flex flex-col justify-center">
+                        <div className="relative h-6 sm:h-7 lg:h-8.5 w-28 sm:w-36 lg:w-44 shrink-0">
+                            <Image
+                                src="/images/dongduong/new_text_clean.png"
+                                alt="ĐÔNG DƯƠNG"
+                                fill
+                                priority
+                                sizes="(max-width: 640px) 112px, (max-width: 1024px) 144px, 176px"
+                                className="object-contain object-left group-hover:brightness-110 transition-all duration-300"
+                            />
+                        </div>
+                    </div>
+                </Link>
+
+                {/* Desktop Right Side: Top Utilities + Navigation */}
+                <div className="hidden lg:flex flex-col items-end justify-center py-2 gap-1.5 flex-1 pl-6">
+                        {/* Top Utility Row (Search, Language) */}
+                        <div className="flex items-center gap-5 text-sm text-slate-200">
+                            {/* Search Form Input */}
+                            <form onSubmit={handleSearchSubmit} className="relative">
+                                <input
+                                    type="text"
+                                    placeholder={t('searchPlaceholder')}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-48 xl:w-56 px-4 py-2 pr-9 bg-white text-slate-900 rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E5B869] placeholder:text-slate-400 shadow-inner"
+                                />
+                                <button
+                                    type="submit"
+                                    aria-label={t('search')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
+                                >
+                                    <Search className="w-4 h-4" />
+                                </button>
+                            </form>
+
+                            {/* Language Switcher Dropdown */}
+                            <div ref={desktopLangRef} className="relative">
                                 <button
                                     type="button"
-                                    aria-haspopup="menu"
-                                    aria-expanded={languageMenuOpen}
-                                    onClick={() => setLanguageMenuOpen((open) => !open)}
-                                    className="flex items-center border border-slate-100 dark:border-white/10 px-2 xl:px-3 py-1 bg-slate-50 dark:bg-white/5 rounded-sm outline-none hover:border-brand-primary/30 transition-colors"
+                                    onClick={() => setLanguageMenuOpen((o) => !o)}
+                                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer text-sm font-bold"
                                 >
-                                    <Globe
-                                        size={14}
-                                        className="mr-1.5 xl:mr-2 text-brand-primary"
-                                    />
-                                    <span className="text-[12px] xl:text-[13px] font-bold xl:font-black tracking-widest uppercase">
-                                        {activeLocale}
-                                    </span>
+                                    <span>{activeLocale === 'vi' ? '🇻🇳' : activeLocale === 'zh' ? '🇨🇳' : '🇬🇧'}</span>
+                                    <ChevronDown className="w-3.5 h-3.5 text-slate-300" />
                                 </button>
 
                                 {languageMenuOpen && (
                                     <div
-                                        role="menu"
-                                        className="absolute right-0 top-full z-50 mt-2 min-w-36 border border-slate-100 bg-white p-1 shadow-lg dark:border-white/10 dark:bg-slate-900"
+                                        onPointerDown={(e) => e.stopPropagation()}
+                                        className="absolute right-0 top-full mt-1.5 w-40 bg-white text-slate-900 rounded-lg shadow-xl border border-slate-100 py-1 z-50 text-sm font-bold"
                                     >
-                                        <button
-                                            type="button"
-                                            role="menuitemradio"
-                                            aria-checked={activeLocale === 'vi'}
-                                            onClick={() => switchLocale('vi')}
-                                            className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-xs font-black tracking-widest uppercase text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800/70"
+                                        <a
+                                            href={getLocalizedUrl('vi')}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                switchLocale('vi');
+                                            }}
+                                            className="w-full px-3.5 py-2 text-left flex items-center justify-between hover:bg-slate-50 cursor-pointer"
                                         >
-                                            {t('vi')}
-                                            {activeLocale === 'vi' && (
-                                                <Check
-                                                    size={12}
-                                                    className="ml-2 text-brand-primary"
-                                                />
-                                            )}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            role="menuitemradio"
-                                            aria-checked={activeLocale === 'en'}
-                                            onClick={() => switchLocale('en')}
-                                            className="flex w-full cursor-pointer items-center justify-between rounded-sm px-2 py-2 text-xs font-black tracking-widest uppercase text-foreground hover:bg-slate-100/70 dark:hover:bg-slate-800/70"
+                                            <span className="flex items-center gap-2">🇻🇳 Tiếng Việt</span>
+                                            {activeLocale === 'vi' && <Check className="w-4 h-4 text-amber-600" />}
+                                        </a>
+                                        <a
+                                            href={getLocalizedUrl('en')}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                switchLocale('en');
+                                            }}
+                                            className="w-full px-3.5 py-2 text-left flex items-center justify-between hover:bg-slate-50 cursor-pointer"
                                         >
-                                            {t('en')}
-                                            {activeLocale === 'en' && (
-                                                <Check
-                                                    size={12}
-                                                    className="ml-2 text-brand-primary"
-                                                />
-                                            )}
-                                        </button>
+                                            <span className="flex items-center gap-2">🇬🇧 English</span>
+                                            {activeLocale === 'en' && <Check className="w-4 h-4 text-amber-600" />}
+                                        </a>
+                                        <a
+                                            href={getLocalizedUrl('zh')}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                switchLocale('zh');
+                                            }}
+                                            className="w-full px-3.5 py-2 text-left flex items-center justify-between hover:bg-slate-50 cursor-pointer"
+                                        >
+                                            <span className="flex items-center gap-2">🇨🇳 中文 (简体)</span>
+                                            {activeLocale === 'zh' && <Check className="w-4 h-4 text-amber-600" />}
+                                        </a>
                                     </div>
                                 )}
                             </div>
                         </div>
-                    </div>
 
-                    {/* Mobile Toggle */}
-                    <div className="flex items-center gap-4 lg:hidden">
-                        <button
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="p-2 text-foreground hover:text-brand-primary transition-colors"
-                        >
-                            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-                        </button>
-                    </div>
-                </nav>
-            </div>
-
-            {/* Mobile Menu */}
-            <AnimatePresence>
-                {mobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
-                        className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-white/10 overflow-y-auto no-scrollbar max-h-[calc(100vh-5rem)] shadow-2xl rounded-b-2xl border-b border-x border-slate-100 dark:border-white/10"
-                    >
-                        <div className="container mx-auto px-5 py-4 space-y-3.5">
-                            {/* Language Switcher for Mobile */}
-                            <div className="flex items-center justify-between py-2 border-b border-slate-100/50 dark:border-white/5">
-                                <span className="text-xs font-bold tracking-wider uppercase text-muted-foreground flex items-center gap-1.5">
-                                    <Globe size={14} className="text-brand-primary" />
-                                    {t('language')}:
-                                </span>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => switchLocale('vi')}
-                                        className={cn(
-                                            'px-3 py-1 text-xs font-bold tracking-wider uppercase rounded-full border transition-all duration-300',
-                                            activeLocale === 'vi'
-                                                ? 'bg-brand-primary text-white border-brand-primary shadow-md shadow-brand-primary/10'
-                                                : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground hover:text-foreground',
-                                        )}
-                                    >
-                                        VI
-                                    </button>
-                                    <button
-                                        onClick={() => switchLocale('en')}
-                                        className={cn(
-                                            'px-3 py-1 text-xs font-bold tracking-wider uppercase rounded-full border transition-all duration-300',
-                                            activeLocale === 'en'
-                                                ? 'bg-brand-primary text-white border-brand-primary shadow-md shadow-brand-primary/10'
-                                                : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/10 text-muted-foreground hover:text-foreground',
-                                        )}
-                                    >
-                                        EN
-                                    </button>
-                                </div>
-                            </div>
-
-                            {NAV_LINKS.map((link) => {
-                                const hasSubmenu = 'submenu' in link || 'featured' in link;
-                                const isExpanded = !!expandedLinks[link.label];
-                                const isSubmenuActive =
-                                    link.href === '#' &&
-                                    (link.submenu || link.featured)?.some(
-                                        (sub) => pathname === sub.href,
-                                    );
+                        {/* Main Navigation Menu Row */}
+                        <nav className="flex items-center gap-3.5 xl:gap-6 pt-1">
+                            {navItems.map((item) => {
+                                const isActive =
+                                    item.href === '/'
+                                        ? pathname === '/'
+                                        : pathname.startsWith(item.href);
 
                                 return (
-                                    <div
-                                        key={link.label}
-                                        className="border-b border-slate-100/50 dark:border-white/5 pb-1.5 last:border-0 last:pb-0"
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            {link.href === '#' ? (
-                                                <button
-                                                    onClick={() => toggleExpand(link.label)}
-                                                    className={cn(
-                                                        'flex items-center justify-between w-full text-sm sm:text-base font-bold uppercase tracking-wider text-left transition-colors py-2',
-                                                        isSubmenuActive
-                                                            ? 'text-brand-primary!'
-                                                            : 'text-foreground hover:text-brand-primary!',
-                                                    )}
-                                                >
-                                                    <span>{link.label}</span>
-                                                    <ChevronDown
-                                                        size={18}
-                                                        className={cn(
-                                                            'text-muted-foreground/75 transition-transform duration-300',
-                                                            isExpanded &&
-                                                                'rotate-180 text-brand-primary',
-                                                        )}
-                                                    />
-                                                </button>
-                                            ) : (
-                                                <>
-                                                    <Link
-                                                        href={link.href}
-                                                        onClick={() => setMobileMenuOpen(false)}
-                                                        className={cn(
-                                                            'flex-1 text-sm sm:text-base font-bold uppercase tracking-wider transition-colors py-2',
-                                                            pathname === link.href
-                                                                ? 'text-brand-primary!'
-                                                                : 'text-foreground hover:text-brand-primary!',
-                                                        )}
-                                                    >
-                                                        {link.label}
-                                                    </Link>
-                                                    {hasSubmenu && (
-                                                        <button
-                                                            onClick={() => toggleExpand(link.label)}
-                                                            className="p-2 -mr-2 text-muted-foreground/75 hover:text-brand-primary transition-colors"
-                                                            aria-label={`Toggle ${link.label} submenu`}
-                                                        >
-                                                            <ChevronDown
-                                                                size={18}
-                                                                className={cn(
-                                                                    'transition-transform duration-300',
-                                                                    isExpanded &&
-                                                                        'rotate-180 text-brand-primary',
-                                                                )}
-                                                            />
-                                                        </button>
-                                                    )}
-                                                </>
-                                            )}
-                                        </div>
-
-                                        {hasSubmenu && (
-                                            <AnimatePresence initial={false}>
-                                                {isExpanded && (
-                                                    <motion.div
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: 'auto', opacity: 1 }}
-                                                        exit={{ height: 0, opacity: 0 }}
-                                                        transition={{
-                                                            duration: 0.25,
-                                                            ease: 'easeInOut',
-                                                        }}
-                                                        className="overflow-hidden"
-                                                    >
-                                                        <div className="pl-4 mt-1 mb-1 py-0.5 grid grid-cols-1 gap-1.5 border-l border-brand-primary/20">
-                                                            {(link.submenu || link.featured)?.map(
-                                                                (item: {
-                                                                    title: string;
-                                                                    href: string;
-                                                                    desc?: string;
-                                                                    external?: boolean;
-                                                                }) => {
-                                                                    const isSubActive =
-                                                                        pathname === item.href;
-                                                                    const subLinkContent = (
-                                                                        <span
-                                                                            className={cn(
-                                                                                'text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 py-1',
-                                                                                isSubActive
-                                                                                    ? 'text-brand-primary!'
-                                                                                    : 'text-muted-foreground hover:text-brand-primary!',
-                                                                            )}
-                                                                        >
-                                                                            <span
-                                                                                className={cn(
-                                                                                    'h-1.5 w-1.5 rounded-full transition-colors',
-                                                                                    isSubActive
-                                                                                        ? 'bg-brand-primary'
-                                                                                        : 'bg-brand-primary/40 group-hover:bg-brand-primary',
-                                                                                )}
-                                                                            />
-                                                                            {item.title}
-                                                                        </span>
-                                                                    );
-
-                                                                    return item.external ? (
-                                                                        <a
-                                                                            key={item.title}
-                                                                            href={item.href}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            onClick={() =>
-                                                                                setMobileMenuOpen(
-                                                                                    false,
-                                                                                )
-                                                                            }
-                                                                            className="group block"
-                                                                        >
-                                                                            {subLinkContent}
-                                                                        </a>
-                                                                    ) : (
-                                                                        <Link
-                                                                            key={item.title}
-                                                                            href={item.href}
-                                                                            onClick={() =>
-                                                                                setMobileMenuOpen(
-                                                                                    false,
-                                                                                )
-                                                                            }
-                                                                            className="group block"
-                                                                        >
-                                                                            {subLinkContent}
-                                                                        </Link>
-                                                                    );
-                                                                },
-                                                            )}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
+                                    <Link
+                                        key={item.label}
+                                        href={item.href as "/"}
+                                        className={cn(
+                                            'text-sm sm:text-base lg:text-[16px] xl:text-[17px] font-extrabold tracking-wide uppercase transition-all duration-200 relative py-1 hover:text-[#E5B869]',
+                                            isActive
+                                                ? 'text-[#E5B869] font-black'
+                                                : 'text-white'
                                         )}
-                                    </div>
+                                    >
+                                        {item.label}
+                                        {isActive && (
+                                            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E5B869] rounded-full" />
+                                        )}
+                                    </Link>
                                 );
                             })}
+                        </nav>
+                    </div>
 
-                            <div className="pt-4 border-t border-slate-100/50 dark:border-white/5 space-y-3.5">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {/* Mobile Hamburger Button */}
+                    <div className="flex items-center gap-3 lg:hidden">
+                        <div ref={mobileLangRef} className="relative">
+                            <button
+                                type="button"
+                                onClick={() => setLanguageMenuOpen((o) => !o)}
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded bg-white/10 text-xs font-semibold"
+                            >
+                                <span>{activeLocale === 'vi' ? '🇻🇳' : activeLocale === 'zh' ? '🇨🇳' : '🇬🇧'}</span>
+                                <ChevronDown className="w-3 h-3 text-slate-300" />
+                            </button>
+
+                            {languageMenuOpen && (
+                                <div
+                                    onPointerDown={(e) => e.stopPropagation()}
+                                    className="absolute right-0 top-full mt-1.5 w-36 bg-white text-slate-900 rounded-lg shadow-xl border border-slate-100 py-1 z-50 text-xs font-bold"
+                                >
                                     <a
-                                        href={`tel:${COMPANY_INFO.hotlineRaw}`}
-                                        className="flex items-center gap-3 text-muted-foreground hover:text-brand-primary transition-colors group"
+                                        href={getLocalizedUrl('vi')}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            switchLocale('vi');
+                                        }}
+                                        className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 cursor-pointer"
                                     >
-                                        <div className="h-8 w-8 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-full transition-all group-hover:bg-brand-primary group-hover:text-white group-hover:scale-105">
-                                            <Phone size={14} />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
-                                                Hotline
-                                            </span>
-                                            <span className="font-bold text-sm tracking-wider text-foreground">
-                                                {COMPANY_INFO.hotline}
-                                            </span>
-                                        </div>
+                                        <span>🇻🇳 Tiếng Việt</span>
+                                        {activeLocale === 'vi' && <Check className="w-3.5 h-3.5 text-amber-600" />}
                                     </a>
                                     <a
-                                        href={`mailto:${COMPANY_INFO.email}`}
-                                        className="flex items-center gap-3 text-muted-foreground hover:text-brand-primary transition-colors group"
+                                        href={getLocalizedUrl('en')}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            switchLocale('en');
+                                        }}
+                                        className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 cursor-pointer"
                                     >
-                                        <div className="h-8 w-8 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-full transition-all group-hover:bg-brand-primary group-hover:text-white group-hover:scale-105">
-                                            <Mail size={14} />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
-                                                Email
-                                            </span>
-                                            <span className="font-bold text-sm tracking-wider text-foreground truncate max-w-[200px]">
-                                                {COMPANY_INFO.email}
-                                            </span>
-                                        </div>
+                                        <span>🇬🇧 English</span>
+                                        {activeLocale === 'en' && <Check className="w-3.5 h-3.5 text-amber-600" />}
+                                    </a>
+                                    <a
+                                        href={getLocalizedUrl('zh')}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            switchLocale('zh');
+                                        }}
+                                        className="w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-50 cursor-pointer"
+                                    >
+                                        <span>🇨🇳 中文 (简体)</span>
+                                        {activeLocale === 'zh' && <Check className="w-3.5 h-3.5 text-amber-600" />}
                                     </a>
                                 </div>
-
-                                {mobileSocialLinks.length > 0 && (
-                                    <div className="flex items-center gap-2 pt-1">
-                                        {mobileSocialLinks.map(({ label, Icon, href }) => (
-                                            <a
-                                                key={label}
-                                                href={href}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                aria-label={label}
-                                                className="h-8 px-2.5 flex items-center justify-center bg-slate-50 dark:bg-white/5 text-brand-primary rounded-full border border-slate-100 dark:border-white/5 transition-all hover:bg-brand-primary hover:text-white hover:border-brand-primary hover:scale-105"
-                                            >
-                                                {Icon ? (
-                                                    <Icon size={14} />
-                                                ) : (
-                                                    <span className="text-xs font-bold uppercase tracking-wider">
-                                                        Zalo
-                                                    </span>
-                                                )}
-                                            </a>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                            )}
                         </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+
+                        <button
+                            type="button"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            aria-label="Toggle Menu"
+                            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+                        >
+                            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+                    </div>
+                </div>
+
+            {/* Mobile Navigation Drawer */}
+            {mobileMenuOpen && (
+                <div className="lg:hidden absolute inset-x-0 top-full bg-[#0A2958] border-b border-white/10 shadow-2xl px-6 py-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
+                    <form onSubmit={handleSearchSubmit} className="relative w-full">
+                        <input
+                            type="text"
+                            placeholder={t('searchPlaceholder')}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full px-4 py-2.5 pr-10 bg-white text-slate-900 rounded-full text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#E5B869] placeholder:text-slate-400"
+                        />
+                        <button
+                            type="submit"
+                            aria-label={t('search')}
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                        >
+                            <Search className="w-4 h-4" />
+                        </button>
+                    </form>
+
+                    <nav className="flex flex-col space-y-2">
+                        {navItems.map((item) => {
+                            const isActive =
+                                item.href === '/'
+                                    ? pathname === '/'
+                                    : pathname.startsWith(item.href);
+                            return (
+                                <Link
+                                    key={item.label}
+                                    href={item.href as "/"}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={cn(
+                                        'px-4 py-3 rounded-xl text-base sm:text-lg font-black tracking-wide uppercase transition-colors',
+                                        isActive
+                                            ? 'text-[#E5B869] bg-white/10 font-black'
+                                            : 'text-white hover:text-[#E5B869] hover:bg-white/5'
+                                    )}
+                                >
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
+                    </nav>
+
+                    <div className="pt-3 border-t border-white/10">
+                        <a
+                            href={`tel:${COMPANY_INFO.hotlineRaw}`}
+                            className="flex items-center justify-center gap-3 w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-base sm:text-lg shadow-lg active:scale-98 transition-transform"
+                        >
+                            <Phone className="w-5 h-5 fill-slate-950 text-slate-950" />
+                            <span>Hotline: {COMPANY_INFO.hotline}</span>
+                        </a>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }
-
-const ListItem = React.forwardRef<
-    React.ElementRef<'a'>,
-    React.ComponentPropsWithoutRef<'a'> & { title: string; external?: boolean; href: string }
->(({ className, title, children, external, href, ...props }, ref) => {
-    const content = (
-        <div className="flex flex-col gap-1">
-            <div className="text-xs font-black uppercase tracking-tight group-hover:text-brand-primary transition-colors">
-                {title}
-            </div>
-            {children && (
-                <p className="line-clamp-2 text-xs font-medium leading-relaxed text-muted-foreground/80 italic">
-                    {children}
-                </p>
-            )}
-        </div>
-    );
-
-    return (
-        <li>
-            <NavigationMenuLink asChild>
-                {external ? (
-                    <a
-                        ref={ref}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={cn(
-                            'block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100/50 dark:hover:bg-slate-800/50 focus:bg-slate-100/50 dark:focus:bg-slate-800/50 group',
-                            className,
-                        )}
-                        {...props}
-                    >
-                        {content}
-                    </a>
-                ) : (
-                    <Link
-                        href={href}
-                        className={cn(
-                            'block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100/50 dark:hover:bg-slate-800/50 focus:bg-slate-100/50 dark:focus:bg-slate-800/50 group',
-                            className,
-                        )}
-                    >
-                        {content}
-                    </Link>
-                )}
-            </NavigationMenuLink>
-        </li>
-    );
-});
-ListItem.displayName = 'ListItem';

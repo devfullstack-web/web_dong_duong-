@@ -20,7 +20,8 @@ import { toast } from 'sonner';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { vi, enUS, zhCN } from 'date-fns/locale';
+import { useLocale } from 'next-intl';
 import { usePermissions } from '@/hooks/use-permissions';
 
 interface Comment {
@@ -39,12 +40,20 @@ interface ProductCommentsProps {
 }
 
 export function ProductComments({ productSlug }: ProductCommentsProps) {
+    const locale = useLocale();
+    const dateLocale = locale === 'zh' ? zhCN : locale === 'en' ? enUS : vi;
     const { isAdmin } = usePermissions();
     const [comments, setComments] = React.useState<Comment[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [showAll, setShowAll] = React.useState(false);
     const [showForm, setShowForm] = React.useState(false);
+
+    const tC = (viText: string, enText: string, zhText: string) => {
+        if (locale === 'zh') return zhText;
+        if (locale === 'en') return enText;
+        return viText;
+    };
 
     // Admin Reply State
     const [replyingToId, setReplyingToId] = React.useState<string | null>(null);
@@ -92,7 +101,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.guest_name || !formData.guest_email || !formData.content) {
-            toast.error('Vui lòng điền đầy đủ thông tin');
+            toast.error(tC('Vui lòng điền đầy đủ thông tin', 'Please fill in all required fields', '请完整填写所有信息'));
             return;
         }
 
@@ -100,7 +109,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
         try {
             const response = await $api.post(`${API_ROUTES.PRODUCTS}/${productSlug}/comments`, formData);
             if (response.data.success) {
-                toast.success('Cảm ơn bạn! Bình luận của bạn đã được gửi và đang chờ duyệt.');
+                toast.success(tC('Cảm ơn bạn! Bình luận của bạn đã được gửi và đang chờ duyệt.', 'Thank you! Your question has been submitted and is pending approval.', '感谢您的咨询！您的提问已提交，正在等待审核。'));
                 const newComment: Comment = { ...response.data.data, is_pending: true };
                 if (!isAdmin) {
                     const localPendingRaw = localStorage.getItem(`pending_comments_${productSlug}`);
@@ -116,7 +125,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 setShowForm(false);
             }
         } catch {
-            toast.error('Không thể gửi bình luận. Vui lòng thử lại.');
+            toast.error(tC('Không thể gửi bình luận. Vui lòng thử lại.', 'Failed to submit question. Please try again.', '提交失败，请稍后重试。'));
         } finally {
             setIsSubmitting(false);
         }
@@ -131,13 +140,13 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 is_approved: true,
             });
             if (response.data.success) {
-                toast.success('Đã gửi phản hồi');
+                toast.success(tC('Đã gửi phản hồi', 'Reply sent successfully', '已成功回复'));
                 setReplyingToId(null);
                 setAdminReply('');
                 fetchComments();
             }
         } catch {
-            toast.error('Không thể gửi phản hồi');
+            toast.error(tC('Không thể gửi phản hồi', 'Failed to send reply', '回复发送失败'));
         } finally {
             setIsReplying(false);
         }
@@ -152,22 +161,24 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <div className="h-px w-8 bg-brand-primary"></div>
-                        <span className="text-xs font-black uppercase tracking-[0.3em] text-brand-primary">Hỏi đáp & Thảo luận</span>
+                        <span className="text-xs font-black uppercase tracking-[0.3em] text-brand-primary">
+                            {tC('Hỏi đáp & Thảo luận', 'Q&A & Discussion', '问答与技术咨询')}
+                        </span>
                     </div>
                     <h2 className="text-2xl font-black text-slate-900 uppercase tracking-tight leading-none">
-                        CHIA SẺ <span className="text-brand-primary">THẮC MẮC</span> CỦA BẠN
+                        {tC('CHIA SẺ', 'SHARE', '咨询')} <span className="text-brand-primary">{tC('THẮC MẮC', 'QUESTIONS', '疑问')}</span> {tC('CỦA BẠN', '& INQUIRIES', '与技术支持')}
                     </h2>
                     <p className="text-sm text-slate-500 font-medium italic">
-                        Chúng tôi sẽ phản hồi các câu hỏi kỹ thuật trong thời gian sớm nhất.
+                        {tC('Chúng tôi sẽ phản hồi các câu hỏi kỹ thuật trong thời gian sớm nhất.', 'We will respond to your technical questions as soon as possible.', '我们的工程专家团队将第一时间为您提供专业解答。')}
                     </p>
                 </div>
 
                 {!showForm && (
                     <button 
                         onClick={() => setShowForm(true)}
-                        className="inline-flex items-center gap-3 px-8 py-3 bg-slate-900 text-white text-xs sm:text-sm font-black uppercase tracking-wider hover:bg-brand-primary transition-all shadow-xl shadow-slate-900/10 group"
+                        className="inline-flex items-center gap-3 px-8 py-3 bg-slate-900 text-white text-xs sm:text-sm font-black uppercase tracking-wider hover:bg-brand-primary transition-all shadow-xl shadow-slate-900/10 group cursor-pointer"
                     >
-                        <Plus size={14} className="group-hover:rotate-90 transition-transform" /> Đặt câu hỏi
+                        <Plus size={14} className="group-hover:rotate-90 transition-transform" /> {tC('Đặt câu hỏi', 'Ask a Question', '发起咨询提问')}
                     </button>
                 )}
             </div>
@@ -177,18 +188,18 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 <div className="mb-12 bg-slate-50 p-8 border border-slate-100 animate-in fade-in slide-in-from-top-4 duration-500 relative">
                     <button 
                         onClick={() => setShowForm(false)}
-                        className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 transition-colors"
+                        className="absolute top-4 right-4 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
                     >
                         <X size={18} />
                     </button>
                     <div className="max-w-3xl">
                         <h3 className="text-sm font-black uppercase tracking-wider text-slate-900 mb-6 flex items-center gap-3">
-                            <Send size={14} className="text-brand-primary" /> Thông tin câu hỏi
+                            <Send size={14} className="text-brand-primary" /> {tC('Thông tin câu hỏi', 'Question Details', '填写咨询内容')}
                         </h3>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Input
-                                    placeholder="Họ và tên *"
+                                    placeholder={tC('Họ và tên *', 'Full Name *', '您的姓名 *')}
                                     value={formData.guest_name}
                                     onChange={(e) => setFormData({ ...formData, guest_name: e.target.value })}
                                     className="bg-white border-slate-200 h-11 text-sm font-medium rounded-none focus:ring-brand-primary"
@@ -196,7 +207,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                 />
                                 <Input
                                     type="email"
-                                    placeholder="Email liên hệ *"
+                                    placeholder={tC('Email liên hệ *', 'Contact Email *', '联系邮箱 *')}
                                     value={formData.guest_email}
                                     onChange={(e) => setFormData({ ...formData, guest_email: e.target.value })}
                                     className="bg-white border-slate-200 h-11 text-sm font-medium rounded-none focus:ring-brand-primary"
@@ -204,7 +215,7 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                 />
                             </div>
                             <Textarea
-                                placeholder="Nội dung thắc mắc của bạn... *"
+                                placeholder={tC('Nội dung thắc mắc của bạn... *', 'Your question or technical inquiry... *', '请输入您的技术咨询或疑问内容... *')}
                                 value={formData.content}
                                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                                 className="bg-white border-slate-200 min-h-[100px] text-sm font-medium rounded-none focus:ring-brand-primary resize-none"
@@ -212,14 +223,14 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                             />
                             <div className="flex items-center justify-between gap-4">
                                 <p className="text-xs text-slate-500 italic">
-                                    * Câu hỏi của bạn sẽ được kiểm duyệt trước khi hiển thị công khai.
+                                    {tC('* Câu hỏi của bạn sẽ được kiểm duyệt trước khi hiển thị công khai.', '* Your question will be moderated before being publicly displayed.', '* 您的咨询提问在通过审核后将公开展示。')}
                                 </p>
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="bg-brand-primary hover:bg-brand-secondary text-white px-10 h-11 text-xs sm:text-sm font-black uppercase tracking-wider transition-all rounded-none"
+                                    className="bg-brand-primary hover:bg-brand-secondary text-white px-10 h-11 text-xs sm:text-sm font-black uppercase tracking-wider transition-all rounded-none cursor-pointer"
                                 >
-                                    {isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu'}
+                                    {isSubmitting ? tC('Đang gửi...', 'Submitting...', '正在提交...') : tC('Gửi yêu cầu', 'Submit Question', '提交咨询')}
                                 </Button>
                             </div>
                         </form>
@@ -232,12 +243,12 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-12 opacity-40">
                         <div className="size-8 border-4 border-brand-primary border-t-transparent animate-spin mb-4" />
-                        <p className="text-xs font-black uppercase tracking-wider">Đang tải thảo luận...</p>
+                        <p className="text-xs font-black uppercase tracking-wider">{tC('Đang tải thảo luận...', 'Loading discussions...', '正在加载问答...')}</p>
                     </div>
                 ) : comments.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 bg-slate-50/50 border border-dashed border-slate-200">
                         <MessageSquare size={32} className="text-slate-200 mb-3" />
-                        <p className="text-slate-400 text-sm font-medium italic">Chưa có thảo luận nào cho sản phẩm này.</p>
+                        <p className="text-slate-400 text-sm font-medium italic">{tC('Chưa có thảo luận nào cho sản phẩm này.', 'No discussions for this product yet.', '暂无相关提问，欢迎率先咨询。')}</p>
                     </div>
                 ) : (
                     <div className="space-y-6">
@@ -251,17 +262,19 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                         <div className="flex items-center gap-3">
                                             <span className="text-sm font-black text-slate-900 uppercase tracking-tight">{comment.guest_name}</span>
                                             {(comment.is_pending || (isAdmin && !comment.is_approved)) && (
-                                                <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 font-bold uppercase tracking-wider border border-amber-100">Đang chờ duyệt</span>
+                                                <span className="text-xs bg-amber-50 text-amber-600 px-2 py-0.5 font-bold uppercase tracking-wider border border-amber-100">
+                                                    {tC('Đang chờ duyệt', 'Pending Review', '待审核')}
+                                                </span>
                                             )}
                                             <span className="text-xs font-medium text-slate-400 flex items-center gap-1.5 ml-auto">
-                                                <Clock size={12} /> {format(new Date(comment.created_at), 'dd/MM/yyyy', { locale: vi })}
+                                                <Clock size={12} /> {format(new Date(comment.created_at), locale === 'zh' ? 'yyyy年MM月dd日' : 'dd/MM/yyyy', { locale: dateLocale })}
                                             </span>
                                             {isAdmin && (
                                                 <button 
                                                     onClick={() => { setReplyingToId(comment.id); setAdminReply(comment.reply_content || ''); }}
-                                                    className="text-xs font-bold uppercase text-brand-primary hover:underline flex items-center gap-1.5"
+                                                    className="text-xs font-bold uppercase text-brand-primary hover:underline flex items-center gap-1.5 cursor-pointer"
                                                 >
-                                                    <Reply size={12} /> {comment.reply_content ? 'Sửa' : 'Trả lời'}
+                                                    <Reply size={12} /> {comment.reply_content ? tC('Sửa', 'Edit', '修改') : tC('Trả lời', 'Reply', '回复')}
                                                 </button>
                                             )}
                                         </div>
@@ -274,7 +287,9 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                             <div className="mt-4 flex gap-4 pl-6 border-l-2 border-brand-primary/20 bg-slate-50/50 p-4">
                                                 <CheckCircle2 size={14} className="text-brand-primary shrink-0 mt-0.5" />
                                                 <div className="space-y-1">
-                                                    <div className="text-xs font-black text-brand-primary uppercase tracking-wider italic">SG - VAL Phản hồi:</div>
+                                                    <div className="text-xs font-black text-brand-primary uppercase tracking-wider italic">
+                                                        {tC('Đông Dương Corporation Phản hồi:', 'Dong Duong Corporation Reply:', '东洋集团技术团队回复:')}
+                                                    </div>
                                                     <div className="text-sm font-medium text-slate-700 leading-relaxed italic">{comment.reply_content}</div>
                                                 </div>
                                             </div>
@@ -284,18 +299,20 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                                         {isAdmin && replyingToId === comment.id && (
                                             <div className="mt-4 p-5 bg-white border border-brand-primary/20 space-y-3">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <span className="text-xs font-black uppercase text-brand-primary tracking-wider">Phản hồi của chuyên gia:</span>
-                                                    <button onClick={() => setReplyingToId(null)}><X size={14} className="text-slate-400 hover:text-rose-500" /></button>
+                                                    <span className="text-xs font-black uppercase text-brand-primary tracking-wider">
+                                                        {tC('Phản hồi của chuyên gia:', 'Expert Reply:', '专家回复:')}
+                                                    </span>
+                                                    <button onClick={() => setReplyingToId(null)}><X size={14} className="text-slate-400 hover:text-rose-500 cursor-pointer" /></button>
                                                 </div>
                                                 <Textarea 
                                                     value={adminReply} 
                                                     onChange={(e) => setAdminReply(e.target.value)}
-                                                    placeholder="Nhập nội dung phản hồi..."
+                                                    placeholder={tC('Nhập nội dung phản hồi...', 'Enter reply content...', '输入回复内容...')}
                                                     className="text-sm font-medium min-h-[80px] border-slate-100 rounded-none focus:ring-brand-primary"
                                                 />
                                                 <div className="flex justify-end gap-2">
-                                                    <Button size="sm" onClick={() => handleAdminReply(comment.id)} disabled={isReplying || !adminReply.trim()} className="bg-brand-primary text-white text-xs font-black uppercase tracking-wider rounded-none">
-                                                        {isReplying ? 'Đang gửi...' : 'Gửi phản hồi'}
+                                                    <Button size="sm" onClick={() => handleAdminReply(comment.id)} disabled={isReplying || !adminReply.trim()} className="bg-brand-primary text-white text-xs font-black uppercase tracking-wider rounded-none cursor-pointer">
+                                                        {isReplying ? tC('Đang gửi...', 'Sending...', '正在发送...') : tC('Gửi phản hồi', 'Send Reply', '提交回复')}
                                                     </Button>
                                                 </div>
                                             </div>
@@ -308,9 +325,13 @@ export function ProductComments({ productSlug }: ProductCommentsProps) {
                         {comments.length > 5 && (
                             <button 
                                 onClick={() => setShowAll(!showAll)}
-                                className="w-full py-4 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-400 hover:text-brand-primary transition-all flex items-center justify-center gap-2"
+                                className="w-full py-4 text-xs sm:text-sm font-black uppercase tracking-wider text-slate-400 hover:text-brand-primary transition-all flex items-center justify-center gap-2 cursor-pointer"
                             >
-                                {showAll ? <>Thu gọn <ChevronUp size={14} /></> : <>Xem thêm {comments.length - 5} thảo luận <ChevronDown size={14} /></>}
+                                {showAll ? (
+                                    <>{tC('Thu gọn', 'Collapse', '收起')} <ChevronUp size={14} /></>
+                                ) : (
+                                    <>{tC(`Xem thêm ${comments.length - 5} thảo luận`, `View ${comments.length - 5} more discussions`, `查看更多 ${comments.length - 5} 条问答`)} <ChevronDown size={14} /></>
+                                )}
                             </button>
                         )}
                     </div>

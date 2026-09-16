@@ -120,3 +120,6 @@ export async function PATCH(request: Request) {
         return apiError('Internal Server Error', 500);
     }
 }
+
+export const PUT = PATCH;
+

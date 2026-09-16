@@ -451,6 +451,7 @@ export default function AddNewsPage() {
                                 placeholder={{
                                     vi: 'Nhập tiêu đề bài viết...',
                                     en: 'Enter article title...',
+                                    zh: '输入文章标题...',
                                 }}
                             />
 
@@ -488,6 +489,7 @@ export default function AddNewsPage() {
                                 placeholder={{
                                     vi: 'Nhập mô tả ngắn cho bài viết (hiển thị trên danh sách)...',
                                     en: 'Enter short summary for the article...',
+                                    zh: '输入文章摘要（显示在列表中）...',
                                 }}
                                 rows={4}
                             />
