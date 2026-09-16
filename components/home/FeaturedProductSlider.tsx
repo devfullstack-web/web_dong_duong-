@@ -133,7 +133,7 @@ function ProductCard({ product }: { product: FeaturedProductData }) {
                     {/* Title Slot (Fixed Min-Height) */}
                     <div className="min-h-[3.2rem] sm:min-h-[3.6rem] flex items-center">
                         <Link
-                            href={{ pathname: '/san-pham/[slug]', params: { slug: product.slug } }}
+                            href={`/san-pham/${product.slug}`}
                             className="group-hover:text-sky-600 transition-colors w-full"
                         >
                             <h3 className="text-base sm:text-lg lg:text-xl font-black uppercase text-[#0B2545] tracking-tight line-clamp-2 leading-snug">
@@ -172,7 +172,7 @@ function ProductCard({ product }: { product: FeaturedProductData }) {
                         {t('requestQuote')}
                     </a>
                     <Link
-                        href={{ pathname: '/san-pham/[slug]', params: { slug: product.slug } }}
+                        href={`/san-pham/${product.slug}`}
                         className="inline-flex items-center justify-center p-3 rounded-xl border-2 border-slate-300 hover:border-sky-400 hover:bg-sky-50 text-slate-800 hover:text-sky-600 transition-all text-base font-bold active:scale-[0.98]"
                         title={t('seeDetail')}
                     >

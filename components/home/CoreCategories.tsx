@@ -191,7 +191,7 @@ export default function CoreCategories({ categories = [] }: Props) {
                                         className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-5 sm:pl-6 min-w-0 flex flex-col items-stretch"
                                     >
                                         <Link
-                                            href={{ pathname: '/san-pham', query: { category: cat.id } }}
+                                            href={`/san-pham?category=${cat.id}`}
                                             className="flex flex-col justify-between h-full min-h-[340px] sm:min-h-[380px] border-2 border-sky-400 rounded-3xl p-4 sm:p-5 bg-white shadow-md hover:shadow-xl hover:border-sky-500 transition-all duration-300 group hover:-translate-y-1"
                                         >
                                             {/* Image Top */}
