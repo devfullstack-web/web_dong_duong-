@@ -26,8 +26,8 @@ export default function ContactPage() {
 
             {/* Contact Grid */}
             <section className="relative py-16 overflow-hidden">
-                {/* Tech Blueprint & Grid Background */}
-                <TechSvgBackground variant="blueprint" glowColor="blue" className="absolute inset-0 z-0" />
+                {/* Architectural Ceramic & Engineering Facility Portal Background */}
+                <TechSvgBackground variant="tiles-porcelain" glowColor="amber" className="absolute inset-0 z-0" />
 
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

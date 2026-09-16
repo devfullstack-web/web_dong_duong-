@@ -54,8 +54,8 @@ export default function AboutPage() {
 
             {/* Intro Section - Mission & Vision */}
             <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
-                {/* Tech Blueprint Vector CAD Background */}
-                <TechSvgBackground variant="blueprint" glowColor="amber" className="absolute inset-0 z-0" />
+                {/* Architectural Tiles & Porcelain Polished Sheen Background */}
+                <TechSvgBackground variant="tiles-porcelain" glowColor="amber" className="absolute inset-0 z-0" />
 
                 <div className="container relative z-10 mx-auto px-4 lg:px-8 max-w-[1340px]">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
@@ -191,8 +191,8 @@ export default function AboutPage() {
 
             {/* Business Pillars - 2 Core Sectors */}
             <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
-                {/* Tech Aerodynamic Flow Background */}
-                <TechSvgBackground variant="flow" glowColor="cyan" className="absolute inset-0 z-0" />
+                {/* Commercial VRV & Chiller Aerodynamic Cooling Flow Background */}
+                <TechSvgBackground variant="hvac-chiller" glowColor="cyan" className="absolute inset-0 z-0" />
 
                 <div className="container relative z-10 mx-auto px-4 lg:px-8 max-w-[1340px]">
                     <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6 mb-16">

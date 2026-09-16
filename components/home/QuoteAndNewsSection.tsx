@@ -114,8 +114,8 @@ export default function QuoteAndNewsSection({ articles }: Props) {
 
     return (
         <section id="quote-form" className="relative py-16 sm:py-20 bg-slate-50/70 border-t border-slate-100 overflow-hidden">
-            {/* Tech Dot Matrix & Ambient Cyan Glow Background */}
-            <TechSvgBackground variant="ecommerce-grid" glowColor="cyan" className="absolute inset-0 z-0" />
+            {/* E-Commerce Project Quoting Portal Background */}
+            <TechSvgBackground variant="ecommerce-portal" glowColor="cyan" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">

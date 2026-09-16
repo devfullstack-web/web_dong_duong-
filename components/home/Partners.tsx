@@ -244,8 +244,8 @@ export default function Partners({ initialPartners }: PartnersProps) {
             transition={{ duration: 0.7, ease: 'easeOut' }}
             className="relative py-20 lg:py-24 bg-gradient-to-b from-slate-50 to-white border-t border-slate-200/80 overflow-hidden"
         >
-            {/* Tech Partner Constellation Network Background */}
-            <TechSvgBackground variant="network" glowColor="blue" className="absolute inset-0 z-0" />
+            {/* Strategic Brand Partner Network Background */}
+            <TechSvgBackground variant="partner-network" glowColor="blue" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 lg:px-8 max-w-[1340px]">
                 {/* Header Section */}

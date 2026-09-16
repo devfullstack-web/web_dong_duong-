@@ -8,8 +8,8 @@ interface PageBannerProps {
 export function PageBanner({ title, accent }: PageBannerProps) {
     return (
         <section className="relative pt-36 pb-8 border-b border-slate-200/80 bg-gradient-to-r from-slate-50 via-white to-sky-50/30 overflow-hidden">
-            {/* Tech Vector Dot Matrix & Corner HUD Ambient Glow */}
-            <TechSvgBackground variant="ecommerce-grid" glowColor="blue" className="absolute inset-0 z-0" />
+            {/* Modern E-Commerce Portal Dot Matrix & Corner HUD Ambient Glow */}
+            <TechSvgBackground variant="ecommerce-portal" glowColor="blue" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 lg:px-8">
                 <div className="flex items-center gap-3.5">

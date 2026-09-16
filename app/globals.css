@@ -287,6 +287,88 @@ html {
   animation: tech-dash-flow 3s linear infinite;
 }
 
+/* Specialized Business Animations: HVAC, Tiles, Industrial & Portals */
+@keyframes hvac-air-stream {
+  0% {
+    stroke-dashoffset: 160;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hvac-fan-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes tile-sheen-sweep {
+  0% {
+    transform: translateX(-120%) translateY(-120%) rotate(35deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  35% {
+    transform: translateX(120%) translateY(120%) rotate(35deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(120%) translateY(120%) rotate(35deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cooling-ion-bob {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.18);
+    opacity: 0.9;
+  }
+}
+
+@keyframes marble-vein-drift {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-8px) scaleY(1.03);
+  }
+}
+
+.animate-hvac-air-stream {
+  animation: hvac-air-stream 4s linear infinite;
+}
+
+.animate-hvac-fan-spin {
+  animation: hvac-fan-spin 24s linear infinite;
+  transform-origin: center;
+}
+
+.animate-tile-sheen {
+  animation: tile-sheen-sweep 8s ease-in-out infinite;
+}
+
+.animate-cooling-ion-bob {
+  animation: cooling-ion-bob 5s ease-in-out infinite;
+}
+
+.animate-cooling-ion-bob-delayed {
+  animation: cooling-ion-bob 6s ease-in-out 2.5s infinite;
+}
+
+.animate-marble-vein-drift {
+  animation: marble-vein-drift 10s ease-in-out infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

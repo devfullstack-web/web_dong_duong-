@@ -49,8 +49,8 @@ export default function WorkflowProcess({ steps = [] }: Props) {
 
     return (
         <section className="relative py-16 sm:py-20 bg-slate-50/60 border-b border-slate-100 overflow-hidden">
-            {/* Tech Animated Circuit Traces Background */}
-            <TechSvgBackground variant="circuit" glowColor="amber" className="absolute inset-0 z-0" />
+            {/* Smart 5-Step Supply Chain & Engineering Workflow Traces */}
+            <TechSvgBackground variant="smart-workflow" glowColor="amber" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Header */}

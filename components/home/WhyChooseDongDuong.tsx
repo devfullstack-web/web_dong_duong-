@@ -26,8 +26,8 @@ export default function WhyChooseDongDuong({ reasons = [] }: Props) {
 
     return (
         <section className="relative py-14 sm:py-16 lg:py-20 bg-white border-b border-slate-100 overflow-hidden">
-            {/* High-Tech Animated Vector Blueprint Background */}
-            <TechSvgBackground variant="blueprint" glowColor="amber" className="absolute inset-0 z-0" />
+            {/* Architectural Tiles & Porcelain Polished Sheen Background */}
+            <TechSvgBackground variant="tiles-porcelain" glowColor="amber" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Title matching Mockup serif bold */}

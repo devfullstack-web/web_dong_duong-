@@ -54,8 +54,8 @@ export default function NewsPage() {
 
             {/* Compact News Grid */}
             <section className="relative py-12 bg-white min-h-[400px] overflow-hidden">
-                {/* Tech Dot Matrix Background */}
-                <TechSvgBackground variant="ecommerce-grid" glowColor="cyan" className="absolute inset-0 z-0" />
+                {/* Industry Technical News & Portal Grid Background */}
+                <TechSvgBackground variant="ecommerce-portal" glowColor="cyan" className="absolute inset-0 z-0" />
 
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     {isLoading && news.length === 0 ? (

@@ -161,8 +161,8 @@ export default function ProductArchive() {
 
             {/* Main Content */}
             <section className="relative py-8 overflow-hidden">
-                {/* Tech Matrix Vector Grid Background */}
-                <TechSvgBackground variant="ecommerce-grid" glowColor="cyan" className="absolute inset-0 z-0" />
+                {/* E-Commerce Product Trading Portal Background */}
+                <TechSvgBackground variant="ecommerce-portal" glowColor="cyan" className="absolute inset-0 z-0" />
 
                 <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">

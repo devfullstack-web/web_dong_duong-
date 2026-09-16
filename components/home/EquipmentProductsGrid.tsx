@@ -32,8 +32,8 @@ export default function EquipmentProductsGrid({ products = [] }: Props) {
 
     return (
         <section id="equipment-products" className="relative py-16 sm:py-20 bg-white overflow-hidden">
-            {/* High-Tech Industrial Honeycomb Mesh Background */}
-            <TechSvgBackground variant="honeycomb" glowColor="amber" className="absolute inset-0 z-0" />
+            {/* Heavy Industrial Machinery, Valve & Chiller Engineering Background */}
+            <TechSvgBackground variant="industrial-equipment" glowColor="amber" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Header */}

@@ -246,8 +246,8 @@ export default function FeaturedProductSlider({ products = [] }: Props) {
 
     return (
         <section id="featured-products" className="py-14 sm:py-16 relative bg-white border-b border-slate-100 overflow-hidden">
-            {/* Tech Animated Aerodynamic Flow Background */}
-            <TechSvgBackground variant="flow" glowColor="cyan" className="absolute inset-0 z-0" />
+            {/* Commercial VRV & Water Chiller Aerodynamic Cooling Background */}
+            <TechSvgBackground variant="hvac-chiller" glowColor="cyan" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Header matching Mockup 1 */}
