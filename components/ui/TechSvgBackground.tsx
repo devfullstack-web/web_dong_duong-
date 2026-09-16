@@ -380,12 +380,7 @@ export default function TechSvgBackground({
                         </svg>
                     </div>
 
-                    {/* Technical Specification Annotations from DB */}
-                    <div className="absolute left-3 top-3 sm:left-8 sm:top-8 font-mono text-[9px] sm:text-[11px] text-slate-400/70 leading-relaxed font-semibold tracking-wider pointer-events-none select-none">
-                        <div>SPEC // DN50 - DN800 | PN16/25</div>
-                        <div>CTRL // RS-485 MODBUS RTU | IP68</div>
-                        <div className="hidden sm:block">HVAC // COP 3.8 ~ 4.2 | R410A</div>
-                    </div>
+
                 </div>
             )}
 
@@ -513,13 +508,7 @@ export default function TechSvgBackground({
                     <div className="absolute bottom-2.5 left-2.5 sm:bottom-5 sm:left-5 w-5 h-5 sm:w-7 sm:h-7 border-b-2 border-l-2 border-amber-500/40 pointer-events-none" />
                     <div className="absolute bottom-2.5 right-2.5 sm:bottom-5 sm:right-5 w-5 h-5 sm:w-7 sm:h-7 border-b-2 border-r-2 border-amber-500/40 pointer-events-none" />
 
-                    {/* Midpoint Coordinate Crosshairs */}
-                    <div className="absolute top-1/2 left-3 -translate-y-1/2 hidden sm:flex items-center gap-1 text-sky-500/40 text-xs font-mono select-none">
-                        <span>+</span><span className="text-[10px]">SYS.01</span>
-                    </div>
-                    <div className="absolute top-1/2 right-3 -translate-y-1/2 hidden sm:flex items-center gap-1 text-sky-500/40 text-xs font-mono select-none">
-                        <span className="text-[10px]">SYS.02</span><span>+</span>
-                    </div>
+
                 </div>
             )}
 
