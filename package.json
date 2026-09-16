@@ -3,8 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev --turbopack",
-        "build": "next build",
+        "dev": "node -e \"try{require('fs').rmSync('.next/server/pages',{recursive:true,force:true})}catch(e){}\" && next dev --turbopack",
+        "clean": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true})}catch(e){}\"",
+        "build": "next build && cp -rf public .next/standalone/ 2>/dev/null || true && cp -rf .next/static .next/standalone/.next/ 2>/dev/null || true",
         "start": "node .next/standalone/server.js",
         "lint": "eslint",
         "db:push": "drizzle-kit push",
@@ -116,6 +117,6 @@
         }
     },
     "lint-staged": {
-        "*.{js,jsx,ts,tsx}": "eslint --fix"
+        "*.{js,jsx,ts,tsx}": "eslint --fix --no-warn-ignored"
     }
 }

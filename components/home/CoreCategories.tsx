@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { motion } from 'motion/react';
 import { Link } from '@/i18n/routing';
 import {
     LayoutGrid,
@@ -170,8 +169,8 @@ export default function CoreCategories({ categories = [] }: Props) {
 
                     {/* Embla Track */}
                     <div className="overflow-hidden flex-1 py-2" ref={emblaRef}>
-                        <div className="flex -ml-5 sm:-ml-6">
-                            {categories.map((cat, idx) => {
+                        <div className="flex -ml-5 sm:-ml-6 items-stretch">
+                            {categories.map((cat) => {
                                 const isZh = locale === 'zh';
                                 const isEn = locale === 'en';
                                 const title = (isZh && cat.name_localized?.zh) ? cat.name_localized.zh : (isEn && cat.name_localized?.en) ? cat.name_localized.en : (cat.name_localized?.vi || cat.name);
@@ -189,14 +188,14 @@ export default function CoreCategories({ categories = [] }: Props) {
                                 return (
                                     <div
                                         key={cat.id}
-                                        className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-5 sm:pl-6 min-w-0"
+                                        className="flex-[0_0_100%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-5 sm:pl-6 min-w-0 flex flex-col items-stretch"
                                     >
                                         <Link
-                                            href={`/san-pham?category=${cat.id}` as any}
-                                            className="block h-full border-2 border-sky-400 rounded-3xl p-4 sm:p-5 bg-white shadow-md hover:shadow-xl hover:border-sky-500 transition-all duration-300 group hover:-translate-y-1"
+                                            href={{ pathname: '/san-pham', query: { category: cat.id } }}
+                                            className="flex flex-col justify-between h-full min-h-[340px] sm:min-h-[380px] border-2 border-sky-400 rounded-3xl p-4 sm:p-5 bg-white shadow-md hover:shadow-xl hover:border-sky-500 transition-all duration-300 group hover:-translate-y-1"
                                         >
                                             {/* Image Top */}
-                                            <div className="relative w-full h-52 sm:h-60 rounded-2xl overflow-hidden mb-4 bg-slate-100">
+                                            <div className="relative w-full h-52 sm:h-60 rounded-2xl overflow-hidden mb-4 bg-slate-100 shrink-0">
                                                 <Image
                                                     src={imageUrl}
                                                     alt={title}
@@ -208,7 +207,7 @@ export default function CoreCategories({ categories = [] }: Props) {
                                             </div>
 
                                             {/* Content Bottom */}
-                                            <div className="flex items-center gap-4 px-1 py-1">
+                                            <div className="flex items-center gap-4 px-1 py-1 mt-auto">
                                                 <div className="w-14 h-14 rounded-xl bg-amber-50 border border-amber-200/60 flex items-center justify-center shrink-0 text-[#D49B45] group-hover:scale-110 group-hover:bg-amber-100/70 transition-all">
                                                     <IconComponent className="w-7 h-7 stroke-[1.8]" />
                                                 </div>

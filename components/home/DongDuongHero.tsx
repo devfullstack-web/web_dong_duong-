@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
@@ -29,7 +29,6 @@ export default function DongDuongHero({ slides = [] }: Props) {
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 25 }, [autoplay.current]);
     const [selectedIndex, setSelectedIndex] = React.useState(0);
-    const [scrollSnaps, setScrollSnaps] = React.useState<number[]>([]);
 
     const scrollPrev = React.useCallback(() => {
         if (emblaApi) emblaApi.scrollPrev();
@@ -54,7 +53,6 @@ export default function DongDuongHero({ slides = [] }: Props) {
     React.useEffect(() => {
         if (!emblaApi) return;
         onSelect();
-        setScrollSnaps(emblaApi.scrollSnapList());
         emblaApi.on('select', onSelect);
         emblaApi.on('reInit', onSelect);
         return () => {
@@ -68,9 +66,11 @@ export default function DongDuongHero({ slides = [] }: Props) {
     }
 
     const currentSlide = slides[selectedIndex] || slides[0];
+    const primaryCta = slides[0]?.cta_primary || { text: 'NHẬN BÁO GIÁ DỰ ÁN', link: '#quote-form' };
+    const secondaryCta = slides[0]?.cta_secondary || { text: 'DANH MỤC SẢN PHẨM', link: '/san-pham' };
 
     return (
-        <section className="relative w-full overflow-hidden bg-slate-950 pt-24 sm:pt-28 lg:pt-32 pb-16 sm:pb-20 lg:pb-24 min-h-[600px] lg:min-h-[680px] flex items-center">
+        <section className="relative w-full overflow-hidden bg-slate-950 pt-20 sm:pt-24 lg:pt-28 pb-14 sm:pb-16 lg:pb-20 h-[640px] sm:h-[680px] lg:h-[720px] flex items-center justify-center">
             {/* Embla Carousel Viewport */}
             <div className="absolute inset-0 z-0 overflow-hidden" ref={emblaRef}>
                 <div className="flex h-full">
@@ -83,7 +83,7 @@ export default function DongDuongHero({ slides = [] }: Props) {
                                 src={slide.image_url}
                                 alt={slide.title}
                                 fill
-                                priority={idx === 0}
+                                priority
                                 sizes="100vw"
                                 className={`object-cover object-center transition-transform duration-7000 ease-out ${
                                     idx === selectedIndex ? 'scale-105 opacity-85' : 'scale-100 opacity-60'
@@ -97,62 +97,67 @@ export default function DongDuongHero({ slides = [] }: Props) {
                 </div>
             </div>
 
-            {/* Slide Content Overlay */}
+            {/* Slide Content Overlay with Locked Equal Height */}
             <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto text-center">
-                    <AnimatePresence mode="wait" initial={false}>
-                        <motion.div
-                            key={selectedIndex}
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -15 }}
-                            transition={{ duration: 0.35, ease: 'easeOut' }}
-                            className="space-y-6 sm:space-y-8"
-                        >
-                            {/* Slide Badge */}
-                            {currentSlide?.badge && (
-                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
-                                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                                    <span>{currentSlide.badge}</span>
+                <div className="max-w-4xl mx-auto text-center flex flex-col items-center justify-center">
+                    {/* Dynamic Text Section with Overlapping Grid: Completely Eliminates Vertical Jumping */}
+                    <div className="w-full grid grid-cols-1 grid-rows-1 items-center justify-items-center min-h-[290px] sm:min-h-[310px] lg:min-h-[330px]">
+                        <AnimatePresence initial={false} mode="wait">
+                            <motion.div
+                                key={selectedIndex}
+                                initial={{ opacity: 0, y: 6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -6 }}
+                                transition={{ duration: 0.25, ease: 'easeOut' }}
+                                className="col-start-1 row-start-1 w-full flex flex-col items-center justify-center space-y-4 sm:space-y-5"
+                            >
+                                {/* Slide Badge Slot */}
+                                <div className="h-8 flex items-center justify-center">
+                                    {currentSlide?.badge ? (
+                                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-bold uppercase tracking-wider backdrop-blur-md shadow-sm">
+                                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                                            <span>{currentSlide.badge}</span>
+                                        </div>
+                                    ) : null}
                                 </div>
-                            )}
 
-                            {/* Main Heading */}
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight leading-[1.15] drop-shadow-lg">
-                                {currentSlide?.title} <br />
-                                {currentSlide?.highlight && (
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-[#E5B869] to-amber-300">
-                                        {currentSlide.highlight}
-                                    </span>
-                                )}
-                            </h1>
+                                {/* Main Heading Slot */}
+                                <div className="min-h-[85px] sm:min-h-[105px] lg:min-h-[120px] flex items-center justify-center">
+                                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white uppercase tracking-tight leading-[1.15] drop-shadow-lg text-center">
+                                        {currentSlide?.title} <br />
+                                        {currentSlide?.highlight && (
+                                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-[#E5B869] to-amber-300">
+                                                {currentSlide.highlight}
+                                            </span>
+                                        )}
+                                    </h1>
+                                </div>
 
-                            {/* Subtitle */}
-                            <p className="text-base sm:text-lg md:text-xl text-slate-100/95 max-w-2xl mx-auto font-medium leading-relaxed drop-shadow">
-                                {currentSlide?.subtitle}
-                            </p>
+                                {/* Subtitle Slot */}
+                                <div className="min-h-[48px] sm:min-h-[56px] flex items-center justify-center max-w-2xl mx-auto">
+                                    <p className="text-sm sm:text-base md:text-lg text-slate-100/95 font-medium leading-relaxed drop-shadow text-center line-clamp-3">
+                                        {currentSlide?.subtitle}
+                                    </p>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
 
-                            {/* Action CTA Buttons */}
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-3">
-                                {currentSlide?.cta_primary && (
-                                    <a
-                                        href={currentSlide.cta_primary.link}
-                                        className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#E5B869] to-[#D49B45] hover:from-[#ECC880] hover:to-[#DEAE5A] text-slate-950 text-sm sm:text-base font-black uppercase tracking-[0.12em] rounded-lg shadow-lg shadow-amber-950/40 hover:shadow-amber-500/25 transition-all duration-300 transform hover:-translate-y-0.5"
-                                    >
-                                        {currentSlide.cta_primary.text}
-                                    </a>
-                                )}
-                                {currentSlide?.cta_secondary && (
-                                    <a
-                                        href={currentSlide.cta_secondary.link}
-                                        className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-[#EED690] hover:bg-[#F5E0A6] text-slate-950 text-sm sm:text-base font-black uppercase tracking-[0.12em] rounded-lg shadow-lg shadow-amber-950/20 transition-all duration-300 transform hover:-translate-y-0.5"
-                                    >
-                                        {currentSlide.cta_secondary.text}
-                                    </a>
-                                )}
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
+                    {/* Action CTA Buttons: 100% Fixed Dimensions, Position & Identical across every transition */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 sm:pt-6 w-full shrink-0">
+                        <a
+                            href={primaryCta.link}
+                            className="w-full sm:w-[260px] h-[52px] inline-flex items-center justify-center px-6 bg-gradient-to-r from-[#E5B869] to-[#D49B45] hover:from-[#ECC880] hover:to-[#DEAE5A] text-slate-950 text-sm sm:text-[15px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-amber-950/40 hover:shadow-amber-500/25 transition-all duration-300 transform hover:-translate-y-0.5 select-none text-center whitespace-nowrap"
+                        >
+                            {primaryCta.text}
+                        </a>
+                        <a
+                            href={secondaryCta.link}
+                            className="w-full sm:w-[260px] h-[52px] inline-flex items-center justify-center px-6 bg-[#EED690] hover:bg-[#F5E0A6] text-slate-950 text-sm sm:text-[15px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-amber-950/20 transition-all duration-300 transform hover:-translate-y-0.5 select-none text-center whitespace-nowrap"
+                        >
+                            {secondaryCta.text}
+                        </a>
+                    </div>
                 </div>
             </div>
 

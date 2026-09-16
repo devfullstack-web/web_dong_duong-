@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Sparkles, ExternalLink, Image as ImageIcon } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -54,7 +53,7 @@ function ProductCard({ product }: { product: FeaturedProductData }) {
     const localizedDesc = (locale === 'zh' ? product.description_localized?.zh : locale === 'en' ? product.description_localized?.en : product.description_localized?.vi) || product.description || (locale === 'zh' ? '国际高品质工程建材与暖通机电设备。' : locale === 'en' ? 'International standard industrial equipment.' : 'Thiết bị công nghiệp cao cấp tiêu chuẩn quốc tế.');
 
     return (
-        <div className="h-full border-2 border-sky-300/80 hover:border-sky-500 rounded-3xl p-5 bg-white shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row items-center gap-5 group relative overflow-hidden">
+        <div className="h-full min-h-[390px] sm:min-h-[420px] border-2 border-sky-300/80 hover:border-sky-500 rounded-3xl p-5 bg-white shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row items-center gap-5 group relative overflow-hidden justify-between">
             {/* Top Accent Gradient Border */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 via-amber-400 to-sky-500 opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -83,9 +82,9 @@ function ProductCard({ product }: { product: FeaturedProductData }) {
                 </div>
 
                 {/* Multiple Image Thumbnails Slider / Switcher */}
-                {images.length > 1 && (
-                    <div className="flex items-center justify-center gap-1.5 mt-2.5 w-full">
-                        {images.slice(0, 4).map((img, idx) => (
+                <div className="h-9 flex items-center justify-center gap-1.5 mt-2.5 w-full">
+                    {images.length > 1 ? (
+                        images.slice(0, 4).map((img, idx) => (
                             <button
                                 key={idx}
                                 type="button"
@@ -106,58 +105,78 @@ function ProductCard({ product }: { product: FeaturedProductData }) {
                                     className="object-cover"
                                 />
                             </button>
-                        ))}
-                    </div>
-                )}
+                        ))
+                    ) : (
+                        <div className="w-8 h-8" />
+                    )}
+                </div>
             </div>
 
-            {/* Product Content Right */}
-            {/* Product Content Right */}
-            <div className="flex-1 min-w-0 flex flex-col items-center sm:items-start text-center sm:text-left space-y-3.5 w-full">
-                {/* Tech Model / Sku Badge */}
-                {product.tech_specs?.Model && (
-                    <span className="inline-flex items-center gap-1.5 text-sm sm:text-base font-bold text-sky-800 bg-sky-50 px-3.5 py-1 rounded-lg border border-sky-200">
-                        <Sparkles className="w-4 h-4 text-amber-500" />
-                        Model: {product.tech_specs.Model}
-                    </span>
-                )}
+            {/* Product Content Right with Equal Slots */}
+            <div className="flex-1 min-w-0 flex flex-col justify-between h-full w-full py-1 text-center sm:text-left">
+                <div className="space-y-2.5">
+                    {/* Tech Model / Sku Badge Slot */}
+                    <div className="h-7 flex items-center justify-center sm:justify-start">
+                        {product.tech_specs?.Model ? (
+                            <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-sky-800 bg-sky-50 px-3 py-0.5 rounded-lg border border-sky-200">
+                                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                                Model: {product.tech_specs.Model}
+                            </span>
+                        ) : (
+                            <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-600 bg-slate-100 px-3 py-0.5 rounded-lg border border-slate-200">
+                                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                                {locale === 'zh' ? '官方正品' : locale === 'en' ? 'Genuine Brand' : 'Chính hãng'}
+                            </span>
+                        )}
+                    </div>
 
-                {/* Title */}
-                <Link
-                    href={`/san-pham/${product.slug}` as any}
-                    className="group-hover:text-sky-600 transition-colors"
-                >
-                    <h3 className="text-lg sm:text-xl lg:text-2xl font-black uppercase text-[#0B2545] tracking-tight line-clamp-2 leading-snug">
-                        {localizedName}
-                    </h3>
-                </Link>
+                    {/* Title Slot (Fixed Min-Height) */}
+                    <div className="min-h-[3.2rem] sm:min-h-[3.6rem] flex items-center">
+                        <Link
+                            href={{ pathname: '/san-pham/[slug]', params: { slug: product.slug } }}
+                            className="group-hover:text-sky-600 transition-colors w-full"
+                        >
+                            <h3 className="text-base sm:text-lg lg:text-xl font-black uppercase text-[#0B2545] tracking-tight line-clamp-2 leading-snug">
+                                {localizedName}
+                            </h3>
+                        </Link>
+                    </div>
 
-                {/* Price / Specs Description */}
-                <div className="space-y-2 w-full">
-                    {formattedPrice ? (
-                        <p className="text-lg font-extrabold text-amber-800">
-                            {t('price')}: <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#D49B45] tracking-tight">{formattedPrice}</span>
+                    {/* Price Slot (Fixed Height) */}
+                    <div className="h-7 sm:h-8 flex items-center justify-center sm:justify-start">
+                        {formattedPrice ? (
+                            <p className="text-sm sm:text-base font-extrabold text-amber-800">
+                                {t('price')}: <span className="text-base sm:text-lg lg:text-xl font-black text-[#D49B45] tracking-tight">{formattedPrice}</span>
+                            </p>
+                        ) : (
+                            <p className="text-xs sm:text-sm font-bold text-amber-900/90 bg-amber-50 px-2.5 py-0.5 rounded-md border border-amber-200 inline-block">
+                                {t('price')}: {locale === 'zh' ? '工程询价直供' : locale === 'en' ? 'Contact for quote' : 'Liên hệ báo giá'}
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Description Slot (Fixed Min-Height) */}
+                    <div className="min-h-[2.8rem] sm:min-h-[3.2rem] flex items-center">
+                        <p className="text-xs sm:text-sm text-slate-600 font-medium line-clamp-2 leading-relaxed">
+                            {localizedDesc}
                         </p>
-                    ) : null}
-                    <p className="text-base sm:text-lg text-slate-700 font-medium line-clamp-2 leading-relaxed">
-                        {localizedDesc}
-                    </p>
+                    </div>
                 </div>
 
                 {/* Actions: Quote Button & Details Link */}
-                <div className="flex items-center gap-3 pt-2 w-full justify-center sm:justify-start">
+                <div className="flex items-center gap-3 pt-3 w-full justify-center sm:justify-start mt-auto">
                     <a
                         href="#quote-form"
-                        className="inline-flex items-center justify-center px-7 py-3.5 sm:py-4 bg-gradient-to-r from-[#E5B869] to-[#D49B45] hover:from-[#ECC880] hover:to-[#DEAE5A] text-slate-950 text-base sm:text-lg font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:scale-[0.98]"
+                        className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-[#E5B869] to-[#D49B45] hover:from-[#ECC880] hover:to-[#DEAE5A] text-slate-950 text-sm sm:text-base font-black uppercase tracking-wider rounded-xl shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:scale-[0.98]"
                     >
                         {t('requestQuote')}
                     </a>
                     <Link
-                        href={`/san-pham/${product.slug}` as any}
-                        className="inline-flex items-center justify-center p-3 sm:p-4 rounded-xl border-2 border-slate-300 hover:border-sky-400 hover:bg-sky-50 text-slate-800 hover:text-sky-600 transition-all text-base font-bold active:scale-[0.98]"
+                        href={{ pathname: '/san-pham/[slug]', params: { slug: product.slug } }}
+                        className="inline-flex items-center justify-center p-3 rounded-xl border-2 border-slate-300 hover:border-sky-400 hover:bg-sky-50 text-slate-800 hover:text-sky-600 transition-all text-base font-bold active:scale-[0.98]"
                         title={t('seeDetail')}
                     >
-                        <ExternalLink className="w-5 h-5" />
+                        <ExternalLink className="w-4 h-4" />
                     </Link>
                 </div>
             </div>
@@ -249,11 +268,11 @@ export default function FeaturedProductSlider({ products = [] }: Props) {
 
                     {/* Embla Viewport */}
                     <div className="overflow-hidden flex-1 py-2" ref={emblaRef}>
-                        <div className="flex -ml-4 sm:-ml-6">
+                        <div className="flex -ml-4 sm:-ml-6 items-stretch">
                             {products.map((prod) => (
                                 <div
                                     key={prod.id}
-                                    className="flex-[0_0_100%] md:flex-[0_0_50%] pl-4 sm:pl-6 min-w-0"
+                                    className="flex-[0_0_100%] md:flex-[0_0_50%] pl-4 sm:pl-6 min-w-0 flex flex-col items-stretch"
                                 >
                                     <ProductCard product={prod} />
                                 </div>
