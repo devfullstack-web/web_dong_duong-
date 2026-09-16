@@ -51,13 +51,14 @@ export default function TechSvgBackground({
             className={`overflow-hidden pointer-events-none select-none ${
                 className.includes('absolute') ? '' : 'relative'
             } ${className}`}
+            style={{ contain: 'paint' }}
         >
-            {/* 1. Ambient Dynamic Lighting Orbs */}
+            {/* 1. Ambient Dynamic Lighting Orbs (Optimized for Mobile & PC 60fps) */}
             {showOrbs && (
-                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none contain-paint">
                     {/* Top Right Ambient Glow */}
                     <div
-                        className="absolute -top-32 -right-32 w-[32rem] h-[32rem] rounded-full blur-3xl animate-tech-pulse-glow pointer-events-none"
+                        className="absolute -top-16 -right-16 sm:-top-24 sm:-right-24 lg:-top-32 lg:-right-32 w-48 h-48 sm:w-72 sm:h-72 lg:w-[26rem] lg:h-[26rem] rounded-full blur-xl sm:blur-2xl lg:blur-3xl animate-tech-pulse-glow pointer-events-none transform-gpu"
                         style={{
                             background:
                                 glowColor === 'amber'
@@ -72,7 +73,7 @@ export default function TechSvgBackground({
 
                     {/* Bottom Left Ambient Glow */}
                     <div
-                        className="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] rounded-full blur-3xl animate-tech-float-delayed pointer-events-none"
+                        className="absolute -bottom-16 -left-16 sm:-bottom-24 sm:-left-24 lg:-bottom-32 lg:-left-32 w-44 h-44 sm:w-64 sm:h-64 lg:w-[24rem] lg:h-[24rem] rounded-full blur-xl sm:blur-2xl lg:blur-3xl animate-tech-float-delayed pointer-events-none transform-gpu"
                         style={{
                             background:
                                 glowColor === 'amber'
@@ -87,7 +88,7 @@ export default function TechSvgBackground({
 
                     {/* Subtle Center Light Pod */}
                     <div
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[600px] blur-3xl opacity-30 pointer-events-none"
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-48 sm:h-72 lg:h-[460px] blur-xl sm:blur-2xl lg:blur-3xl opacity-30 pointer-events-none transform-gpu"
                         style={{
                             background:
                                 'radial-gradient(ellipse at center, rgba(248, 250, 252, 0.85) 0%, transparent 75%)',
@@ -100,456 +101,426 @@ export default function TechSvgBackground({
             {/* VARIANT 1: TILES & PORCELAIN (Gạch Men, Đá Porcelain, Marble & Mosaic)   */}
             {/* ========================================================================= */}
             {canonicalVariant === 'tiles-porcelain' && (
-                <svg
-                    className="absolute inset-0 w-full h-full z-0 opacity-80"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="100%"
-                    height="100%"
-                >
-                    <defs>
-                        {/* 1. Large 60x120 & 80x80 Tile Grid Pattern with Grout Lines */}
-                        <pattern
-                            id={`tile-grid-${id}`}
-                            width="160"
-                            height="160"
-                            patternUnits="userSpaceOnUse"
-                        >
-                            {/* Outer Tile Boundary Grout */}
-                            <rect
-                                x="0"
-                                y="0"
-                                width="160"
-                                height="160"
-                                fill="none"
-                                stroke="rgba(203, 213, 225, 0.35)"
-                                strokeWidth="1"
-                            />
-                            {/* Inner Sub-Tile Division (Subtle 80x80 division) */}
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {/* Base Tile Grid Pattern */}
+                    <svg
+                        className="absolute inset-0 w-full h-full opacity-75"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="100%"
+                        height="100%"
+                    >
+                        <defs>
+                            <pattern
+                                id={`tile-grid-${id}`}
+                                width="140"
+                                height="140"
+                                patternUnits="userSpaceOnUse"
+                            >
+                                <rect
+                                    x="0"
+                                    y="0"
+                                    width="140"
+                                    height="140"
+                                    fill="none"
+                                    stroke="rgba(203, 213, 225, 0.32)"
+                                    strokeWidth="1"
+                                />
+                                <path
+                                    d="M 70 0 L 70 140 M 0 70 L 140 70"
+                                    fill="none"
+                                    stroke="rgba(226, 232, 240, 0.4)"
+                                    strokeWidth="0.8"
+                                    strokeDasharray="4 4"
+                                />
+                                <path
+                                    d="M 65 70 L 75 70 M 70 65 L 70 75"
+                                    fill="none"
+                                    stroke="rgba(217, 119, 6, 0.38)"
+                                    strokeWidth="1.2"
+                                />
+                                <circle cx="70" cy="70" r="1.5" fill="#f59e0b" opacity="0.6" />
+                            </pattern>
+
+                            <linearGradient id={`marble-grad-${id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#d97706" stopOpacity="0.08" />
+                                <stop offset="50%" stopColor="#d97706" stopOpacity="0.25" />
+                                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.10" />
+                            </linearGradient>
+
+                            <linearGradient id={`tile-sheen-grad-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+                                <stop offset="45%" stopColor="#fef3c7" stopOpacity="0.22" />
+                                <stop offset="50%" stopColor="#ffffff" stopOpacity="0.4" />
+                                <stop offset="55%" stopColor="#fef3c7" stopOpacity="0.22" />
+                                <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
+
+                        <rect width="100%" height="100%" fill={`url(#tile-grid-${id})`} />
+
+                        {/* Flowing Organic Calacatta Marble Veins */}
+                        <g className="animate-marble-vein-drift" stroke={`url(#marble-grad-${id})`} fill="none" strokeWidth="1.4">
                             <path
-                                d="M 80 0 L 80 160 M 0 80 L 160 80"
-                                fill="none"
-                                stroke="rgba(226, 232, 240, 0.45)"
-                                strokeWidth="0.8"
-                                strokeDasharray="4 4"
+                                d="M -100 120 Q 350 40, 750 180 T 1600 110"
+                                strokeDasharray="14 10"
+                                className="animate-tech-dash-flow"
                             />
-                            {/* Golden Grout Crosshairs at tile intersections */}
                             <path
-                                d="M 74 80 L 86 80 M 80 74 L 80 86"
-                                fill="none"
-                                stroke="rgba(217, 119, 6, 0.4)"
-                                strokeWidth="1.4"
+                                d="M -50 380 Q 450 480, 920 310 T 1650 390"
+                                strokeDasharray="20 12"
+                                className="animate-tech-dash-flow"
                             />
-                            <circle cx="80" cy="80" r="1.5" fill="#f59e0b" opacity="0.6" />
-                        </pattern>
+                        </g>
 
-                        {/* 2. Showroom Light Reflection Gradient */}
-                        <linearGradient id={`tile-sheen-grad-${id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-                            <stop offset="45%" stopColor="#fef3c7" stopOpacity="0.25" />
-                            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.45" />
-                            <stop offset="55%" stopColor="#fef3c7" stopOpacity="0.25" />
-                            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-                        </linearGradient>
+                        {/* Showroom Polished Glaze Sheen Beam */}
+                        <rect
+                            x="-20%"
+                            y="-20%"
+                            width="140%"
+                            height="140%"
+                            fill={`url(#tile-sheen-grad-${id})`}
+                            className="animate-tile-sheen pointer-events-none"
+                        />
+                    </svg>
 
-                        {/* 3. Calacatta Natural Marble Vein Gradient */}
-                        <linearGradient id={`marble-grad-${id}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#d97706" stopOpacity="0.10" />
-                            <stop offset="50%" stopColor="#d97706" stopOpacity="0.28" />
-                            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.12" />
-                        </linearGradient>
-                    </defs>
-
-                    {/* Background Isometric & Orthogonal Architectural Tile Floor */}
-                    <rect width="100%" height="100%" fill={`url(#tile-grid-${id})`} />
-
-                    {/* Flowing Organic Calacatta Marble Veins (Vân đá tự nhiên mềm mại) */}
-                    <g className="animate-marble-vein-drift" stroke={`url(#marble-grad-${id})`} fill="none" strokeWidth="1.4">
-                        <path
-                            d="M -100 120 Q 350 40, 750 180 T 1600 110"
-                            strokeDasharray="14 10"
-                            className="animate-tech-dash-flow"
-                        />
-                        <path
-                            d="M -50 380 Q 450 480, 920 310 T 1650 390"
-                            strokeDasharray="20 12"
-                            className="animate-tech-dash-flow"
-                        />
-                    </g>
-
-                    {/* Geometric Mosaic Diamond Art Elements (Mosaic hồ bơi & resort) */}
-                    <g fill="none" stroke="rgba(217, 119, 6, 0.3)" strokeWidth="1.2">
-                        {/* Diamond 1 */}
-                        <polygon
-                            points="120,70 135,50 150,70 135,90"
-                            className="animate-cooling-ion-bob"
-                            fill="rgba(245, 158, 11, 0.08)"
-                        />
-                        {/* Diamond 2 */}
-                        <polygon
-                            points="1320,110 1338,90 1356,110 1338,130"
-                            className="animate-cooling-ion-bob-delayed"
-                            fill="rgba(14, 165, 233, 0.08)"
-                        />
-                        {/* Diamond 3 */}
-                        <polygon
-                            points="260,460 275,440 290,460 275,480"
-                            className="animate-cooling-ion-bob"
-                            fill="rgba(245, 158, 11, 0.06)"
-                        />
-                        {/* Diamond 4 */}
-                        <polygon
-                            points="1180,480 1198,460 1216,480 1198,500"
-                            className="animate-cooling-ion-bob-delayed"
-                            fill="rgba(245, 158, 11, 0.07)"
-                        />
-                    </g>
-
-                    {/* Showroom Polished Glaze Sheen Beam (Vệt sáng bóng kiếng Nano lướt qua) */}
-                    <rect
-                        x="-20%"
-                        y="-20%"
-                        width="140%"
-                        height="140%"
-                        fill={`url(#tile-sheen-grad-${id})`}
-                        className="animate-tile-sheen pointer-events-none"
-                    />
-                </svg>
+                    {/* Responsive Mosaic Diamonds (Always in viewport on mobile & desktop) */}
+                    <div className="absolute top-6 left-5 sm:top-12 sm:left-14 pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 30 40" className="w-5 h-6 sm:w-7 sm:h-9 animate-cooling-ion-bob" fill="rgba(245, 158, 11, 0.08)" stroke="rgba(217, 119, 6, 0.35)" strokeWidth="1.2">
+                            <polygon points="15,2 28,20 15,38 2,20" />
+                        </svg>
+                    </div>
+                    <div className="absolute top-8 right-5 sm:top-14 sm:right-16 pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 30 40" className="w-5 h-6 sm:w-7 sm:h-9 animate-cooling-ion-bob-delayed" fill="rgba(14, 165, 233, 0.08)" stroke="rgba(14, 165, 233, 0.35)" strokeWidth="1.2">
+                            <polygon points="15,2 28,20 15,38 2,20" />
+                        </svg>
+                    </div>
+                    <div className="absolute bottom-8 left-6 sm:bottom-14 sm:left-20 pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 30 40" className="w-4 h-5 sm:w-6 sm:h-8 animate-cooling-ion-bob" fill="rgba(245, 158, 11, 0.06)" stroke="rgba(217, 119, 6, 0.3)" strokeWidth="1.2">
+                            <polygon points="15,2 28,20 15,38 2,20" />
+                        </svg>
+                    </div>
+                    <div className="absolute bottom-6 right-6 sm:bottom-12 sm:right-24 pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 30 40" className="w-5 h-6 sm:w-7 sm:h-9 animate-cooling-ion-bob-delayed" fill="rgba(245, 158, 11, 0.07)" stroke="rgba(245, 158, 11, 0.3)" strokeWidth="1.2">
+                            <polygon points="15,2 28,20 15,38 2,20" />
+                        </svg>
+                    </div>
+                </div>
             )}
 
             {/* ========================================================================= */}
             {/* VARIANT 2: HVAC & WATER CHILLER (Điều Hòa Trung Tâm VRV, Chiller & Gió Mát) */}
             {/* ========================================================================= */}
             {canonicalVariant === 'hvac-chiller' && (
-                <svg
-                    className="absolute inset-0 w-full h-full z-0 opacity-75"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 640"
-                    preserveAspectRatio="none"
-                >
-                    <defs>
-                        {/* Airflow Streamline Gradients */}
-                        <linearGradient id={`hvac-flow-1-${id}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.10" />
-                            <stop offset="30%" stopColor="#0ea5e9" stopOpacity="0.32" />
-                            <stop offset="70%" stopColor="#38bdf8" stopOpacity="0.28" />
-                            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.08" />
-                        </linearGradient>
-
-                        <linearGradient id={`hvac-flow-2-${id}`} x1="100%" y1="0%" x2="0%" y2="0%">
-                            <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.12" />
-                            <stop offset="50%" stopColor="#0284c7" stopOpacity="0.30" />
-                            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.10" />
-                        </linearGradient>
-
-                        {/* Refrigerant R410A / R32 Piping Loop Gradient */}
-                        <linearGradient id={`pipe-grad-${id}`} x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#0284c7" stopOpacity="0.25" />
-                            <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.4" />
-                            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.25" />
-                        </linearGradient>
-                    </defs>
-
-                    {/* Central VRV Condenser Fan Vector (Cánh quạt tản nhiệt dàn nóng quay êm) */}
-                    <g
-                        transform="translate(1360, 100)"
-                        className="animate-hvac-fan-spin opacity-35 pointer-events-none"
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {/* Aerodynamic Airflow Waves & Refrigerant Piping Base */}
+                    <svg
+                        className="absolute inset-0 w-full h-full opacity-70"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 1440 600"
+                        preserveAspectRatio="none"
                     >
-                        <circle cx="0" cy="0" r="90" fill="none" stroke="#0ea5e9" strokeWidth="1.2" strokeDasharray="8 6" />
-                        <circle cx="0" cy="0" r="45" fill="none" stroke="#0284c7" strokeWidth="1" />
-                        <circle cx="0" cy="0" r="12" fill="#0284c7" opacity="0.6" />
-                        {/* 4 Fan Blades */}
-                        <path d="M -70 0 C -40 -25, -15 -10, 0 0 C -15 10, -40 25, -70 0 Z" fill="#38bdf8" opacity="0.4" />
-                        <path d="M 70 0 C 40 25, 15 10, 0 0 C 15 -10, 40 -25, 70 0 Z" fill="#38bdf8" opacity="0.4" />
-                        <path d="M 0 -70 C 25 -40, 10 -15, 0 0 C -10 -15, -25 -40, 0 -70 Z" fill="#38bdf8" opacity="0.4" />
-                        <path d="M 0 70 C -25 40, -10 15, 0 0 C 10 15, 25 40, 0 70 Z" fill="#38bdf8" opacity="0.4" />
-                    </g>
+                        <defs>
+                            <linearGradient id={`hvac-flow-1-${id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.08" />
+                                <stop offset="30%" stopColor="#0ea5e9" stopOpacity="0.30" />
+                                <stop offset="70%" stopColor="#38bdf8" stopOpacity="0.25" />
+                                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.06" />
+                            </linearGradient>
 
-                    {/* Secondary Condenser Fan (Góc dưới bên trái) */}
-                    <g
-                        transform="translate(70, 520)"
-                        className="animate-hvac-fan-spin opacity-30 pointer-events-none"
-                    >
-                        <circle cx="0" cy="0" r="75" fill="none" stroke="#d97706" strokeWidth="1" strokeDasharray="6 6" />
-                        <circle cx="0" cy="0" r="10" fill="#d97706" opacity="0.5" />
-                        <path d="M -60 0 C -30 -20, -10 -8, 0 0 C -10 8, -30 20, -60 0 Z" fill="#fbbf24" opacity="0.35" />
-                        <path d="M 60 0 C 30 20, 10 8, 0 0 C 10 -8, 30 -20, 60 0 Z" fill="#fbbf24" opacity="0.35" />
-                        <path d="M 0 -60 C 20 -30, 8 -10, 0 0 C -8 -10, -20 -30, 0 -60 Z" fill="#fbbf24" opacity="0.35" />
-                        <path d="M 0 60 C -20 30, -8 10, 0 0 C 8 10, 20 30, 0 60 Z" fill="#fbbf24" opacity="0.35" />
-                    </g>
+                            <linearGradient id={`hvac-flow-2-${id}`} x1="100%" y1="0%" x2="0%" y2="0%">
+                                <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.10" />
+                                <stop offset="50%" stopColor="#0284c7" stopOpacity="0.28" />
+                                <stop offset="100%" stopColor="#38bdf8" stopOpacity="0.08" />
+                            </linearGradient>
 
-                    {/* Aerodynamic Chilled Airflow Wave Paths (Luồng khí lạnh VRV / Chiller lướt qua) */}
-                    <g fill="none" strokeWidth="1.8">
-                        <path
-                            d="M -80 160 C 280 60, 720 280, 1520 120"
-                            stroke={`url(#hvac-flow-1-${id})`}
-                            strokeDasharray="24 12"
-                            className="animate-hvac-air-stream"
-                        />
-                        <path
-                            d="M -80 280 C 380 420, 860 160, 1520 300"
-                            stroke={`url(#hvac-flow-2-${id})`}
-                            strokeDasharray="28 14"
-                            className="animate-hvac-air-stream"
-                        />
-                        <path
-                            d="M -80 440 C 320 500, 920 340, 1520 480"
-                            stroke={`url(#hvac-flow-1-${id})`}
-                            strokeDasharray="20 10"
-                            className="animate-hvac-air-stream"
-                        />
-                    </g>
+                            <linearGradient id={`pipe-grad-${id}`} x1="0%" y1="100%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#0284c7" stopOpacity="0.22" />
+                                <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.35" />
+                                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.22" />
+                            </linearGradient>
+                        </defs>
 
-                    {/* Refrigerant Closed Loop Piping Lines (Đường ống đồng môi chất lạnh) */}
-                    <g stroke={`url(#pipe-grad-${id})`} fill="none" strokeWidth="1.2" strokeDasharray="6 6" className="animate-tech-dash-flow">
-                        <path d="M 120 40 H 420 L 460 80 H 760" />
-                        <path d="M 1320 580 H 980 L 940 540 H 680" />
-                    </g>
+                        {/* Aerodynamic Chilled Airflow Wave Paths */}
+                        <g fill="none" strokeWidth="1.8">
+                            <path
+                                d="M -80 160 C 280 60, 720 280, 1520 120"
+                                stroke={`url(#hvac-flow-1-${id})`}
+                                strokeDasharray="24 12"
+                                className="animate-hvac-air-stream"
+                            />
+                            <path
+                                d="M -80 300 C 380 440, 860 180, 1520 320"
+                                stroke={`url(#hvac-flow-2-${id})`}
+                                strokeDasharray="28 14"
+                                className="animate-hvac-air-stream"
+                            />
+                            <path
+                                d="M -80 460 C 320 520, 920 360, 1520 500"
+                                stroke={`url(#hvac-flow-1-${id})`}
+                                strokeDasharray="20 10"
+                                className="animate-hvac-air-stream"
+                            />
+                        </g>
 
-                    {/* Floating Cooling Air Ions & Plasmaster Purification Particles (Hạt ion làm sạch không khí) */}
-                    <g fill="#0284c7" opacity="0.7">
-                        {/* Hexagonal Frost Ion 1 */}
-                        <polygon
-                            points="320,110 326,114 326,122 320,126 314,122 314,114"
-                            className="animate-cooling-ion-bob"
-                            fill="#38bdf8"
-                        />
-                        {/* Star Ion 2 */}
-                        <path
-                            d="M 640 180 Q 640 188 648 188 Q 640 188 640 196 Q 640 188 632 188 Q 640 188 640 180 Z"
-                            className="animate-cooling-ion-bob-delayed"
-                            fill="#0ea5e9"
-                        />
-                        {/* Hexagonal Frost Ion 3 */}
-                        <polygon
-                            points="960,250 967,255 967,263 960,268 953,263 953,255"
-                            className="animate-cooling-ion-bob"
-                            fill="#38bdf8"
-                        />
-                        {/* Star Ion 4 */}
-                        <path
-                            d="M 1180 340 Q 1180 349 1189 349 Q 1180 349 1180 358 Q 1180 349 1171 349 Q 1180 349 1180 340 Z"
-                            className="animate-cooling-ion-bob-delayed"
-                            fill="#f59e0b"
-                        />
-                        {/* Hexagonal Frost Ion 5 */}
-                        <polygon
-                            points="480,480 486,484 486,492 480,496 474,492 474,484"
-                            className="animate-cooling-ion-bob"
-                            fill="#0ea5e9"
-                        />
-                    </g>
-                </svg>
+                        {/* Refrigerant Closed Loop Piping Lines */}
+                        <g stroke={`url(#pipe-grad-${id})`} fill="none" strokeWidth="1.2" strokeDasharray="6 6" className="animate-tech-dash-flow">
+                            <path d="M 120 40 H 420 L 460 80 H 760" />
+                            <path d="M 1320 560 H 980 L 940 520 H 680" />
+                        </g>
+                    </svg>
+
+                    {/* Primary VRV Condenser Fan (Top Right - Isolated Hardware Compositor Layer) */}
+                    <div className="absolute top-3 right-3 sm:top-6 sm:right-10 w-24 h-24 sm:w-32 sm:h-32 lg:w-44 lg:h-44 pointer-events-none opacity-30 sm:opacity-40 transform-gpu contain-paint">
+                        <svg viewBox="-100 -100 200 200" className="w-full h-full animate-hvac-fan-spin">
+                            <circle cx="0" cy="0" r="90" fill="none" stroke="#0ea5e9" strokeWidth="1.5" strokeDasharray="8 6" />
+                            <circle cx="0" cy="0" r="45" fill="none" stroke="#0284c7" strokeWidth="1.2" />
+                            <circle cx="0" cy="0" r="12" fill="#0284c7" opacity="0.6" />
+                            <path d="M -70 0 C -40 -25, -15 -10, 0 0 C -15 10, -40 25, -70 0 Z" fill="#38bdf8" opacity="0.4" />
+                            <path d="M 70 0 C 40 25, 15 10, 0 0 C 15 -10, 40 -25, 70 0 Z" fill="#38bdf8" opacity="0.4" />
+                            <path d="M 0 -70 C 25 -40, 10 -15, 0 0 C -10 -15, -25 -40, 0 -70 Z" fill="#38bdf8" opacity="0.4" />
+                            <path d="M 0 70 C -25 40, -10 15, 0 0 C 10 15, 25 40, 0 70 Z" fill="#38bdf8" opacity="0.4" />
+                        </svg>
+                    </div>
+
+                    {/* Secondary Condenser Fan (Bottom Left - Isolated Hardware Compositor Layer) */}
+                    <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-8 w-18 h-18 sm:w-24 sm:h-24 lg:w-32 lg:h-32 pointer-events-none opacity-25 sm:opacity-35 transform-gpu contain-paint">
+                        <svg viewBox="-80 -80 160 160" className="w-full h-full animate-hvac-fan-spin">
+                            <circle cx="0" cy="0" r="75" fill="none" stroke="#d97706" strokeWidth="1.2" strokeDasharray="6 6" />
+                            <circle cx="0" cy="0" r="10" fill="#d97706" opacity="0.5" />
+                            <path d="M -60 0 C -30 -20, -10 -8, 0 0 C -10 8, -30 20, -60 0 Z" fill="#fbbf24" opacity="0.35" />
+                            <path d="M 60 0 C 30 20, 10 8, 0 0 C 10 -8, 30 -20, 60 0 Z" fill="#fbbf24" opacity="0.35" />
+                            <path d="M 0 -60 C 20 -30, 8 -10, 0 0 C -8 -10, -20 -30, 0 -60 Z" fill="#fbbf24" opacity="0.35" />
+                            <path d="M 0 60 C -20 30, -8 10, 0 0 C 8 10, 20 30, 0 60 Z" fill="#fbbf24" opacity="0.35" />
+                        </svg>
+                    </div>
+
+                    {/* Floating Cooling Air Ions & Plasmaster Purification Particles */}
+                    <div className="absolute top-[22%] left-[16%] sm:left-[22%] pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-cooling-ion-bob fill-sky-400">
+                            <polygon points="8,0 15,4 15,12 8,16 1,12 1,4" />
+                        </svg>
+                    </div>
+                    <div className="absolute top-[18%] left-[50%] -translate-x-1/2 pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 20 20" className="w-4 h-4 sm:w-5 sm:h-5 animate-cooling-ion-bob-delayed fill-sky-500">
+                            <path d="M 10 0 Q 10 10 20 10 Q 10 10 10 20 Q 10 10 0 10 Q 10 10 10 0 Z" />
+                        </svg>
+                    </div>
+                    <div className="absolute top-[42%] right-[15%] sm:right-[22%] pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-cooling-ion-bob fill-sky-400">
+                            <polygon points="8,0 15,4 15,12 8,16 1,12 1,4" />
+                        </svg>
+                    </div>
+                    <div className="absolute bottom-[24%] left-[28%] pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-cooling-ion-bob fill-sky-500">
+                            <polygon points="8,0 15,4 15,12 8,16 1,12 1,4" />
+                        </svg>
+                    </div>
+                    <div className="absolute bottom-[20%] right-[12%] sm:right-[18%] pointer-events-none transform-gpu">
+                        <svg viewBox="0 0 20 20" className="w-4 h-4 sm:w-5 sm:h-5 animate-cooling-ion-bob-delayed fill-amber-500">
+                            <path d="M 10 0 Q 10 10 20 10 Q 10 10 10 20 Q 10 10 0 10 Q 10 10 10 0 Z" />
+                        </svg>
+                    </div>
+                </div>
             )}
 
             {/* ========================================================================= */}
             {/* VARIANT 3: INDUSTRIAL EQUIPMENT (Cơ Điện, Van Công Nghiệp, Chiller Trục Vít) */}
             {/* ========================================================================= */}
             {canonicalVariant === 'industrial-equipment' && (
-                <svg
-                    className="absolute inset-0 w-full h-full z-0 opacity-75"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="100%"
-                    height="100%"
-                >
-                    <defs>
-                        {/* Heavy Equipment Hexagon Honeycomb Mesh Pattern */}
-                        <pattern
-                            id={`hex-mesh-${id}`}
-                            width="64"
-                            height="110.8"
-                            patternUnits="userSpaceOnUse"
-                        >
-                            <path
-                                d="M32,0 L64,18.5 L64,55.4 L32,73.9 L0,55.4 L0,18.5 Z M32,110.8 L64,92.3 L64,55.4 L32,73.9 L0,55.4 L0,92.3 Z"
-                                fill="none"
-                                stroke="rgba(148, 163, 184, 0.16)"
-                                strokeWidth="0.9"
-                            />
-                            {/* Pressure Node Indicator */}
-                            <circle cx="32" cy="55.4" r="2.2" fill="rgba(245, 158, 11, 0.35)" />
-                        </pattern>
-                    </defs>
-
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                     {/* Hexagon Mesh Base */}
-                    <rect width="100%" height="100%" fill={`url(#hex-mesh-${id})`} />
+                    <svg
+                        className="absolute inset-0 w-full h-full opacity-70"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="100%"
+                        height="100%"
+                    >
+                        <defs>
+                            <pattern
+                                id={`hex-mesh-${id}`}
+                                width="64"
+                                height="110.8"
+                                patternUnits="userSpaceOnUse"
+                            >
+                                <path
+                                    d="M32,0 L64,18.5 L64,55.4 L32,73.9 L0,55.4 L0,18.5 Z M32,110.8 L64,92.3 L64,55.4 L32,73.9 L0,55.4 L0,92.3 Z"
+                                    fill="none"
+                                    stroke="rgba(148, 163, 184, 0.16)"
+                                    strokeWidth="0.9"
+                                />
+                                <circle cx="32" cy="55.4" r="2.2" fill="rgba(245, 158, 11, 0.32)" />
+                            </pattern>
+                        </defs>
 
-                    {/* Industrial Butterfly Valve & Flange CAD Line Art (Góc phải trên) */}
-                    <g transform="translate(1320, 80)" stroke="rgba(14, 165, 233, 0.28)" fill="none" strokeWidth="1.2">
-                        {/* Outer Flange Circle */}
-                        <circle cx="0" cy="0" r="110" strokeDasharray="8 6" />
-                        <circle cx="0" cy="0" r="90" />
-                        <circle cx="0" cy="0" r="50" stroke="#d97706" strokeWidth="1.4" opacity="0.6" />
-                        {/* Valve Stem & Disk axis */}
-                        <line x1="-120" y1="0" x2="120" y2="0" strokeWidth="1.6" />
-                        <line x1="0" y1="-120" x2="0" y2="120" strokeWidth="1.2" strokeDasharray="4 4" />
-                        {/* Bolt Holes */}
-                        <circle cx="75" cy="0" r="4" fill="rgba(14, 165, 233, 0.35)" />
-                        <circle cx="-75" cy="0" r="4" fill="rgba(14, 165, 233, 0.35)" />
-                        <circle cx="0" cy="75" r="4" fill="rgba(14, 165, 233, 0.35)" />
-                        <circle cx="0" cy="-75" r="4" fill="rgba(14, 165, 233, 0.35)" />
-                        <circle cx="53" cy="53" r="3.5" fill="rgba(217, 119, 6, 0.35)" />
-                        <circle cx="-53" cy="-53" r="3.5" fill="rgba(217, 119, 6, 0.35)" />
-                        <circle cx="-53" cy="53" r="3.5" fill="rgba(217, 119, 6, 0.35)" />
-                        <circle cx="53" cy="-53" r="3.5" fill="rgba(217, 119, 6, 0.35)" />
-                    </g>
+                        <rect width="100%" height="100%" fill={`url(#hex-mesh-${id})`} />
 
-                    {/* Technical Specification Annotations from DB (DN50 - DN800, PN16, IP68, Modbus) */}
-                    <g fill="rgba(100, 116, 139, 0.45)" fontSize="11" fontFamily="monospace" fontWeight="600">
-                        <text x="40" y="60">SPEC // DN50 - DN800 | PN16/25</text>
-                        <text x="40" y="80">CTRL // RS-485 MODBUS RTU | IP68</text>
-                        <text x="40" y="100">HVAC // COP 3.8 ~ 4.2 | R410A</text>
-                    </g>
+                        {/* Precision Dimension Calibration Lines */}
+                        <g stroke="rgba(217, 119, 6, 0.28)" strokeWidth="1.2" fill="none">
+                            <line x1="-5%" y1="35%" x2="105%" y2="45%" strokeDasharray="16 10" className="animate-tech-dash-flow" />
+                            <line x1="-5%" y1="75%" x2="105%" y2="85%" strokeDasharray="22 12" className="animate-tech-dash-flow" />
+                        </g>
+                    </svg>
 
-                    {/* Precision Dimension Calibration Lines */}
-                    <g stroke="rgba(217, 119, 6, 0.28)" strokeWidth="1.2" fill="none">
-                        <line x1="-5%" y1="30%" x2="105%" y2="45%" strokeDasharray="16 10" className="animate-tech-dash-flow" />
-                        <line x1="-5%" y1="75%" x2="105%" y2="85%" strokeDasharray="22 12" className="animate-tech-dash-flow" />
-                    </g>
-                </svg>
+                    {/* Industrial Butterfly Valve & Flange CAD Line Art (Responsive Top Right) */}
+                    <div className="absolute top-3 right-3 sm:top-6 sm:right-10 w-28 h-28 sm:w-36 sm:h-36 lg:w-52 lg:h-52 pointer-events-none opacity-30 sm:opacity-40 transform-gpu contain-paint">
+                        <svg viewBox="-125 -125 250 250" className="w-full h-full stroke-sky-500 fill-none" strokeWidth="1.2">
+                            <circle cx="0" cy="0" r="110" strokeDasharray="8 6" />
+                            <circle cx="0" cy="0" r="90" />
+                            <circle cx="0" cy="0" r="50" stroke="#d97706" strokeWidth="1.5" opacity="0.7" />
+                            <line x1="-120" y1="0" x2="120" y2="0" strokeWidth="1.6" />
+                            <line x1="0" y1="-120" x2="0" y2="120" strokeWidth="1.2" strokeDasharray="4 4" />
+                            <circle cx="75" cy="0" r="4" fill="rgba(14, 165, 233, 0.45)" />
+                            <circle cx="-75" cy="0" r="4" fill="rgba(14, 165, 233, 0.45)" />
+                            <circle cx="0" cy="75" r="4" fill="rgba(14, 165, 233, 0.45)" />
+                            <circle cx="0" cy="-75" r="4" fill="rgba(14, 165, 233, 0.45)" />
+                            <circle cx="53" cy="53" r="3.5" fill="rgba(217, 119, 6, 0.45)" />
+                            <circle cx="-53" cy="-53" r="3.5" fill="rgba(217, 119, 6, 0.45)" />
+                            <circle cx="-53" cy="53" r="3.5" fill="rgba(217, 119, 6, 0.45)" />
+                            <circle cx="53" cy="-53" r="3.5" fill="rgba(217, 119, 6, 0.45)" />
+                        </svg>
+                    </div>
+
+                    {/* Technical Specification Annotations from DB */}
+                    <div className="absolute left-3 top-3 sm:left-8 sm:top-8 font-mono text-[9px] sm:text-[11px] text-slate-400/70 leading-relaxed font-semibold tracking-wider pointer-events-none select-none">
+                        <div>SPEC // DN50 - DN800 | PN16/25</div>
+                        <div>CTRL // RS-485 MODBUS RTU | IP68</div>
+                        <div className="hidden sm:block">HVAC // COP 3.8 ~ 4.2 | R410A</div>
+                    </div>
+                </div>
             )}
 
             {/* ========================================================================= */}
             {/* VARIANT 4: SMART WORKFLOW (Quy Trình 5 Bước Cơ Điện & Cung Ứng Dự Án)     */}
             {/* ========================================================================= */}
             {canonicalVariant === 'smart-workflow' && (
-                <svg
-                    className="absolute inset-0 w-full h-full z-0 opacity-80"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 600"
-                    preserveAspectRatio="none"
-                >
-                    <defs>
-                        <linearGradient id={`workflow-trace-grad-${id}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#d97706" stopOpacity="0.30" />
-                            <stop offset="35%" stopColor="#0284c7" stopOpacity="0.35" />
-                            <stop offset="70%" stopColor="#d97706" stopOpacity="0.35" />
-                            <stop offset="100%" stopColor="#0284c7" stopOpacity="0.30" />
-                        </linearGradient>
-                    </defs>
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    <svg
+                        className="absolute inset-0 w-full h-full opacity-75"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 1440 500"
+                        preserveAspectRatio="xMidYMid slice"
+                    >
+                        <defs>
+                            <linearGradient id={`workflow-trace-grad-${id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stopColor="#d97706" stopOpacity="0.28" />
+                                <stop offset="35%" stopColor="#0284c7" stopOpacity="0.32" />
+                                <stop offset="70%" stopColor="#d97706" stopOpacity="0.32" />
+                                <stop offset="100%" stopColor="#0284c7" stopOpacity="0.28" />
+                            </linearGradient>
+                        </defs>
 
-                    {/* Interconnected Circuit Pipeline Linking Step 1 -> Step 5 */}
-                    <g stroke={`url(#workflow-trace-grad-${id})`} fill="none" strokeWidth="1.6">
-                        {/* Upper Pathway */}
-                        <path
-                            d="M 60 140 H 280 L 330 190 H 590 L 640 140 H 890 L 940 190 H 1190 L 1240 140 H 1420"
-                            strokeDasharray="10 8"
-                            className="animate-tech-dash-flow"
-                        />
-                        {/* Lower Complementary Pipeline */}
-                        <path
-                            d="M 60 460 H 260 L 310 410 H 570 L 620 460 H 870 L 920 410 H 1170 L 1220 460 H 1420"
-                            strokeDasharray="12 8"
-                            className="animate-tech-dash-flow"
-                        />
-                    </g>
+                        {/* Interconnected Circuit Pipeline Linking Step 1 -> Step 5 */}
+                        <g stroke={`url(#workflow-trace-grad-${id})`} fill="none" strokeWidth="1.6">
+                            <path
+                                d="M 60 140 H 280 L 330 190 H 590 L 640 140 H 890 L 940 190 H 1190 L 1240 140 H 1420"
+                                strokeDasharray="10 8"
+                                className="animate-tech-dash-flow"
+                            />
+                            <path
+                                d="M 60 360 H 260 L 310 310 H 570 L 620 360 H 870 L 920 310 H 1170 L 1220 360 H 1420"
+                                strokeDasharray="12 8"
+                                className="animate-tech-dash-flow"
+                            />
+                        </g>
 
-                    {/* Checkpoint Nodes linking 5 stages */}
-                    <g fill="#0284c7">
-                        {/* Node 1: Tìm kiếm */}
-                        <circle cx="280" cy="140" r="5" fill="#d97706" />
-                        <circle cx="280" cy="140" r="10" fill="none" stroke="#d97706" strokeWidth="1" strokeDasharray="3 3" />
-                        {/* Node 2: Tư vấn & Báo giá */}
-                        <circle cx="590" cy="190" r="5" fill="#0284c7" />
-                        <circle cx="590" cy="190" r="10" fill="none" stroke="#0284c7" strokeWidth="1" strokeDasharray="3 3" />
-                        {/* Node 3: Hợp đồng */}
-                        <circle cx="890" cy="140" r="5.5" fill="#d97706" />
-                        <circle cx="890" cy="140" r="11" fill="none" stroke="#d97706" strokeWidth="1" strokeDasharray="3 3" />
-                        {/* Node 4: Vận chuyển logistics */}
-                        <circle cx="1190" cy="190" r="5" fill="#0284c7" />
-                        <circle cx="1190" cy="190" r="10" fill="none" stroke="#0284c7" strokeWidth="1" strokeDasharray="3 3" />
-                    </g>
-                </svg>
+                        {/* Checkpoint Nodes linking 5 stages */}
+                        <g fill="#0284c7">
+                            <circle cx="280" cy="140" r="5" fill="#d97706" />
+                            <circle cx="280" cy="140" r="10" fill="none" stroke="#d97706" strokeWidth="1" strokeDasharray="3 3" />
+                            <circle cx="590" cy="190" r="5" fill="#0284c7" />
+                            <circle cx="590" cy="190" r="10" fill="none" stroke="#0284c7" strokeWidth="1" strokeDasharray="3 3" />
+                            <circle cx="890" cy="140" r="5.5" fill="#d97706" />
+                            <circle cx="890" cy="140" r="11" fill="none" stroke="#d97706" strokeWidth="1" strokeDasharray="3 3" />
+                            <circle cx="1190" cy="190" r="5" fill="#0284c7" />
+                            <circle cx="1190" cy="190" r="10" fill="none" stroke="#0284c7" strokeWidth="1" strokeDasharray="3 3" />
+                        </g>
+                    </svg>
+                </div>
             )}
 
             {/* ========================================================================= */}
             {/* VARIANT 5: PARTNER NETWORK (Mạng Lưới Đối Tác Chiến Lược Cấp 1)           */}
             {/* ========================================================================= */}
             {canonicalVariant === 'partner-network' && (
-                <svg
-                    className="absolute inset-0 w-full h-full z-0 opacity-70"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 1440 620"
-                    preserveAspectRatio="none"
-                >
-                    {/* Interconnecting Supply Constellations */}
-                    <g stroke="rgba(14, 165, 233, 0.25)" strokeWidth="1.2" fill="none">
-                        {/* Line network */}
-                        <line x1="140" y1="180" x2="360" y2="120" />
-                        <line x1="360" y1="120" x2="540" y2="250" />
-                        <line x1="540" y1="250" x2="800" y2="170" />
-                        <line x1="800" y1="170" x2="1040" y2="290" />
-                        <line x1="1040" y1="290" x2="1280" y2="190" />
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    <svg
+                        className="absolute inset-0 w-full h-full opacity-70"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 1200 400"
+                        preserveAspectRatio="xMidYMid slice"
+                    >
+                        {/* Interconnecting Supply Constellations */}
+                        <g stroke="rgba(14, 165, 233, 0.25)" strokeWidth="1.2" fill="none">
+                            <line x1="140" y1="140" x2="360" y2="80" />
+                            <line x1="360" y1="80" x2="540" y2="180" />
+                            <line x1="540" y1="180" x2="800" y2="120" />
+                            <line x1="800" y1="120" x2="1040" y2="210" />
 
-                        <line x1="220" y1="440" x2="460" y2="380" />
-                        <line x1="460" y1="380" x2="740" y2="460" />
-                        <line x1="740" y1="460" x2="1000" y2="400" />
-                        <line x1="1000" y1="400" x2="1340" y2="470" />
+                            <line x1="220" y1="320" x2="460" y2="260" />
+                            <line x1="460" y1="260" x2="740" y2="340" />
+                            <line x1="740" y1="340" x2="1000" y2="280" />
 
-                        {/* Cross links */}
-                        <line x1="360" y1="120" x2="460" y2="380" strokeDasharray="4 4" stroke="rgba(217, 119, 6, 0.2)" />
-                        <line x1="800" y1="170" x2="740" y2="460" strokeDasharray="4 4" stroke="rgba(217, 119, 6, 0.2)" />
-                        <line x1="1040" y1="290" x2="1000" y2="400" strokeDasharray="4 4" stroke="rgba(14, 165, 233, 0.2)" />
-                    </g>
+                            <line x1="360" y1="80" x2="460" y2="260" strokeDasharray="4 4" stroke="rgba(217, 119, 6, 0.2)" />
+                            <line x1="800" y1="120" x2="740" y2="340" strokeDasharray="4 4" stroke="rgba(217, 119, 6, 0.2)" />
+                        </g>
 
-                    {/* Brand Satellite Nodes: Đồng Tâm, Viglacera, Catalan, Gree, Midea, VNSTEEL */}
-                    <g fill="#0284c7">
-                        <circle cx="140" cy="180" r="5" fill="#d97706" />
-                        <circle cx="360" cy="120" r="4.5" />
-                        <circle cx="540" cy="250" r="6" fill="#d97706" />
-                        <circle cx="800" cy="170" r="5" />
-                        <circle cx="1040" cy="290" r="5.5" fill="#d97706" />
-                        <circle cx="1280" cy="190" r="4.5" />
-                    </g>
-                    <g fill="#d97706">
-                        <circle cx="220" cy="440" r="4.5" />
-                        <circle cx="460" cy="380" r="5" fill="#0284c7" />
-                        <circle cx="740" cy="460" r="6.5" />
-                        <circle cx="1000" cy="400" r="4.5" fill="#0284c7" />
-                        <circle cx="1340" cy="470" r="5.5" />
-                    </g>
-                </svg>
+                        {/* Brand Satellite Nodes */}
+                        <g fill="#0284c7">
+                            <circle cx="140" cy="140" r="5" fill="#d97706" />
+                            <circle cx="360" cy="80" r="4.5" />
+                            <circle cx="540" cy="180" r="6" fill="#d97706" />
+                            <circle cx="800" cy="120" r="5" />
+                            <circle cx="1040" cy="210" r="5.5" fill="#d97706" />
+                        </g>
+                        <g fill="#d97706">
+                            <circle cx="220" cy="320" r="4.5" />
+                            <circle cx="460" cy="260" r="5" fill="#0284c7" />
+                            <circle cx="740" cy="340" r="6" />
+                            <circle cx="1000" cy="280" r="4.5" fill="#0284c7" />
+                        </g>
+                    </svg>
+                </div>
             )}
 
             {/* ========================================================================= */}
             {/* VARIANT 6: ECOMMERCE PORTAL (Cổng Giao Dịch Báo Giá, Banner & Danh Mục)     */}
             {/* ========================================================================= */}
             {canonicalVariant === 'ecommerce-portal' && (
-                <svg
-                    className="absolute inset-0 w-full h-full z-0 opacity-75"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="100%"
-                    height="100%"
-                >
-                    <defs>
-                        {/* Dot Matrix Pattern */}
-                        <pattern
-                            id={`dot-matrix-${id}`}
-                            width="36"
-                            height="36"
-                            patternUnits="userSpaceOnUse"
-                        >
-                            <circle cx="18" cy="18" r="1.3" fill="rgba(148, 163, 184, 0.38)" />
-                        </pattern>
-                    </defs>
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                    {/* Base Dot Matrix Pattern */}
+                    <svg
+                        className="absolute inset-0 w-full h-full opacity-70"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="100%"
+                        height="100%"
+                    >
+                        <defs>
+                            <pattern
+                                id={`dot-matrix-${id}`}
+                                width="36"
+                                height="36"
+                                patternUnits="userSpaceOnUse"
+                            >
+                                <circle cx="18" cy="18" r="1.3" fill="rgba(148, 163, 184, 0.35)" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill={`url(#dot-matrix-${id})`} />
+                    </svg>
 
-                    <rect width="100%" height="100%" fill={`url(#dot-matrix-${id})`} />
+                    {/* HUD Precision Corner Alignment Brackets (Anchored to 4 Corners on ANY Screen) */}
+                    <div className="absolute top-2.5 left-2.5 sm:top-5 sm:left-5 w-5 h-5 sm:w-7 sm:h-7 border-t-2 border-l-2 border-amber-500/40 pointer-events-none" />
+                    <div className="absolute top-2.5 right-2.5 sm:top-5 sm:right-5 w-5 h-5 sm:w-7 sm:h-7 border-t-2 border-r-2 border-amber-500/40 pointer-events-none" />
+                    <div className="absolute bottom-2.5 left-2.5 sm:bottom-5 sm:left-5 w-5 h-5 sm:w-7 sm:h-7 border-b-2 border-l-2 border-amber-500/40 pointer-events-none" />
+                    <div className="absolute bottom-2.5 right-2.5 sm:bottom-5 sm:right-5 w-5 h-5 sm:w-7 sm:h-7 border-b-2 border-r-2 border-amber-500/40 pointer-events-none" />
 
-                    {/* HUD Precision Corner Alignment Brackets */}
-                    <g stroke="rgba(217, 119, 6, 0.42)" strokeWidth="1.4" fill="none">
-                        {/* Top Left Bracket */}
-                        <path d="M 60 70 H 40 V 90" />
-                        {/* Top Right Bracket */}
-                        <path d="M 1380 70 H 1400 V 90" />
-                        {/* Bottom Left Bracket */}
-                        <path d="M 40 450 V 470 H 60" />
-                        {/* Bottom Right Bracket */}
-                        <path d="M 1400 450 V 470 H 1380" />
-
-                        {/* Midpoint Coordinate Crosshairs */}
-                        <path d="M 120 280 L 140 280 M 130 270 L 130 290" stroke="rgba(14, 165, 233, 0.4)" />
-                        <path d="M 1300 280 L 1320 280 M 1310 270 L 1310 290" stroke="rgba(14, 165, 233, 0.4)" />
-                    </g>
-                </svg>
+                    {/* Midpoint Coordinate Crosshairs */}
+                    <div className="absolute top-1/2 left-3 -translate-y-1/2 hidden sm:flex items-center gap-1 text-sky-500/40 text-xs font-mono select-none">
+                        <span>+</span><span className="text-[10px]">SYS.01</span>
+                    </div>
+                    <div className="absolute top-1/2 right-3 -translate-y-1/2 hidden sm:flex items-center gap-1 text-sky-500/40 text-xs font-mono select-none">
+                        <span className="text-[10px]">SYS.02</span><span>+</span>
+                    </div>
+                </div>
             )}
 
             {/* Optional Content Container */}

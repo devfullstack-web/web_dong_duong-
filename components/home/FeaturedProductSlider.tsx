@@ -9,6 +9,7 @@ import Autoplay from 'embla-carousel-autoplay';
 
 import { useTranslations, useLocale } from 'next-intl';
 import TechSvgBackground from '@/components/ui/TechSvgBackground';
+import { stripHtml } from '@/utils/strip-html';
 
 export interface FeaturedProductData {
     id: string;
@@ -159,7 +160,7 @@ function ProductCard({ product }: { product: FeaturedProductData }) {
                     {/* Description Slot (Fixed Min-Height) */}
                     <div className="min-h-[2.8rem] sm:min-h-[3.2rem] flex items-center">
                         <p className="text-xs sm:text-sm text-slate-600 font-medium line-clamp-2 leading-relaxed">
-                            {localizedDesc}
+                            {stripHtml(localizedDesc, 130)}
                         </p>
                     </div>
                 </div>

@@ -350,6 +350,7 @@ html {
 
 .animate-hvac-fan-spin {
   animation: hvac-fan-spin 24s linear infinite;
+  transform-box: fill-box;
   transform-origin: center;
 }
 
@@ -367,6 +368,36 @@ html {
 
 .animate-marble-vein-drift {
   animation: marble-vein-drift 10s ease-in-out infinite;
+}
+
+/* GPU Hardware Layer Promotion - Zero Repaint / Lag-Free 60fps */
+.animate-tech-float,
+.animate-tech-float-delayed,
+.animate-tech-pulse-glow,
+.animate-hvac-fan-spin,
+.animate-tile-sheen,
+.animate-cooling-ion-bob,
+.animate-cooling-ion-bob-delayed,
+.animate-marble-vein-drift {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Battery Saver & Accessibility Optimization */
+@media (prefers-reduced-motion: reduce) {
+  .animate-tech-float,
+  .animate-tech-float-delayed,
+  .animate-tech-pulse-glow,
+  .animate-tech-dash-flow,
+  .animate-hvac-air-stream,
+  .animate-hvac-fan-spin,
+  .animate-tile-sheen,
+  .animate-cooling-ion-bob,
+  .animate-cooling-ion-bob-delayed,
+  .animate-marble-vein-drift {
+    animation: none !important;
+  }
 }
 
 @layer base {

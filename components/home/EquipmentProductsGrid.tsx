@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Link } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
 import TechSvgBackground from '@/components/ui/TechSvgBackground';
+import { stripHtml } from '@/utils/strip-html';
 
 export interface EquipmentProductItem {
     id: string;
@@ -106,7 +107,7 @@ export default function EquipmentProductsGrid({ products = [] }: Props) {
                                     ))}
                                     {entries.length === 0 && (
                                         <p className="line-clamp-2 text-base text-slate-600 font-medium leading-relaxed italic">
-                                            {(locale === 'zh' ? item.description_localized?.zh : locale === 'en' ? item.description_localized?.en : item.description_localized?.vi) || item.description || (locale === 'zh' ? '高品质工程标准设备。' : locale === 'en' ? 'High quality standard equipment.' : 'Sản phẩm tiêu chuẩn chất lượng cao.')}
+                                            {stripHtml((locale === 'zh' ? item.description_localized?.zh : locale === 'en' ? item.description_localized?.en : item.description_localized?.vi) || item.description || (locale === 'zh' ? '高品质工程标准设备。' : locale === 'en' ? 'High quality standard equipment.' : 'Sản phẩm tiêu chuẩn chất lượng cao.'))}
                                         </p>
                                     )}
                                 </div>
