@@ -7,6 +7,7 @@ import { motion } from 'motion/react';
 import { Newspaper, Calendar } from 'lucide-react';
 import { getLocalizedValue, LocalizedText, type Locale } from '@/types/i18n';
 import { PageBanner } from '@/components/site/PageBanner';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 import { API_ROUTES } from '@/constants/routes';
 import { usePaginatedApiQuery } from '@/hooks/use-paginated-api-query';
 import { SiteEmptyState } from '@/components/site/SiteEmptyState';
@@ -52,8 +53,11 @@ export default function NewsPage() {
             <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Compact News Grid */}
-            <section className="py-12 bg-white relative min-h-[400px]">
-                <div className="container mx-auto px-4 lg:px-8">
+            <section className="relative py-12 bg-white min-h-[400px] overflow-hidden">
+                {/* Tech Dot Matrix Background */}
+                <TechSvgBackground variant="ecommerce-grid" glowColor="cyan" className="absolute inset-0 z-0" />
+
+                <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     {isLoading && news.length === 0 ? (
                         <Loading variant="section" size="lg" text={tCommon('loading')} />
                     ) : news.length === 0 ? (

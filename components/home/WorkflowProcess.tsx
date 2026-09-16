@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { motion } from 'motion/react';
 import {
     Search,
     Handshake,
@@ -39,6 +38,7 @@ interface Props {
 }
 
 import { useTranslations } from 'next-intl';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 export default function WorkflowProcess({ steps = [] }: Props) {
     const t = useTranslations('Home');
@@ -48,8 +48,11 @@ export default function WorkflowProcess({ steps = [] }: Props) {
     }
 
     return (
-        <section className="py-16 sm:py-20 bg-slate-50/50 border-b border-slate-100">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
+        <section className="relative py-16 sm:py-20 bg-slate-50/60 border-b border-slate-100 overflow-hidden">
+            {/* Tech Animated Circuit Traces Background */}
+            <TechSvgBackground variant="circuit" glowColor="amber" className="absolute inset-0 z-0" />
+
+            <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Header */}
                 <div className="text-center mb-12 sm:mb-16">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#C29236] uppercase tracking-wide">

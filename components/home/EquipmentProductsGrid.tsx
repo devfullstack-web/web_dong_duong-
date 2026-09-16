@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { motion } from 'motion/react';
 import { Link } from '@/i18n/routing';
 import { useLocale, useTranslations } from 'next-intl';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 export interface EquipmentProductItem {
     id: string;
@@ -31,8 +31,11 @@ export default function EquipmentProductsGrid({ products = [] }: Props) {
     }
 
     return (
-        <section id="equipment-products" className="py-16 sm:py-20 bg-white">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
+        <section id="equipment-products" className="relative py-16 sm:py-20 bg-white overflow-hidden">
+            {/* High-Tech Industrial Honeycomb Mesh Background */}
+            <TechSvgBackground variant="honeycomb" glowColor="amber" className="absolute inset-0 z-0" />
+
+            <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Header */}
                 <div className="text-center mb-12 sm:mb-16">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#C29236] uppercase tracking-wide">
@@ -43,7 +46,7 @@ export default function EquipmentProductsGrid({ products = [] }: Props) {
 
                 {/* Grid of Real Products from Backend */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {products.map((item, idx) => {
+                    {products.map((item) => {
                         // Extract up to 3 real specs from tech_specs object
                         const entries =
                             item.tech_specs && typeof item.tech_specs === 'object'

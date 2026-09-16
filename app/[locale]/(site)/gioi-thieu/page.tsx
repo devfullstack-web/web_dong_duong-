@@ -27,6 +27,7 @@ import Link from 'next/link';
 import { useTranslations, useLocale } from 'next-intl';
 import { useSiteInfo } from '@/components/providers/site-info-provider';
 import { PageBanner } from '@/components/site/PageBanner';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 import { DEFAULT_PARTNERS, BrandPartnerItem } from '@/components/home/Partners';
 
@@ -52,8 +53,11 @@ export default function AboutPage() {
             <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Intro Section - Mission & Vision */}
-            <section className="py-20 lg:py-28 bg-white overflow-hidden">
-                <div className="container mx-auto px-4 lg:px-8 max-w-[1340px]">
+            <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
+                {/* Tech Blueprint Vector CAD Background */}
+                <TechSvgBackground variant="blueprint" glowColor="amber" className="absolute inset-0 z-0" />
+
+                <div className="container relative z-10 mx-auto px-4 lg:px-8 max-w-[1340px]">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                         <div className="lg:col-span-7 space-y-8">
                             <div className="space-y-3">
@@ -186,8 +190,11 @@ export default function AboutPage() {
             </section>
 
             {/* Business Pillars - 2 Core Sectors */}
-            <section className="py-20 lg:py-28 bg-white overflow-hidden">
-                <div className="container mx-auto px-4 lg:px-8 max-w-[1340px]">
+            <section className="relative py-20 lg:py-28 bg-white overflow-hidden">
+                {/* Tech Aerodynamic Flow Background */}
+                <TechSvgBackground variant="flow" glowColor="cyan" className="absolute inset-0 z-0" />
+
+                <div className="container relative z-10 mx-auto px-4 lg:px-8 max-w-[1340px]">
                     <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6 mb-16">
                         <div className="space-y-3 text-left">
                             <div className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#0A2958]">

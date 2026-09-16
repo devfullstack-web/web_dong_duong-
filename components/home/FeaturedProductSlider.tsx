@@ -8,6 +8,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
 import { useTranslations, useLocale } from 'next-intl';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 export interface FeaturedProductData {
     id: string;
@@ -245,7 +246,10 @@ export default function FeaturedProductSlider({ products = [] }: Props) {
 
     return (
         <section id="featured-products" className="py-14 sm:py-16 relative bg-white border-b border-slate-100 overflow-hidden">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
+            {/* Tech Animated Aerodynamic Flow Background */}
+            <TechSvgBackground variant="flow" glowColor="cyan" className="absolute inset-0 z-0" />
+
+            <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Header matching Mockup 1 */}
                 <div className="text-center mb-12 sm:mb-16">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0B2545] uppercase tracking-tight">

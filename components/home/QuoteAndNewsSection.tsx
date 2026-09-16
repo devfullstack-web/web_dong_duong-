@@ -2,13 +2,13 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { motion } from 'motion/react';
 import { Calendar, Loader2, Send } from 'lucide-react';
 import { Link } from '@/i18n/routing';
 import { toast } from 'sonner';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { useLocale, useTranslations } from 'next-intl';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 interface NewsItem {
     id: string;
@@ -113,8 +113,11 @@ export default function QuoteAndNewsSection({ articles }: Props) {
     };
 
     return (
-        <section id="quote-form" className="py-16 sm:py-20 bg-slate-50/70 border-t border-slate-100">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
+        <section id="quote-form" className="relative py-16 sm:py-20 bg-slate-50/70 border-t border-slate-100 overflow-hidden">
+            {/* Tech Dot Matrix & Ambient Cyan Glow Background */}
+            <TechSvgBackground variant="ecommerce-grid" glowColor="cyan" className="absolute inset-0 z-0" />
+
+            <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                     {/* Left Column: Quote Form Card */}
                     <div className="lg:col-span-5 bg-[#0B2545] text-white rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">

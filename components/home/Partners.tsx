@@ -5,8 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslations, useLocale } from 'next-intl';
-import { CheckCircle2, ExternalLink, Sparkles, Building2, Wind, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Sparkles } from 'lucide-react';
 import $api from '@/utils/axios';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 export interface BrandPartnerItem {
     id?: string;
@@ -241,9 +242,12 @@ export default function Partners({ initialPartners }: PartnersProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="py-20 lg:py-24 bg-gradient-to-b from-slate-50 to-white border-t border-slate-200/80"
+            className="relative py-20 lg:py-24 bg-gradient-to-b from-slate-50 to-white border-t border-slate-200/80 overflow-hidden"
         >
-            <div className="container mx-auto px-4 lg:px-8 max-w-[1340px]">
+            {/* Tech Partner Constellation Network Background */}
+            <TechSvgBackground variant="network" glowColor="blue" className="absolute inset-0 z-0" />
+
+            <div className="container relative z-10 mx-auto px-4 lg:px-8 max-w-[1340px]">
                 {/* Header Section */}
                 <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
                     <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0A2958]/5 border border-[#0A2958]/10 text-xs font-black tracking-widest text-[#0A2958] uppercase">

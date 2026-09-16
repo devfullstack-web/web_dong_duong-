@@ -19,6 +19,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
 import { useLocale, useTranslations } from 'next-intl';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 // Dynamic Icon Mapping
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -113,38 +114,9 @@ export default function CoreCategories({ categories = [] }: Props) {
     }
 
     return (
-        <section className="py-16 sm:py-20 relative overflow-hidden bg-gradient-to-b from-white via-sky-50/30 to-white">
-            {/* Background Decorative Waves */}
-            <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
-                <svg
-                    className="w-full h-full"
-                    viewBox="0 0 1440 600"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="none"
-                >
-                    <path
-                        d="M-50 120 C 300 40, 700 200, 1500 80 L 1500 600 L -50 600 Z"
-                        fill="url(#wave-gradient-1)"
-                        opacity="0.3"
-                    />
-                    <path
-                        d="M-50 250 C 400 180, 900 350, 1500 200 L 1500 600 L -50 600 Z"
-                        fill="url(#wave-gradient-2)"
-                        opacity="0.2"
-                    />
-                    <defs>
-                        <linearGradient id="wave-gradient-1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#bae6fd" />
-                            <stop offset="100%" stopColor="#e0f2fe" />
-                        </linearGradient>
-                        <linearGradient id="wave-gradient-2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#7dd3fc" />
-                            <stop offset="100%" stopColor="#bae6fd" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-            </div>
+        <section className="py-16 sm:py-20 relative overflow-hidden bg-gradient-to-b from-white via-sky-50/20 to-white">
+            {/* Tech Vector Grid with dynamic lighting */}
+            <TechSvgBackground variant="ecommerce-grid" glowColor="cyan" className="absolute inset-0 z-0" />
 
             <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Header */}

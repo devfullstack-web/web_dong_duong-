@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { motion } from 'motion/react';
 
 import { useTranslations } from 'next-intl';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 
 export interface ReasonItem {
     id: string;
@@ -25,8 +25,11 @@ export default function WhyChooseDongDuong({ reasons = [] }: Props) {
     }
 
     return (
-        <section className="py-14 sm:py-16 lg:py-20 bg-white border-b border-slate-100">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
+        <section className="relative py-14 sm:py-16 lg:py-20 bg-white border-b border-slate-100 overflow-hidden">
+            {/* High-Tech Animated Vector Blueprint Background */}
+            <TechSvgBackground variant="blueprint" glowColor="amber" className="absolute inset-0 z-0" />
+
+            <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-[1280px]">
                 {/* Section Title matching Mockup serif bold */}
                 <div className="text-center mb-12 sm:mb-16">
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0B2545] uppercase tracking-wide font-serif">

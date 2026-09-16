@@ -3,6 +3,7 @@
 import { Phone, Mail, MapPin, Send, Facebook, Linkedin, Youtube, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { PageBanner } from '@/components/site/PageBanner';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 import { useSiteInfo } from '@/components/providers/site-info-provider';
 import { useContactForm } from '@/hooks/use-contact-form';
 
@@ -24,8 +25,11 @@ export default function ContactPage() {
             <PageBanner title={t('headerTitle')} accent={t('headerTitleAccent')} />
 
             {/* Contact Grid */}
-            <section className="py-16">
-                <div className="container mx-auto px-4 lg:px-8">
+            <section className="relative py-16 overflow-hidden">
+                {/* Tech Blueprint & Grid Background */}
+                <TechSvgBackground variant="blueprint" glowColor="blue" className="absolute inset-0 z-0" />
+
+                <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                         {/* Info Column */}
                         <div className="space-y-10">

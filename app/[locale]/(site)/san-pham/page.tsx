@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { LayoutGrid, List, ArrowRight, Shield, Info, ChevronDown, Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PageBanner } from '@/components/site/PageBanner';
+import TechSvgBackground from '@/components/ui/TechSvgBackground';
 import $api from '@/utils/axios';
 import { API_ROUTES } from '@/constants/routes';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -159,8 +160,11 @@ export default function ProductArchive() {
             <PageBanner title={t('hero.title')} accent={t('hero.titleAccent')} />
 
             {/* Main Content */}
-            <section className="py-8 ">
-                <div className="container mx-auto px-4 lg:px-8">
+            <section className="relative py-8 overflow-hidden">
+                {/* Tech Matrix Vector Grid Background */}
+                <TechSvgBackground variant="ecommerce-grid" glowColor="cyan" className="absolute inset-0 z-0" />
+
+                <div className="container relative z-10 mx-auto px-4 lg:px-8">
                     <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">
                         {/* Sidebar Filters */}
                         <aside className="lg:w-64 shrink-0">
