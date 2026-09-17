@@ -214,8 +214,7 @@ export default function Footer() {
                         </div>
 
                         {/* Certified Security Assurance */}
-                        <div className="flex items-center gap-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl px-2.5 py-2 mt-2 shadow-sm">
-                            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                        <div className="flex items-center justify-center gap-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl px-2.5 py-2 mt-2 shadow-sm">
                             <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                             <span className="text-[11px] xl:text-[11.5px] text-emerald-200/95 font-semibold whitespace-nowrap leading-none">
                                 {t('securityWarning')}
