@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sgv_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sgv_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sgv_secure_pass_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-sgv_db}
+    ports:
+      # Map cổng 5435 trên host (để KHÔNG đụng cổng 5432 của irrigation-postgres đang chạy trên VPS)
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5435}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sgv_admin} -d ${POSTGRES_DB:-sgv_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sgv_network
+
+  web:
+    image: ${IMAGE_NAME:-sgv_web}:${IMAGE_TAG:-latest}
+    container_name: sgv_web
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sgv_admin}:${POSTGRES_PASSWORD:-sgv_secure_pass_2026}@postgres:5432/${POSTGRES_DB:-sgv_db}
+    ports:
+      # Port 3001 trên host VPS (để KHÔNG đụng cổng 3000 của SCADA), sgv-proxy sẽ reverse proxy vào đây
+      - "${WEB_HOST_PORT:-3001}:3000"
+    volumes:
+      # Mount volume để lưu file upload lâu dài, không bị mất khi redeploy container
+      - uploads_data:/app/public/uploads
+    networks:
+      - sgv_network
+
+volumes:
+  postgres_data:
+    name: sgv_postgres_data
+  uploads_data:
+    name: sgv_uploads_data
+
+networks:
+  sgv_network:
+    name: sgv_network
+    driver: bridge
