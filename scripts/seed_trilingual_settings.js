@@ -1,7 +1,8 @@
 const { Pool } = require('pg');
+require('dotenv').config();
 
 const pool = new Pool({
-    connectionString: 'postgresql://postgres:trung0126397651@localhost:5432/sgv_cms',
+    connectionString: process.env.DATABASE_URL,
 });
 
 async function seedTrilingualSettings() {

@@ -43,9 +43,20 @@ function fixRedirectPort(response: NextResponse): NextResponse {
 }
 
 function safeRedirect(path: string, request: NextRequest): NextResponse {
-    const configuredBaseUrl = process.env.APP_URL;
+    // 1. Ưu tiên lấy host và proto từ request header (Nginx reverse proxy chuyển tiếp qua)
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    const host = forwardedHost || request.headers.get('host');
+    const proto = request.headers.get('x-forwarded-proto') || 'https';
 
-    if (configuredBaseUrl) {
+    if (host && !isLocalHostname(host.split(':')[0])) {
+        try {
+            return NextResponse.redirect(new URL(path, `${proto}://${host}`));
+        } catch {}
+    }
+
+    // 2. Nếu có APP_URL và APP_URL không phải localhost thì mới dùng
+    const configuredBaseUrl = process.env.APP_URL;
+    if (configuredBaseUrl && !configuredBaseUrl.includes('localhost') && !configuredBaseUrl.includes('127.0.0.1')) {
         try {
             return NextResponse.redirect(new URL(path, configuredBaseUrl));
         } catch {}

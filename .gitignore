@@ -26,6 +26,8 @@ deploy*
 # misc
 .DS_Store
 *.pem
+backups/
+*.dump
 
 # debug
 npm-debug.log*

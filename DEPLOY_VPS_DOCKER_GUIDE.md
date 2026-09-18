@@ -217,3 +217,67 @@ sudo certbot --nginx -d saigonvalve.vn -d www.saigonvalve.vn
 - [`docker-compose.yml`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/docker-compose.yml): Cấu hình dịch vụ Web + PostgreSQL + Persistent Volumes.
 - [`.env.production.example`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/.env.production.example): Mẫu biến môi trường cho môi trường Production trên VPS.
 - [`.dockerignore`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/.dockerignore): Tối ưu build context không gửi file rác.
+
+---
+
+## 6. Hướng Dẫn Migration & Quản Lý Database (Chuẩn Kiến Trúc Như Event)
+
+Hệ thống cung cấp trọn bộ công cụ Migration và Clone/Backup Database qua SSH tunnel bảo mật, tự động đóng tunnel sau khi kết thúc.
+
+### 6.1. Migration trên Database Remote (VPS)
+
+Khi bạn thêm trường mới vào `db/schemas/*.ts` hoặc sửa đổi cấu trúc bảng:
+
+* **Chạy Migration trên DB Remote (Menu tương tác):**
+  ```bash
+  make migration-remote
+  # hoặc lệnh tắt:
+  make migration
+  ```
+  Lệnh sẽ hỏi IP VPS, Port, User, Pass (có sẵn giá trị mặc định, chỉ cần nhấn Enter), mở SSH tunnel bảo mật và cung cấp 4 lựa chọn:
+  1. `Run pending migrations`: Chạy các file SQL trong `drizzle/` chưa áp dụng.
+  2. `Generate migration mới`: Tự so sánh code schema TypeScript với DB Remote, sinh file `000x_<name>.sql`, hiển thị nội dung và hỏi xác nhận trước khi áp.
+  3. `Drizzle Push`: Đồng bộ trực tiếp thay đổi bảng/cột vào DB Remote.
+  4. `Status`: Kiểm tra danh sách bảng hiện có và lịch sử migrations.
+
+* **Chỉ Generate file Migration từ DB Remote (Read-Only, không đụng dữ liệu):**
+  ```bash
+  make migration-generate-remote
+  ```
+
+* **Kiểm tra trạng thái DB & Migrations trên Remote:**
+  ```bash
+  make migration-status
+  ```
+
+### 6.2. Migration trên Database Local
+
+* **Chạy Migration trên DB Local:**
+  ```bash
+  make migration-local
+  ```
+
+### 6.3. Backup & Clone Database (Remote ↔ Local)
+
+* **Backup DB Remote về máy Local (Không ảnh hưởng server đang chạy):**
+  ```bash
+  make db-dump-remote
+  ```
+  File dump sẽ được lưu tại `backups/remote-<ip>-<timestamp>.dump`.
+
+* **Clone toàn bộ Data từ VPS về máy Local để test giả lập:**
+  ```bash
+  make db-clone-remote
+  ```
+  Lệnh tự động SSH vào VPS → dump dữ liệu `sgv_postgres` → tải về máy → hỏi xác nhận restore vào container Postgres local.
+
+* **Backup DB Local:**
+  ```bash
+  make db-dump
+  ```
+
+* **Restore file dump bất kỳ vào Local:**
+  ```bash
+  make db-restore FILE=backups/ten_file.dump
+  ```
+

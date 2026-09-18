@@ -648,3 +648,9 @@ Nhật ký hệ thống được ghi nhận tự động bởi máy chủ và l�
 
 **Q5: Tại sao dòng bản quyền (Copyright) hoặc số Hotline ở chân trang website chính chưa thay đổi sau khi tôi sửa trong Cài đặt?**
 * **Trả lời:** Vui lòng kiểm tra xem bạn đã bấm nút **Cập nhật cấu hình website** ở cuối trang Cài đặt chưa. Ngoài ra, sau khi cập nhật, bạn cần tải lại trang website chính (nhấn Ctrl + F5) để trình duyệt xóa bộ nhớ đệm (cache) và hiển thị thông tin mới nhất.
+
+
+chạy này đẻ seed data : 
+make seed-remote
+
+make migration-generate-remote

@@ -21,8 +21,8 @@ services:
       - sgv_network
 
   web:
-    image: ${IMAGE_NAME:-sgv_web}:${IMAGE_TAG:-latest}
-    container_name: sgv_web
+    image: ${IMAGE_NAME:-sgv-web-dong-duong}:${IMAGE_TAG:-latest}
+    container_name: sgv-web-dong-duong
     restart: unless-stopped
     depends_on:
       postgres:
