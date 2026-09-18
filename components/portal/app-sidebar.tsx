@@ -103,36 +103,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 } as import('react').CSSProperties
             }
         >
-            <SidebarHeader className="border-b border-white/5 flex items-center justify-start px-4 bg-brand shrink-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center">
+            <SidebarHeader className="border-b border-white/10 flex items-center justify-start px-3 bg-brand shrink-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center min-h-[56px]">
                 <Link
                     href={PORTAL_ROUTES.dashboard}
-                    className="flex items-center gap-3 group/logo relative w-full h-full justify-center "
+                    className="flex items-center gap-3 group/logo relative w-full h-full justify-center"
                 >
-                    <div className="relative flex items-center gap-3 group-data-[collapsible=icon]:hidden w-full px-1">
-                        <div className="bg-white p-1 rounded-none flex items-center justify-center h-8 w-8 shrink-0">
+                    <div className="relative flex items-center gap-2.5 group-data-[collapsible=icon]:hidden w-full px-1">
+                        <div className="relative flex items-center justify-center h-8 w-8 shrink-0 drop-shadow-md">
                             <Image
-                                src="/images/logo/logo.png"
-                                alt="Logo"
-                                width={22}
-                                height={22}
-                                unoptimized
+                                src="/images/dongduong/dongduong_emblem_tight.png"
+                                alt="Đông Dương Corporation"
+                                width={32}
+                                height={32}
+                                priority
                                 className="object-contain"
-                                style={{ width: 'auto', height: 'auto' }}
                             />
                         </div>
                         <span className="text-[11px] font-black tracking-tighter leading-none text-white whitespace-nowrap uppercase">
                             {t('companyName')}
                         </span>
                     </div>
-                    <div className="hidden group-data-[collapsible=icon]:flex h-8 w-8 items-center justify-center rounded-none bg-white p-1 shrink-0">
+                    <div className="hidden group-data-[collapsible=icon]:flex h-8 w-8 items-center justify-center shrink-0 drop-shadow-md">
                         <Image
-                            src="/images/logo/logo.png"
-                            alt="Logo"
-                            width={20}
-                            height={20}
-                            unoptimized
+                            src="/images/dongduong/dongduong_emblem_tight.png"
+                            alt="Đông Dương Corporation"
+                            width={28}
+                            height={28}
+                            priority
                             className="object-contain"
-                            style={{ width: 'auto', height: 'auto' }}
                         />
                     </div>
                 </Link>

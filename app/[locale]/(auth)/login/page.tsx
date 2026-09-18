@@ -2,7 +2,8 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Lock, User, Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
+import { Lock, User, Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -71,8 +72,15 @@ export default function LoginPage() {
             >
                 {/* Brand Header */}
                 <div className="flex flex-col items-center text-center mb-8">
-                    <div className="h-12 w-12 rounded-none bg-brand-primary/10 flex items-center justify-center mb-4">
-                        <ShieldCheck className="text-brand-primary size-6" />
+                    <div className="relative w-14 h-14 mb-3 drop-shadow-md flex items-center justify-center">
+                        <Image
+                            src="/images/dongduong/dongduong_emblem_tight.png"
+                            alt="Đông Dương Corporation"
+                            width={52}
+                            height={52}
+                            priority
+                            className="object-contain"
+                        />
                     </div>
                     <span className="text-xs font-black uppercase tracking-widest text-slate-800 leading-none">
                         {COMPANY_INFO.shortName?.toUpperCase() || 'ĐÔNG DƯƠNG'}
