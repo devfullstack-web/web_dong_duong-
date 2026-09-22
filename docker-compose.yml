@@ -1,3 +1,14 @@
+# ============================================================
+#  SGV Web Dong Duong (Next.js Fullstack) — Production Compose
+#  Kiến trúc chuẩn theo backend_dauthau (Persistent Volumes, Logging, Healthchecks)
+# ============================================================
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "50m"
+    max-file: "5"
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -6,19 +17,21 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-sgv_admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sgv_secure_pass_2026}
-      POSTGRES_DB: ${POSTGRES_DB:-sgv_db}
+      POSTGRES_DB: ${POSTGRES_DB:-sgv_cms}
+      TZ: Asia/Ho_Chi_Minh
     ports:
       # Map cổng 5435 trên host (để KHÔNG đụng cổng 5432 của irrigation-postgres đang chạy trên VPS)
       - "127.0.0.1:${POSTGRES_HOST_PORT:-5435}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sgv_admin} -d ${POSTGRES_DB:-sgv_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sgv_admin} -d ${POSTGRES_DB:-sgv_cms}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - sgv_network
+    logging: *default-logging
 
   web:
     image: ${IMAGE_NAME:-sgv-web-dong-duong}:${IMAGE_TAG:-latest}
@@ -33,7 +46,8 @@ services:
       NODE_ENV: production
       PORT: 3000
       HOSTNAME: "0.0.0.0"
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sgv_admin}:${POSTGRES_PASSWORD:-sgv_secure_pass_2026}@postgres:5432/${POSTGRES_DB:-sgv_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sgv_admin}:${POSTGRES_PASSWORD:-sgv_secure_pass_2026}@postgres:5432/${POSTGRES_DB:-sgv_cms}
+      TZ: Asia/Ho_Chi_Minh
     ports:
       # Port 3001 trên host VPS (để KHÔNG đụng cổng 3000 của SCADA), sgv-proxy sẽ reverse proxy vào đây
       - "${WEB_HOST_PORT:-3001}:3000"
@@ -42,6 +56,7 @@ services:
       - uploads_data:/app/public/uploads
     networks:
       - sgv_network
+    logging: *default-logging
 
 volumes:
   postgres_data:

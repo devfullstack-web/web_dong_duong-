@@ -25,6 +25,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@/hooks/use-debounce';
 import { useTranslations } from 'next-intl';
 import Loading from '@/components/shared/Loading';
+import { validateImageFile, IMAGE_ACCEPT } from '@/utils/client-media';
 
 interface UploadedImage {
     filename: string;
@@ -103,9 +104,7 @@ export default function MediaManagementPage() {
         mutationFn: async (file: File) => {
             const formData = new FormData();
             formData.append('file', file);
-            const response = await $api.post(API_ROUTES.UPLOAD, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            const response = await $api.post(API_ROUTES.UPLOAD, formData);
             return response.data;
         },
         onSuccess: () => {
@@ -122,16 +121,9 @@ export default function MediaManagementPage() {
     const handleSelectFile = (file: File) => {
         if (!file) return;
 
-        // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-        if (!allowedTypes.includes(file.type)) {
-            toast.error('Định dạng không hợp lệ. Chỉ chấp nhận: JPEG, PNG, WebP, GIF');
-            return;
-        }
-
-        // Validate file size (max 10MB for admin)
-        if (file.size > 10 * 1024 * 1024) {
-            toast.error('Kích thước file vượt quá 10MB');
+        const validation = validateImageFile(file, 25);
+        if (!validation.ok) {
+            toast.error(validation.message);
             return;
         }
 
@@ -388,7 +380,7 @@ export default function MediaManagementPage() {
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                accept="image/jpeg,image/png,image/webp,image/gif"
+                                accept={IMAGE_ACCEPT}
                                 className="hidden"
                                 onChange={(e) => {
                                     const file = e.target.files?.[0];

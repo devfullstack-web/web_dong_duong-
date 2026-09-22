@@ -56,7 +56,7 @@ export function MediaSelectorDialog({ open, onOpenChange, onSelect }: MediaSelec
     const handleUpload = async (file: File) => {
         if (!file) return;
 
-        const validation = validateImageFile(file, 10);
+        const validation = validateImageFile(file, 25);
         if (!validation.ok) {
             toast.error(validation.message);
             return;
@@ -67,9 +67,7 @@ export function MediaSelectorDialog({ open, onOpenChange, onSelect }: MediaSelec
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await $api.post(API_ROUTES.UPLOAD, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            const response = await $api.post(API_ROUTES.UPLOAD, formData);
 
             if (response.data.success) {
                 toast.success('Tải ảnh thành công!');

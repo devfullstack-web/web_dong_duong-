@@ -1,283 +1,89 @@
 # Hướng Dẫn Build Docker & Triển Khai Lên VPS - SaigonValve & Đông Dương
 
-Tài liệu hướng dẫn chi tiết quy trình đóng gói Docker và đưa toàn bộ hệ thống lên máy chủ ảo VPS.
+Tài liệu hướng dẫn chi tiết quy trình đóng gói Docker, bảo toàn dữ liệu khi deploy và các chuẩn quản trị tương đồng với `backend_dauthau`.
 
 ---
 
-## 1. Bản Chất Kiến Trúc Hệ Thống (Backend & Frontend)
+## 1. Bản Chất Kiến Trúc Hệ Thống & Cơ Chế Bảo Toàn Dữ Liệu
 
-Dự án này sử dụng kiến trúc **Next.js 15 Fullstack (App Router)**:
-- **Frontend (Giao diện):** Nằm tại `app/[locale]/...` (Giao diện website SaigonValve, Đông Dương và Admin Portal CMS).
-- **Backend (API & Logic):** Nằm tại `app/api/...` (Hệ thống REST API xử lý Auth JWT, Upload Media, Sản phẩm, Tin tức, Dự án, Tuyển dụng, Liên hệ...).
-- **Cơ sở dữ liệu:** PostgreSQL kết nối qua Drizzle ORM (`db/...`).
-
-> **LƯU Ý QUAN TRỌNG:**
-> Bạn **KHÔNG CẦN** phải tách 2 container riêng biệt cho Frontend và Backend.
-> Next.js với cấu hình `output: 'standalone'` sẽ tự động biên dịch và gom toàn bộ Frontend + Backend API thành **1 ứng dụng duy nhất** chạy trên port `3000`. Khi đóng gói bằng Docker multi-stage, image chỉ nặng khoảng **~180MB**.
+### 1.1. Kiến Trúc Fullstack Next.js 15 (App Router)
+- **Frontend (Giao diện):** Nằm tại `app/[locale]/...` (Website SaigonValve, Đông Dương và Admin Portal CMS).
+- **Backend (API & Services):** Nằm tại `app/api/...` (Hệ thống REST API xử lý Auth JWT, Media Upload, Sản phẩm, Tin tức, Dự án, Tuyển dụng, Liên hệ, Cài đặt hệ thống...).
+- **Cơ sở dữ liệu:** PostgreSQL 16 kết nối qua Drizzle ORM (`db/...`).
+- Next.js cấu hình `output: 'standalone'` tự động gom toàn bộ Frontend + Backend API thành **1 ứng dụng duy nhất** chạy trên port `3000`.
 
 ---
 
-## 2. Các Thành Phần Triển Khai Qua Docker
+### 1.2. 🛡️ BẢO VỆ DỮ LIỆU TUYỆT ĐỐI KHI DEPLOY (Không Đè Database Cũ)
 
-Hệ thống trên VPS sẽ chạy gồm:
-1. **Container `sgv_web`**: Chạy Next.js Fullstack (Standalone Node.js Server), map ra cổng host **`3001`** (để KHÔNG trùng cổng 3000 của SCADA đang chạy trên cùng VPS).
-2. **Container `sgv_postgres`**: Cơ sở dữ liệu PostgreSQL 16 Alpine.
-3. **Docker Volume `uploads_data`**: Mount vào `/app/public/uploads` để lưu trữ ảnh, tài liệu upload lâu dài (không bị mất khi update container).
-4. **Docker Volume `postgres_data`**: Lưu trữ dữ liệu database vĩnh viễn trên VPS.
-5. **Reverse Proxy & SSL**: Sử dụng [`sgv-proxy`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/sgv-proxy) (`UPSTREAM_WEB=localhost:3001` và `DOMAIN_WEB=event-web.saigonvalve.vn`) hoặc Nginx độc lập để cấp HTTPS Let's Encrypt.
+**Câu hỏi quan trọng:** *Khi người quản trị vào Admin Portal chỉnh sửa thông tin (sản phẩm, bài viết, số điện thoại, banner, ảnh upload...), việc chạy `make deploy` có làm mất hay đè dữ liệu cũ không?*
 
----
+**TRẢ LỜI: HOÀN TOÀN KHÔNG! DỮ LIỆU ĐƯỢC BẢO TOÀN 100%!**
 
-## 3. Các Bước Triển Khai Chi Tiết Trên VPS
-
-### Bước 1: Chuẩn Bị VPS
-Đăng nhập vào VPS qua SSH (khuyên dùng Ubuntu 22.04 LTS hoặc 24.04 LTS):
-
-```bash
-ssh root@<IP_VPS_CỦA_BẠN>
-```
-
-Cập nhật hệ điều hành và cài đặt Docker + Docker Compose:
-```bash
-# Cập nhật packages
-sudo apt update && sudo apt upgrade -y
-
-# Cài đặt Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# Kiểm tra docker đã hoạt động
-docker --version
-docker compose version
-```
+Lý do kỹ thuật:
+1. **Dữ liệu Database nằm trong Named Volume riêng biệt (`sgv_postgres_data`):**
+   - PostgreSQL lưu toàn bộ bảng và dữ liệu tại volume `sgv_postgres_data` trên ổ cứng máy chủ VPS (`/var/lib/docker/volumes/sgv_postgres_data/_data`).
+   - Khi chạy `make deploy`, Docker chỉ cập nhật image `sgv-web-dong-duong:latest` của container `web`. Container database `sgv_postgres` và volume `sgv_postgres_data` **hoàn toàn giữ nguyên**, không bị recreate hay reset.
+2. **File hình ảnh và tài liệu upload nằm trong Volume (`sgv_uploads_data`):**
+   - Mọi ảnh sản phẩm, bài viết do Admin tải lên được lưu tại volume `sgv_uploads_data` (`/app/public/uploads`). Khi deploy code mới, thư mục này được mount lại nguyên vẹn.
+3. **Cơ chế Marker `.setup-complete` & Pre-flight Table Audit (Chuẩn `backend_dauthau`):**
+   - Giống như kiến trúc trong `backend_dauthau`, target `first-run` trên VPS kiểm tra file `.setup-complete`.
+   - Nếu đã có file `.setup-complete` HOẶC database đã có sẵn các bảng đang hoạt động, hệ thống **TỰ ĐỘNG BỎ QUA SEED** để bảo vệ dữ liệu đang chạy.
+   - Các lệnh nạp đè dữ liệu mẫu (`make seed-remote`, `make seed-vps`) đều được trang bị bước xác nhận bảo vệ (`gõ 'yes' để xác nhận`).
 
 ---
 
-### Bước 2: Triển Khai Lên VPS
+## 2. Bảng Lệnh Quản Trị Hệ Thống (Chuẩn Hóa Theo `backend_dauthau`)
 
-#### 👉 Cách 1: Tự Động 100% Qua Makefile (CHUẨN NHẤT — Giống `frontend_remake` & `backend_remake`)
-Chỉ cần chạy 1 lệnh duy nhất tại máy Local:
-```bash
-make deploy
-```
-*(hoặc `make deploy ENV_FILE=.env.production`)*
+Toàn bộ Makefile đã được chuẩn hóa với Shell `/bin/bash`, cờ `-p $(PROJECT)` và các lệnh thao tác nhanh:
 
-Hệ thống sẽ tự động:
-1. Build image Docker Standalone tại local.
-2. Nén image thành `sgv_web-latest.tar.gz`.
-3. Mở kết nối SSH ControlMaster tới VPS (hỏi IP, user, đường dẫn lưu).
-4. Upload Makefile, docker-compose.yml, file image và .env lên VPS.
-5. Kích hoạt `make deploy-vps` trên VPS để nạp image và khởi chạy container.
-6. Dọn dẹp file nén tạm, hoàn tất deploy an toàn và nhanh chóng (không cần tốn RAM VPS để build).
-
----
-
-#### Cách 2: Sử dụng Git truyền thống:
-```bash
-mkdir -p /var/www/saigonvalve
-cd /var/www/saigonvalve
-git clone <URL_REPO_CỦA_BẠN> .
-```
-
-#### Cách 3: Đồng bộ bằng rsync / SCP:
-```bash
-# Chạy trên máy tính cá nhân của bạn:
-rsync -avz --exclude 'node_modules' --exclude '.next' --exclude '.git' ./ root@<IP_VPS>:/var/www/saigonvalve
-```
-
----
-
-### Bước 3: Thiết Lập Biến Môi Trường (.env)
-
-Tại thư mục dự án trên VPS (`/var/www/saigonvalve`):
-```bash
-cp .env.production.example .env
-nano .env
-```
-
-Chỉnh sửa các thông số quan trọng:
-- `POSTGRES_USER` & `POSTGRES_PASSWORD`: Mật khẩu bảo mật cho database.
-- `POSTGRES_DB`: Tên database (mặc định `sgv_db`).
-- `DATABASE_URL`: Khớp mật khẩu trên, ví dụ:
-  ```env
-  DATABASE_URL=postgresql://sgv_admin:Mat_Khau_Bao_Mat@postgres:5432/sgv_db
-  ```
-- `NEXT_PUBLIC_SITE_URL`: Domain website (ví dụ `https://saigonvalve.vn`).
-- `NEXT_PUBLIC_API_URL`: Domain API (ví dụ `https://saigonvalve.vn/api`).
-- `JWT_SECRET`: Chuỗi ký tự ngẫu nhiên bảo mật token.
-- `MAIL_*`: Cấu hình tài khoản email gửi báo giá/liên hệ.
+| Nhóm | Lệnh | Mô Tả Chức Năng |
+| :--- | :--- | :--- |
+| **Deploy** | `make deploy` | ⭐ Build local, nén .tar.gz, upload VPS qua SSH và reload code (KHÔNG đè DB) |
+| | `make deploy-remote` | Chi tiết quá trình upload SSH + docker load + start an toàn |
+| | `make deploy-vps` | Lệnh chạy nội bộ trên VPS: setup môi trường + load image + up |
+| **Container** | `make up` | Chạy toàn bộ containers ở chế độ daemon |
+| | `make down` | Dừng toàn bộ containers |
+| | `make restart` | Khởi động lại container web |
+| | `make ps` | Xem trạng thái các container |
+| | `make logs` | Xem logs thời gian thực của web container |
+| | `make clean` | Dọn dẹp images/containers cũ (BẢO TOÀN Volume DB và Uploads, không dùng `-v`) |
+| **Database Infra** | `make db-up` (hoặc `make start-db`) | Khởi động riêng container PostgreSQL |
+| | `make db-down` | Dừng container PostgreSQL |
+| | `make db-logs` | Xem logs PostgreSQL |
+| | `make wait-db` | Chờ PostgreSQL sẵn sàng kết nối (`pg_isready`) |
+| **Migration** | `make migration` (hoặc `make migration-remote`) | ⭐ Chạy công cụ Migration tương tác trên DB Remote qua SSH Tunnel |
+| | `make migration-generate-remote` | ⭐ Chỉ sinh file SQL từ diff TypeScript schema ↔ DB Remote (Read-only) |
+| | `make migration-local` | Chạy Drizzle migration trên DB Local |
+| | `make migration-status` | Kiểm tra danh sách bảng & trạng thái migration trên VPS |
+| | `make db-push-remote` | Push schema trực tiếp trên VPS container |
+| **Backup & Clone** | `make db-dump-remote` | ⭐ Backup DB VPS về máy local (`backups/remote-*.dump`) |
+| | `make db-clone-remote` | Clone toàn bộ dữ liệu từ VPS về Local để test |
+| | `make db-dump` | Backup DB Local |
+| | `make db-restore FILE=...` | Khôi phục dump vào DB Local |
+| **Seed & Cấp quyền** | `make seed-admin-remote` | Cập nhật tài khoản Admin & phân quyền RBAC từ `.env` lên VPS |
+| | `make seed-remote` | ⚠️ Nạp đè toàn bộ dữ liệu mẫu lên VPS (Có prompt gõ `yes`) |
+| | `make seed-vps` | ⚠️ Nạp đè dữ liệu trực tiếp khi đang SSH trên VPS |
+| **Tiện ích** | `make fix-ssl-event` | 🚑 Khôi phục chứng chỉ SSL SAN cho toàn bộ domain |
 
 ---
 
-### Bước 4: Khởi Chạy Database & Seed Dữ Liệu Ban Đầu
+## 3. Quy Trình Thay Đổi Bảng & Cột Trong Tương Lai (Drizzle Migration)
 
-1. Khởi động PostgreSQL trước:
-```bash
-docker compose up -d postgres
-```
+Khi bạn cần thêm bảng hoặc cột mới trong `db/schemas/*.ts`:
 
-2. Kiểm tra container database đã sẵn sàng (`healthy`):
-```bash
-docker compose ps
-```
-
-3. Khởi tạo cấu trúc bảng (Migration Drizzle):
-Bạn có thể chạy trực tiếp một container tạm để push schema vào database:
-```bash
-docker compose run --rm web npx drizzle-kit push
-```
-
-Hoặc nạp dữ liệu chuẩn kỹ thuật (Seed script):
-```bash
-docker compose run --rm web node scripts/seed_dongduong_master.js
-```
-
----
-
-### Bước 5: Build Và Chạy Toàn Bộ Hệ Thống
-
-Chạy lệnh build và khởi động toàn bộ cụm container ở chế độ chạy nền (detached):
-```bash
-docker compose up -d --build
-```
-
-Kiểm tra log hệ thống:
-```bash
-docker compose logs -f web
-```
-Khi thấy dòng log `Listening on port 3000` hoặc `Ready in ...ms`, hệ thống web & API đã chạy thành công!
-
----
-
-### Bước 6: Cấu Hình Reverse Proxy & SSL (HTTPS)
-
-#### 👉 Lựa chọn 1: Dùng cụm `sgv-proxy` có sẵn (KHUYÊN DÙNG khi chạy chung VPS)
-Trong thư mục `sgv-proxy`, hệ thống đã được mở rộng hỗ trợ thêm Web:
-- Biến trong `sgv-proxy/.env.event`:
-  ```env
-  DOMAIN_WEB=event-web.saigonvalve.vn
-  UPSTREAM_WEB=localhost:3001
-  ```
-- Chỉ cần deploy `sgv-proxy`:
-  ```bash
-  cd sgv-proxy
-  make deploy-remote ENV_FILE=.env.event
-  ```
-`sgv-proxy` sẽ tự động cấp chứng chỉ SSL Let's Encrypt và định tuyến HTTPS từ `event-web.saigonvalve.vn` (hoặc domain web bạn đặt) vào cổng `3001` của container `sgv_web`. **Tuyệt đối không xung đột với SCADA (port 3000), Frontend (port 8080) hay Backend API (port 8998)!**
-
----
-
-#### Lựa chọn 2: Cài Nginx truyền thống trên VPS
-Nếu VPS chạy riêng lẻ, cấu hình Nginx trỏ vào cổng `3001`:
-```nginx
-server {
-    listen 80;
-    server_name saigonvalve.vn www.saigonvalve.vn;
-    client_max_body_size 50M;
-
-    location / {
-        proxy_pass http://127.0.0.1:3001;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-Kích hoạt và cấp SSL Let's Encrypt:
-```bash
-sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d saigonvalve.vn -d www.saigonvalve.vn
-```
-
----
-
-## 4. Các Lệnh Quản Trị Hệ Thống Hữu Ích
-
-| Thao Tác | Lệnh Thực Hiện |
-| :--- | :--- |
-| **Xem trạng thái containers** | `docker compose ps` |
-| **Xem log trực tiếp của Web** | `docker compose logs -f web` |
-| **Khởi động lại dịch vụ** | `docker compose restart web` |
-| **Dừng hệ thống** | `docker compose down` |
-| **Cập nhật code mới từ Git & Redeploy** | `git pull && docker compose up -d --build` |
-| **Backup cơ sở dữ liệu PostgreSQL** | `docker compose exec -t postgres pg_dump -U sgv_admin sgv_db > backup_$(date +%F).sql` |
-| **Phục hồi cơ sở dữ liệu từ file SQL** | `cat backup_file.sql \| docker compose exec -T postgres psql -U sgv_admin -d sgv_db` |
-
----
-
-## 5. Danh Sách File Đã Cấu Hình Sẵn Trong Dự Án
-
-- [`Dockerfile`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/Dockerfile): Tối ưu Next.js 15 Standalone đa tầng (Multi-stage build).
-- [`docker-compose.yml`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/docker-compose.yml): Cấu hình dịch vụ Web + PostgreSQL + Persistent Volumes.
-- [`.env.production.example`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/.env.production.example): Mẫu biến môi trường cho môi trường Production trên VPS.
-- [`.dockerignore`](file:///home/thanh/project_cty_sg_val/sgv_web_dong_duong/.dockerignore): Tối ưu build context không gửi file rác.
-
----
-
-## 6. Hướng Dẫn Migration & Quản Lý Database (Chuẩn Kiến Trúc Như Event)
-
-Hệ thống cung cấp trọn bộ công cụ Migration và Clone/Backup Database qua SSH tunnel bảo mật, tự động đóng tunnel sau khi kết thúc.
-
-### 6.1. Migration trên Database Remote (VPS)
-
-Khi bạn thêm trường mới vào `db/schemas/*.ts` hoặc sửa đổi cấu trúc bảng:
-
-* **Chạy Migration trên DB Remote (Menu tương tác):**
-  ```bash
-  make migration-remote
-  # hoặc lệnh tắt:
-  make migration
-  ```
-  Lệnh sẽ hỏi IP VPS, Port, User, Pass (có sẵn giá trị mặc định, chỉ cần nhấn Enter), mở SSH tunnel bảo mật và cung cấp 4 lựa chọn:
-  1. `Run pending migrations`: Chạy các file SQL trong `drizzle/` chưa áp dụng.
-  2. `Generate migration mới`: Tự so sánh code schema TypeScript với DB Remote, sinh file `000x_<name>.sql`, hiển thị nội dung và hỏi xác nhận trước khi áp.
-  3. `Drizzle Push`: Đồng bộ trực tiếp thay đổi bảng/cột vào DB Remote.
-  4. `Status`: Kiểm tra danh sách bảng hiện có và lịch sử migrations.
-
-* **Chỉ Generate file Migration từ DB Remote (Read-Only, không đụng dữ liệu):**
-  ```bash
-  make migration-generate-remote
-  ```
-
-* **Kiểm tra trạng thái DB & Migrations trên Remote:**
-  ```bash
-  make migration-status
-  ```
-
-### 6.2. Migration trên Database Local
-
-* **Chạy Migration trên DB Local:**
-  ```bash
-  make migration-local
-  ```
-
-### 6.3. Backup & Clone Database (Remote ↔ Local)
-
-* **Backup DB Remote về máy Local (Không ảnh hưởng server đang chạy):**
-  ```bash
-  make db-dump-remote
-  ```
-  File dump sẽ được lưu tại `backups/remote-<ip>-<timestamp>.dump`.
-
-* **Clone toàn bộ Data từ VPS về máy Local để test giả lập:**
-  ```bash
-  make db-clone-remote
-  ```
-  Lệnh tự động SSH vào VPS → dump dữ liệu `sgv_postgres` → tải về máy → hỏi xác nhận restore vào container Postgres local.
-
-* **Backup DB Local:**
-  ```bash
-  make db-dump
-  ```
-
-* **Restore file dump bất kỳ vào Local:**
-  ```bash
-  make db-restore FILE=backups/ten_file.dump
-  ```
-
+1. **Bước 1: Backup DB VPS đề phòng:**
+   ```bash
+   make db-dump-remote
+   ```
+2. **Bước 2: Tạo migration hoặc đồng bộ qua SSH Tunnel:**
+   ```bash
+   make migration
+   ```
+   Chọn một trong các tùy chọn:
+   - **Tùy chọn 2 (`Generate migration mới`):** Hệ thống sẽ so sánh code schema TypeScript mới của bạn với DB trên VPS, tự động sinh file `000x_ten_migration.sql` trong thư mục `drizzle/`. Bạn kiểm tra nội dung SQL và chọn áp dụng ngay.
+   - **Tùy chọn 3 (`Drizzle Push`):** So sánh trực tiếp và áp dụng các câu lệnh `ALTER TABLE / ADD COLUMN` vào DB Remote mà không làm mất dữ liệu các bảng cũ.
+3. **Bước 3: Deploy code mới lên VPS:**
+   ```bash
+   make deploy
+   ```

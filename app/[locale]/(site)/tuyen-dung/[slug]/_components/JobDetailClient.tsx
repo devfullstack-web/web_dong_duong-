@@ -440,9 +440,7 @@ function ApplyForm({ jobId, locale }: { jobId: string; locale: string }) {
                 data.append('cover_letter', formData.cover_letter);
             }
 
-            const response = await $api.post(API_ROUTES.APPLICATIONS, data, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            const response = await $api.post(API_ROUTES.APPLICATIONS, data);
 
             if (response.data.success) {
                 toast.success(tForm('Nộp hồ sơ thành công! Chúng tôi sẽ liên hệ sớm.', 'Application submitted successfully! We will contact you soon.', '简历投递成功！我们将尽快与您取得联系。'));

@@ -1,33 +1,70 @@
 # ============================================================
 #  SGV Web Dong Duong (Next.js Fullstack) — Docker Build & Deploy
-#  Pattern chuẩn: Local build → Save .tar.gz → SSH Upload → Load & Run
+#  Kiến trúc chuẩn hóa theo pattern /backend_dauthau
+#  Local build → Save .tar.gz → SSH Upload → Load & Safe Run
 # ============================================================
 
+args=$(filter-out $@,$(MAKECMDGOALS))
+
+SHELL := /bin/bash
 .EXPORT_ALL_VARIABLES:
 
 ENV_FILE ?= .env.production
+PROJECT ?= sgv_web
+SETUP_MARKER ?= .setup-complete
+
+# Export env vars từ file cấu hình
 -include $(ENV_FILE)
 export
 
-# Docker image config (Cục bộ, nén .tar.gz gửi qua SSH, KHÔNG phụ thuộc registry ngoài)
+# ── Docker Image Config (Cục bộ, nén .tar.gz gửi qua SSH, KHÔNG phụ thuộc registry ngoài) ──
 IMAGE_NAME    ?= sgv-web-dong-duong
 IMAGE_TAG     ?= latest
 IMAGE         := $(IMAGE_NAME):$(IMAGE_TAG)
 IMAGE_ARCHIVE := $(IMAGE_NAME)-$(IMAGE_TAG).tar.gz
 ARCHIVE_PATH  := /tmp/$(IMAGE_ARCHIVE)
 
-.PHONY: all help build save deploy deploy-remote deploy-vps setup load up down restart logs ps clean db-push-remote seed-remote seed-vps seed-admin-remote fix-ssl-event migration migration-remote migration-local migration-generate-remote migration-status db-dump db-dump-remote db-restore db-clone-remote
+.PHONY: help dev build save deploy deploy-remote deploy-vps check-env setup infra-up up restart ps logs clean db-up db-down db-logs start-db wait-db first-run migration migration-remote migration-local migration-generate-remote migration-status db-dump db-dump-remote db-restore db-clone-remote db-push-remote seed-remote seed-vps seed-admin-remote fix-ssl-event
 
-all: help
-
-help: ## Show available commands
+help: ## Hiển thị danh sách lệnh hỗ trợ
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-26s\033[0m %s\n", $$1, $$2}'
 
 # ============================================================
-#  Local — Build & Package
+#  Local — Development & Container Management (chuẩn backend_dauthau)
 # ============================================================
 
-build: ## Build Docker image locally
+dev: ## Chạy local dev server với Docker Compose
+	docker compose -p $(PROJECT) up $(args) -d $${SERVICE}
+
+down: ## Dừng các container
+	docker compose -p $(PROJECT) down
+
+db-up: ## Khởi động dịch vụ PostgreSQL local/container
+	docker compose -p $(PROJECT) up -d postgres
+	@echo "✅ Database service (PostgreSQL) is running"
+
+db-down: ## Dừng dịch vụ PostgreSQL
+	docker compose -p $(PROJECT) stop postgres
+	@echo "✅ Database service stopped"
+
+db-logs: ## Xem logs thời gian thực của PostgreSQL
+	docker compose -p $(PROJECT) logs -f postgres
+
+start-db: db-up ## Alias cho db-up (tương thích backend_dauthau)
+
+wait-db: ## Chờ PostgreSQL sẵn sàng kết nối (pg_isready)
+	@echo "⏳ Waiting for PostgreSQL to be ready..."
+	@until docker compose -p $(PROJECT) exec -T postgres pg_isready -U $${POSTGRES_USER:-sgv_admin} -d $${POSTGRES_DB:-sgv_cms} >/dev/null 2>&1; do \
+		echo "   PostgreSQL is still starting..."; \
+		sleep 2; \
+	done
+	@echo "✅ PostgreSQL is ready"
+
+# ============================================================
+#  Local — Build & Package (Không phụ thuộc Registry)
+# ============================================================
+
+build: ## Build Docker image tại máy local
 	@echo "🔨 Building image with Site URL: $${NEXT_PUBLIC_SITE_URL:-https://indochinagroup.vn} ..."
 	docker build \
 		--build-arg NEXT_PUBLIC_SITE_URL=$${NEXT_PUBLIC_SITE_URL:-https://indochinagroup.vn} \
@@ -40,12 +77,12 @@ save: build ## Build + đóng gói image thành .tar.gz để gửi qua SSH (kh�
 	@echo "✅ Saved: $(ARCHIVE_PATH) ($$(du -h $(ARCHIVE_PATH) | cut -f1))"
 
 # ============================================================
-#  Local → VPS — Remote Deploy
+#  Local → VPS — Remote Deploy (Chuẩn bảo vệ Dữ liệu Live)
 # ============================================================
 
-deploy: deploy-remote ## ⭐ Build + upload VPS qua SSH + tự start (make deploy)
+deploy: deploy-remote ## ⭐ Deploy code lên VPS (Build → Upload → Safe Start, KHÔNG đè database)
 
-deploy-remote: save ## ⭐ Build → zip image → upload qua SSH (IP) → docker load + chạy (KHÔNG registry)
+deploy-remote: save ## ⭐ Build → zip image → upload qua SSH (IP) → docker load + chạy an toàn
 	@echo "===================================================="; \
 	echo "  🚀 Deploy sgv-web-dong-duong to VPS (image qua .tar.gz)"; \
 	echo "  📋 Config file : $(ENV_FILE)"; \
@@ -75,19 +112,19 @@ deploy-remote: save ## ⭐ Build → zip image → upload qua SSH (IP) → docke
 	$$SSH $$vps_user@$$vps_host "mkdir -p $$vps_path"; \
 	abs_path=$$($$SSH $$vps_user@$$vps_host "cd $$vps_path && pwd"); \
 	[ -n "$$abs_path" ] || { echo "❌ Không resolve được deploy path trên VPS"; exit 1; }; \
-	echo "📦 Uploading image + config + scripts → $$abs_path (có thể mất 1-2 phút tùy mạng)..."; \
+	echo "📦 Uploading image + config + scripts → $$abs_path..."; \
 	$$SCP -r Makefile docker-compose.yml scripts $(ARCHIVE_PATH) $$vps_user@$$vps_host:$$abs_path/; \
 	$$SCP $(ENV_FILE) $$vps_user@$$vps_host:$$abs_path/.env; \
 	echo "✅ Uploaded!"; \
 	echo ""; \
-	echo "🔧 docker load + start trên remote..."; \
+	echo "🔧 Running safe deploy-vps on remote..."; \
 	$$SSH -t $$vps_user@$$vps_host "cd $$abs_path && make deploy-vps && rm -f $(IMAGE_ARCHIVE)"
 
 # ============================================================
-#  VPS — Load image & Run
+#  VPS — Setup, Load Image & Safe Start (Chuẩn backend_dauthau)
 # ============================================================
 
-setup: ## Check .env exists
+check-env: ## Kiểm tra file cấu hình .env tồn tại
 	@if [ ! -f .env ]; then \
 		echo "❌ .env not found! Run 'make deploy' from local to upload config."; \
 		exit 1; \
@@ -95,31 +132,62 @@ setup: ## Check .env exists
 		echo "✅ .env found."; \
 	fi
 
-load: ## Load image từ file $(IMAGE_ARCHIVE) đã upload (chạy trên VPS)
-	docker load -i $(IMAGE_ARCHIVE)
+infra-up: ## Khởi động database services (Postgres) trước
+	docker compose -p $(PROJECT) up -d postgres
+	@echo "✅ Infrastructure service (PostgreSQL) is running"
 
-up: ## Start the container
-	docker compose up -d
-	@echo "✅ SaigonValve Web is running on port $${WEB_HOST_PORT:-3001}"
+load: ## Load image từ file $(IMAGE_ARCHIVE) đã upload
+	@if [ -f "$(IMAGE_ARCHIVE)" ]; then \
+		echo "📦 Loading Docker image $(IMAGE_ARCHIVE)..."; \
+		docker load -i $(IMAGE_ARCHIVE); \
+	else \
+		echo "ℹ️  Không tìm thấy $(IMAGE_ARCHIVE), sử dụng image hiện có."; \
+	fi
 
-down: ## Stop the container
-	docker compose down
+first-run: wait-db ## Kiểm tra & khởi tạo DB lần đầu (BẢO VỆ TUYỆT ĐỐI dữ liệu đang có, KHÔNG ghi đè)
+	@set -e; \
+	if [ -f "$(SETUP_MARKER)" ]; then \
+		echo "🛡️  Dữ liệu an toàn: Marker $(SETUP_MARKER) đã tồn tại ($$(cat $(SETUP_MARKER))). Bỏ qua nạp seed."; \
+	else \
+		has_tables=$$(docker compose -p $(PROJECT) exec -T postgres psql -U $${POSTGRES_USER:-sgv_admin} -d $${POSTGRES_DB:-sgv_cms} -tAc "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';" 2>/dev/null || echo 0); \
+		if [ "$$has_tables" -gt 5 ]; then \
+			echo "🛡️  Đã phát hiện database đang chạy với $$has_tables bảng! BẢO VỆ DỮ LIỆU ĐANG CÓ, KHÔNG GHI ĐÈ."; \
+			date -Iseconds > "$(SETUP_MARKER)"; \
+			echo "✅ Đã đánh dấu $(SETUP_MARKER). Toàn bộ dữ liệu admin/cms được giữ nguyên 100%."; \
+		else \
+			echo "🚀 Khởi tạo database lần đầu cho VPS trống..."; \
+			if [ -f scripts/sgv_cms_master_dump.sql ]; then \
+				docker exec -i sgv_postgres psql -U postgres -d $${POSTGRES_DB:-sgv_cms} < scripts/sgv_cms_master_dump.sql; \
+			fi; \
+			date -Iseconds > "$(SETUP_MARKER)"; \
+			echo "✅ Khởi tạo database thành công. Đã tạo marker $(SETUP_MARKER)."; \
+		fi; \
+	fi
 
-deploy-vps: setup load up ## Load image + Start (chạy trên VPS sau khi đã upload)
+setup: check-env ## Chuẩn bị môi trường: kiểm tra env, chạy DB infra, kiểm tra first-run an toàn
+	@$(MAKE) infra-up
+	@$(MAKE) first-run
 
-restart: ## Restart web container
-	docker compose restart web
+up: ## Start toàn bộ containers
+	docker compose -p $(PROJECT) up -d
+	@echo "✅ SaigonValve Web is up and running on port $${WEB_HOST_PORT:-3001}"
+
+restart: ## Khởi động lại container web
+	docker compose -p $(PROJECT) restart web
 	@echo "🔄 SaigonValve Web container restarted"
 
-logs: ## Show container logs (follow)
-	docker compose logs -f --tail=100
+deploy-vps: setup load up ## Setup an toàn + Load image + Khởi chạy trên VPS
+	@echo "✅ VPS deploy completed! Code đã cập nhật, Database được bảo toàn nguyên vẹn."
 
-ps: ## Show container status
-	docker compose ps
+ps: ## Xem trạng thái containers đang chạy
+	docker compose -p $(PROJECT) ps
 
-clean: ## Remove containers and images
-	docker compose down --rmi local -v 2>/dev/null || true
-	@echo "🧹 Cleaned up"
+logs: ## Xem logs thời gian thực của web container
+	docker compose -p $(PROJECT) logs -f --tail=100 web
+
+clean: ## Dọn dẹp containers và images cũ (BẢO TOÀN Volume Dữ liệu DB & Uploads)
+	docker compose -p $(PROJECT) down --rmi local
+	@echo "🧹 Cleaned up containers and images. (Named Volumes sgv_postgres_data & sgv_uploads_data preserved safely)."
 
 # ============================================================
 #  Database Migrations & Management (Chuẩn kiến trúc như Event)
@@ -156,7 +224,7 @@ db-clone-remote: ## SSH vào VPS → dump DB remote → nạp vào local (clone 
 	@bash ./scripts/db-clone-remote.sh
 
 # ============================================================
-#  Database Legacy Seeds & Drizzle Push Remote
+#  Database Manual Seeds & RBAC (Có cảnh báo bảo vệ dữ liệu)
 # ============================================================
 
 db-push-remote: ## ⭐ Chạy Drizzle push trực tiếp trong container VPS
@@ -172,9 +240,9 @@ db-push-remote: ## ⭐ Chạy Drizzle push trực tiếp trong container VPS
 		vps_path=$${vps_path:-\$$HOME/sgv_web}; \
 	fi; \
 	echo "🚀 Running drizzle-kit push on remote VPS..."; \
-	ssh $$vps_user@$$vps_host "cd $$vps_path && docker compose run --rm web npx drizzle-kit push"
+	ssh $$vps_user@$$vps_host "cd $$vps_path && docker compose -p $(PROJECT) run --rm web npx drizzle-kit push"
 
-seed-remote: ## ⭐ Nạp toàn bộ dữ liệu mẫu & tài khoản admin từ Local lên VPS PostgreSQL
+seed-remote: ## ⚠️  Nạp đè dữ liệu mẫu & tài khoản admin lên VPS PostgreSQL (Yêu cầu xác nhận)
 	@vps_host="$(VPS_HOST)"; \
 	vps_user="$(VPS_USER)"; \
 	vps_path="$(VPS_PATH)"; \
@@ -183,21 +251,32 @@ seed-remote: ## ⭐ Nạp toàn bộ dữ liệu mẫu & tài khoản admin từ
 	vps_user=$${vps_user:-root}; \
 	[ -n "$$vps_path" ] || read -p "📁 Deploy path [~/sgv_web]: " vps_path; \
 	vps_path=$${vps_path:-\$$HOME/sgv_web}; \
+	echo "⚠️  CẢNH BÁO QUAN TRỌNG: Lệnh này sẽ NẠP ĐÈ toàn bộ dữ liệu mẫu lên VPS ($$vps_host)!"; \
+	read -p "👉 Bạn có chắc chắn muốn nạp đè dữ liệu? (gõ đúng 'yes' để tiếp tục): " confirm; \
+	if [ "$$confirm" != "yes" ]; then \
+		echo "❌ Đã hủy thao tác seed để bảo vệ dữ liệu hiện tại."; \
+		exit 0; \
+	fi; \
 	echo "🌱 Đang nạp toàn bộ dữ liệu & tài khoản admin vào container sgv_postgres trên VPS..."; \
 	cat scripts/sgv_cms_master_dump.sql | ssh $$vps_user@$$vps_host "docker exec -i sgv_postgres psql -U postgres -d $${POSTGRES_DB:-sgv_cms}" || { echo "❌ Nạp dữ liệu thất bại!"; exit 1; }; \
 	echo "===================================================="; \
 	echo "✅ NẠP DỮ LIỆU THÀNH CÔNG VÀO VPS POSTGRESQL!"; \
 	echo "🔄 Khởi động lại web container để nhận kết nối DB..."; \
-	ssh $$vps_user@$$vps_host "cd $$vps_path && docker compose restart web"; \
+	ssh $$vps_user@$$vps_host "cd $$vps_path && docker compose -p $(PROJECT) restart web"; \
 	echo "🔑 Thông tin tài khoản đăng nhập:"; \
 	echo "   1. Admin       : $${SEED_ADMIN_USERNAME:-admin} / $${SEED_ADMIN_PASSWORD:-admin123}"; \
 	echo "   2. Super Admin : $${SUPER_ADMIN_USERNAME:-superadmin} / $${SUPER_ADMIN_PASSWORD:-Super@123}"; \
 	echo "===================================================="
 
-seed-vps: ## Nạp database trực tiếp trên VPS (chạy lệnh này khi đã SSH vào VPS tại ~/sgv_web)
-	@echo "🌱 Đang nạp database từ scripts/sgv_cms_master_dump.sql..."
+seed-vps: ## ⚠️  Nạp database trực tiếp trên VPS (Chạy thủ công khi đã SSH vào VPS)
+	@echo "⚠️  CẢNH BÁO: Lệnh này sẽ NẠP ĐÈ database từ scripts/sgv_cms_master_dump.sql!"
+	@read -p "👉 Gõ 'yes' để xác nhận: " confirm; \
+	if [ "$$confirm" != "yes" ]; then \
+		echo "❌ Đã hủy thao tác seed."; \
+		exit 0; \
+	fi
 	docker exec -i sgv_postgres psql -U postgres -d $${POSTGRES_DB:-sgv_cms} < scripts/sgv_cms_master_dump.sql
-	docker compose restart web
+	docker compose -p $(PROJECT) restart web
 	@echo "===================================================="
 	@echo "✅ NẠP DỮ LIỆU THÀNH CÔNG!"
 	@echo "🔑 Thông tin tài khoản đăng nhập:"
@@ -221,7 +300,11 @@ seed-admin-remote: ## Cập nhật/seed lại tài khoản admin & RBAC từ .en
 	ssh $$vps_user@$$vps_host "cd $$vps_path && docker run --rm --network sgv_network -v \$$(pwd)/scripts:/scripts --env-file .env node:22-alpine sh -c 'cd /scripts && npm install --silent pg bcryptjs dotenv && node seed_admin_rbac.js'"; \
 	echo "✅ Seed admin & RBAC completed!"
 
-fix-ssl-event: ## 🚑 Khôi phục SSL Let's Encrypt cho event.saigonvalve.vn (Bypass rate limit bằng SAN cert)
+# ============================================================
+#  SSL & Infrastructure Utilities
+# ============================================================
+
+fix-ssl-event: ## 🚑 Khôi phục SSL Let's Encrypt cho event.saigonvalve.vn
 	@vps_host="$(VPS_HOST)"; \
 	vps_user="$(VPS_USER)"; \
 	[ -n "$$vps_host" ] || vps_host="14.241.237.132"; \
@@ -258,26 +341,5 @@ fix-ssl-event: ## 🚑 Khôi phục SSL Let's Encrypt cho event.saigonvalve.vn (
 			echo \"🎉 KHÔI PHỤC THÀNH CÔNG CHỨNG CHỈ SSL CHO TẤT CẢ DOMAIN!\"; \
 			echo \"👉 Mời bạn F5 lại https://event.saigonvalve.vn/login\"; \
 			echo \"====================================================\"; \
-		else \
-			echo \"⚠️  Đang thử gói 3 domain (event + apis + indochinagroup)...\"; \
-			certbot certonly --webroot -w /var/www/certbot \
-				--cert-name sgv-event-alt \
-				-d event.saigonvalve.vn \
-				-d event-apis.saigonvalve.vn \
-				-d indochinagroup.vn \
-				--email admin@saigonvalve.vn \
-				--agree-tos --no-eff-email \
-				--non-interactive 2>&1 || true; \
-			if [ -f /etc/letsencrypt/live/sgv-event-alt/fullchain.pem ]; then \
-				for d in event.saigonvalve.vn event-apis.saigonvalve.vn; do \
-					mkdir -p /etc/nginx/certs/live/\$$d; \
-					cp -fL /etc/letsencrypt/live/sgv-event-alt/fullchain.pem /etc/nginx/certs/live/\$$d/fullchain.pem; \
-					cp -fL /etc/letsencrypt/live/sgv-event-alt/privkey.pem /etc/nginx/certs/live/\$$d/privkey.pem; \
-				done; \
-				nginx -s reload; \
-				echo \"🎉 Khôi phục SSL thành công cho event.saigonvalve.vn!\"; \
-			else \
-				echo \"❌ Cần kiểm tra chi tiết log certbot tại /var/log/letsencrypt/letsencrypt.log\"; \
-			fi; \
 		fi; \
 	"'

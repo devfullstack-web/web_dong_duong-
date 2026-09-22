@@ -114,9 +114,7 @@ export function ImageUploader({
             const formData = new FormData();
             formData.append('file', selectedFile);
 
-            const response = await $api.post(API_ROUTES.UPLOAD, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            const response = await $api.post(API_ROUTES.UPLOAD, formData);
 
             if (response.data.success) {
                 const url = response.data.data.url;
@@ -141,7 +139,7 @@ export function ImageUploader({
     const handleFileSelect = (file: File) => {
         if (!file) return;
 
-        const validation = validateImageFile(file, 5);
+        const validation = validateImageFile(file, 25);
         if (!validation.ok) {
             toast.error(validation.message);
             return;

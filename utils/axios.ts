@@ -13,6 +13,17 @@ const axiosConfig = { baseURL: BASE_URL, headers: JSON_HEADERS };
 const $api = axios.create(axiosConfig);
 export const $publicApi = axios.create(axiosConfig);
 
+const handleFormDataHeader = (config: InternalAxiosRequestConfig) => {
+    if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+        // Let browser / runtime set multipart/form-data with proper boundary delimiter
+        delete config.headers['Content-Type'];
+    }
+    return config;
+};
+
+$api.interceptors.request.use(handleFormDataHeader);
+$publicApi.interceptors.request.use(handleFormDataHeader);
+
 const isAuthError = (msg: string) => AUTH_ERROR_KEYWORDS.some(k => msg.includes(k));
 
 const clearAuthAndRedirect = () => {

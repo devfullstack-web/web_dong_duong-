@@ -14,6 +14,19 @@ interface UploadedFile {
     createdAt: Date;
 }
 
+const ALLOWED_EXTENSIONS = [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.webp',
+    '.gif',
+    '.svg',
+    '.avif',
+    '.pdf',
+    '.doc',
+    '.docx',
+];
+
 // GET /api/upload - List uploaded images with pagination & search
 export const GET = withAuth(
     async (request: NextRequest) => {
@@ -46,17 +59,7 @@ export const GET = withAuth(
                             path.join(process.cwd(), 'public', 'uploads'),
                             fullPath,
                         );
-                        const allowedExtensions = [
-                            '.jpg',
-                            '.jpeg',
-                            '.png',
-                            '.webp',
-                            '.gif',
-                            '.pdf',
-                            '.doc',
-                            '.docx',
-                        ];
-                        if (allowedExtensions.some((ext) => file.toLowerCase().endsWith(ext))) {
+                        if (ALLOWED_EXTENSIONS.some((ext) => file.toLowerCase().endsWith(ext))) {
                             // Normalize path to use forward slashes for URL
                             const normalizedUrlPath = relativePublic.split(path.sep).join('/');
                             results.push({
@@ -104,17 +107,19 @@ export const POST = withAuth(
     async (request: NextRequest) => {
         try {
             const formData = await request.formData();
-            const file = formData.get('file') as File | null;
+            const file = (formData.get('file') || formData.get('image') || formData.get('upload')) as File | null;
 
-            if (!file) {
-                return apiError('No file uploaded', 400);
+            if (!file || typeof file === 'string') {
+                return apiError('Không tìm thấy file tải lên (No file uploaded)', 400);
             }
 
             const validation = await validateUploadedFile(file, {
                 allowedKinds: ['image', 'document'],
                 maxSize: UPLOAD.MAX_FILE_SIZE,
             });
-            if (!validation.ok) return apiError(validation.error, 400);
+            if (!validation.ok) {
+                return apiError(validation.error, 400);
+            }
 
             // Determine target directory with date-based organization
             const category = validation.kind === 'document' ? 'documents' : 'images';
@@ -144,6 +149,20 @@ export const POST = withAuth(
 
             // Return public URL
             const publicUrl = `/uploads/${category}/${year}/${month}/${day}/${filename}`;
+
+            // Non-blocking sync to media database table
+            try {
+                const { db } = await import('@/db');
+                const { media } = await import('@/db/schemas');
+                await db.insert(media).values({
+                    file_name: filename,
+                    file_url: publicUrl,
+                    file_type: category,
+                    file_size: file.size,
+                });
+            } catch (dbErr) {
+                console.warn('Could not record upload in media database table:', dbErr);
+            }
 
             return apiResponse({ url: publicUrl, filename }, { status: 201 });
         } catch (error) {
@@ -176,17 +195,8 @@ export const DELETE = withAuth(
                 return apiError('Invalid filename', 400);
             }
 
-            const allowedExtensions = new Set([
-                '.jpg',
-                '.jpeg',
-                '.png',
-                '.webp',
-                '.gif',
-                '.pdf',
-                '.doc',
-                '.docx',
-            ]);
-            if (!allowedExtensions.has(path.extname(filepath).toLowerCase())) {
+            const allowedExtensionsSet = new Set(ALLOWED_EXTENSIONS);
+            if (!allowedExtensionsSet.has(path.extname(filepath).toLowerCase())) {
                 return apiError('Invalid file type', 400);
             }
 

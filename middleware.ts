@@ -73,6 +73,7 @@ const apiUnauthorized = (reason: string) =>
 
 const isStaticAsset = (pathname: string) =>
     pathname.startsWith('/_next') ||
+    pathname.startsWith('/uploads') ||
     pathname.includes('favicon.ico') ||
     (pathname.includes('.') && !pathname.startsWith('/api'));
 
