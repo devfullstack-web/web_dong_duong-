@@ -11,6 +11,13 @@ import {
     Layers,
     Cpu,
     Wrench,
+    Building2,
+    Sparkles,
+    Grid,
+    Package,
+    Boxes,
+    Flame,
+    ShieldCheck,
     ChevronLeft,
     ChevronRight,
     ArrowRight,
@@ -30,6 +37,13 @@ const ICON_MAP: Record<string, React.ElementType> = {
     Layers,
     Cpu,
     Wrench,
+    Building2,
+    Sparkles,
+    Grid,
+    Package,
+    Boxes,
+    Flame,
+    ShieldCheck,
 };
 
 export interface CoreCategoryItem {

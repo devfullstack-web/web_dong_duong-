@@ -26,6 +26,13 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
         permission: 'product.view',
     },
     {
+        code: 'product_categories',
+        name: 'Danh mục Sản phẩm',
+        icon: 'FolderTree',
+        route: PORTAL_ROUTES.cms.products.categories.list,
+        permission: 'product.view',
+    },
+    {
         code: 'blog',
         name: 'Quản lý Tin tức',
         icon: 'FileText',

@@ -29,7 +29,18 @@ export async function GET(
       return apiError("Category not found", 404);
     }
 
-    return apiResponse(category);
+    const loc = (category.name_localized as Record<string, unknown>) || {};
+    const responseData = {
+      ...category,
+      subtitle: typeof loc.subtitle === "string" ? loc.subtitle : "",
+      subtitle_en: typeof loc.subtitle_en === "string" ? loc.subtitle_en : "",
+      subtitle_zh: typeof loc.subtitle_zh === "string" ? loc.subtitle_zh : "",
+      image_url: typeof loc.image_url === "string" ? loc.image_url : "",
+      icon: typeof loc.icon === "string" ? loc.icon : "LayoutGrid",
+      is_core: category.display_order > 0 && category.is_visible,
+    };
+
+    return apiResponse(responseData);
   } catch (error) {
     console.error("Error fetching category:", error);
     return apiError("Internal Server Error", 500);
@@ -48,16 +59,45 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
       parent_id?: string | null;
       display_order?: number;
       is_visible?: boolean;
+      subtitle?: string;
+      subtitle_en?: string;
+      subtitle_zh?: string;
+      image_url?: string;
+      icon?: string;
     };
+
+    // First fetch existing category
+    const [existing] = await db.select().from(categories).where(eq(categories.id, id));
+    if (!existing) {
+      return apiError("Category not found", 404);
+    }
+
+    const existingLoc = (existing.name_localized as Record<string, unknown>) || {};
+    const bodyLoc = (name_localized as Record<string, unknown>) || {};
 
     // Build update object
     const updateData: Record<string, unknown> = {};
 
-    if (name_localized) {
-      updateData.name_localized = name_localized;
-      updateData.name = name_localized.vi; // Keep legacy field in sync
+    const mergedLoc: Record<string, unknown> = {
+      ...existingLoc,
+      ...bodyLoc,
+    };
+
+    if (body.subtitle !== undefined) mergedLoc.subtitle = body.subtitle;
+    if (body.subtitle_en !== undefined) mergedLoc.subtitle_en = body.subtitle_en;
+    if (body.subtitle_zh !== undefined) mergedLoc.subtitle_zh = body.subtitle_zh;
+    if (body.image_url !== undefined) mergedLoc.image_url = body.image_url;
+    if (body.icon !== undefined) mergedLoc.icon = body.icon;
+
+    if (name_localized || body.image_url !== undefined || body.icon !== undefined || body.subtitle !== undefined) {
+      if (!mergedLoc.vi && (name || existing.name)) {
+        mergedLoc.vi = name || existing.name;
+      }
+      updateData.name_localized = mergedLoc;
+      updateData.name = typeof mergedLoc.vi === 'string' ? mergedLoc.vi : (name || existing.name);
     } else if (name) {
       updateData.name = name;
+      updateData.name_localized = { ...existingLoc, vi: name };
     }
 
     if (category_type_id) {
@@ -97,7 +137,18 @@ export const PATCH = withAuth(async (request: NextRequest, session, { params }) 
       return apiError("Category not found", 404);
     }
 
-    return apiResponse(updatedCategory);
+    const resLoc = (updatedCategory.name_localized as Record<string, unknown>) || {};
+    const finalResponse = {
+      ...updatedCategory,
+      subtitle: typeof resLoc.subtitle === "string" ? resLoc.subtitle : "",
+      subtitle_en: typeof resLoc.subtitle_en === "string" ? resLoc.subtitle_en : "",
+      subtitle_zh: typeof resLoc.subtitle_zh === "string" ? resLoc.subtitle_zh : "",
+      image_url: typeof resLoc.image_url === "string" ? resLoc.image_url : "",
+      icon: typeof resLoc.icon === "string" ? resLoc.icon : "LayoutGrid",
+      is_core: updatedCategory.display_order > 0 && updatedCategory.is_visible,
+    };
+
+    return apiResponse(finalResponse);
   } catch (error) {
     console.error("Error updating category:", error);
     return apiError("Internal Server Error", 500);

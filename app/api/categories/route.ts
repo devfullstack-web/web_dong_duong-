@@ -95,6 +95,11 @@ export const POST = withAuth(async (request: NextRequest) => {
       parent_id?: string | null;
       display_order?: number;
       is_visible?: boolean;
+      subtitle?: string;
+      subtitle_en?: string;
+      subtitle_zh?: string;
+      image_url?: string;
+      icon?: string;
     };
 
     // Support both legacy (name) and new (name_localized) format
@@ -113,11 +118,22 @@ export const POST = withAuth(async (request: NextRequest) => {
       }
     }
 
-    const localizedName: LocalizedText = name_localized || { vi: name || '', en: '', zh: '' };
+    const bodyLoc = (name_localized as Record<string, unknown>) || {};
+    const localizedName: Record<string, unknown> = {
+      ...bodyLoc,
+      vi: nameVi,
+      en: typeof bodyLoc.en === 'string' ? bodyLoc.en : '',
+      zh: typeof bodyLoc.zh === 'string' ? bodyLoc.zh : '',
+      subtitle: body.subtitle !== undefined ? body.subtitle : (typeof bodyLoc.subtitle === 'string' ? bodyLoc.subtitle : ''),
+      subtitle_en: body.subtitle_en !== undefined ? body.subtitle_en : (typeof bodyLoc.subtitle_en === 'string' ? bodyLoc.subtitle_en : ''),
+      subtitle_zh: body.subtitle_zh !== undefined ? body.subtitle_zh : (typeof bodyLoc.subtitle_zh === 'string' ? bodyLoc.subtitle_zh : ''),
+      image_url: body.image_url !== undefined ? body.image_url : (typeof bodyLoc.image_url === 'string' ? bodyLoc.image_url : ''),
+      icon: body.icon !== undefined ? body.icon : (typeof bodyLoc.icon === 'string' ? bodyLoc.icon : 'LayoutGrid'),
+    };
 
     const [newCategory] = await db.insert(categories).values({
       name: nameVi,
-      name_localized: localizedName,
+      name_localized: localizedName as LocalizedText,
       category_type_id,
       parent_id: parent_id || null,
       display_order: display_order ?? 0,

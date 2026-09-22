@@ -27,12 +27,18 @@ import {
     Trash2,
     ArrowUp,
     ArrowDown,
-    Edit2
+    Edit2,
+    Star,
+    LayoutGrid,
+    ExternalLink,
+    FolderTree,
 } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { ImageUploader } from '@/components/portal/ImageUploader';
 import { usePermissions } from '@/hooks/use-permissions';
 import $api from '@/utils/axios';
-import { API_ROUTES } from '@/constants/routes';
+import { API_ROUTES, PORTAL_ROUTES } from '@/constants/routes';
 import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DeleteConfirmationDialog } from '@/components/portal/delete-confirmation-dialog';
@@ -96,6 +102,25 @@ export default function SettingsPage() {
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+
+    // Core Categories State (Homepage)
+    const [coreCategories, setCoreCategories] = useState<{
+        id: string;
+        name: string;
+        name_localized?: {
+            vi?: string;
+            en?: string;
+            zh?: string;
+            subtitle?: string;
+            subtitle_en?: string;
+            subtitle_zh?: string;
+            image_url?: string;
+            icon?: string;
+        } | null;
+        display_order: number;
+        is_visible: boolean;
+    }[]>([]);
+    const [isLoadingCoreCategories, setIsLoadingCoreCategories] = useState(false);
 
     const saveSubmenuToDb = async (items: typeof submenuItems, silent = true): Promise<boolean> => {
         setIsSavingSettings(true);
@@ -288,8 +313,51 @@ export default function SettingsPage() {
         }
     };
 
+    const fetchCoreCategories = async () => {
+        setIsLoadingCoreCategories(true);
+        try {
+            type CategoryItem = {
+                id: string;
+                name: string;
+                name_localized?: {
+                    vi?: string;
+                    en?: string;
+                    zh?: string;
+                    subtitle?: string;
+                    subtitle_en?: string;
+                    subtitle_zh?: string;
+                    image_url?: string;
+                    icon?: string;
+                } | null;
+                display_order: number;
+                is_visible: boolean;
+                children?: CategoryItem[];
+            };
+
+            const res = await $api.get(`${API_ROUTES.CATEGORIES}?type=product&all=true`);
+            const cats: CategoryItem[] = res.data?.data || [];
+            const flat: CategoryItem[] = [];
+            const traverse = (items: CategoryItem[]) => {
+                for (const item of items) {
+                    flat.push(item);
+                    if (item.children?.length) traverse(item.children);
+                }
+            };
+            traverse(cats);
+            const core = flat
+                .filter((c) => c.display_order > 0 && c.is_visible)
+                .sort((a, b) => a.display_order - b.display_order);
+            setCoreCategories(core);
+        } catch (e) {
+            console.error('Failed to load core categories', e);
+        } finally {
+            setIsLoadingCoreCategories(false);
+        }
+    };
+
     useEffect(() => {
         fetchSiteSettings();
+        fetchCoreCategories();
     }, []);
 
     const handleSubmit = async () => {
@@ -359,6 +427,13 @@ export default function SettingsPage() {
                     >
                         <Globe size={14} />
                         Thông tin website
+                    </TabsTrigger>
+                    <TabsTrigger 
+                        value="homepage" 
+                        className="rounded-none font-bold text-xs uppercase tracking-wider py-3 px-6 data-[state=active]:bg-white data-[state=active]:text-brand-primary data-[state=active]:shadow-sm flex items-center gap-2 flex-1 sm:flex-initial"
+                    >
+                        <LayoutGrid size={14} />
+                        Trang chủ & Sản phẩm chủ lực
                     </TabsTrigger>
                 </TabsList>
 
@@ -991,6 +1066,125 @@ export default function SettingsPage() {
                             </Card>
                         </div>
                     )}
+                </TabsContent>
+
+                {/* Tab Homepage & Core Categories */}
+                <TabsContent value="homepage" className="outline-none space-y-6">
+                    <Card className="border-slate-100 rounded-none overflow-hidden shadow-sm">
+                        <CardHeader className="bg-slate-50/50 border-b border-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Star size={16} className="text-amber-500 fill-amber-500" />
+                                    <CardTitle className="text-sm font-black uppercase tracking-widest text-slate-900">
+                                        Khối Danh mục Sản phẩm Chủ lực (Trang chủ)
+                                    </CardTitle>
+                                </div>
+                                <CardDescription className="text-xs font-medium italic">
+                                    Quản lý danh sách các sản phẩm/ngành hàng chủ lực hiển thị trên slider trang chủ website.
+                                </CardDescription>
+                            </div>
+                            <Link href={PORTAL_ROUTES.cms.products.categories.list}>
+                                <Button className="bg-brand-primary hover:bg-brand-secondary text-[10px] font-black uppercase tracking-widest px-4 py-2 h-9 rounded-none flex items-center gap-2">
+                                    <FolderTree size={14} />
+                                    Quản lý danh mục & Thứ tự slider
+                                </Button>
+                            </Link>
+                        </CardHeader>
+                        <CardContent className="p-4 md:p-6 space-y-6">
+                            <div className="p-4 bg-amber-50/60 border border-amber-200 text-xs text-slate-700 leading-relaxed space-y-2">
+                                <div className="font-bold text-amber-900 uppercase text-[11px] flex items-center gap-1.5">
+                                    <Star size={14} className="fill-amber-500 text-amber-500" />
+                                    Cơ chế hoạt động của khối Danh mục sản phẩm chủ lực:
+                                </div>
+                                <ul className="list-disc pl-5 space-y-1 text-slate-600 text-xs">
+                                    <li>Mỗi thẻ danh mục trên thanh trượt hiển thị <strong>Hình ảnh minh họa</strong>, <strong>Biểu tượng icon</strong>, <strong>Tên danh mục</strong> và <strong>Tiêu đề phụ mô tả ngắn</strong>.</li>
+                                    <li>Tất cả danh mục sản phẩm có <strong>Thứ tự hiển thị &gt; 0</strong> và <strong>Trạng thái Hiển thị</strong> sẽ xuất hiện trên thanh trượt trang chủ theo thứ tự từ nhỏ đến lớn.</li>
+                                    <li>Để chỉnh sửa hình ảnh, biểu tượng, tên hoặc thứ tự, hãy bấm nút <strong>Sửa</strong> bên dưới hoặc vào menu <strong>Danh mục sản phẩm</strong>.</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <div className="flex items-center justify-between mb-4">
+                                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-800">
+                                        Danh mục chủ lực đang hiển thị ({coreCategories.length})
+                                    </h4>
+                                    <Link href={PORTAL_ROUTES.cms.products.categories.list} className="text-xs font-bold text-brand-primary hover:underline flex items-center gap-1">
+                                        Xem trong cây danh mục <ExternalLink size={12} />
+                                    </Link>
+                                </div>
+
+                                {isLoadingCoreCategories ? (
+                                    <div className="flex items-center justify-center p-8">
+                                        <Loader2 className="h-6 w-6 animate-spin text-brand-primary" />
+                                    </div>
+                                ) : coreCategories.length === 0 ? (
+                                    <div className="p-8 text-center border border-dashed border-slate-200 text-slate-400 text-xs">
+                                        Chưa có danh mục sản phẩm chủ lực nào.
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {coreCategories.map((cat, idx) => {
+                                            const raw = cat.name_localized || {};
+                                            const title = raw.vi || cat.name;
+                                            const subtitle = raw.subtitle || 'Chưa có tiêu đề phụ';
+                                            const img = raw.image_url;
+                                            const icon = raw.icon || 'LayoutGrid';
+
+                                            return (
+                                                <div
+                                                    key={cat.id}
+                                                    className="flex items-center justify-between p-3.5 border border-slate-200 bg-white hover:border-amber-300 transition-colors"
+                                                >
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <div className="w-7 h-7 rounded-full bg-amber-500 text-white font-black text-xs flex items-center justify-center shrink-0">
+                                                            #{cat.display_order || idx + 1}
+                                                        </div>
+
+                                                        {img ? (
+                                                            <div className="relative w-14 h-11 rounded overflow-hidden bg-slate-100 shrink-0 border border-slate-200">
+                                                                <Image
+                                                                    src={img}
+                                                                    alt={title}
+                                                                    fill
+                                                                    className="object-cover"
+                                                                />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="w-14 h-11 rounded border border-dashed border-slate-300 flex items-center justify-center text-[10px] text-slate-400 shrink-0">
+                                                                Không ảnh
+                                                            </div>
+                                                        )}
+
+                                                        <div className="min-w-0">
+                                                            <div className="text-xs font-black uppercase text-slate-900 truncate">
+                                                                {title}
+                                                            </div>
+                                                            <div className="text-[11px] text-slate-500 truncate">
+                                                                {subtitle}
+                                                            </div>
+                                                            <div className="text-[10px] text-amber-700 font-medium mt-0.5">
+                                                                Icon: {icon} • Thứ tự: #{cat.display_order}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <Link href={PORTAL_ROUTES.cms.products.categories.edit(cat.id)}>
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            className="text-[10px] font-black uppercase h-8 px-2.5 rounded-none border-slate-200 hover:bg-slate-50 hover:text-brand-primary shrink-0 ml-2"
+                                                        >
+                                                            <Edit2 size={12} className="mr-1" /> Sửa
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </TabsContent>
             </Tabs>
             <DeleteConfirmationDialog
